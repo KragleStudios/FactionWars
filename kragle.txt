@@ -1,0 +1,7 @@
+"kragle"
+{
+	"base"		"base"
+	"title"		"Faction Wars"
+	"maps"		"^ttt_"
+	"menusystem"	"1"
+}
