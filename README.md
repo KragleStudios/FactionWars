@@ -14,3 +14,7 @@ fw.hook.Add('PlayerSay', function(pl) -- automagically injects the hook into the
   pl:Kill() -- speaking out against the authority is death~
 end)
 ```
+# Dependencies
+Please install and keep the following up to date
+ - https://github.com/GMFactionWars/netdoc for networking
+ - https://github.com/GMFactionWars/ra
