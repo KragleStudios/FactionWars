@@ -1,7 +1,7 @@
 # kragle
 The core gamemode that holds everything together
 
-# Kragle is based on a module loader framework
+### Kragle is plugin based
 ```
 <your module name>/
   module.lua
