@@ -1,6 +1,8 @@
 require 'ra'
 
-fw = {}
+fw = {
+	--debug = true
+}
 
 -- gamemode variables
 (GM or GAMEMODE).Name = "Faction Wars"
@@ -55,8 +57,12 @@ function fw.dep(cond, name)
 	if not cond then return end
 
 	local oldprint = _G.print
-	_G.print = function(...)
-		oldprint("    ", ...)
+	if fw.debug then
+		_G.print = function(...)
+			oldprint("    ", ...)
+		end
+	else
+		_G.print = function() end
 	end
 	timer.Create('restore-print-function', 0, 1, function()
 		_G.print = oldprint
