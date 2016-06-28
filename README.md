@@ -1,6 +1,8 @@
 # kragle
 The core gamemode that holds everything together
 
+Uses semantic versioning http://semver.org
+
 ### Kragle is plugin based
 ```
 <your module name>/
