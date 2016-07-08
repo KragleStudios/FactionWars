@@ -1,3 +1,3 @@
 AddCSLuaFile "fw_init_sh.lua"
-AddCSLuaFile "init_cl.lua"
+AddCSLuaFile "cl_init.lua"
 include "fw_init_sh.lua"

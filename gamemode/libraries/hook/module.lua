@@ -1,4 +1,3 @@
-if not SHARED then return end -- every module should begin with a line like this
 if SERVER then AddCSLuaFile() end -- you must add yourself as a CSLua file if you want your module to get loaded on the client
 
 local hook 			= {}
