@@ -1,6 +1,8 @@
 # kragle
 The core gamemode that holds everything together
 
+Uses semantic versioning http://semver.org
+
 ### Kragle is plugin based
 ```
 <your module name>/
@@ -18,3 +20,4 @@ end)
 Please install and keep the following up to date
  - https://github.com/GMFactionWars/netdoc for networking
  - https://github.com/GMFactionWars/ra
+ - https://github.com/thelastpenguin/sPON for table serialization and deserialization

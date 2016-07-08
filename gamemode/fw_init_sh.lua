@@ -8,7 +8,7 @@ fw = {
 
 -- gamemode variables
 (GM or GAMEMODE).Name = "Faction Wars"
-(GM or GAMEMODE).Author = "thelastpenguin, Ott, Seris, Kalamitous, Mikey Howell"
+(GM or GAMEMODE).Author = "thelastpenguin, Ott, Seris, Kalamitous, Mikey Howell, Nookyava, Spai"
 (GM or GAMEMODE).Email = ""
 (GM or GAMEMODE).Website = "https://github.com/GMFactionWars"
 
@@ -40,7 +40,7 @@ end
 
 -- module loader
 print "-----------------------"
-print " fortwars v0.1.0 Alpha "
+print " factionwars v0.1.0 Alpha "
 print "-----------------------"
 
 fw.module_srcs = {}
@@ -117,10 +117,9 @@ function fw.dep(name)
 end
 
 
-end -- local function load()
+end load() -- local function load()
 
-load()
-
+-- allow for reloading 
 concommand.Add('fw_reload', function(pl)
 	if not pl:IsSuperAdmin() then return end
 	load()
