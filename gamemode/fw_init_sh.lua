@@ -68,7 +68,8 @@ function fw.dep(cond, name)
 	Msg(" " .. string.rep('.', 30 - name:len()) .. " ")
 	MsgC(Color(255, 155, 0), "loading\n")
 
-	fw[name] = include(fw.module_srcs[name])
+	local ret = include(fw.module_srcs[name])
+	if ret then fw[name] = ret end
 
 	Msg(" - [module] " .. name)
 	Msg(" " .. string.rep('.', 30 - name:len()) .. " ")

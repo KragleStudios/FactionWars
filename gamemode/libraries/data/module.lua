@@ -26,20 +26,16 @@ local engine = fw.include_sv 'engine_text_sv.lua'
 data.player = {}
 ndoc.table.fwPlayers = {}
 
-ndoc.addHook('fwPlayers.?', 'set', function(player, key, value)
-	print("fw new networked player " .. player:Name())
+ndoc.addHook('fwPlayers.?', 'set', function(pl, value)
+	data.player[pl] = {}
 end)
 
-ndoc.addHook('fwPlayers.?.?', 'set', function(player, key, value)
-	fw.print("fw data store " .. player:Name() .. " - " .. tostring(key) .. " = " .. tostring(value))
-	assert(type(value) ~= 'table') -- can't store nested tables... yet...
-	data.player[player][key] = value
-	data.player[player]._modified = true
+ndoc.addHook('fwPlayers.?.?', 'set', function(pl, key, value)
+	data.player[pl][key] = value
 end)
 
 function data.loadPlayer(player)
 	ndoc.table.fwPlayers[player] = {}
-	data.player[player] = {}
 	engine.loadPlayerData(player:SteamID64() or '0', function(data)
 		for k,v in pairs(data) do
 			ndoc.table.fwPlayers[k] = v
@@ -50,10 +46,7 @@ function data.loadPlayer(player)
 end
 
 function data.updateStore(player)
-	if data.player[player]._modified then 
-		data.player[player]._modified = nil
-		engine.updatePlayerData(player:SteamID64() or '0', data.player[player], ra.fn.noop) -- no callback
-	end
+	engine.updatePlayerData(player:SteamID64() or '0', data.player[player], ra.fn.noop) -- no callback
 end
 
 --
@@ -124,4 +117,3 @@ for k,v in ipairs(player.GetAll()) do
 	data.loadPlayer(pl)
 end
 
-return data
