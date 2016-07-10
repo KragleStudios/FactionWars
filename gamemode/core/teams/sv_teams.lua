@@ -83,6 +83,8 @@ hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 
 	ply.team = t.ind
 	ply:SetNWInt("team_id", t.ind)
+
+	table.insert(fw.team.list[t.ind].players, ply)
 end)
 
 -- handles all death related functionality

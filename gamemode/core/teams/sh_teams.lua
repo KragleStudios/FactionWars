@@ -23,10 +23,13 @@ function fw.team.register(name, tbl) // DO CHECKS FOR TEAM CORRECT
 				return tbl.weapons or {}
 			end,
 		getID = function()
-				return tbl.index
+				return index
 			end,
 		getPlayers = function()
-				return self.players or {}
+				return fw.team.list[index].players or {}
+			end,
+		getInfo = function()
+				return tbl
 			end,
 	}
 
@@ -36,29 +39,48 @@ function fw.team.register(name, tbl) // DO CHECKS FOR TEAM CORRECT
 	return t
 end
 
+concommand.Add("test", function()
+	PrintTable(TEAM_CIVILIAN:getPlayers())
+end)
+
 -- fw.team.getByString - Gets a team's data by the string used, "civilian", "police_officer"
 -- @param team_textID:string - the string_id found in the team configuration
 -- @ret the table team
 function fw.team.getByString(team_textID)
 	for k,v in ipairs(fw.team.list) do
-		if (v.stringID == stringID) then
+		if (v.stringID == team_textID) then
 			return v
 		end
 	end
+
+	Error("FAILED TO FIND TEAM")
+end
+
+function fw.team.demotePlayer(ply)
+	if (!IsValid(ply)) then return end
+	
+	playerChangeTeam(ply, TEAM_CIVILIAN:getID(), table.Random(TEAM_CIVILIAN:getModels()))
+end
+
+function fw.team.setPlayer(ply, team_id_num)
+	if (!IsValid(ply) or !team_textID) then return end
+	
+	local team = fw.team.list[team_textID]
+	if (!team) then return end
+	
+	playerChangeTeam(ply, team_id_num, table.Random(team.models), true)
 end
 
 -- handles the ability of whether or not a player can join a team
 hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	if (!targ_team or !ply:Alive()) then
 		//NOTIFY NO TARG_TEAM
-		Msg("1")
 		return false
 	end
 	
 	local t = fw.team.list[targ_team]
 	if (!t) then 
 		//NOTIFY TEAM NOT FOUND
-		Msg("2")
 		return false 
 	end
 	
@@ -67,7 +89,6 @@ hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	local max = t.max or 0
 	if (max != 0) then
 		if (#t.players + 1 > max) then 
-			Msg("3")
 			return false
 		end
 	end
@@ -96,17 +117,26 @@ end)
 -- @param targ_team:int - the index of the team in the table
 -- @param pref_model:string - the model selected on the switch team screen is sent here
 -- @ret nothing
-function playerChangeTeam(ply, targ_team, pref_model)
+function playerChangeTeam(ply, targ_team, pref_model, forced)
 	if (!targ_team) then
 		// NOTIFY TARG_TEAM NOT FOUND
 		return
 	end
 
 	local canjoin = hook.Call("CanPlayerJoinTeam", FW, ply, targ_team)
-	if (!canjoin) then
+	if (!forced and !canjoin) then
 		//NOTIFY CAN'T JOIN TEAM
 		return false 
 	end
+
+	local t = fw.team.list[targ_team]
+	t.players = t.players or {}
+	table.insert(fw.team.list[targ_team].players, ply)
+
+	local last_team = fw.team.list[ply:getTeam()]
+	if (!last_team) then return end
+	table.RemoveByValue(fw.team.list[ply:getTeam()].players, ply)
+
 	if (SERVER) then
 		ply.last_team = ply.team
 		ply.team = targ_team
@@ -117,14 +147,6 @@ function playerChangeTeam(ply, targ_team, pref_model)
 
 		ply:Kill()
 	end
-
-	local t = fw.team.list[targ_team]
-	t.players = t.players or {}
-	table.insert(fw.team.list[targ_team].players, ply)
-
-	local last_team = fw.team.list[ply:getTeam()]
-	if (!last_team) then return end
-	table.RemoveByValue(fw.team.list[ply:getTeam()].players, ply)
 end
 if (SERVER) then
 	net.Receive("playerChangeTeam", function(l, client)

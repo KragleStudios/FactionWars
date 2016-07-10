@@ -25,6 +25,10 @@ hook.Add("HUDPaint", "LoadGUI", function()
 	draw.SimpleText(name, "head", 10, 10, colors.text)
 end)
 
+hook.Add("InitPostEntity", "UpdateTeamGroupsCL", function()
+	local tid = LocalPlayer():getTeam()
+	table.insert(fw.team.list[tid].players, LocalPlayer())
+end)
 
 concommand.Add("teams", function()
 	if (!LocalPlayer():Alive()) then return end
