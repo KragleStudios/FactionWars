@@ -56,12 +56,19 @@ function fw.team.getByString(team_textID)
 	Error("FAILED TO FIND TEAM")
 end
 
+-- fw.team.demotePlayer - force demotes a player back to the citizen team
+-- @param py:player - the player to demote
+-- @ret nothing
 function fw.team.demotePlayer(ply)
 	if (!IsValid(ply)) then return end
 	
 	playerChangeTeam(ply, TEAM_CIVILIAN:getID(), table.Random(TEAM_CIVILIAN:getModels()))
 end
 
+-- fw.team,setPlayer - sets a player to a job, regardless of restrictions
+-- @param ply:player - the player to set the job on
+-- @param team_id_num:integer - the index value in the master team table, found by TEAM_*:getID()
+-- @ret nothing
 function fw.team.setPlayer(ply, team_id_num)
 	if (!IsValid(ply) or !team_textID) then return end
 	
