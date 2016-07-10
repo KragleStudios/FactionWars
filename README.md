@@ -21,3 +21,7 @@ Please install and keep the following up to date
  - https://github.com/GMFactionWars/netdoc for networking
  - https://github.com/GMFactionWars/ra
  - https://github.com/thelastpenguin/sPON for table serialization and deserialization
+
+# Style Guide
+ - use -- for comments
+ - use native lua syntax only plaese aka not instead of !
