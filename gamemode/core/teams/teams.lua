@@ -3,6 +3,8 @@ TEAM_POLICE = fw.team.register("Police Officer", {
 	models = {"models/player/combine_soldier.mdl"},
 	weapons = {"weapon_357"},
 	factionOnly = false,
+	//OPTIONAL
+	//faction = "FACTION_COMMONWEALTH",
 	max = 1,
 	canJoin = function(team, ply) return true end,
 	onSpawn = function(team, ply) end,

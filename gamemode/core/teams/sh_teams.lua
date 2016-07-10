@@ -103,9 +103,13 @@ hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	if (ply:getTeam() == targ_team) then return false end
 
 	// SUPPORT FOR FACTION ONLY JOBS
-	if (t.factionOnly and ply:getFaction() == NULL) then 
+	if ((t.factionOnly and !t.faction) and ply:getFaction() == NULL) then 
 		return false
 	end 
+	//notify incorrect faction
+	if ((t.factionOnly and t.faction) and (ply:getFaction() != t.faction)) then
+		return false
+	end
 
 	if (istable(canjoin)) then
 		for k,v in ipairs(canjoin) do
@@ -123,6 +127,7 @@ end)
 -- @param ply:player object - the player object switching teams
 -- @param targ_team:int - the index of the team in the table
 -- @param pref_model:string - the model selected on the switch team screen is sent here
+-- @param optional forced:bool - should we ignore canjoin conditions?
 -- @ret nothing
 function playerChangeTeam(ply, targ_team, pref_model, forced)
 	if (!targ_team) then
@@ -179,5 +184,8 @@ end
 -- gets the player's faction
 -- PLACEHOLDER FUNCTION
 function player:getFaction()
+	return NULL
+end
+function player:inFaction()
 	return NULL
 end

@@ -7,13 +7,13 @@ fw.team.spawns = fw.team.spawns or {}
 -- @param vector:string - the vector position of the new spawn point
 -- @param angle:angle - the angle of the new spawn point
 -- @ret nothing
-function fw.team.registerSpawn(team_textID, vector, angle)
+function fw.team.registerSpawn(team_textID, vector, angle, faction)
 	local points = {}
 	if (fw.team.spawns[team_textID]) then
 		points = fw.team.spawns[team_textID]
 	end
 
-	table.insert(points, {vector, angle})
+	table.insert(points, {vector, angle, faction})
 
 	fw.team.spawns[team_textID] = points
 end
@@ -21,9 +21,11 @@ end
 -- fw.team.findBestSpawn - Finds an open spawn point for the team, upon player spawning
 -- @param team_textID:string - the string_id found in the team configuration
 -- @ret nothing
-function fw.team.findBestSpawn(team_textID)
+function fw.team.findBestSpawn(team_textID, faction)
 	if (fw.team.spawns[team_textID]) then
 		for k,v in ipairs(fw.team.spawns[team_textID]) do
+			if (faction and (v[3] != faction)) then continue end 
+
 			local ent = ents.FindInSphere(v[1], 40)
 			if (#ent > 0) then
 				continue
@@ -56,8 +58,11 @@ hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
 	for k,v in ipairs(t.weapons) do
 		ply:Give(v)
 	end
-
-	local sp = fw.team.findBestSpawn(t.stringID)
+	local fac = nil
+	if (ply:inFaction()) then 
+		fac = ply:getFaction()
+	end
+	local sp = fw.team.findBestSpawn(t.stringID, fac)
 	if (sp) then
 		ply:SetPos(sp[1])
 		ply:SetAngles(sp[2])
@@ -75,7 +80,11 @@ hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 		ply:Give(v)
 	end
 
-	local sp = fw.team.findBestSpawn(t.stringID)
+	local fac = nil
+	if (ply:inFaction()) then 
+		fac = ply:getFaction()
+	end
+	local sp = fw.team.findBestSpawn(t.stringID, fac)
 	if (sp) then
 		ply:SetPos(sp[1])
 		ply:SetAngles(sp[2])
