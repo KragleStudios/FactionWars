@@ -31,3 +31,6 @@ Please install and keep the following up to date
 # Module Docs
  - [core/economy](gamemode/core/economy/README.md)
  - [core/teams](gamemode/core/teams/README.md)
+ - [libraries/data](gamemode/libraries/data/README.md)
+ - [libraries/hook](gamemode/libraries/hook/README.md)
+ - [libraries/notif](gamemode/libraries/notif/README.md)
