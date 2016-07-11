@@ -25,3 +25,5 @@ Please install and keep the following up to date
 # Style Guide
  - use -- for comments
  - use native lua syntax only plaese aka not instead of !
+ - use lowerCammelCase for all methods etc. If you find somewhere that isn't lower camel case please change it.
+ - Try to use lowerCamelCase or _ scores for variable names.
