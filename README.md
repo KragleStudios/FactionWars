@@ -16,6 +16,43 @@ fw.hook.Add('PlayerSay', function(pl) -- automagically injects the hook into the
   pl:Kill() -- speaking out against the authority is death~
 end)
 ```
+# Utility Functions and Recommendations
+## When including files
+Please always use
+```
+fw.include_sh 'file name' -- to include a shared file
+fw.include_cl 'file name' -- to include a client file
+fw.include_sv 'file name' -- to include a server file
+```
+## When loading dependencies
+```
+-- Require External libraries first
+require 'spon'
+require 'tmysql'
+...
+-- Require Dependend modules next
+fw.dep(SERVER, 'hook')
+fw.dep(SHARED, 'data')
+...
+-- Require lua files last
+fw.include_cl 'myfile.lua'
+...
+```
+Also remember if your module runs any code client side you must add 
+```
+if SERVER then AddCSLuaFile() end
+```
+to the top, kragle does not AddCSLuaFiles for you! It aims to give you maximum control over how your files are loaded.
+## When adding hooks
+always use the fw hook module the syntax for this is 
+```
+fw.hook.Add('hook name', 'optional hook id', function(...) end)
+```
+just as usual. Hooks get injected into the GM[hook name] table. They will always be called in the same order that they are added which means hooks in modules you require with fw.dep(...) will get called before hooks in your module, but this behavior can get funky with lua refresh. If you choose not to provide the 'optional hook id' the source path of the file it is defined in will be used instead.
+
+## Networking
+Please try to use netdoc for your networking needs. The data module defines a helper function Player:GetFWData() that you can use to get the network data table for that player. The player's money for example is stored in player:GetFWData().money, the faction in player:GetFWData().faction. You can add fields as desired. For more information about this please see the module docs at the bottom of this page for [libraries/data](gamemode/libraries/data/README.md).
+
 # Dependencies
 Please install and keep the following up to date
  - https://github.com/GMFactionWars/netdoc for networking
