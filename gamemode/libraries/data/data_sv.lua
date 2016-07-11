@@ -1,4 +1,3 @@
-
 fw.data = fw.data or {}
 local data = fw.data
 

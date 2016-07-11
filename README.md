@@ -25,3 +25,4 @@ Please install and keep the following up to date
 # Style Guide
  - use -- for comments
  - use native lua syntax only plaese aka not instead of !
+ - https://github.com/Capster/lua-style-guide

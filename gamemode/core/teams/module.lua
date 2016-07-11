@@ -2,6 +2,7 @@
 fw.team = fw.team or {}
 
 -- load internal dependencies
+fw.dep(SHARED, 'notif')
 fw.dep(SHARED, 'hook')
 fw.dep(SERVER, 'data')
 
