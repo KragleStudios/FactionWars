@@ -8,6 +8,7 @@ fw.dep(SERVER, 'data')
 -- proper include system
 fw.include_sh 'sh_teams.lua'
 fw.include_sv 'sv_teams.lua'
+fw.include_sh 'sh_team_overrides.lua'
 -- fw.include_cl 'cl_teams.lua'
 
 -- should really be placed somewhere else
