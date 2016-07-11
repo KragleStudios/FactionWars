@@ -5,6 +5,7 @@ local team_mt = {
 	getStringID = function(self)
 		return self.stringID
 	end,
+	getModels = function(self)
 		return self.models
 	end,
 	getWeapons = function(self)
@@ -13,8 +14,10 @@ local team_mt = {
 	getID = function(self)
 		return self.index
 	end,
+	getPlayers = function(self)
 		return team.GetPlayers(self.index) 
 	end,
+	addPlayer = function(self, pref_mdoel, forced)
 		fw.team.playerChangeTeam(ply, self.index, pref_model, forced)
 	end
 }
@@ -50,6 +53,7 @@ function fw.team.register(name, tbl)
 				fw.team.setPreferredModel(tbl.index, pl, args[1])
 			end
 
+			self:addPlayer(nil, nil)
 		end)
 	end
 
@@ -89,6 +93,7 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	
 	
 	-- enforce t.max players
+	if t.max and #t:getPlayers() > t.max then return false end
 
 	-- can't join a team you're already on
 	if (ply:Team() == targ_team) then return false end
