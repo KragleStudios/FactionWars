@@ -30,7 +30,7 @@ function team.GetSpawnPoints(teamIndex)
 		
 		return fw.team.spawns[sp] or {}
 	else
-		//NETWORK SPAWN POITNS BTW SERV AND CLIENT
+		//NETWORK SPAWN POINTS BTW SERV AND CLIENT
 	end
 end
 
