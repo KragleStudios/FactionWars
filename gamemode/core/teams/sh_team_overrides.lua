@@ -3,7 +3,6 @@ fw.team.stats  = fw.team.stats  or {frags = {}, deaths = {}}
 if (SERVER) then
 	util.AddNetworkString("team_frags")
 	util.AddNetworkString("team_deaths")
-
 end
 
 function team.GetName(teamIndex)
