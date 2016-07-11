@@ -1,4 +1,3 @@
-
 local data = {}
 fw.data = data -- preset table
 
