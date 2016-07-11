@@ -1,5 +1,6 @@
 if SERVER then AddCSLuaFile() end
 
+fw.dep(SHARED, 'notif')
 fw.dep(SERVER, 'hook')
 
 local Player = FindMetaTable('Player')

@@ -1,6 +1,6 @@
 
-local data = {}
-fw.data = data -- preset table
+fw.data = fw.data or {}
+local data = fw.data
 
 -- load external dependencies
 require 'spon' spon.noCompat = true
@@ -34,8 +34,8 @@ end
 
 
 -- player data table
-data.player = {}
-ndoc.table.fwPlayers = {}
+data.player = data.player or {}
+if not ndoc.table.fwPlayers then ndoc.table.fwPlayers = {} end
 
 ndoc.addHook('fwPlayers.?', 'set', function(pl, value)
 	if value == nil then
@@ -60,6 +60,7 @@ function data.loadPlayer(player)
 end
 
 function data.updateStore(player)
+	fw.print("update store for " .. tostring(player))
 	engine.updatePlayerData(player:SteamID64() or '0', data.player[player], ra.fn.noop) -- no callback
 end
 
@@ -93,11 +94,11 @@ function data.updateGlobalCache()
 	file.Write(data._cacheFile, spon.encode(persist))
 end
 
-timer.Create('fwUpdateCache', 30, 0, function()
+timer.Create('fwUpdateCache', fw.config.data_cacheUpdateInterval, 0, function()
 	data.updateGlobalCache()
 end)
 
-timer.Create('fwUpdateStore', 600, 0, function()
+timer.Create('fwUpdateStore', fw.config.data_storeUpdateInterval, 0, function()
 	for k, player in ipairs(player.GetAll()) do
 		data.updateStore(player)
 	end
@@ -140,12 +141,21 @@ end
 -- CONSOLE COMMANDS
 -- 
 concommand.Add('fw_data_updateStore', function(pl, cmd, args)
+	if not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') end
+
+	pl:FWConPrint("updated data store for all players")
+
+	for k,v in pairs(player.GetAll()) do
+		data.updateStore(v)
+	end
 end, function()
 	return {"commits all changes to player data to the long term storage"}
 end)
 
 concommand.Add('fw_data_updateCache', function(pl, cmd, args)
 	if not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') end
+
+	pl:FWConPrint("updated global cache")
 
 	data.updateGlobalCache()
 end, function()
