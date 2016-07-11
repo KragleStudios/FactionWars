@@ -26,8 +26,8 @@ local resolvePath = function(fn)
 		return fn(resolvePathHelper(3, ...))
 	end
 end
-fw.include_sv = resolvePath(include or function() end)
-fw.include_cl = resolvePath(AddCSLuaFile or include) 
+fw.include_sv = resolvePath(SERVER and include or function() end)
+fw.include_cl = resolvePath(SERVER and AddCSLuaFile or include) 
 fw.include_sh = resolvePath(function(path)
 	if SERVER then AddCSLuaFile(path) end
 	return include(path)
@@ -56,7 +56,7 @@ fw.module_search_paths = {
 -- fw.dep(cond:bool, name:string)
 -- @param cond:bool - if true then it loads, if false then it doesnt i.e. fw.dep(SERVER, ...)
 -- @param name:string - the name of the module to load i.e. hooks
--- @ret nothing
+-- @ret module:table - the module's method table
 function fw.dep(cond, name)
 	if fw.loaded_modules[name] then return fw[name] end
 
@@ -106,7 +106,6 @@ for k,v in pairs(fw.module_srcs) do
 		fw.dep(SHARED, k)
 	end
 end
-
 
 
 -- fw.dep without printing

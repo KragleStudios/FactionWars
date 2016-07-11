@@ -18,14 +18,14 @@ surface.CreateFont("head", {font = "coolvetica", size = 60, weight = 500})
 surface.CreateFont("btn", {font = "coolvetica", size = 30, weight = 500})
 surface.CreateFont("btnsmall", {font = "coolvetica", size = 20, weight = 500})
 
-
-hook.Add("HUDPaint", "LoadGUI", function()
+fw.hook.Add("HUDPaint", "LoadGUI", function()
 	local tid = LocalPlayer():getTeam()
+	print(tid)
 	local name = fw.team.list[tid].job
 	draw.SimpleText(name, "head", 10, 10, colors.text)
 end)
 
-hook.Add("InitPostEntity", "UpdateTeamGroupsCL", function()
+fw.hook.Add("InitPostEntity", "UpdateTeamGroupsCL", function()
 	local tid = LocalPlayer():getTeam()
 	table.insert(fw.team.list[tid].players, LocalPlayer())
 end)

@@ -1,5 +1,3 @@
-util.AddNetworkString("playerChangeTeam")
-
 fw.team.spawns = fw.team.spawns or {}
 
 -- fw.team.registerSpawn - Registers spawn points to be used in player spawns. Multiple points can be registered
@@ -39,16 +37,16 @@ function fw.team.findBestSpawn(team_textID, faction)
 end
 
 -- handles all spawning related functionality 
-hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
+fw.hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
 	local plyT = ply:getTeam()
 	if (!plyT) then
-		//NOTIFY UNABLE TO OBTAIN PLAYER'S TEAM
+		-- NOTIFY UNABLE TO OBTAIN PLAYER'S TEAM
 		return
 	end
 
 	local t = fw.team.list[plyT]
 	if (!t) then
-		//NOTIFY UNABLE TO FIND TEAM
+		--NOTIFY UNABLE TO FIND TEAM
 		return
 	end
 
@@ -72,8 +70,8 @@ hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
 end)
 
 -- sets the players team to 'Civilian' on the first spawn
-hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
-	local t = fw.team.getByString("civilian")
+fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
+	local t = fw.team.getByStringID("civilian")
 
 	ply:SetModel(ply.pref_model or table.Random(t.models))
 	for k,v in ipairs(t.weapons) do
@@ -97,16 +95,16 @@ hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 end)
 
 -- handles all death related functionality
-hook.Add("PlayerDeath", "TeamSpawn", function(ply)
+fw.hook.Add("PlayerDeath", "TeamSpawn", function(ply)
 	local plyT = ply:getTeam()
 	if (!plyT) then
-		//NOTIFY UNABLE TO OBTAIN PLAYER'S TEAM
+		--NOTIFY UNABLE TO OBTAIN PLAYER'S TEAM
 		return
 	end
 
 	local t = fw.team.list[plyT]
 	if (!t) then
-		//NOTIFY UNABLE TO FIND TEAM
+		--NOTIFY UNABLE TO FIND TEAM
 		return
 	end
 

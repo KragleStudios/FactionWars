@@ -1,22 +1,14 @@
-if SERVER then
-	AddCSLuaFile()
-
-	include("sh_teams.lua")
-	include('sv_teams.lua')
-	include("teams.lua")
-
-	AddCSLuaFile("sh_teams.lua")
-	AddCSLuaFile("cl_teams.lua")
-	AddCSLuaFile("teams.lua")
-else
-	include("sh_teams.lua")
-	include("cl_teams.lua")
-	include("teams.lua")
-end
+-- create the exported table
+fw.team = fw.team or {}
 
 -- load internal dependencies
 fw.dep(SHARED, 'hook')
 fw.dep(SERVER, 'data')
 
--- load self
+-- proper include system
+fw.include_sh 'sh_teams.lua'
+fw.include_sv 'sv_teams.lua'
+-- fw.include_cl 'cl_teams.lua'
 
+-- should really be placed somewhere else
+fw.include_sh 'teams.lua'
