@@ -25,8 +25,8 @@ Please install and keep the following up to date
 # Style Guide
  - use -- for comments
  - use native lua syntax only plaese aka not instead of !
- - https://github.com/Capster/lua-style-guide
  - use lowerCamelCase for all methods etc. If you find somewhere that isn't lower camel case please change it.
+ - look at this if you have to > https://github.com/Capster/lua-style-guide
 
 # Module Docs
  - [core/economy](gamemode/core/economy/README.md)
