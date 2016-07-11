@@ -33,8 +33,8 @@ function team.GetSpawnPoints(teamIndex)
 	end
 end
 
-//This is a buggy work around and does NOT produce accurate results 100% of the time,
-//as it depends on the player's team and the custom function of the job
+-- This is a buggy work around and does NOT produce accurate results 100% of the time,
+-- as it depends on the player's team and the custom function of the job
 function team.Joinable(teamIndex)
 	local t = fw.team.list[teamIndex]
 	if (!t) then return end
