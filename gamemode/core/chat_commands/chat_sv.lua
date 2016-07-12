@@ -118,15 +118,26 @@ function fw.chat.parseString(ply, str)
 		local pName = v[1]
 		local pType = v[2]
 
-		local value = args[count] --where are we in the string the player sent?
+		local value = args[1] --where are we in the string the player sent?
 		if (not value) then
 			--NOTIFY CAN'T CONTINUE BECAUSE OF MISSING PARAMETER VALUE
 			return str
 		end
 
+
+
 		--the player is targeting themself
 		if (pType == 'player' and value == '^') then
 			value = ply
+		elseif (pType == 'string' and (params[k + 1] == nil)) then
+
+			local func = fw.chat.paramTypes['string']
+			value = table.concat(args, ' ')
+			value = func(value)
+
+			if (not value) then 
+				return str
+			end
 		else
 			local func = fw.chat.paramTypes[pType] or fw.chat.paramTypes['string']
 			value = func(value)
@@ -135,11 +146,14 @@ function fw.chat.parseString(ply, str)
 				--NOTIFY CAN"T CONTINUE BECAUSE OF MISSING PARAMETER VALUE
 				return str
 			end
-			print(pName, value)
 
-			table.insert(structure, value)
-			count = count + 1
+			
 		end
+
+		table.insert(structure, value)
+		count = count + 1
+		
+		table.remove(args, 1) --for getting remainder of string
 	end
 	
 	cmdObj.callback(ply, unpack(structure))
@@ -157,5 +171,3 @@ hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 
 	return fw.chat.parseString(ply, text) or text
 end)
-
-
