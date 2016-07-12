@@ -1,8 +1,8 @@
 fw.config = fw.config or {} -- for now. todo: make into a module
 
-fw.config.datadir = 'factionwars'
+fw.config.dataDir = 'factionwars'
 
-fw.config.datastore = 'text' -- text documents
+fw.config.dataStore = 'text' -- text documents
 
 fw.config.data_cacheUpdateInterval = 60 -- SECONDS
 fw.config.data_storeUpdateInterval = 60 * 10 -- SECONDS
