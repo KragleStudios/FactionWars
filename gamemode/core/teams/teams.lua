@@ -1,7 +1,14 @@
+--
+-- FACTIONS
+--
 FACTION_POLICE = fw.team.registerFaction('Police', {
 	stringID = 'f_police',
 })
 
+
+--
+-- TEAMS/CLASSES
+--
 TEAM_POLICE = fw.team.register("Police Officer", {
 	stringID = "t_police_officer",
 	models = {"models/player/combine_soldier.mdl"},
