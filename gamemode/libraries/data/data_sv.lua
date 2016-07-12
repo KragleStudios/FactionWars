@@ -9,9 +9,9 @@ fw.dep(SERVER, 'hook')
 
 
 -- create directories
-data._rootDir = fw.config.dataDir 
-data._cacheFile = data._rootDir .. '/sessionCache.txt'
-file.CreateDir(data._rootDir)
+data._rootdir = fw.config.dataDir
+data._cacheFile = data._rootdir .. '/sessionCache.txt'
+file.CreateDir(data._rootdir)
 
 local engine = fw.include_sv 'engine_text_sv.lua'
 
@@ -58,7 +58,7 @@ end
 function data.updateStore(player)
 	fw.print("update store for " .. tostring(player))
 	if not data.player[player] then
-		pl:FWChatPrint(Color(255, 0, 0), '[FACTIONWARS] [ERROR] Your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.')
+		player:FWChatPrint(Color(255, 0, 0), '[FACTION WARS] [ERROR] your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.')
 		return 
 	end
 
@@ -73,13 +73,13 @@ fw.hook.Add('PlayerInitialSpawn', function(pl)
 end)
 
 fw.hook.Add('PlayerDisconnected', function(pl)
-	data.updateStore(player)
+	data.updateStore(pl)
 
 	data.player[pl] = nil
 	ndoc.table.fwPlayers[pl] = nil
 end)
 
-fw.hook.Add('ShutDown', function(pl)
+fw.hook.Add('ShutDown', function()
 	data.updateGlobalCache()
 end)
 
@@ -91,7 +91,7 @@ function data.updateGlobalCache()
 	for player, data in pairs(data.player) do
 		persist[player:SteamID64() or '0'] = data
 	end
-	
+
 	file.Write(data._cacheFile, spon.encode(persist))
 end
 
@@ -137,14 +137,17 @@ end
 for k,v in ipairs(player.GetAll()) do
 	data.loadPlayer(v)
 end
-
 --
 -- CONSOLE COMMANDS
 -- 
 concommand.Add('fw_data_updateStore', function(pl, cmd, args)
-	if not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') end
+	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
 
-	pl:FWConPrint("updated data store for all players")
+	if IsValid(pl) then
+		pl:FWConPrint("updated data store for all players")
+	else
+		fw.print("updated data store for all players")
+	end
 
 	for k,v in pairs(player.GetAll()) do
 		data.updateStore(v)
@@ -154,9 +157,13 @@ end, function()
 end)
 
 concommand.Add('fw_data_updateCache', function(pl, cmd, args)
-	if not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') end
+	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
 
-	pl:FWConPrint("updated global cache")
+	if IsValid(pl) then
+		pl:FWConPrint("updated global cache")
+	else
+		fw.print("updated global cache")
+	end
 
 	data.updateGlobalCache()
 end, function()

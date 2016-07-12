@@ -20,7 +20,7 @@ end
 
 engine.updatePlayerData = function(steamid64, data, callback)
 	-- since storing player data is somewhat infrequent we can afford to util.Compress it
-	file.Write(engine._getPlayerDataFile(), util.Compress(spon.encode(data)))
+	file.Write(engine._getPlayerDataFile(steamid64), util.Compress(spon.encode(data)))
 	callback()
 end
 
