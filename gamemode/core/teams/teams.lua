@@ -1,10 +1,6 @@
 FACTION_POLICE = fw.team.registerFaction('Police', {
-		stringID = 'f_police',
-	})
-
-FACTION_POLICE = fw.team.registerFaction('Police', {
-		stringID = 'f_police',
-	})
+	stringID = 'f_police',
+})
 
 TEAM_POLICE = fw.team.register("Police Officer", {
 	stringID = "t_police_officer",
@@ -37,9 +33,6 @@ TEAM_MERC = fw.team.register("Mercenary", {
 	factionOnly = false,
 	max = 4,
 })
-
-
-
 
 TEAM_GUN = fw.team.register("Gun Dealer", {
 	stringID = "t_gun_dealer",
