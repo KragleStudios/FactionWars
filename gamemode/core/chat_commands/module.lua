@@ -5,4 +5,4 @@ fw.chat = fw.chat or {}
 fw.dep(SHARED, 'hook')
 
 -- proper include system
-fw.include_sv 'sv_chat.lua'
+fw.include_sv 'chat_sv.lua'
