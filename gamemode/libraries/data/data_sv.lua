@@ -9,9 +9,9 @@ fw.dep(SERVER, 'hook')
 
 
 -- create directories
-data._rootdir = fw.config.datadir 
-data._cacheFile = data._rootdir .. '/sessionCache.txt'
-file.CreateDir(data._rootdir)
+data._rootDir = fw.config.dataDir 
+data._cacheFile = data._rootDir .. '/sessionCache.txt'
+file.CreateDir(data._rootDir)
 
 local engine = fw.include_sv 'engine_text_sv.lua'
 
@@ -58,7 +58,7 @@ end
 function data.updateStore(player)
 	fw.print("update store for " .. tostring(player))
 	if not data.player[player] then
-		pl:FWChatPrint(Color(255, 0, 0), '[FACTION WARS] [ERROR] your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.')
+		pl:FWChatPrint(Color(255, 0, 0), '[FACTIONWARS] [ERROR] Your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.')
 		return 
 	end
 
