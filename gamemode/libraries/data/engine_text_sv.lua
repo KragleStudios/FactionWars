@@ -1,12 +1,12 @@
 local engine = {}
 
-file.CreateDir(fw.config.datadir)
-file.CreateDir(fw.config.datadir .. '/PlayerData')
+file.CreateDir(fw.config.dataDir)
+file.CreateDir(fw.config.dataDir .. '/PlayerData')
 
-local datadirPlayers = fw.config.datadir .. '/PlayerData'
+local dataDirPlayers = fw.config.dataDir .. '/PlayerData'
 
 engine._getPlayerDataFile = function(steamid64)
-	return datadirPlayers .. '/p' .. (steamid64 or 0) .. '.dat'
+	return dataDirPlayers .. '/p' .. (steamid64 or 0) .. '.dat'
 end
 
 engine.loadPlayerData = function(steamid64, callback)
