@@ -11,7 +11,7 @@ FACTION_POLICE = fw.team.registerFaction('Police', {
 TEAM_POLICE = fw.team.register("Police Officer", {
 	stringID = "t_police_officer",
 	models = {"models/player/combine_soldier.mdl"},
-	weapons = {"weapon_357"},
+	weapons = {"weapon_357", "weapon_fists"},
 	faction = FACTION_POLICE,
 	max = 4,
 })
@@ -19,7 +19,7 @@ TEAM_POLICE = fw.team.register("Police Officer", {
 TEAM_CIVILIAN = fw.team.register("Civilian", {
 	stringID = "t_civilian",
 	models = {"models/player/mossman.mdl"},
-	weapons = {},
+	weapons = {"weapon_fists"},
 	factionOnly = false,
 	max = 0,
 })
@@ -27,7 +27,7 @@ TEAM_CIVILIAN = fw.team.register("Civilian", {
 TEAM_DRUG = fw.team.register("Drug Dealer", {
 	stringID = "t_drug_dealer",
 	models = {"models/player/eli.mdl"},
-	weapons = {},
+	weapons = {"weapon_fists"},
 	factionOnly = false,
 	max = 4,
 })
@@ -35,7 +35,7 @@ TEAM_DRUG = fw.team.register("Drug Dealer", {
 TEAM_MERC = fw.team.register("Mercenary", {
 	stringID = "t_merc",
 	models = {"models/player/odessa.mdl"},
-	weapons = {},
+	weapons = {"weapon_fists"},
 	factionOnly = false,
 	max = 4,
 })
@@ -43,7 +43,7 @@ TEAM_MERC = fw.team.register("Mercenary", {
 TEAM_GUN = fw.team.register("Gun Dealer", {
 	stringID = "t_gun_dealer",
 	models = {"models/player/monk.mdl"},
-	weapons = {},
+	weapons = {"weapon_fists"},
 	factionOnly = true,
 	max = 4,
 })
@@ -51,7 +51,7 @@ TEAM_GUN = fw.team.register("Gun Dealer", {
 TEAM_MEDIC = fw.team.register("Medic", {
 	stringID = "t_medic",
 	models = {"models/player/kleiner.mdl"},
-	weapons = {},
+	weapons = {"weapon_medkit", "weapon_fists"},
 	factionOnly = true,
 	max = 4,
 })
@@ -59,7 +59,7 @@ TEAM_MEDIC = fw.team.register("Medic", {
 TEAM_BOSS = fw.team.register("Boss", {
 	stringID = "t_boss",
 	models = {"models/player/breen.mdl"},
-	weapons = {},
+	weapons = {"weapon_fists"},
 	factionOnly = true,
 	max = 1,
 })
@@ -67,7 +67,7 @@ TEAM_BOSS = fw.team.register("Boss", {
 TEAM_SOLDIER = fw.team.register("Soldier", {
 	stringID = "soldier",
 	models = {"models/player/barney.mdl"},
-	weapons = {},
+	weapons = {"weapon_fists"},
 	factionOnly = true,
 	max = 4,
 })
