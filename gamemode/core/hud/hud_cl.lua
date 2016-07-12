@@ -21,7 +21,7 @@ vgui.Register('fwHudInfoCell', {
 			self:InvalidateLayout(true)
 
 			self:AlphaTo(255, 0.1, 0, function()
-				self:AlphaTo(155, 0.5, 0)
+				self:AlphaTo(155, 1, 0)
 			end)
 		end,
 
@@ -76,6 +76,26 @@ vgui.Register('fwHudInfo', {
 
 			end
 
+			-- display faction
+			do
+				self.faction = vgui.Create('fwHudInfoCell', self.layout)
+				
+				local function updateFaction()
+					if not IsValid(self.faction) then return end
+
+					if LocalPlayer():inFaction() then
+						local factionMeta = fw.team.getFactionById(LocalPlayer():getFaction())
+						if not factionMeta then return end
+						self.faction:SetText('FACTION: ' .. factionMeta:getName())
+					else
+						self.faction:SetText('NO FACTION')
+					end
+				end
+				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateFaction)
+				updateFaction()
+
+			end
+
 			-- display hp
 			do
 				self.hp = vgui.Create('fwHudInfoCell', self.layout)
@@ -95,6 +115,7 @@ vgui.Register('fwHudInfo', {
 			-- do layout
 			self.money:SetWide(sty.ScreenScale(100))
 			self.job:SetWide(sty.ScreenScale(100))
+			self.faction:SetWide(sty.ScreenScale(100))
 			self.hp:SetWide(sty.ScreenScale(50))
 
 			local p = sty.ScreenScale(2)
@@ -105,7 +126,7 @@ vgui.Register('fwHudInfo', {
 		end,
 
 		Paint = function(self, w, h)
-			surface.SetDrawColor(0, 0, 0, 100)
+			surface.SetDrawColor(0, 0, 0, 150)
 			surface.DrawRect(0, 0, w, h)
 		end
 

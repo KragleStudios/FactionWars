@@ -73,7 +73,7 @@ end
 -- fw.team.getByStringId - Gets a team's data by the string used, "civilian", "police_officer"
 -- @param team_textID:string - the string_id found in the team configuration
 -- @ret the table team
-fw.team.getByStringID = ra.fn.memoize(function(id)
+function fw.team.getByStringID(id)
 	for k,v in ipairs(fw.team.list) do -- todo: optimize this
 		if (v.stringID == id) then
 			return v
@@ -81,7 +81,7 @@ fw.team.getByStringID = ra.fn.memoize(function(id)
 	end
 
 	error("FAILED TO FIND TEAM")
-end)
+end
 
 
 
@@ -137,16 +137,8 @@ if (SERVER) then
 end
 
 
-local player = FindMetaTable("Player")
+local Player = FindMetaTable("Player")
 
-function player:getPrefModel()
+function Player:getPrefModel()
 	return ply:GetFWData().pref_model
-end
-
--- gets the player's faction
-function player:getFaction()
-	return self:GetFWData().faction
-end
-function player:inFaction()
-	return self:GetFWData().faction ~= nil 
 end

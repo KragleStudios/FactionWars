@@ -6,11 +6,14 @@ fw.dep(SHARED, 'notif')
 fw.dep(SHARED, 'hook')
 fw.dep(SERVER, 'data')
 
--- proper include system
-fw.include_sh 'sh_teams.lua'
-fw.include_sv 'sv_teams.lua'
-fw.include_sh 'sh_team_overrides.lua'
--- fw.include_cl 'cl_teams.lua'
+-- load core team system
+fw.include_sh 'teams_sh.lua'
+fw.include_sv 'teams_sv.lua'
+fw.include_sh 'team_overrides_sh.lua'
+
+-- load faction system
+fw.include_sh 'factions_sh.lua'
+
 
 -- should really be placed somewhere else
 fw.include_sh 'teams.lua'

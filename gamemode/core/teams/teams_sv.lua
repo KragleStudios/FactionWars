@@ -6,12 +6,16 @@ fw.team.spawns = fw.team.spawns or {}
 -- @param angle:angle - the angle of the new spawn point
 -- @ret nothing
 function fw.team.registerSpawn(team_textID, vector, angle, faction)
-	local points = {}
-	if (fw.team.spawns[team_textID]) then
-		points = fw.team.spawns[team_textID]
+	if not fw.team.spawns[team_textID] then
+		fw.team.spawns[team_textID] = {}
 	end
+	local points = fw.team.spawns[team_textID]
 
-	table.insert(points, {vector, angle, faction})
+	table.insert(points, {
+		pos = vector, 
+		angle = angle, 
+		faction = faction
+	})
 
 	fw.team.spawns[team_textID] = points
 end
@@ -20,16 +24,18 @@ end
 -- @param team_textID:string - the string_id found in the team configuration
 -- @ret nothing
 function fw.team.findBestSpawn(team_textID, faction)
-	if (fw.team.spawns[team_textID]) then
+	if fw.team.spawns[team_textID] then
 		for k,v in ipairs(fw.team.spawns[team_textID]) do
-			if (faction and (v[3] != faction)) then continue end 
+			if faction ~= nil and v.faction ~= faction then continue end 
 
-			local ent = ents.FindInSphere(v[1], 40)
-			if (#ent > 0) then
+			-- this is pretty expensive
+			local ents = ents.FindInSphere(v.pos, 40)
+			if (#ents > 0) then
 				continue
 			else
 				return v
 			end
+
 		end
 	end
 
@@ -138,8 +144,8 @@ fw.hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
 	-- TODO: use PlayerSelectSpawn
 	local sp = fw.team.findBestSpawn(t.stringID, fac)
 	if (sp) then
-		ply:SetPos(sp[1])
-		ply:SetAngles(sp[2])
+		ply:SetPos(sp.pos)
+		ply:SetAngles(sp.angle)
 	end
 
 	if t.onSpawn then
@@ -200,8 +206,7 @@ end)
 -- 
 
 concommand.Add("fw_team_preferredModel", function(pl, cmd, args)
-	if #args < 2 then return end
+	if #args < 2 then pl:FWConPrint("too few argumetns") return end
 	local team = fw.team.getByStringID(args[1])
 	fw.team.setPreferredModel(team:getID(), pl, args[2])
-
 end)
