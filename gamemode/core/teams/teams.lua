@@ -5,7 +5,6 @@ FACTION_POLICE = fw.team.registerFaction('Police', {
 	stringID = 'f_police',
 })
 
-
 --
 -- TEAMS/CLASSES
 --
