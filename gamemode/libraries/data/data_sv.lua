@@ -26,6 +26,7 @@ function data.addPersistField(name)
 		table.insert(data.persistFields, name)
 
 		ndoc.addHook('fwPlayers.?.' .. name, 'set', function(pl, value)
+			if not data.player[pl] then return end -- for some reason their data is not loaded yet. It can not be modified.
 			data.player[pl][name] = value
 		end)
 	end
@@ -33,24 +34,20 @@ end
 
 
 -- player data table
-data.player = data.player or {}
-if not ndoc.table.fwPlayers then ndoc.table.fwPlayers = {} end
-
-ndoc.addHook('fwPlayers.?', 'set', function(pl, value)
-	if value == nil then
-		data.player[pl] = nil
-	else
-		data.player[pl] = {}
-	end
-end)
+data.player = {}
+ndoc.table.fwPlayers = {}
 
 function data.loadPlayer(player)
 	fw.print("loading data for " .. tostring(player).. ".")
 
 	ndoc.table.fwPlayers[player] = {}
-	engine.loadPlayerData(player:SteamID64() or '0', function(data)
+	engine.loadPlayerData(player:SteamID64() or '0', function(_data)
+		-- copy the data to data.player
+		data.player[player] = _data
+
+		-- copy it into the net table
 		local pdataTable = player:GetFWData()
-		for k,v in pairs(data) do
+		for k,v in pairs(_data) do
 			pdataTable[k] = v
 		end
 
@@ -60,6 +57,11 @@ end
 
 function data.updateStore(player)
 	fw.print("update store for " .. tostring(player))
+	if not data.player[player] then
+		pl:FWChatPrint(Color(255, 0, 0), '[FACTION WARS] [ERROR] your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.')
+		return 
+	end
+
 	engine.updatePlayerData(player:SteamID64() or '0', data.player[player], ra.fn.noop) -- no callback
 end
 
@@ -89,7 +91,7 @@ function data.updateGlobalCache()
 	for player, data in pairs(data.player) do
 		persist[player:SteamID64() or '0'] = data
 	end
-
+	
 	file.Write(data._cacheFile, spon.encode(persist))
 end
 

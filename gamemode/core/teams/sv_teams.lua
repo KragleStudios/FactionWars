@@ -97,16 +97,13 @@ function fw.team.playerChangeTeam(ply, targ_team, pref_model, forced)
 
 	-- find a good pref_model
 	if not pref_model then
-		if ply:GetFWData().preferred_models then
-			pref_model = ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
-		end
+		pref_model = ply:GetFWData().preferred_models and ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
 	end
 
 	-- set the data
 	if (SERVER) then
 		ply:SetTeam(targ_team)
 		ply:GetFWData().team = targ_team 
-		ply:GetFWData().pref_model = pref_model
 		if not ply:GetFWData().preferred_models then
 			ply:GetFWData().preferred_models = {}
 		end
