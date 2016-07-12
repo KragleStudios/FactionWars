@@ -1,6 +1,5 @@
 util.AddNetworkString("playerBuyItem")
 
-
 function fw.ents.buyItem(ply, item_index)
 	local canjoin = hook.Call("CanPlayerBuyItem", GAMEMODE, ply, item_index)
 
