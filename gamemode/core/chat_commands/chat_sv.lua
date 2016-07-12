@@ -67,13 +67,13 @@ function fw.chat.parseQuotes(input)
 end
 
 fw.chat.paramTypes["player"] = function(data)
-	local isid = (string.sub(data, 1, 5) == "STEAM") //is the data passed a steam id?
+	local isid = (string.sub(data, 1, 5) == "STEAM") -- is the data passed a steam id?
 
 	for k,v in pairs(player.GetAll()) do
 		if (isid and v:SteamID() == data) then
 			return v
 		end
-		if (string.find( string.lower(v:Nick()), string.lower(data))) then //match the steamid, or match the nickname
+		if (string.find( string.lower(v:Nick()), string.lower(data))) then -- match the steamid, or match the nickname
 			return v
 		end
 	end
