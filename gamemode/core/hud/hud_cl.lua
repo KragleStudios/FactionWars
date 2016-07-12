@@ -1,4 +1,4 @@
-hook.Add('HUDShouldDraw', 'fw.hud', function(name)
+fw.hook.Add('HUDShouldDraw', 'fw.hud', function(name)
 	if name == 'CHudHealth' then
 		return false
 	end
