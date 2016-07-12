@@ -50,19 +50,20 @@ end
 local hook_Remove = hook.Remove
 hook.Add = function(name, id, func)
 	if not overrides[name] then
-		if (GM or GAMEMODE)[name] then
-			local old = (GM or GAMEMODE)[name]
-			gmod.GetGamemode()[name] = function(self, ...)
+		local gmTable = (GM or GAMEMODE)
+		if gmTable[name] then
+			local old = gmTable[name]
+			gmTable[name] = function(self, ...)
 				local a, b, c, d = fw.hook.Call(name, ...)
 				if a ~= nil then return a, b, c, d end
 				return old(...)
 			end
 		else
-			(GM or GAMEMODE)[name] = function(self, ...)
+			gmTable[name] = function(self, ...)
 				return fw.hook.Call(name, ...)
 			end
 		end
-		overrides[name] = (GM or GAMEMODE)[name]
+		overrides[name] = gmTable[name]
 	end
 
 	if isfunction(id) then

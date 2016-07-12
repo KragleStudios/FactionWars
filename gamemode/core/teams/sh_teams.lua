@@ -35,6 +35,7 @@ function fw.team.register(name, tbl)
 	local index = table.insert(fw.team.list, tbl)
 
 	-- setup required properties
+	tbl.name = name
 	tbl.index = index
 	tbl.color = tbl.color or Color(0, 155, 0)
 	tbl.players = {}

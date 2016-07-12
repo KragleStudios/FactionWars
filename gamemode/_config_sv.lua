@@ -1,4 +1,4 @@
-fw.config = {} -- for now. todo: make into a module
+fw.config = fw.config or {} -- for now. todo: make into a module
 
 fw.config.datadir = 'factionwars'
 

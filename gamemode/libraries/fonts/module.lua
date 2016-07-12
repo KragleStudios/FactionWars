@@ -12,6 +12,6 @@ require 'sty'
 fw.fonts = {}
 
 fw.fonts.default = sty.Font {
-	font = 'coolvetica',
+	font = 'Roboto',
 	weight = 100
 }

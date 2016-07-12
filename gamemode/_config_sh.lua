@@ -1,1 +1,1 @@
---
+fw.config = fw.config or {}
