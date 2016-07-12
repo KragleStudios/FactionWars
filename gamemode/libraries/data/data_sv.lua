@@ -146,7 +146,7 @@ concommand.Add('fw_data_updateStore', function(pl, cmd, args)
 	if IsValid(pl) then
 		pl:FWConPrint("updated data store for all players")
 	else
-		fw.print("updated data store for all players")
+		fw.notif.conPrint("updated global cache")
 	end
 
 	for k,v in pairs(player.GetAll()) do
@@ -158,11 +158,11 @@ end)
 
 concommand.Add('fw_data_updateCache', function(pl, cmd, args)
 	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
-
+	
 	if IsValid(pl) then
 		pl:FWConPrint("updated global cache")
 	else
-		fw.print("updated global cache")
+		fw.notif.conPrint("updated global cache")
 	end
 
 	data.updateGlobalCache()
