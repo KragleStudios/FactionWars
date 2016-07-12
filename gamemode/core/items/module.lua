@@ -1,3 +1,7 @@
+if SERVER then
+	AddCSLuaFile()
+end
+
 -- create the exported table
 fw.ents = fw.ents or {}
 
