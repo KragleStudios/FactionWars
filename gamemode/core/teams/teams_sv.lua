@@ -176,6 +176,7 @@ fw.hook.Add('PlayerSetModel', function(ply)
 	end
 
 	ply:SetModel(ply.pref_model or table.Random(t.models))
+	ply:SetupHands()
 end)
 
 -- sets the players team to 'Civilian' on the first spawn
