@@ -18,6 +18,5 @@ fw.include_sh 'team_overrides_sh.lua'
 -- load faction system
 fw.include_sh 'factions_sh.lua'
 
-
 -- should really be placed somewhere else
 fw.include_sh 'teams.lua'
