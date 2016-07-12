@@ -1,3 +1,7 @@
+if SERVER then
+	AddCSLuaFile()
+end
+
 -- create the exported table
 fw.team = fw.team or {}
 
