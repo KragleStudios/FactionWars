@@ -15,11 +15,11 @@ Allows for creation and usage of chat commands throughout the serverside realm
 
  For example
 ```
-	fw.chat.addCMD('mock', "helptext", function(caller, targ_one, str, targ_two)
-	print(targ, str)
+fw.chat.addCMD('mock', "helptext", function(caller, targ_one, str, targ_two)
+print(targ, str)
 
-	PrintMessage(HUD_PRINTTALK, caller:Name().." used mock! ".. targ_one:Name() .. " " .. str .. " " .. targ_two:Name())
+PrintMessage(HUD_PRINTTALK, caller:Name().." used mock! ".. targ_one:Name() .. " " .. str .. " " .. targ_two:Name())
 
-	end):addParam('target_one', 'player'):addParam('string', 'string'):addParam('second_target', 'player')
+end):addParam('target_one', 'player'):addParam('string', 'string'):addParam('second_target', 'player')
 ```
 - usage in game: !mock crazy "is highly in love with" STEAM_0:1:53961993
