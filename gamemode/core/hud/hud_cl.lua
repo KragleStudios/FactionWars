@@ -40,6 +40,9 @@ vgui.Register('fwHudInfoCell', {
 		Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 255)
 			surface.DrawRect(0, 0, w, h)
+			
+			surface.SetDrawColor(0, 0, 0, 255)
+			surface.DrawOutlinedRect(0, 0, w, h)
 		end,
 	}, 'STYPanel')
 
@@ -128,6 +131,9 @@ vgui.Register('fwHudInfo', {
 		Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 150)
 			surface.DrawRect(0, 0, w, h)
+			
+			surface.SetDrawColor(0, 0, 0, 150)
+			surface.DrawOutlinedRect(0, 0, w, h)
 		end
 
 	})
