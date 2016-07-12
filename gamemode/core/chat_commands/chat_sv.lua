@@ -187,7 +187,7 @@ fw.chat.addCMD("help", "Prints a help log to your screen", function(ply)
 		ply:PrintMessage(HUD_PRINTCONSOLE, "Command: " .. k)
 		ply:PrintMessage(HUD_PRINTCONSOLE, "Help: ".. v.help)
 
-		local usage = "/"..k
+		local usage = "/"..k.." "
 
 		for k,v in pairs(v.parameters) do
 			ply:PrintMessage(HUD_PRINTCONSOLE, "Param: ".. v[1].. ', accepts type ' ..v[2])
