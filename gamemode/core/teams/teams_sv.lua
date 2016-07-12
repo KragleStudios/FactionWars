@@ -181,7 +181,7 @@ end)
 
 -- sets the players team to 'Civilian' on the first spawn
 fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
-	fw.print("setting your team to team citizen")
+	ply:FWConPrint("setting your team to team citizen")
 	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN:getID(), nil, true)
 end)
 
