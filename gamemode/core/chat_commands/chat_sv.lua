@@ -20,6 +20,11 @@ function fw.chat.addCMD(cname, chelp, cfunc)
 
 	fw.chat.cmds[cname] = obj
 
+	--support for calling commands via the console
+	concommand.Add(cname, function(ply, cmd, args, argStr)
+		fw.chat.parseString(ply, "!"..cmd.." "..argStr) --spoof a chat command structure (lol)
+	end)
+
 	return obj
 end
 
