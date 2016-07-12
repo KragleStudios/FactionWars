@@ -121,6 +121,12 @@ end load() -- local function load()
 
 -- allow for reloading 
 concommand.Add('fw_reload', function(pl)
-	if not pl:IsSuperAdmin() then return end
+	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
 	load()
 end)
+
+concommand.Add("fw_reloadmap", function(pl)
+	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
+	fw.print("Reloading map...")
+	RunConsoleCommand("changelevel", game.GetMap())
+end )
