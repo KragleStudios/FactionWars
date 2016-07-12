@@ -160,7 +160,7 @@ function fw.chat.parseString(ply, str)
 	return ""
 end
 
-hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
+fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 	if (string.match('^[^]', string.sub(text, 1, 1))) then 
 		if (ply.lastmsg) then 
 			text = ply.lastmsg
