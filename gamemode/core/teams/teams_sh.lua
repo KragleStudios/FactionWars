@@ -99,7 +99,7 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	if (ply:Team() == targ_team) then return false end
 
 	-- SUPPORT FOR FACTION ONLY JOBS
-	if ((t.factionOnly and !t.faction) and ply:getFaction() == NULL) then 
+	if ((t.factionOnly and not t.faction) and not ply:getFaction()) then 
 		return false
 	end 
 	-- notify incorrect faction
@@ -136,7 +136,6 @@ function fw.team.playerChangeTeam(ply, targ_team, pref_model, forced)
 		-- TODO: notify can't join team
 		return false 
 	end
-
 	local t = fw.team.list[targ_team]
 	if not t then
 		-- TODO: notify player the team doesn't exist
@@ -149,10 +148,23 @@ function fw.team.playerChangeTeam(ply, targ_team, pref_model, forced)
 		pref_model = ply:GetFWData().preferred_models and ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
 	end
 
-	ply:GetFWData().team = targ_team 
+	local old_team = ply:GetFWData().team or TEAM_CIVILIAN:getID()
+
+	--if the player is changing FROM a boss team, remove them based on the player's faction
+	local old_t = fw.team.list[old_team]
+	if (old_t and old_t.boss) then
+		fw.team.factions[ply:getFaction()].boss = nil
+	end
+
+	--if the player is changing into a boss team, update the faction's info based on the player's faction
+	if (t.boss) then
+		fw.team.factions[ply:getFaction()].boss = ply
+	end
 
 	-- set the data
 	if (SERVER) then
+		ply:GetFWData().team = targ_team 
+
 		ply:SetTeam(targ_team)
 		if not ply:GetFWData().preferred_models then
 			ply:GetFWData().preferred_models = {}
@@ -162,6 +174,7 @@ function fw.team.playerChangeTeam(ply, targ_team, pref_model, forced)
 
 		-- TODO: NOTIFY PLAYER CHANGED TEAM
 		ply:Spawn()
+		
 	end
 end
 

@@ -33,6 +33,12 @@ hook.Add("HUDPaint", "LoadGUI", function()
 	local faction = LocalPlayer():getFaction()
 	local agenda_text = fw.team.factionAgendas[faction] or "No agenda currently set!" 
 	draw.SimpleText(agenda_text, "btn", 10, 150, colors.text)
+
+	local boss = fw.team.getBoss(faction)
+	if (not isstring(boss)) then
+		boss = "Boss: " ..boss:Nick()
+	end
+	draw.SimpleText(boss, "btn", ScrW() / 2, 0, colors.text)
 end)
 
 --[[

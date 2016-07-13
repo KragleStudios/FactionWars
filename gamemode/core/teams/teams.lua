@@ -14,6 +14,7 @@ TEAM_BOSS = fw.team.register("Boss", {
 	weapons = {"weapon_fists"},
 	factionOnly = true,
 	max = 1,
+	boss = true,
 	
 })
 
@@ -87,7 +88,7 @@ TEAM_POLICE_CHIEF = fw.team.register("Police Chief", {
 	stringID = "t_police_officer_chief",
 	models = {"models/player/combine_super_soldier.mdl"},
 	weapons = {"weapon_fists"},
-	factionOnly = false,
+	factionOnly = true,
 	faction = FACTION_POLICE,
 	boss = true,
 	max = 1,

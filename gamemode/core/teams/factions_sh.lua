@@ -56,10 +56,13 @@ function fw.team.getFactionPlayers(factionId)
 	end)
 end
 
-
+function fw.team.getBoss(factionId)
+	if (not fw.team.factions[factionId]) then return "No Boss" end
+	
+	return fw.team.factions[factionId].boss or "No Boss"
+end
 
 local Player = FindMetaTable 'Player'
-
 
 -- gets the player's faction
 function Player:getFaction()
