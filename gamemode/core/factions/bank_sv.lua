@@ -13,7 +13,7 @@ function fw.faction.bank.deposit(ply, amt)
 	fw.faction.bank[fac].currency = fw.faction.bank[fac].currency + amt
 
 	for k,v in pairs(fw.team.getFactionPlayers(fac)) do
-		v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), ply:Nick(), " has deposited $", amt, " into the faction bank! New Amount: $", fw.faction.bank[fac].currency)
+		v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), ply:Nick(), " has deposited $", amt, " into the faction bank! New Amount: $"..fw.faction.bank[fac].currency)
 	end	
 end
 
@@ -44,7 +44,7 @@ function fw.faction.bank.withdraw(ply, amt)
 				fw.faction.bank[fac].currency = fw.faction.bank[fac].currency - amt
 
 				for k,v in pairs(fw.team.getFactionPlayers(fac)) do
-					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), ply:Nick(), " has withdrawn $", amt, " from the faction bank! New Amount: $", fw.faction.bank[fac].currency)
+					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), ply:Nick(), " has withdrawn $", amt, " from the faction bank! New Amount: $"..fw.faction.bank[fac].currency)
 				end	
 			end
 
@@ -78,6 +78,8 @@ function fw.faction.bank.load(faction)
 	local tbl = {currency = 0, items = {}}
 	local path = "faction_data/faction_"..faction..".txt"
 
+	fw.faction.bank[faction] = tbl
+
 	if (file.Exists(path, "DATA")) then
 		local table = file.Read(path, "DATA")
 		table = util.JSONToTable(table)
@@ -108,7 +110,8 @@ function fw.faction.bank.payroll(faction)
 			v:addMoney(salary)
 		end
 
-		v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "Payroll has been issued! Your salary: $", salary)
+		local text = "Payroll has been issued! Your salary: $"..salary
+		v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), text)
 	end
 end
 
@@ -133,6 +136,10 @@ hook.Add("Initialize", "IssueFactionPayroll", function()
 
 			local salary = team.salary
 			v:addMoney(salary)
+
+			local text = "Payroll has been issued! Your salary: $"..salary
+
+			v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), text)
 		end
 	end)
 end)
