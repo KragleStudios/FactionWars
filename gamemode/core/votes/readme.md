@@ -3,6 +3,7 @@ Allows for creation and usage votes for certain groups on players in the servers
 
 # API
  - fw.vote.createNew(title, description, group of players, callback function(decision, vote_data, decision_data), Yes Text, No Text, Length[seconds])
+ - It is HIGHLY recommended that length be set to 15 seconds universally, as if it's less, votes may disappear before a player has a chance to decide, due to the nature of how they are stacked on multiples.
 
  For example
 ```
