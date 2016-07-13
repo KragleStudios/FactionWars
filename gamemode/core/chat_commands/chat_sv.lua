@@ -103,8 +103,9 @@ function fw.chat.parseString(ply, str)
 
 	--make sure the command oject exists
 	cmdn = string.sub(cmdn, 2, string.len(cmdn))
+	PrintTable(fw.chat.cmds)
 	local cmdObj = fw.chat.cmds[cmdn]
-	if (not cmdObj) then print(2) return str end
+	if (not cmdObj) then print('cmdn', cmdn, 'not found') return str end
 
 	table.remove(string_parts, 1)
 
@@ -164,6 +165,8 @@ function fw.chat.parseString(ply, str)
 	cmdObj.callback(ply, unpack(structure))
 	return ""
 end
+
+hook.Call("FWChatLibraryLoaded", GAMEMODE)
 
 fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 	if (string.match('^[^]', string.sub(text, 1, 1))) then 

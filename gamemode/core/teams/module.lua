@@ -15,6 +15,8 @@ fw.include_sh 'teams_sh.lua'
 fw.include_sv 'teams_sv.lua'
 fw.include_sh 'team_overrides_sh.lua'
 
+fw.include_cl 'cl_teams.lua'
+
 -- load faction system
 fw.include_sh 'factions_sh.lua'
 

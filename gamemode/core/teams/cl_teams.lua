@@ -18,17 +18,28 @@ surface.CreateFont("head", {font = "coolvetica", size = 60, weight = 500})
 surface.CreateFont("btn", {font = "coolvetica", size = 30, weight = 500})
 surface.CreateFont("btnsmall", {font = "coolvetica", size = 20, weight = 500})
 
-fw.hook.Add("HUDPaint", "LoadGUI", function()
-	local tid = LocalPlayer():getTeam()
-	print(tid)
-	local name = fw.team.list[tid].job
-	draw.SimpleText(name, "head", 10, 10, colors.text)
+net.Receive("fw_agendaupdate", function()
+	local agenda = net.ReadString()
+	local faction = net.ReadInt(32)
+
+	fw.team.factionAgendas[faction] = agenda
 end)
 
-fw.hook.Add("InitPostEntity", "UpdateTeamGroupsCL", function()
-	local tid = LocalPlayer():getTeam()
-	table.insert(fw.team.list[tid].players, LocalPlayer())
+hook.Add("HUDPaint", "LoadGUI", function()
+	local tid = LocalPlayer():Team()
+	local name = fw.team.list[tid].name
+	draw.SimpleText(name, "head", 10, 10, colors.text)
+
+	local faction = LocalPlayer():getFaction()
+	local agenda_text = fw.team.factionAgendas[faction] or "No agenda currently set!" 
+	draw.SimpleText(agenda_text, "btn", 10, 150, colors.text)
 end)
+
+--[[
+fw.hook.Add("InitPostEntity", "UpdateTeamGroupsCL", function()
+	local tid = LocalPlayer():Team()
+	table.insert(fw.team.list[tid].players, LocalPlayer())
+end)]]--
 
 concommand.Add("teams", function()
 	if (!LocalPlayer():Alive()) then return end
@@ -53,10 +64,10 @@ concommand.Add("teams", function()
 		pan:SetSize(490, 100)
 		pan:SetPos(0, ((k - 1) * 110))
 
-		local job = v.job or ""
+		local job = v.name or ""
 		local models = v.models or {}
 		local weapons = v.weapons or {}
-		local canjoin = hook.Call("CanPlayerJoinTeam", FW, LocalPlayer(), k)
+		local canjoin = hook.Call("CanPlayerJoinTeam", GAMEMODE, LocalPlayer(), k)
 
 		surface.SetFont("btn")
 		local wide,high = surface.GetTextSize(job)
@@ -88,7 +99,7 @@ concommand.Add("teams", function()
 				net.WriteString(models[1]) //to do model selection client side
 			net.SendToServer()
 
-			playerChangeTeam(LocalPlayer(), k, models[1])// so we update info client side too
+			fw.team.playerChangeTeam(LocalPlayer(), k, models[1])// so we update info client side too
 
 			frame:Close()
 		end

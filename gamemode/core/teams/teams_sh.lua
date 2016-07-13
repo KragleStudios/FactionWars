@@ -1,4 +1,5 @@
 fw.team.list = fw.team.list or {}
+fw.team.factionAgendas = fw.team.factionAgendas or {}
 
 -- meta table for a team
 local team_mt = {
@@ -83,8 +84,6 @@ function fw.team.getByStringID(id)
 	error("FAILED TO FIND TEAM")
 end
 
-
-
 -- handles the ability of whether or not a player can join a team
 fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	local t = fw.team.list[targ_team]
@@ -125,6 +124,46 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	end
 end)
 
+-- playerChangeTeam - handles player team switching
+-- @param ply:player object - the player object switching teams
+-- @param targ_team:int - the index of the team in the table
+-- @param pref_model:string - the model selected on the switch team screen is sent here
+-- @param optional forced:bool - should we ignore canjoin conditions?
+-- @ret nothing
+function fw.team.playerChangeTeam(ply, targ_team, pref_model, forced)
+	local canjoin, message = hook.Call("CanPlayerJoinTeam", GAMEMODE, ply, targ_team)
+	if (not forced and not canjoin) then
+		-- TODO: notify can't join team
+		return false 
+	end
+
+	local t = fw.team.list[targ_team]
+	if not t then
+		-- TODO: notify player the team doesn't exist
+		fw.print("no such team! " .. targ_team)
+		return false 
+	end
+
+	-- find a good pref_model
+	if not pref_model then
+		pref_model = ply:GetFWData().preferred_models and ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
+	end
+
+	ply:GetFWData().team = targ_team 
+
+	-- set the data
+	if (SERVER) then
+		ply:SetTeam(targ_team)
+		if not ply:GetFWData().preferred_models then
+			ply:GetFWData().preferred_models = {}
+		end
+		ply:GetFWData().preferred_models[t.stringID] = pref_model
+		ply:GetFWData().pref_model = pref_model
+
+		-- TODO: NOTIFY PLAYER CHANGED TEAM
+		ply:Spawn()
+	end
+end
 
 if (SERVER) then
 	-- TODO: this should be a concommand.

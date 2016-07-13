@@ -8,13 +8,17 @@ FACTION_POLICE = fw.team.registerFaction('Police', {
 --
 -- TEAMS/CLASSES
 --
-TEAM_POLICE = fw.team.register("Police Officer", {
-	stringID = "t_police_officer",
-	models = {"models/player/combine_soldier.mdl"},
-	weapons = {"weapon_357", "weapon_fists"},
-	faction = FACTION_POLICE,
-	max = 4,
+TEAM_BOSS = fw.team.register("Boss", {
+	stringID = "t_boss",
+	models = {"models/player/breen.mdl"},
+	weapons = {"weapon_fists"},
+	factionOnly = true,
+	max = 1,
+	
 })
+
+
+
 
 TEAM_CIVILIAN = fw.team.register("Civilian", {
 	stringID = "t_civilian",
@@ -56,14 +60,6 @@ TEAM_MEDIC = fw.team.register("Medic", {
 	max = 4,
 })
 
-TEAM_BOSS = fw.team.register("Boss", {
-	stringID = "t_boss",
-	models = {"models/player/breen.mdl"},
-	weapons = {"weapon_fists"},
-	factionOnly = true,
-	max = 1,
-})
-
 TEAM_SOLDIER = fw.team.register("Soldier", {
 	stringID = "soldier",
 	models = {"models/player/barney.mdl"},
@@ -76,3 +72,26 @@ if (SERVER) then
 	-- TODO: make this configured in a text file with a chatcommand
 	fw.team.registerSpawn("police_officer", Vector(384.719086, 712.536865, -29.674372), Angle(11.538577, 205.371857, 0.000000))
 end
+
+
+TEAM_POLICE = fw.team.register("Police Officer", {
+	stringID = "t_police_officer",
+	models = {"models/player/combine_soldier.mdl"},
+	weapons = {"weapon_357", "weapon_fists"},
+	factionOnly = false,
+	faction = FACTION_POLICE,
+	max = 4,
+})
+
+TEAM_POLICE_CHIEF = fw.team.register("Police Chief", {
+	stringID = "t_police_officer_chief",
+	models = {"models/player/combine_super_soldier.mdl"},
+	weapons = {"weapon_fists"},
+	factionOnly = false,
+	faction = FACTION_POLICE,
+	boss = true,
+	max = 1,
+	canJoin = function(pc_team, ply)
+		return ply:GetFWData().team == TEAM_POLICE:getID()
+	end,
+})
