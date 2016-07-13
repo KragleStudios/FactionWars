@@ -18,6 +18,7 @@ vgui.Register('fwHudInfoCell', {
 
 		SetText = function(self, value)
 			self.label:SetText(value)
+			self.label:SetTextColor(color_white)
 			self:InvalidateLayout(true)
 
 			self:AlphaTo(255, 0.1, 0, function()
