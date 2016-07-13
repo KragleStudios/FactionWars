@@ -21,7 +21,7 @@ function ENT:Initialize()
 	self:SetNextPrintTime(CurTime() + self.PrintSpeed)
 	self:SetMoney(0)
 	self:SetPaper(0)
-	self:SetInk(0)
+	-- self:SetInk(0)
 	self:SetPrintStatus(true)
 
 	self:SetColor(self.Color)
@@ -42,7 +42,7 @@ end
 function ENT:Think()
 	self.Power = 100 -- Current power input to printer. Replace with function that gets power input when system is added.
 
-	if self:GetNextPrintTime() < CurTime() and self.Power >= self.PowerRequired and self:GetInk() + 1 > self.InkDrain and self:GetPaper() + 1 > self.PaperDrain then
+	if self:GetNextPrintTime() < CurTime() and self.Power >= self.PowerRequired --[[and self:GetInk() + 1 > self.InkDrain]] and self:GetPaper() + 1 > self.PaperDrain and self:GetPrintStatus() then
 		-- self:SetMoney(self:GetMoney() + self.PrintAmount)
 		local money = ents.Create("fw_money")
 		money:SetPos(self:LocalToWorld(self:OBBMaxs()))
@@ -51,8 +51,8 @@ function ENT:Think()
 
 		self:SetNextPrintTime(CurTime() + self.PrintSpeed)
 		self:SetPaper(self:GetPaper() - self.PaperDrain)
-		self:SetInk(self:GetInk() - self.InkDrain)
-	elseif self.Power < self.PowerRequired or self:GetInk() + 1 <= self.InkDrain or self:GetPaper() + 1 <= self.PaperDrain then
+		-- self:SetInk(self:GetInk() - self.InkDrain)
+	elseif self.Power < self.PowerRequired --[[or self:GetInk() + 1 <= self.InkDrain]] or self:GetPaper() + 1 <= self.PaperDrain then
 		self:SetPrintStatus(false)
 		self.Sound:Stop()
 	elseif not self:GetPrintStatus() then
@@ -63,14 +63,14 @@ function ENT:Think()
 end
 
 function ENT:Touch(ent)
-	if ent:GetClass() == "fw_printer_paper" and self:GetPaper() < 100 and not ent.Used then
+	if ent:GetClass() == "fw_printer_paper" and self:GetPaper() < self.PaperCap and not ent.Used then
 		ent.Used = true
 		ent:Remove()
-		self:SetPaper(math.Clamp(self:GetPaper() + 15, 0, 100))
-	elseif ent:GetClass() == "fw_printer_ink" and self:GetInk() < 100 and not ent.Used then
+		self:SetPaper(math.Clamp(self:GetPaper() + 15, 0, self.PaperCap))
+--[[elseif ent:GetClass() == "fw_printer_ink" and self:GetInk() < 100 and not ent.Used then
 		ent.Used = true
 		ent:Remove()
-		self:SetInk(self:GetInk() + 30)
+		self:SetInk(self:GetInk() + 30)]]
 	end
 end
 
