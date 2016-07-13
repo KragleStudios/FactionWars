@@ -11,6 +11,59 @@ net.Receive('fw.notif.chatprint', function()
 	chat.AddText(unpack(table))
 end)
 
+
+local nextNotification = 0
+
+net.Receive('fw.notif.screenCenter', function()
+	local color = net.ReadColor()
+	local time = net.ReadFloat()
+	local title = net.ReadString()
+	local text = net.ReadString()
+
+	local function display()
+		local p = sty.ScreenScale(5)
+
+		local notificationWrapper = vgui.Create('DPanel')
+
+		timer.Simple(time, function()
+			if IsValid(notificationWrapper) then
+				notificationWrapper:AlphaTo(0, 0.5, 0, function()
+					notificationWrapper:Remove()
+				end)
+			end
+		end)
+
+		notificationWrapper:SetSize(sty.ScrW, sty.ScreenScale(50))
+		notificationWrapper.Paint = function(w, h)
+			surface.SetDrawColor(color)
+			surface.DrawRect(0, 0, w, h)
+
+			surface.SetDrawColor(0, 0, 0, 220)
+			surface.DrawRect(0, p, w, h - 2 * p)
+		end
+
+		notificationWrapper.Think = function() self:MoveToFront() end
+
+		local notification = vgui.Create('fwNotification', notificationWrapper)
+		notification:SetPos(0, p)
+		notification:SetSize(notificationWrapper:GetWide(), notificationWrapper:GetTall() - 2 * p)
+
+		notification:SetTitle(title)
+		notification:SetMessage(text)
+	end
+
+	if nextNotification < os.time() then
+		display()
+		nextNotification = os.time() + time + 1
+	else
+		timer.Simple(nextNotification - os.time(), function()
+			display()
+		end)
+		nextNotification = nextNotification + time + 1
+	end
+
+end)
+
 vgui.Register('fwNotification', {
 		Init = function(self)
 			self.titleLabel = sty.With(Label('', self))

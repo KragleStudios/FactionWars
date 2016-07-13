@@ -18,6 +18,7 @@ vgui.Register('fwHudInfoCell', {
 
 		SetText = function(self, value)
 			self.label:SetText(value)
+			self.label:SetTextColor(color_white)
 			self:InvalidateLayout(true)
 
 			self:AlphaTo(255, 0.1, 0, function()
@@ -45,6 +46,10 @@ vgui.Register('fwHudInfoCell', {
 			surface.DrawOutlinedRect(0, 0, w, h)
 		end,
 	}, 'STYPanel')
+
+vgui.Register('fwHudAgenda', {
+		-- TODO: flesh this out with the same style as fwHudInfo and general code too
+	})
 
 vgui.Register('fwHudInfo', {
 		Init = function(self)
@@ -131,9 +136,6 @@ vgui.Register('fwHudInfo', {
 		Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 150)
 			surface.DrawRect(0, 0, w, h)
-			
-			surface.SetDrawColor(0, 0, 0, 150)
-			surface.DrawOutlinedRect(0, 0, w, h)
 		end
 
 	})

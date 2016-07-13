@@ -8,7 +8,6 @@ local isfunction = isfunction
 local ipairs 		= ipairs
 local IsValid 		= IsValid
 
-local overrides     = _G.___fwhook_overrides or {} _G.___fwhook_overrides = overrides -- the gamemode functions that we have overriden so far
 local hooks 		= {}
 local mappings 		= {}
 
@@ -49,23 +48,6 @@ end
 
 local hook_Remove = hook.Remove
 hook.Add = function(name, id, func)
-	if not overrides[name] then
-		local gmTable = (GM or GAMEMODE)
-		if gmTable[name] then
-			local old = gmTable[name]
-			gmTable[name] = function(self, ...)
-				local a, b, c, d = fw.hook.Call(name, ...)
-				if a ~= nil then return a, b, c, d end
-				return old(...)
-			end
-		else
-			gmTable[name] = function(self, ...)
-				return fw.hook.Call(name, ...)
-			end
-		end
-		overrides[name] = gmTable[name]
-	end
-
 	if isfunction(id) then
 		func = id
 		id = debug_info(func).short_src

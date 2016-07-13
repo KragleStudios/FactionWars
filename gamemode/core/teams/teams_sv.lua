@@ -1,5 +1,8 @@
 fw.team.spawns = fw.team.spawns or {}
 
+util.AddNetworkString("fw_agendaupdate")
+util.AddNetworkString("playerChangeTeam")
+
 -- fw.team.registerSpawn - Registers spawn points to be used in player spawns. Multiple points can be registered
 -- @param team_textID:string - the string_id found in the team configuration
 -- @param vector:string - the vector position of the new spawn point
@@ -81,46 +84,47 @@ function fw.team.setPreferredModel(team_id, ply, model)
 	ply:GetFWData().preferred_models[t.stringID] = pref_model
 end
 
--- playerChangeTeam - handles player team switching
--- @param ply:player object - the player object switching teams
--- @param targ_team:int - the index of the team in the table
--- @param pref_model:string - the model selected on the switch team screen is sent here
--- @param optional forced:bool - should we ignore canjoin conditions?
--- @ret nothing
-function fw.team.playerChangeTeam(ply, targ_team, pref_model, forced)
-	local canjoin, message = hook.Call("CanPlayerJoinTeam", GAMEMODE, ply, targ_team)
-	if (not forced and not canjoin) then
-		-- TODO: notify can't join team
-		return false 
+
+
+function fw.team.updateAgenda(ply, faction, text)
+	fw.team.factionAgendas[faction] = text
+
+	--todo: optimize
+	local f_plys = player.GetAll() -- fw.team.getFactionPlayers(faction)
+	for k,v in ipairs(f_plys) do
+		v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "The agenda has been updated by ", ply:Nick())
+
+		net.Start("fw_agendaupdate")
+			net.WriteString(text)
+			net.WriteUInt(faction, 32)
+		net.Send(v)			
 	end
 
-	local t = fw.team.list[targ_team]
-	if not t then
-		-- TODO: notify player the team doesn't exist
-		fw.print("no such team! " .. targ_team)
-		return false 
-	end
-
-	-- find a good pref_model
-	if not pref_model then
-		pref_model = ply:GetFWData().preferred_models and ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
-	end
-
-	-- set the data
-	if (SERVER) then
-		ply:SetTeam(targ_team)
-		ply:GetFWData().team = targ_team 
-		if not ply:GetFWData().preferred_models then
-			ply:GetFWData().preferred_models = {}
-		end
-		ply:GetFWData().preferred_models[t.stringID] = pref_model
-		ply:GetFWData().pref_model = pref_model
-
-		-- TODO: NOTIFY PLAYER CHANGED TEAM
-		ply:Spawn()
-	end
+	return true
 end
 
+hook.Add("FWChatLibraryLoaded", "LoadCMD", function()
+	fw.chat.addCMD("agenda", "Sets the agenda for your faction if you're the boss.", function(ply, text)
+		local t = fw.team.list[ply:Team()]
+		if (not t) then return end
+
+		--duh
+		if (not t.boss) then ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You aren't the correct rank for this!") return end
+
+		--just a check. it should go through if the team is set up correctly
+		if (not t.faction or not t.factionOnly) then ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You need to be in a faction to set the agenda! If you are, notify a dev!") return end
+
+		local agenda = fw.team.updateAgenda(ply, t.faction, text)
+
+		if (agenda) then 
+			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You have succesfully set the agenda!")
+
+			return
+		end
+
+		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "Uh oh, something went wrong!")
+	end):addParam('message', 'string')
+end)
 
 -- handles all spawning related functionality 
 fw.hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
@@ -181,7 +185,7 @@ end)
 
 -- sets the players team to 'Civilian' on the first spawn
 fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
-	fw.print("setting your team to team citizen")
+	ply:FWConPrint("setting your team to team citizen")
 	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN:getID(), nil, true)
 end)
 
@@ -205,7 +209,6 @@ end)
 --
 -- CONSOLE COMMANDS
 -- 
-
 concommand.Add("fw_team_preferredModel", function(pl, cmd, args)
 	if #args < 2 then pl:FWConPrint("too few argumetns") return end
 	local team = fw.team.getByStringID(args[1])

@@ -17,6 +17,12 @@ fw.hook.Add('PlayerSay', function(pl) -- automagically injects the hook into the
 end)
 ```
 # Utility Functions and Recommendations
+Please read over the modules by thelastpenguin for reference to find how to properly use netdoc and existing librararies properly in your code.
+Please use stylish fonts. from libraries/fonts 
+
+## When doing prints
+Please always use fw.print over print
+
 ## When including files
 Please always use
 ```
