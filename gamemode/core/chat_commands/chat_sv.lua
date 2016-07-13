@@ -195,8 +195,8 @@ fw.chat.addCMD("help", "Prints a help log to your screen", function(ply)
 		local usage = "/"..k.." "
 
 		for k,v in pairs(v.parameters) do
-			ply:FWConPrint("Param: ".. v[1].. ', accepts type ' ..v[2])
-			usage = usage .. v[1].. " < "..v[2].." >"
+			ply:FWConPrint("Param: ".. v.name.. ', accepts type ' ..v.type)
+			usage = usage .. v.name .. " <"..v.type..">"
 		end
 		ply:FWConPrint("Usage: "..usage)
 	end
