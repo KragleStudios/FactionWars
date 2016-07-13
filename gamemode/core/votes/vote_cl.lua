@@ -60,7 +60,9 @@ net.Receive("sendVoteQuery", function()
 	realignVotes()
 
 	timer.Create("vote_"..vIndex, tbl.voteLength or vote_defLen, 1, function()
-		pnl:Close()
+		if IsValid(pnl) then
+			pnl:Close()
+		end
 
 		removeVotePanel(pnl)
 		
