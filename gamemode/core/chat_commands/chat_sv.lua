@@ -24,8 +24,8 @@ function fw.chat.addCMD(cname, chelp, cfunc)
 	fw.chat.cmds[cname] = obj
 
 	--support for calling commands via the console
-	concommand.Add(cname, function(ply, cmd, args, argStr)
-		fw.chat.parseString(ply, "!"..cmd.." "..argStr) --spoof a chat command structure (lol)
+	concommand.Add("fw_" .. cname, function(ply, cmd, args, argStr)
+		fw.chat.parseString(ply, "!"..cmd:gsub("fw_", "").." "..argStr) --spoof a chat command structure (lol)
 	end)
 
 	return obj
@@ -184,21 +184,21 @@ end):addParam('message', 'string')
 
 --basic help command
 fw.chat.addCMD("help", "Prints a help log to your screen", function(ply)
-	ply:PrintMessage(HUD_PRINTCONSOLE, "------------NOTE------------")
-	ply:PrintMessage(HUD_PRINTCONSOLE, "THE ORDER MATTERS WITH PARAMETERS. FOLLOW USAGE GUIDE.")
+	ply:FWConPrint( "------------NOTE------------")
+	ply:FWConPrint("THE ORDER MATTERS WITH PARAMETERS. FOLLOW USAGE GUIDE.")
 
 	for k,v in pairs(fw.chat.cmds) do
-		ply:PrintMessage(HUD_PRINTCONSOLE, "----------------")
-		ply:PrintMessage(HUD_PRINTCONSOLE, "Command: " .. k)
-		ply:PrintMessage(HUD_PRINTCONSOLE, "Help: ".. v.help)
+		ply:FWConPrint("----------------")
+		ply:FWConPrint("Command: " .. k)
+		ply:FWConPrint("Help: ".. v.help)
 
 		local usage = "/"..k.." "
 
 		for k,v in pairs(v.parameters) do
-			ply:PrintMessage(HUD_PRINTCONSOLE, "Param: ".. v[1].. ', accepts type ' ..v[2])
+			ply:FWConPrint("Param: ".. v[1].. ', accepts type ' ..v[2])
 			usage = usage .. v[1].. " < "..v[2].." >"
 		end
-		ply:PrintMessage(HUD_PRINTCONSOLE, "Usage: "..usage)
+		ply:FWConPrint("Usage: "..usage)
 	end
 	ply:FWChatPrint(Color(0, 0, 0), '[Faction Wars]: ', Color(255, 255, 255), 'A list of all available commands has printed to your console!')
 end)

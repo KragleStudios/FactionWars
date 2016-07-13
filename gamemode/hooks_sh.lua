@@ -38,6 +38,9 @@ function GM:InitPostEntity(...)
 	return fw.hook.Call('InitPostEntity', ...)
 end
 
+function GM:PlayerSay(...)
+	return fw.hook.Call('PlayerSay', ...)
+end
 --
 -- MODELE TEAMS
 --
