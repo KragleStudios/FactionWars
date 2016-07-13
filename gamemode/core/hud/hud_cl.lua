@@ -48,6 +48,7 @@ vgui.Register('fwHudInfoCell', {
 	}, 'STYPanel')
 
 vgui.Register('fwHudAgenda', {
+		-- TODO: flesh this out with the same style as fwHudInfo and general code too
 	})
 
 vgui.Register('fwHudInfo', {
