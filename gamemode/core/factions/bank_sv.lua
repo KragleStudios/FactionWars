@@ -81,5 +81,15 @@ hook.Add("Initialize", "IssueFactionPayroll", function()
 		for k,v in pairs(fw.team.factions) do
 			fw.faction.bank.payroll(k)
 		end
+
+		for k,v in pairs(player.GetAll()) do
+			if (v:inFaction()) then continue end
+
+			local team = fw.team.list[v:Team()]
+			if (not team) then continue end
+
+			local salary = team.salary
+			v:addMoney(salary)
+		end
 	end)
 end)
