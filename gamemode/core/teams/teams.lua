@@ -15,6 +15,7 @@ TEAM_BOSS = fw.team.register("Boss", {
 	factionOnly = true,
 	max = 1,
 	boss = true,
+	election = true
 })
 
 

@@ -25,6 +25,15 @@ local function removeVotePanel(pnl)
 	realignVotes()
 end
 
+local function wrapText(string, width)
+	local tbl = {}
+	for k,v in pairs(markup.Parse(string, width).blocks) do
+		table.insert(tbl, v.text)
+	end
+
+	return tbl
+end
+
 net.Receive("sendVoteQuery", function()
 	local tbl = net.ReadTable()
 
@@ -69,17 +78,27 @@ net.Receive("sendVoteQuery", function()
 		table.remove(fw.vote.list, vIndex)
 	end)
 
+	local title_f = fw.fonts.default:fitToView(pnl:GetWide(), 75, title)
+	local desc_f = fw.fonts.default:fitToView(pnl:GetWide(), 60, "aaaaaaaaaaaaaaaa")
+	local timeLeft_f = fw.fonts.default:fitToView(pnl:GetWide() / 2, 15, "15 seconds")
+	local wrappedText = wrapText(desc, pnl:GetWide() / 1.5)
+
 	function pnl:Paint(w, h)
 		draw.RoundedBox(0, 0, 0, w, h, Color(255, 255, 255))
-		draw.SimpleText(title, "Default", w / 2, 0, Color(0, 0, 0), TEXT_ALIGN_CENTER)
-		draw.SimpleText(desc, "Default", w / 2, 20, Color(0, 0, 0), TEXT_ALIGN_CENTER)
+		draw.SimpleText(title, title_f, w / 2, 0, Color(0, 0, 0), TEXT_ALIGN_CENTER)
+
+		for k,v in pairs(wrappedText) do
+			if (k > 2) then continue end
+
+			draw.SimpleText(v, desc_f, w / 2, 5 + (k * 15), Color(0, 0, 0), TEXT_ALIGN_CENTER)
+		end
 
 		local timeLeft = timer.TimeLeft("vote_"..vIndex) or 0
 
 		if (not self.inback) then
 			draw.RoundedBox(0, 0, h - 30, w, 30, Color(0, 0, 0))
 			draw.RoundedBox(0, 5, h - 25, (timeLeft / length) * (w -10) , 20, Color(255, 0, 0))
-			draw.SimpleText(math.Round(timeLeft).. " seconds", "Default", 10, (h - 21) , Color(255, 255, 255))
+			draw.SimpleText(math.Round(timeLeft).. " seconds", timeLeft_f, 10, (h - 21) , Color(255, 255, 255))
 		end
 		draw.RoundedBox(0, 0, 0, w, h, self.color)
 	end
@@ -90,6 +109,9 @@ net.Receive("sendVoteQuery", function()
 	yes:SetSize((w / 2) - 7.5, 50)
 	yes:SetPos(5, pnl:GetTall() - yes:GetTall() - 35)
 	yes:SetText(" ")
+
+	local yes_f = fw.fonts.default:fitToView(yes:GetWide() / 2, 20, yesText)
+
 	function yes:Paint(w, h)
 		local col = Color(0, 0, 0, 255)
 		if (self:IsHovered()) then
@@ -97,13 +119,15 @@ net.Receive("sendVoteQuery", function()
 		end
 
 		draw.RoundedBox(0, 0, 0, w, h, col)
-		draw.SimpleText(yesText, "Trebuchet24", w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(yesText, yes_f, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	local no = vgui.Create("DButton", pnl)
 	no:SetSize((w / 2) - 7.5, 50)
 	no:SetPos((w / 2), pnl:GetTall() - yes:GetTall() - 35)
 	no:SetText(" ")
+
+	local no_f = fw.fonts.default:fitToView(no:GetWide() / 2, 20, noText)
 
 	function no:Paint(w, h)
 		local col = Color(0, 0, 0, 255)
@@ -112,7 +136,7 @@ net.Receive("sendVoteQuery", function()
 		end
 
 		draw.RoundedBox(0, 0, 0, w, h, col)
-		draw.SimpleText(noText, "Trebuchet24", w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(noText, no_f, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	function yes:DoClick()

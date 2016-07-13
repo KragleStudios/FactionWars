@@ -42,6 +42,7 @@ function fw.team.register(name, tbl)
 	tbl.players = {}
 	tbl.weapons = tbl.weapons or {}
 	tbl.models = tbl.models or {tbl.model}
+	tbl.election = tbl.election or false
 
 	tbl.command = 'fw_job_' .. tbl.stringID
 
@@ -122,6 +123,26 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	else
 		return true
 	end
+
+	if (t.election) then
+		local players = player.GetAll()
+
+		if (t.factionOnly) then
+			local faction = ply:getFaction()
+			players = fw.team.getFactionPlayers(faction) or players
+		end
+
+		local job_title = t.name or "Nil"
+
+		fw.vote.createNew("Job Vote", ply:Nick().." for ".. job_title, players, 
+			function(decision)
+				if (decision == "Yes") then
+					return true
+				end 
+			end, "Yes", "No", 15)
+	end
+
+	return false
 end)
 
 -- playerChangeTeam - handles player team switching
