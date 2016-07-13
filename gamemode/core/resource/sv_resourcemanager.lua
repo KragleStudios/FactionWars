@@ -7,48 +7,48 @@ resc.__index = resc
 resc.Resources = {}
 
 function resc.register(class, printname, colour, icon16)
-	if resc.Exists(class) then return resc.Resources[class] end
+	if resc.exists(class) then return resc.Resources[class] end
 	local resource = setmetatable({ ["class"] = class, ["printname"] = (printname || class), ["id"] = id, ["colour"] = colour, ["icon"] = icon16}, resc)
 	resc.Resources[class] = resource
 	id = id + 1
 	return resource
 end
 
-function resc.GetResources()
+function resc.getResources()
 	return resc.Resources
 end
 
-function resc.GetResource(class)
+function resc.getResource(class)
 	if resc.Exists(class) then
 		return resc.Resources[class]
 	end
 	return false
 end
 
-function resc.Exists(class)
+function resc.exists(class)
 	if resc.Resources[class] then
 		return true
 	end
 	return false
 end
 
-function resc:GetClass()
+function resc:getClass()
 	return self.class
 end
 
-function resc:GetID()
+function resc:getID()
 	return self.id
 end
 
-function resc:GetName()
+function resc:getName()
 	return self.printname
 end
 
-function resc:GetColour()
+function resc:getColour()
 	return self.colour
 end
 
-function resc:GetIcon()
+function resc:getIcon()
 	return self.icon
 end
 
