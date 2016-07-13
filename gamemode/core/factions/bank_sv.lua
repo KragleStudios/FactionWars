@@ -51,6 +51,44 @@ function fw.faction.bank.withdraw(ply, amt)
 		end, "Yes", "No", 15)
 end
 
+function fw.faction.bank.save(faction)
+	local bank = fw.faction.bank or {currency = 0, items = {}}
+
+	if (not file.Exists("faction_data", "DATA")) then
+		file.CreateDir("faction_data")
+	end
+
+	local path = "faction_data/faction_"..faction..".txt"
+	local tbl = {currency = bank.currency, items = bank.items}
+	tbl = util.TableToJSON(tbl)
+
+	file.Write(path, tbl)
+end
+
+--[[
+		Structure: 
+		tbl = {
+			currency = amount,
+			items = {
+				[item_stringID] = amount
+			}
+		}
+	]]--
+function fw.faction.bank.load(faction)
+	local tbl = {currency = 0, items = {}}
+	local path = "faction_data/faction_"..faction..".txt"
+
+	if (file.Exists(path, "DATA")) then
+		local table = file.Read(path, "DATA")
+		table = util.JSONToTable(table)
+
+		if (table) then tbl = table end
+	end
+
+	fw.faction.bank[faction].currency = tbl.currency
+	fw.faction.bank[faction].items    = tbl.items
+end
+
 function fw.faction.bank.payroll(faction)
 	local fac_players = fw.team.getFactionPlayers(faction)
 	local useFacBank = fw.config.useFactionBank
@@ -76,10 +114,15 @@ end
 
 hook.Add("Initialize", "IssueFactionPayroll", function()
 	local payroll = fw.config.payrollTime or 60
+	
+	for k,v in pairs(fw.team.factions) do
+		fw.faction.bank.load(k)
+	end
 
 	timer.Create("FunctionPayroll", payroll, 0, function() 
 		for k,v in pairs(fw.team.factions) do
 			fw.faction.bank.payroll(k)
+			fw.faction.bank.save(k)
 		end
 
 		for k,v in pairs(player.GetAll()) do
