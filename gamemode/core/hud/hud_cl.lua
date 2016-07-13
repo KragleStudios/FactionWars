@@ -115,6 +115,50 @@ vgui.Register('fwHudInfo', {
 				end)
 			end
 			
+			do
+				if (not LocalPlayer():inFaction()) then return end
+
+				self.boss = vgui.Create('fwHudInfoCell', self.layout)
+
+				local function updateBoss()
+					if not IsValid(self.boss) then return end
+
+					if LocalPlayer():inFaction() then
+						local boss =  fw.team.getBoss(LocalPlayer():getFaction())
+						if (not isstring(boss)) then
+							boss = boss:Nick()
+						end
+
+						self.boss:SetText('BOSS: ' .. boss)
+					else
+						self.boss:SetText('NO BOSS')
+					end
+				end
+				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateBoss)
+				updateBoss()
+
+			end
+
+			do
+				if (not LocalPlayer():inFaction()) then return end
+				
+				self.agenda = vgui.Create('fwHudInfoCell', self.layout)
+
+				local function updateAgenda()
+					if not IsValid(self.agenda) then return end
+
+					if LocalPlayer():inFaction() then
+						local agenda =  fw.team.factionAgendas[faction] or "No agenda currently set!" 
+
+						self.agenda:SetText(agenda)
+					else
+						self.agenda:SetText('NO AGENDA')
+					end
+				end
+				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateAgenda)
+				updateAgenda()
+
+			end
 		end,
 
 		PerformLayout = function(self)
