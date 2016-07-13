@@ -32,6 +32,7 @@ function fw.team.register(name, tbl)
 	-- DO CHECKS FOR TEAM CORRECT - TODO: finish
 	assert(tbl.model or tbl.models, "must provide model or models")
 	assert(tbl.stringID, "must provide stringID")
+	assert(tbl.salary, "a salary must be provided!")
 
 	local index = table.insert(fw.team.list, tbl)
 
