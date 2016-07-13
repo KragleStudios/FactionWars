@@ -116,10 +116,15 @@ function fw.dep(name)
 	return fw[name]
 end
 
+end load() -- local function load()
+
+
+
 -- load default hooks for base gamemode compatability
 fw.include_sh 'hooks_sh.lua'
 
-end load() -- local function load()
+
+
 
 -- allow for reloading 
 concommand.Add('fw_reload', function(pl)
