@@ -161,7 +161,7 @@ function fw.chat.parseString(ply, str)
 		
 		table.remove(args, 1) --for getting remainder of string
 	end
-	PrintTable(structure)
+
 	cmdObj.callback(ply, unpack(structure))
 	return ""
 end
@@ -205,3 +205,13 @@ fw.chat.addCMD("help", "Prints a help log to your screen", function(ply)
 	end
 	ply:FWChatPrint(Color(0, 0, 0), '[Faction Wars]: ', Color(255, 255, 255), 'A list of all available commands has printed to your console!')
 end)
+
+fw.chat.addCMD("vote", "Makes a vote available to everyone", function(ply, desc)
+	fw.vote.createNew(ply:Nick().."'s vote", desc, player.GetAll(), 
+		function(decision, vote, results) 
+			PrintTable(results)
+			for k,v in pairs(player.GetAll()) do
+				v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "'"..decision.. "' won in "..ply:Nick().."'s vote, with, ".. results[1] .." Yes votes, and ".. results[2] .." No votes!")
+			end
+		end, "Yes", "No", 15)
+end):addParam("description", "string")
