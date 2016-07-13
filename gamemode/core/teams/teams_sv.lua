@@ -214,3 +214,135 @@ concommand.Add("fw_team_preferredModel", function(pl, cmd, args)
 	local team = fw.team.getByStringID(args[1])
 	fw.team.setPreferredModel(team:getID(), pl, args[2])
 end)
+
+--
+-- CHAT COMMANDS FOR FACTION
+-- TODO: MOVE THESE TO THEIR OWN SEPERATE FILE
+--
+--boss can demote players in faction
+fw.hook.Add("FWChatLibraryLoaded", "LoadCMDSS", function()
+	fw.chat.addCMD("bossDemote", "The boss' ability to demote a user with no vote", function(ply, target)
+		local team = fw.team.list[ply:Team()]
+		if (not team) then return end
+		
+		if (not team.boss) then
+			return
+		end
+
+		if (not ply:getFaction()) then 
+			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "You need to be in a faction to use this command!")
+			return 
+		end
+
+		if (not target:getFaction() or (target:getFaction() != ply:getFaction())) then 
+			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
+			return 
+		end
+
+		local players = fw.team.getFactionPlayers(ply:getFaction())
+		for k,v in pairs(players) do
+			v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was demoted!")
+		end	
+
+		fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID(), table.Random(TEAM_CIVILIAN:getModels()))
+	end)
+
+	--boss can remove players from faction
+	fw.chat.addCMD("bossRemove", "The boss' ability to remove a user from the faction with no vote", function(ply, target)
+		local team = fw.team.list[ply:Team()]
+		if (not team) then return end
+		
+		if (not team.boss) then
+			return
+		end
+
+		if (not ply:getFaction()) then 
+			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "You need to be in a faction to use this command!")
+			return 
+		end
+
+		if (not target:getFaction() or (target:getFaction() != ply:getFaction())) then 
+			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
+			return 
+		end
+
+		local players = fw.team.getFactionPlayers(ply:getFaction())
+
+		for k,v in pairs(players) do
+			v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was removed from this faction!")
+		end	
+		fw.team.removePlayerFromFaction(target)
+	end)
+
+	--vote to remove a user from faction
+	fw.chat.addCMD("voteRemoveFaction", "Vote to remove a user from a faction", function(ply, target)
+
+		if (not ply:getFaction()) then 
+			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "You need to be in a faction to use this command!")
+			return 
+		end
+
+		if (not target:getFaction() or (target:getFaction() != ply:getFaction())) then 
+			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
+			return 
+		end
+
+		local faction = ply:getFaction()
+		local players = fw.team.getFactionPlayers(faction)
+
+		if (not players) then return end
+		
+		fw.vote.createNew("Vote Remove User: Faction", "Remove ".. target:Nick().." from faction?", players, 
+			function(decision, vote, results) 
+				if (not IsValid(target)) then return end
+
+				if (decision == "Yes") then
+					fw.team.removePlayerFromFaction(target)
+
+					for k,v in pairs(players) do
+						v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was removed from the faction!")
+					end	
+				else
+					for k,v in pairs(players) do
+						v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was not removed!")
+					end
+				end
+			end, "Yes", "No", 15)
+	end):addParam("target", "player")
+
+	--vote to demote a player to civilian within a faction
+	fw.chat.addCMD("voteDemoteFaction", "Vote to demote a user within faction", function(ply, target)
+
+		if (not ply:getFaction()) then 
+			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "You need to be in a faction to use this command!")
+			return 
+		end
+
+		if (not target:getFaction() or (target:getFaction() != ply:getFaction())) then 
+			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
+			return 
+		end
+
+		local faction = ply:getFaction()
+		local players = fw.team.getFactionPlayers(faction)
+
+		if (not players) then return end
+		
+		fw.vote.createNew("Vote Demote User: Faction", "Demote ".. target:Nick().." within faction?", players, 
+			function(decision, vote, results) 
+				if (not IsValid(target)) then return end
+
+				if (decision == "Yes") then
+					fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID(), table.Random(TEAM_CIVILIAN:getModels()))
+
+					for k,v in pairs(players) do
+						v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was demoted to Citizen!")
+					end	
+				else
+					for k,v in pairs(players) do
+						v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was not demoted!")
+					end
+				end
+			end, "Yes", "No", 15)
+	end):addParam("target", "player")
+end)

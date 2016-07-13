@@ -62,6 +62,12 @@ function fw.team.getBoss(factionId)
 	return fw.team.factions[factionId].boss or "No Boss"
 end
 
+function fw.team.removePlayerFromFaction(ply)
+	if (not ply:inFaction()) then return end
+	
+	ply:GetFWData().faction = nil
+end
+
 local Player = FindMetaTable 'Player'
 
 -- gets the player's faction
