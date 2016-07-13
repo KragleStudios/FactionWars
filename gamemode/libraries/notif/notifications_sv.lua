@@ -28,3 +28,7 @@ end
 function Player:FWChatPrint(...)
 	fwChatPrint(self, ...) 
 end
+
+function Player:FWChatPrintError(...)
+	fwChatPrint(self, Color(0, 0, 0), '[Faction Wars]', Color(255, 0, 0), ...)
+end

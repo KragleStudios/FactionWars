@@ -104,7 +104,7 @@ function fw.team.updateAgenda(ply, faction, text)
 end
 
 hook.Add("FWChatLibraryLoaded", "LoadCMD", function()
-	fw.chat.addCMD("agenda", "Sets the agenda for your faction. If you're the boss.", function(ply, text)
+	fw.chat.addCMD("agenda", "Sets the agenda for your faction if you're the boss.", function(ply, text)
 		local t = fw.team.list[ply:Team()]
 		if (not t) then return end
 
@@ -209,7 +209,6 @@ end)
 --
 -- CONSOLE COMMANDS
 -- 
-
 concommand.Add("fw_team_preferredModel", function(pl, cmd, args)
 	if #args < 2 then pl:FWConPrint("too few argumetns") return end
 	local team = fw.team.getByStringID(args[1])

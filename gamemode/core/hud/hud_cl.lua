@@ -47,6 +47,9 @@ vgui.Register('fwHudInfoCell', {
 		end,
 	}, 'STYPanel')
 
+vgui.Register('fwHudAgenda', {
+	})
+
 vgui.Register('fwHudInfo', {
 		Init = function(self)
 			self.layout = vgui.Create('STYLayoutHorizontal', self)
@@ -132,9 +135,6 @@ vgui.Register('fwHudInfo', {
 		Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 150)
 			surface.DrawRect(0, 0, w, h)
-			
-			surface.SetDrawColor(0, 0, 0, 150)
-			surface.DrawOutlinedRect(0, 0, w, h)
 		end
 
 	})

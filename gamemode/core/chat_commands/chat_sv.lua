@@ -3,7 +3,10 @@ fw.chat.paramTypes = fw.chat.paramTypes or {}
 local cmdobj = {}
 
 function cmdobj:addParam(name, type)
-	table.insert(self.parameters, {name, type})
+	table.insert(self.parameters, {
+		name = name, 
+		type = type
+	})
 
 	return self
 end
@@ -97,15 +100,15 @@ function fw.chat.parseString(ply, str)
 
 	--make sure the player is trying to call a cmd
 	local first = string.sub(cmdn, 1, 1)
-	if (not first:match("^[!/$#@]")) then print(1)
+	if (not first:match("^[!/$#@]")) then
 		return str
 	end
 
 	--make sure the command oject exists
 	cmdn = string.sub(cmdn, 2, string.len(cmdn))
-	PrintTable(fw.chat.cmds)
+
 	local cmdObj = fw.chat.cmds[cmdn]
-	if (not cmdObj) then print('cmdn', cmdn, 'not found') return str end
+	if (not cmdObj) then fw.print('cmdn', cmdn, 'not found') return str end
 
 	table.remove(string_parts, 1)
 
@@ -114,31 +117,29 @@ function fw.chat.parseString(ply, str)
 
 	--get ready for assigning arguments to parameters, as required by the command
 	local params = cmdObj.parameters
-	local structure = {}
+	local parsedArguments = {}
 
 	--assign a count for easier indexing of args
 	local count = 1
 
 	--here we will assign each parameter a value and return it to the function, in a very neat fashion
 	for k,v in pairs(params) do
-		local pName = v[1]
-		local pType = v[2]
+		local pName = v.name
+		local pType = v.type
 
-		local value = args[1] --where are we in the string the player sent?
+		local value = args[k] --where are we in the string the player sent?
 		if (not value) then
-			--NOTIFY CAN'T CONTINUE BECAUSE OF MISSING PARAMETER VALUE
+			ply:FWChatPrintError(Color(0, 0, 0), '[Faction Wars] ', Color(255, 0, 0), ' Command requires ' .. #params .. ' arguments, failed to run.')
 			return str
 		end
-
-
 
 		--the player is targeting themself
 		if (pType == 'player' and value == '^') then
 			value = ply
 		elseif (pType == 'string' and (params[k + 1] == nil)) then
-
 			local func = fw.chat.paramTypes['string']
-			value = table.concat(args, ' ')
+			-- very efficient way of splicing the arguments table, dropping the first k-1 values, and then creating a new table and joining it with ' '
+			value = table.concat({select(k, unpack(args))}, ' ')
 			value = func(value)
 
 			if (not value) then 
@@ -149,27 +150,23 @@ function fw.chat.parseString(ply, str)
 			value = func(value)
 
 			if (not value) then
-				--NOTIFY CAN"T CONTINUE BECAUSE OF MISSING PARAMETER VALUE
+				ply:FWChatPrintError('Failed to parse parameter #' .. k .. ' did not run command.')
 				return str
 			end
-
-			
 		end
 
-		table.insert(structure, value)
+		table.insert(parsedArguments, value)
 		count = count + 1
-		
-		table.remove(args, 1) --for getting remainder of string
 	end
 
-	cmdObj.callback(ply, unpack(structure))
+	cmdObj.callback(ply, unpack(parsedArguments))
 	return ""
 end
 
 hook.Call("FWChatLibraryLoaded", GAMEMODE)
 
 fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
-	if (string.match('^[^]', string.sub(text, 1, 1))) then 
+	if (text[1] == '^') then 
 		if (ply.lastmsg) then 
 			text = ply.lastmsg
 		end
