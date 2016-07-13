@@ -94,18 +94,25 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	
 	
 	-- enforce t.max players
-	if t.max and #t:getPlayers() > t.max then return false end
+	if t.max and #t:getPlayers() > t.max then 
+		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars]: ", Color(255, 255, 255), "This job has the maximum number of players!")
+		return false 
+	end
 
 	-- can't join a team you're already on
-	if (ply:Team() == targ_team) then return false end
+	if (ply:Team() == targ_team) then 
+		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars]: ", Color(255, 255, 255), "You are already this job!")
+		return false 
+	end
 
 	-- SUPPORT FOR FACTION ONLY JOBS
 	if ((t.factionOnly and not t.faction) and not ply:getFaction()) then 
+		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars]: ", Color(255, 255, 255), "You need to be in a faction for this job!")
 		return false
 	end 
 	-- notify incorrect faction
 	if ((t.factionOnly and t.faction) and (ply:getFaction() != t.faction)) then
-		-- TODO: notify them why they can't join
+		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars]: ", Color(255, 255, 255), "You aren't in the correct faction for this job!")
 		return false
 	end
 
@@ -136,9 +143,19 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 
 		fw.vote.createNew("Job Vote", ply:Nick().." for ".. job_title, players, 
 			function(decision)
-				if (decision == "Yes") then
+
+				--make sure another player hasn't already got the job
+				if (decision == "Yes" and t.max and #t:getPlayers() > t.max ) then
+					for k,v in pairs(players) do
+						v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Elections]: ", Color(255, 255, 255), ply:Nick(), " has won the election for ", job_title)
+					end
+
 					return true
-				end 
+				else
+					for k,v in pairs(players) do
+						v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Elections]: ", Color(255, 255, 255), ply:Nick(), " has LOST the election for ", job_title)
+					end
+				end
 			end, "Yes", "No", 15)
 	end
 
