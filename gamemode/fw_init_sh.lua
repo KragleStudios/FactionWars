@@ -11,6 +11,7 @@ fw = {
 (GM or GAMEMODE).Author = "thelastpenguin, Ott, Seris, Kalamitous, Mikey Howell, Nookyava, Spai, crazyscouter, meharryp"
 (GM or GAMEMODE).Email = ""
 (GM or GAMEMODE).Website = "https://github.com/GMFactionWars"
+(GM or GAMEMODE).Version = "0.1.0 Alpha"
 
 -- utils
 local resolvePath = function(fn)
@@ -34,14 +35,15 @@ fw.include_sh = resolvePath(function(path)
 end)
 
 function fw.print(...)
-	print('[FW]', ...)
+	Msg('[FW]')
+	ra.print(...)
 end
 
 
 -- module loader
-print "-----------------------"
+print "--------------------------"
 print " factionwars v0.1.0 Alpha "
-print "-----------------------"
+print "--------------------------"
 
 fw.module_srcs = {}
 fw.loaded_modules = {}

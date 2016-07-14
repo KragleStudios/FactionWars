@@ -45,12 +45,33 @@ end
 function GM:Initialize(...)
 	return fw.hook.Call("Initialize", ...)
 end
+
+function GM:ScoreboardShow(...)
+	return fw.hook.Call('ScoreboardShow', ...)
+end
+
+function GM:ScoreboardHide(...)
+	return fw.hook.Call('ScoreboardHide', ...)
+end
+
+
 --
 -- MODELE TEAMS
 --
-
 function GM:CanPlayerJoinTeam(...)
 	return fw.hook.Call('CanPlayerJoinTeam', ...)
+end
+
+function GM:PlayerChangedTeam(teamFrom, teamTo)
+	return fw.hook.Call('PlayerChangedTeam', teamFrom, teamTo)
+end
+
+function GM:PlayerLeftFaction(factionId)
+	return fw.hook.Call('PlayerLeftFaction', factionId)
+end
+
+function GM:PlayerJoinedFaction(factionId)
+	return fw.hook.Call('PlayerJoinedFaction', factionId)
 end
 
 --

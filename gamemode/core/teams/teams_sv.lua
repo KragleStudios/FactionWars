@@ -1,7 +1,58 @@
 fw.team.spawns = fw.team.spawns or {}
 
-util.AddNetworkString("fw_agendaupdate")
-util.AddNetworkString("playerChangeTeam")
+-- playerChangeTeam - handles player team switching
+-- @param ply:player object - the player object switching teams
+-- @param targ_team:int - the index of the team in the table
+-- @param pref_model:string - the model selected on the switch team screen is sent here
+-- @param optional forced:bool - should we ignore canjoin conditions?
+-- @ret nothing
+function fw.team.playerChangeTeam(ply, targ_team, pref_model, forced)
+	local canjoin, message = hook.Call("CanPlayerJoinTeam", GAMEMODE, ply, targ_team)
+	
+	local t = fw.team.list[targ_team]
+	if not t then
+		ply:FWChatPrintError("no such team ", tostring(targ_team))
+		return false 
+	end
+
+	if (not forced and not canjoin) then
+		ply:FWChatPrintError(message or ("can't join team " .. t:getName()))
+		return false 
+	end
+
+	-- find a good pref_model
+	if not pref_model then
+		pref_model = ply:GetFWData().preferred_models and ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
+	end
+
+	-- remove player if they are the faction boss
+	if ply:isFactionBoss() then
+		fw.notif.chatPrint(player.GetAll(), "Player ", ply, " is no longer the boss of " .. fw.team.getFactionByID(ply:getFaction()):getName())
+		fw.team.removeFactionBoss(ply:getFaction())
+	end
+
+	local prevTeam = ply:Team()
+
+	-- set the player's team and preferred model data
+	ply:SetTeam(targ_team)
+	if not ply:GetFWData().preferred_models then
+		ply:GetFWData().preferred_models = {}
+	end
+	ply:GetFWData().preferred_models[t.stringID] = pref_model
+	ply:GetFWData().pref_model = pref_model
+
+	-- respawn the player
+	ply:Spawn()
+
+	-- make the player the faction boss if their team is flagged as a boss team
+	if t.boss then
+		-- make the player the new boss of the faction!
+		fw.team.setFactionBoss(ply:getFaction(), ply)
+	end
+
+	hook.Run('PlayerChangedTeam', prevTeam, ply:Team())
+end
+
 
 -- fw.team.registerSpawn - Registers spawn points to be used in player spawns. Multiple points can be registered
 -- @param team_textID:string - the string_id found in the team configuration
@@ -84,25 +135,42 @@ function fw.team.setPreferredModel(team_id, ply, model)
 	ply:GetFWData().preferred_models[t.stringID] = pref_model
 end
 
-
-
-function fw.team.updateAgenda(ply, faction, text)
-	fw.team.factionAgendas[faction] = text
-
-	--todo: optimize
-	local f_plys = player.GetAll() -- fw.team.getFactionPlayers(faction)
-	for k,v in ipairs(f_plys) do
-		v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "The agenda has been updated by ", ply:Nick())
-
-		net.Start("fw_agendaupdate")
-			net.WriteString(text)
-			net.WriteUInt(faction, 32)
-		net.Send(v)			
+-- handles the ability of whether or not a player can join a team
+fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
+	local t = fw.team.list[targ_team]
+	if (not t) then 
+		return false 
+	end
+	
+	-- enforce t.max players
+	if t.max and #t:getPlayers() > t.max then 
+		return false 
 	end
 
-	return true
-end
+	-- can't join a team you're already on
+	if (ply:Team() == targ_team) then 
+		return false 
+	end
 
+	-- SUPPORT FOR FACTION ONLY JOBS
+	if ((t.factionOnly and not t.faction) and not ply:getFaction()) then 
+		return false
+	end 
+	-- notify incorrect faction
+	if ((t.factionOnly and t.faction) and (ply:getFaction() != t.faction)) then
+		return false
+	end
+
+	local canjoin = t.canJoin
+	if canjoin then
+		if (istable(canjoin)) then
+			return table.HasValue(canjoin, ply:Team())
+		else
+			return canjoin(t, ply) ~= false
+		end
+	end
+	return true
+end)
 
 
 -- handles all spawning related functionality 
@@ -149,6 +217,7 @@ fw.hook.Add('PlayerLoadout', function(ply)
 		ply:Give(v)
 	end
 end)
+
 
 fw.hook.Add('PlayerSetModel', function(ply)
 	local team = ply:Team()
@@ -199,96 +268,45 @@ end)
 -- TODO: MOVE THESE TO THEIR OWN SEPERATE FILE
 --
 
-if (fw.config.bossPowers) then
---boss can demote players in faction
-	fw.chat.addCMD("bossdemote", "The boss' ability to demote a user with no vote", function(ply, target)
-		local team = fw.team.list[ply:Team()]
-		if (not team) then return end
-		
-		if (not team.boss) then
-			return
-		end
-
-		if (not ply:getFaction()) then 
-			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "You need to be in a faction to use this command!")
-			return 
-		end
-
-		if (not target:getFaction() or (target:getFaction() != ply:getFaction())) then 
-			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
-			return 
-		end
-
-		local players = fw.team.getFactionPlayers(ply:getFaction())
-		for k,v in pairs(players) do
-			v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was demoted!")
-		end	
-
-		fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID(), table.Random(TEAM_CIVILIAN:getModels()))
-	end)
-
-	--boss can remove players from faction
-	fw.chat.addCMD("bossremove", "The boss' ability to remove a user from the faction with no vote", function(ply, target)
-		local team = fw.team.list[ply:Team()]
-		if (not team) then return end
-		
-		if (not team.boss) then
-			return
-		end
-
-		if (not ply:getFaction()) then 
-			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "You need to be in a faction to use this command!")
-			return 
-		end
-
-		if (not target:getFaction() or (target:getFaction() != ply:getFaction())) then 
-			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
-			return 
-		end
-
-		local players = fw.team.getFactionPlayers(ply:getFaction())
-
-		for k,v in pairs(players) do
-			v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was removed from this faction!")
-		end	
-		fw.team.removePlayerFromFaction(target)
-	end)
-end
-
 --vote to remove a user from faction
-fw.chat.addCMD("voteremovefaction", "Vote to remove a user from a faction", function(ply, target)
+fw.chat.addCMD("factionkick", "Vote to remove a user from a faction", function(ply, target)
 
-	if (not ply:getFaction()) then 
-		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "You need to be in a faction to use this command!")
+	if ply == target then
+		ply:FWChatPrintError("You can't remove yourself!")
 		return 
 	end
 
-	if (not target:getFaction() or (target:getFaction() != ply:getFaction())) then 
-		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
+	if not ply:inFaction() then
+		ply:FWChatPrintError("You aren't in a faction!")
+		return 
+	end
+
+	if (target:getFaction() ~= ply:getFaction()) then 
+		ply:FWChatPrintError(Color(0, 0, 0), "This person isn't in the same faction as you!")
 		return 
 	end
 
 	local faction = ply:getFaction()
 	local players = fw.team.getFactionPlayers(faction)
 
-	if (not players) then return end
-	
+	if ply:isFactionBoss() then
+		fw.notif.chatPrint(players, ply, " forcefully removed ", target, " from the faction.")
+		fw.team.removePlayerFromFaction(target)
+		return 
+	end
+
 	fw.vote.createNew("Vote Remove User: Faction", "Remove ".. target:Nick().." from faction?", players, 
 		function(decision, vote, results) 
 			if (not IsValid(target)) then return end
 
 			if (decision == "Yes") then
 				fw.team.removePlayerFromFaction(target)
-
-				for k,v in pairs(players) do
-					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was removed from the faction!")
-				end	
+				fw.notif.chatPrint(players, color_black, '[Votes]: ', color_white, target:Nick(), " was removed from the faction!")
 			else
-				for k,v in pairs(players) do
-					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was not removed!")
-				end
+				fw.notif.chatPrint(players, color_black, '[Votes]: ', color_white, target:Nick(), " was not removed!")
 			end
 		end, "Yes", "No", 15)
+
 end):addParam("target", "player")
 
 --vote to demote a player to civilian within a faction
@@ -296,51 +314,31 @@ fw.chat.addCMD("demote", "Vote to demote a user", function(ply, target)
 	local faction = ply:getFaction()
 	local players = player.GetAll()
 
-	if (faction and target:getFaction() and (target:getFaction() != ply:getFaction())) then 
-		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
+	if (target:getFaction() ~= ply:getFaction()) then 
+		ply:FWChatPrintError("This person isn't in the same faction as you!")
 		return 
 	end
+	
 	if (faction == target:getFaction()) then
 		players = fw.team.getFactionPlayers(faction)
 	end
 
-	if (not players) then return end
-	
+	if ply:isFactionBoss() then
+		fw.notif.chatPrint(player.GetAll(), ply, " forcefully demoted ", target, "!")
+		fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID())
+		return
+	end
+
 	fw.vote.createNew("Vote Demote User", "Demote ".. target:Nick().."?", players, 
 		function(decision, vote, results) 
 			if (not IsValid(target)) then return end
 
 			if (decision == "Yes") then
-				fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID(), table.Random(TEAM_CIVILIAN:getModels()))
-
-				for k,v in pairs(players) do
-					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was demoted to Citizen!")
-				end	
+				fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID())
+				fw.notif.chatPrint(player.GetAll(), target:Nick(), " was demoted to Citizen!")
 			else
-				for k,v in pairs(players) do
-					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was not demoted!")
-				end
+				fw.notif.chatPrint(player.GetAll(), target:Nick(), " was not demoted!")
 			end
 		end, "Yes", "No", 15)
+
 end):addParam("target", "player")
-
-fw.chat.addCMD("agenda", "Sets the agenda for your faction if you're the boss.", function(ply, text)
-	local t = fw.team.list[ply:Team()]
-	if (not t) then return end
-
-	--duh
-	if (not t.boss) then ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You aren't the correct rank for this!") return end
-
-	--just a check. it should go through if the team is set up correctly
-	if (not t.faction or not t.factionOnly) then ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You need to be in a faction to set the agenda! If you are, notify a dev!") return end
-
-	local agenda = fw.team.updateAgenda(ply, t.faction, text)
-
-	if (agenda) then 
-		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You have succesfully set the agenda!")
-
-		return
-	end
-
-	ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "Uh oh, something went wrong!")
-end):addParam('message', 'string')

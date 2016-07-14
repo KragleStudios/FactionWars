@@ -34,7 +34,7 @@ local function wrapText(string, width)
 	return tbl
 end
 
-net.Receive("sendVoteQuery", function()
+net.Receive("fw.sendVoteQuery", function()
 	local tbl = net.ReadTable()
 
 	local vIndex = tbl.index

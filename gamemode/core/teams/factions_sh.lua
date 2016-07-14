@@ -1,16 +1,23 @@
 fw.team.factions = {}
 
+local factionsList = fw.team.factions
+
+if SERVER then
+	ndoc.fwFactions = {}
+end
+
 local faction_mt = {
 	getName = function(self) return self.name end,
 	getID = function(self) return self.index end,
 	getStringID = function(self) return self.stringID end,
 	getPlayers = function(self)
-		local tbl = {}
-		for k,v in pairs(player.GetAll()) do
-			if v:getFaction() == self.index then
-				tbl[#tbl + 1] = v 
-			end
-		end
+		return ra.util.filter(player.GetAll(), function(ply)
+			return ply:getFaction() == self.index
+		end)
+	end,
+
+	getNWData = function(self)
+		return ndoc.fwFactions[self.index] or {}
 	end,
 }
 
@@ -24,6 +31,16 @@ function fw.team.registerFaction(factionName, tbl)
 
 	tbl.index = table.insert(fw.team.factions, tbl)
 	tbl.name = factionName
+
+	if SERVER then
+		ndoc.fwFactions[tbl.index] = {
+			money = 10000,
+			boss = nil,
+			-- all other data to come...
+		}
+		-- boss = nil
+		-- money = nil
+	end
 
 	return tbl.index -- return the faction id
 end
@@ -51,21 +68,7 @@ end
 -- @param factionId:number - the faction to get the players of. nil for unaffiliated.
 -- @ret players:table
 function fw.team.getFactionPlayers(factionId)
-	return ra.util.filter(player.GetAll(), function(ply)
-		return ply:getFaction() == factionId
-	end)
-end
-
-function fw.team.getBoss(factionId)
-	if (not fw.team.factions[factionId]) then return "No Boss" end
-	
-	return fw.team.factions[factionId].boss or "No Boss"
-end
-
-function fw.team.removePlayerFromFaction(ply)
-	if (not ply:inFaction()) then return end
-	
-	ply:GetFWData().faction = nil
+	return factionsList[factionId]:getPlayers()
 end
 
 local Player = FindMetaTable 'Player'
@@ -74,6 +77,15 @@ local Player = FindMetaTable 'Player'
 function Player:getFaction()
 	return self:GetFWData().faction
 end
+
 function Player:inFaction()
 	return self:GetFWData().faction ~= nil 
+end
+
+function Player:isFactionBoss()
+	return self:getFactionBoss() == self
+end
+
+function Player:getFactionBoss()
+	return self:inFaction() and fw.team.factions[self:getFaction()].boss or NULL
 end

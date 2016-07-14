@@ -1,9 +1,9 @@
 
-util.AddNetworkString("sendVoteQuery")
-util.AddNetworkString("sendVoteResponse")
-util.AddNetworkString("sendVote")
+util.AddNetworkString("fw.sendVoteQuery")
+util.AddNetworkString("fw.sendVoteResponse")
+util.AddNetworkString("fw.sendVote")
 
-net.Receive("sendVoteResponse", function(len, client)
+net.Receive("fw.sendVoteResponse", function(len, client)
 	local index = net.ReadInt(32)
 	local decision = net.ReadString()
 
@@ -28,7 +28,7 @@ function fw.vote.getVoteStatus(index)
 
 	local vote = fw.vote.list[index]
 	if (not vote) then return "No", {yes, no} end
-
+	
 	for k,v in pairs(vote.votes) do
 		if (v == vote.yesText) then
 			yes = yes + 1
@@ -37,12 +37,7 @@ function fw.vote.getVoteStatus(index)
 		end
 	end
 
-	local answer = vote.noText
-	if (yes > no) then
-		answer = vote.yesText
-	end
-
-	return answer, {yes, no, vote.votes}
+	return yes > no, {yes, no, vote.votes}
 end
 
 function fw.vote.createNew(vTitle, vDesc, vPlayers, vCallback, vYText, vNText, vote_len)
@@ -54,7 +49,7 @@ function fw.vote.createNew(vTitle, vDesc, vPlayers, vCallback, vYText, vNText, v
 		votes = {}, 
 		yesText = vYText or "Yes", 
 		noText = vNText or "No",
-		voteLength = vote_len or vote_defLen
+		voteLength = vote_len or fw.vote_defLen
 	}
 
 	local indx = table.insert(fw.vote.list, tbl)
@@ -78,7 +73,7 @@ function fw.vote.createNew(vTitle, vDesc, vPlayers, vCallback, vYText, vNText, v
 	tbl.cback = nil
 
 	for k,v in pairs(vPlayers) do
-		net.Start("sendVoteQuery")
+		net.Start("fw.sendVoteQuery")
 			net.WriteTable(tbl)
 		net.Send(v)			
 	end

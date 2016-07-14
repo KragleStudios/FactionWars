@@ -8,7 +8,7 @@ end)
 
 net.Receive('fw.notif.chatprint', function()
 	local table = net.ReadTable()
-	chat.AddText(unpack(table))
+	chat.AddText(color_black, '[' .. GAMEMODE.Name .. ']', color_white, unpack(table))
 end)
 
 
