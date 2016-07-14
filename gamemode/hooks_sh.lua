@@ -1,3 +1,7 @@
+function GM:Initialize(...)
+	return fw.hook.Call('Initialize', ...)
+end
+
 function GM:PlayerSpawn(...)
 	return fw.hook.Call('PlayerSpawn', ...)
 end

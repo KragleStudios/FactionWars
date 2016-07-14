@@ -133,6 +133,7 @@ fw.include_sh 'hooks_sh.lua'
 concommand.Add('fw_reload', function(pl)
 	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
 	load()
+	fw.hook.GetTable().Initialize.LoadPrinters() -- Hacky printer reloading fix
 end)
 
 concommand.Add("fw_reloadmap", function(pl)

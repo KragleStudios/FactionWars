@@ -27,7 +27,7 @@ function ENT:Initialize()
 	self:SetColor(self.Color)
 
 	self.Sound = CreateSound(self, "ambient/levels/labs/equipment_printer_loop1.wav")
-	self.Sound:SetSoundLevel(54)
+	self.Sound:SetSoundLevel(57)
 end
 
 function ENT:Use(activator, ply)
@@ -40,12 +40,12 @@ function ENT:Use(activator, ply)
 end
 
 function ENT:Think()
-	self.Power = 100 -- Current power input to printer. Replace with function that gets power input when system is added.
+	self.Power = math.huge -- Current power input to printer. Replace with function that gets power input when system is added.
 
 	if self:GetNextPrintTime() < CurTime() and self.Power >= self.PowerRequired --[[and self:GetInk() + 1 > self.InkDrain]] and self:GetPaper() + 1 > self.PaperDrain and self:GetPrintStatus() then
 		-- self:SetMoney(self:GetMoney() + self.PrintAmount)
 		local money = ents.Create("fw_money")
-		money:SetPos(self:LocalToWorld(self:OBBMaxs()))
+		money:SetPos(self:LocalToWorld(self:OBBMaxs() + Vector(4, -3.5, -3)))
 		money:SetValue(self.PrintAmount)
 		money:Spawn()
 
