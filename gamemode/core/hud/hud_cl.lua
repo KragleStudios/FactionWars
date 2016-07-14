@@ -56,6 +56,17 @@ vgui.Register('fwHudInfo', {
 			self.layout = vgui.Create('STYLayoutHorizontal', self)
 			self.layout:SetPadding(5)
 
+			-- display hp
+			do
+				self.hp = vgui.Create('fwHudInfoCell', self.layout)
+
+				self.hp:SetUpdater(function()
+					return LocalPlayer():Health()
+				end, function()
+					return 'HP: ' .. LocalPlayer():Health()
+				end)
+			end
+
 			-- display money
 			do
 				self.money = vgui.Create('fwHudInfoCell', self.layout)
@@ -102,17 +113,6 @@ vgui.Register('fwHudInfo', {
 				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateFaction)
 				updateFaction()
 
-			end
-
-			-- display hp
-			do
-				self.hp = vgui.Create('fwHudInfoCell', self.layout)
-
-				self.hp:SetUpdater(function()
-					return LocalPlayer():Health()
-				end, function()
-					return 'HP: ' .. LocalPlayer():Health()
-				end)
 			end
 			
 			do
