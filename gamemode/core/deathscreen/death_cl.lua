@@ -2,7 +2,7 @@ net.Receive("playerDeath", function()
         local deathText
 	local suicide = net.ReadBool()
         local attacker = net.ReadEntity()
-    
+
 	if suicide then
 	        deathText = "You commit suicide"
 	elseif IsValid(attacker) then
@@ -22,9 +22,9 @@ net.Receive("playerDeath", function()
 		local seed = 10
 		local tick = (CurTime() + seed*40)
 		local speed = seed % 4 + 1 + (seed * 0.05)
-		local lolTick = (CurTime() * 2 + tick * speed * 100) % w
+		local realTick = (CurTime() * 2 + tick * speed * 100) % w
 
-		draw.SimpleText("RIP", fw.fonts.default:atSize(100), lolTick, 0 + (h*2/4) + math.sin(lolTick/200) * 100, color_white)
+		draw.SimpleText("RIP", fw.fonts.default:atSize(100), realTick, 0 + (h*2/4) + math.sin(realTick/200) * 100, color_white)
 	end
 
 	-- Label
@@ -40,6 +40,6 @@ net.Receive("playerDeath", function()
 	timer.Create("checkIfAlive", 0.5, 0, function()
                 if LocalPlayer():Alive() then
 	                deathPanel:Remove()
-		    end
-	  end)
+		end
+	end)
 end)
