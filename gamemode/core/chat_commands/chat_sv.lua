@@ -16,6 +16,8 @@ function fw.chat.addCMD(cname, chelp, cfunc)
 
 	setmetatable(obj, {__index = cmdobj})
 
+	cname = string.lower(cname)
+
 	obj.name = cname
 	obj.help = chelp
 	obj.callback = cfunc
@@ -106,6 +108,7 @@ function fw.chat.parseString(ply, str)
 
 	--make sure the command oject exists
 	cmdn = string.sub(cmdn, 2, string.len(cmdn))
+	cmdn = string.lower(cmdn)
 
 	local cmdObj = fw.chat.cmds[cmdn]
 	if (not cmdObj) then fw.print('cmdn', cmdn, 'not found') return str end
@@ -162,8 +165,6 @@ function fw.chat.parseString(ply, str)
 	cmdObj.callback(ply, unpack(parsedArguments))
 	return ""
 end
-
-hook.Call("FWChatLibraryLoaded", GAMEMODE)
 
 fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 	if (text[1] == '^') then 

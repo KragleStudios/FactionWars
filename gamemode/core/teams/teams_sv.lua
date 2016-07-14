@@ -103,28 +103,7 @@ function fw.team.updateAgenda(ply, faction, text)
 	return true
 end
 
-hook.Add("FWChatLibraryLoaded", "LoadCMD", function()
-	fw.chat.addCMD("agenda", "Sets the agenda for your faction if you're the boss.", function(ply, text)
-		local t = fw.team.list[ply:Team()]
-		if (not t) then return end
 
-		--duh
-		if (not t.boss) then ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You aren't the correct rank for this!") return end
-
-		--just a check. it should go through if the team is set up correctly
-		if (not t.faction or not t.factionOnly) then ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You need to be in a faction to set the agenda! If you are, notify a dev!") return end
-
-		local agenda = fw.team.updateAgenda(ply, t.faction, text)
-
-		if (agenda) then 
-			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You have succesfully set the agenda!")
-
-			return
-		end
-
-		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "Uh oh, something went wrong!")
-	end):addParam('message', 'string')
-end)
 
 -- handles all spawning related functionality 
 fw.hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
@@ -219,9 +198,10 @@ end)
 -- CHAT COMMANDS FOR FACTION
 -- TODO: MOVE THESE TO THEIR OWN SEPERATE FILE
 --
+
+if (fw.config.bossPowers) then
 --boss can demote players in faction
-fw.hook.Add("FWChatLibraryLoaded", "LoadCMDSS", function()
-	fw.chat.addCMD("bossDemote", "The boss' ability to demote a user with no vote", function(ply, target)
+	fw.chat.addCMD("bossdemote", "The boss' ability to demote a user with no vote", function(ply, target)
 		local team = fw.team.list[ply:Team()]
 		if (not team) then return end
 		
@@ -248,7 +228,7 @@ fw.hook.Add("FWChatLibraryLoaded", "LoadCMDSS", function()
 	end)
 
 	--boss can remove players from faction
-	fw.chat.addCMD("bossRemove", "The boss' ability to remove a user from the faction with no vote", function(ply, target)
+	fw.chat.addCMD("bossremove", "The boss' ability to remove a user from the faction with no vote", function(ply, target)
 		local team = fw.team.list[ply:Team()]
 		if (not team) then return end
 		
@@ -273,76 +253,94 @@ fw.hook.Add("FWChatLibraryLoaded", "LoadCMDSS", function()
 		end	
 		fw.team.removePlayerFromFaction(target)
 	end)
+end
 
-	--vote to remove a user from faction
-	fw.chat.addCMD("voteRemoveFaction", "Vote to remove a user from a faction", function(ply, target)
+--vote to remove a user from faction
+fw.chat.addCMD("voteremovefaction", "Vote to remove a user from a faction", function(ply, target)
 
-		if (not ply:getFaction()) then 
-			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "You need to be in a faction to use this command!")
-			return 
-		end
+	if (not ply:getFaction()) then 
+		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "You need to be in a faction to use this command!")
+		return 
+	end
 
-		if (not target:getFaction() or (target:getFaction() != ply:getFaction())) then 
-			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
-			return 
-		end
+	if (not target:getFaction() or (target:getFaction() != ply:getFaction())) then 
+		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
+		return 
+	end
 
-		local faction = ply:getFaction()
-		local players = fw.team.getFactionPlayers(faction)
+	local faction = ply:getFaction()
+	local players = fw.team.getFactionPlayers(faction)
 
-		if (not players) then return end
-		
-		fw.vote.createNew("Vote Remove User: Faction", "Remove ".. target:Nick().." from faction?", players, 
-			function(decision, vote, results) 
-				if (not IsValid(target)) then return end
+	if (not players) then return end
+	
+	fw.vote.createNew("Vote Remove User: Faction", "Remove ".. target:Nick().." from faction?", players, 
+		function(decision, vote, results) 
+			if (not IsValid(target)) then return end
 
-				if (decision == "Yes") then
-					fw.team.removePlayerFromFaction(target)
+			if (decision == "Yes") then
+				fw.team.removePlayerFromFaction(target)
 
-					for k,v in pairs(players) do
-						v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was removed from the faction!")
-					end	
-				else
-					for k,v in pairs(players) do
-						v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was not removed!")
-					end
+				for k,v in pairs(players) do
+					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was removed from the faction!")
+				end	
+			else
+				for k,v in pairs(players) do
+					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was not removed!")
 				end
-			end, "Yes", "No", 15)
-	end):addParam("target", "player")
+			end
+		end, "Yes", "No", 15)
+end):addParam("target", "player")
 
-	--vote to demote a player to civilian within a faction
-	fw.chat.addCMD("voteDemoteFaction", "Vote to demote a user within faction", function(ply, target)
+--vote to demote a player to civilian within a faction
+fw.chat.addCMD("demote", "Vote to demote a user", function(ply, target)
+	local faction = ply:getFaction()
+	local players = player.GetAll()
 
-		if (not ply:getFaction()) then 
-			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "You need to be in a faction to use this command!")
-			return 
-		end
+	if (faction and target:getFaction() and (target:getFaction() != ply:getFaction())) then 
+		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
+		return 
+	end
+	if (faction == target:getFaction()) then
+		players = fw.team.getFactionPlayers(faction)
+	end
 
-		if (not target:getFaction() or (target:getFaction() != ply:getFaction())) then 
-			ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "This person isn't in the same faction!")
-			return 
-		end
+	if (not players) then return end
+	
+	fw.vote.createNew("Vote Demote User", "Demote ".. target:Nick().."?", players, 
+		function(decision, vote, results) 
+			if (not IsValid(target)) then return end
 
-		local faction = ply:getFaction()
-		local players = fw.team.getFactionPlayers(faction)
+			if (decision == "Yes") then
+				fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID(), table.Random(TEAM_CIVILIAN:getModels()))
 
-		if (not players) then return end
-		
-		fw.vote.createNew("Vote Demote User: Faction", "Demote ".. target:Nick().." within faction?", players, 
-			function(decision, vote, results) 
-				if (not IsValid(target)) then return end
-
-				if (decision == "Yes") then
-					fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID(), table.Random(TEAM_CIVILIAN:getModels()))
-
-					for k,v in pairs(players) do
-						v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was demoted to Citizen!")
-					end	
-				else
-					for k,v in pairs(players) do
-						v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was not demoted!")
-					end
+				for k,v in pairs(players) do
+					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was demoted to Citizen!")
+				end	
+			else
+				for k,v in pairs(players) do
+					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), target:Nick(), " was not demoted!")
 				end
-			end, "Yes", "No", 15)
-	end):addParam("target", "player")
-end)
+			end
+		end, "Yes", "No", 15)
+end):addParam("target", "player")
+
+fw.chat.addCMD("agenda", "Sets the agenda for your faction if you're the boss.", function(ply, text)
+	local t = fw.team.list[ply:Team()]
+	if (not t) then return end
+
+	--duh
+	if (not t.boss) then ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You aren't the correct rank for this!") return end
+
+	--just a check. it should go through if the team is set up correctly
+	if (not t.faction or not t.factionOnly) then ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You need to be in a faction to set the agenda! If you are, notify a dev!") return end
+
+	local agenda = fw.team.updateAgenda(ply, t.faction, text)
+
+	if (agenda) then 
+		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "You have succesfully set the agenda!")
+
+		return
+	end
+
+	ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "Uh oh, something went wrong!")
+end):addParam('message', 'string')
