@@ -54,6 +54,13 @@ function GM:ScoreboardHide(...)
 	return fw.hook.Call('ScoreboardHide', ...)
 end
 
+function GM:PlayerSpawnedProp(...)
+	return fw.hook.Call("PlayerSpawnedProp", ...)
+end
+
+function GM:EntityTakeDamage(...)
+	return fw.hook.Call("EntityTakeDamage", ...)
+end
 
 --
 -- MODELE TEAMS
