@@ -1,5 +1,5 @@
-todo:
+#todo:
 
-netdocify networking
-stylishing
-testing with a player
+- netdocify networking
+- stylishing
+- testing with a player
