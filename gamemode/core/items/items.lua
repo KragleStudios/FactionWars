@@ -17,7 +17,7 @@ fw.ents.registerItem("Blowtorch", {
 fw.ents.registerItem("Tier 1 Money Printer", {
 	stringID = "t1printer",
 	color =  Color(211, 84, 0),
-	model = "models/props_c17/consolebox01a.mdl", 
+	model = "models/props_c17/consolebox01a.mdl",
 	entity = "fw_printer_tier1",
 	max = 0,
 	price = 1500,
@@ -27,9 +27,9 @@ fw.ents.registerItem("Tier 1 Money Printer", {
 
 fw.ents.registerItem("Tier 2 Money Printer", {
 	stringID = "t2printer",
-	color =  Color(243, 156, 18)
+	color =  Color(243, 156, 18),
 	model = "models/props_c17/consolebox01a.mdl",
-	entity = "fw_printer_tier2", 
+	entity = "fw_printer_tier2",
 	max = 0,
 	price = 2750,
 	removeOnDisc = true,
@@ -40,7 +40,7 @@ fw.ents.registerItem("Tier 3 Money Printer", {
 	stringID = "t3printer",
 	color =  Color(52, 73, 94),
 	model = "models/props_c17/consolebox01a.mdl",
-	entity = "fw_printer_tier3",  
+	entity = "fw_printer_tier3",
 	max = 0,
 	price = 5000,
 	removeOnDisc = true,
@@ -50,7 +50,7 @@ fw.ents.registerItem("Tier 3 Money Printer", {
 fw.ents.registerItem("Tier 4 Money Printer", {
 	stringID = "t4printer",
 	color =  Color(142, 68, 173),
-	model = "models/props_c17/consolebox01a.mdl"
+	model = "models/props_c17/consolebox01a.mdl",
 	entity = "fw_printer_tier4",
 	max = 0,
 	price = 12500,
