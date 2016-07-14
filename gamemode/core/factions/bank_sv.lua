@@ -10,10 +10,10 @@ function fw.faction.bank.deposit(ply, amt)
 		return
 	end
 
-	fw.faction.bank[fac].currency = fw.faction.bank[fac].currency + amt
+	fw.faction.bank[fac].money = fw.faction.bank[fac].money + amt
 
 	for k,v in pairs(fw.team.getFactionPlayers(fac)) do
-		v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), ply:Nick(), " has deposited $", amt, " into the faction bank! New Amount: $"..fw.faction.bank[fac].currency)
+		v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), ply:Nick(), " has deposited $", amt, " into the faction bank! New Amount: $"..fw.faction.bank[fac].money)
 	end	
 end
 
@@ -32,7 +32,7 @@ function fw.faction.bank.withdraw(ply, amt)
 		players = boss
 	end
 
-	if (fw.faction.bank[fac].currency - amt < 0) then
+	if (fw.faction.bank[fac].money - amt < 0) then
 		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), "The faction can't afford this withdraw!")
 		return
 	end
@@ -41,10 +41,10 @@ function fw.faction.bank.withdraw(ply, amt)
 		function(decision)
 			if (decision == "Yes") then
 				ply:addMoney(amt)
-				fw.faction.bank[fac].currency = fw.faction.bank[fac].currency - amt
+				fw.faction.bank[fac].money = fw.faction.bank[fac].money - amt
 
 				for k,v in pairs(fw.team.getFactionPlayers(fac)) do
-					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), ply:Nick(), " has withdrawn $", amt, " from the faction bank! New Amount: $"..fw.faction.bank[fac].currency)
+					v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), ply:Nick(), " has withdrawn $", amt, " from the faction bank! New Amount: $"..fw.faction.bank[fac].money)
 				end	
 			end
 
@@ -52,15 +52,15 @@ function fw.faction.bank.withdraw(ply, amt)
 end
 
 function fw.faction.bank.save(faction)
-	local bank = fw.faction.bank or {currency = 0, items = {}}
+	local bank = fw.faction.bank or {money = 0, items = {}}
 
 	if (not file.Exists("faction_data", "DATA")) then
 		file.CreateDir("faction_data")
 	end
 
 	local path = "faction_data/faction_"..faction..".txt"
-	local tbl = {currency = bank.currency, items = bank.items}
-	tbl = util.TableToJSON(tbl)
+	local tbl = {money = bank.money, items = bank.items}
+	tbl = spon.encode(tbl)
 
 	file.Write(path, tbl)
 end
@@ -68,26 +68,26 @@ end
 --[[
 		Structure: 
 		tbl = {
-			currency = amount,
+			money = amount,
 			items = {
 				[item_stringID] = amount
 			}
 		}
 	]]--
 function fw.faction.bank.load(faction)
-	local tbl = {currency = 0, items = {}}
+	local tbl = {money = 0, items = {}}
 	local path = "faction_data/faction_"..faction..".txt"
 
 	fw.faction.bank[faction] = tbl
 
 	if (file.Exists(path, "DATA")) then
 		local table = file.Read(path, "DATA")
-		table = util.JSONToTable(table)
+		table = spon.decode(table)
 
 		if (table) then tbl = table end
 	end
 
-	fw.faction.bank[faction].currency = tbl.currency
+	fw.faction.bank[faction].money = tbl.money
 	fw.faction.bank[faction].items    = tbl.items
 end
 
@@ -102,8 +102,8 @@ function fw.faction.bank.payroll(faction)
 		local salary = team.salary
 
 		--use the faction bank? okay can the faction afford it?
-		if (useFacBank and (fw.faction.bank[fac].currency - salary > 0)) then
-			fw.faction.bank[fac].currency = fw.faction.bank[fac] - salary
+		if (useFacBank and (fw.faction.bank[fac].money - salary > 0)) then
+			fw.faction.bank[fac].money = fw.faction.bank[fac] - salary
 
 			v:addMoney(salary)
 		else
@@ -115,7 +115,7 @@ function fw.faction.bank.payroll(faction)
 	end
 end
 
-hook.Add("Initialize", "IssueFactionPayroll", function()
+fw.hook.Add("Initialize", "IssueFactionPayroll", function()
 	local payroll = fw.config.payrollTime or 60
 	
 	for k,v in pairs(fw.team.factions) do

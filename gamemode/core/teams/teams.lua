@@ -36,6 +36,7 @@ TEAM_DRUG = fw.team.register("Drug Dealer", {
 	models = {"models/player/eli.mdl"},
 	weapons = {"weapon_fists"},
 	factionOnly = false,
+	election = true,--testing
 	salary = 50,
 	max = 4,
 })

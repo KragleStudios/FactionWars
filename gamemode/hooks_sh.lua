@@ -41,6 +41,10 @@ end
 function GM:PlayerSay(...)
 	return fw.hook.Call('PlayerSay', ...)
 end
+
+function GM:Initialize(...)
+	return fw.hook.Call("Initialize", ...)
+end
 --
 -- MODELE TEAMS
 --

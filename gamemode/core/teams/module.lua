@@ -9,6 +9,7 @@ fw.team = fw.team or {}
 fw.dep(SHARED, 'notif')
 fw.dep(SHARED, 'hook')
 fw.dep(SERVER, 'data')
+fw.dep(SERVER, 'chat_commands')
 
 -- load core team system
 fw.include_sh 'teams_sh.lua'
