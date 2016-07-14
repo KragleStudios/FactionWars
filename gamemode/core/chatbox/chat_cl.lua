@@ -231,18 +231,18 @@ function chatBox:Close()
 	chat.Close()
 end
 
-hook.Add( "StartChat", "chatBox_StartChat", function(TeamChat)
+fw.hook.Add( "StartChat", "chatBox_StartChat", function(TeamChat)
 	chatBox:Open(TeamChat)
 	return true
 end)
 
-hook.Add("HUDShouldDraw", "chatBox_HUDShouldDraw", function(Element)
+fw.hook.Add("HUDShouldDraw", "chatBox_HUDShouldDraw", function(Element)
 	if (Element == "CHudChat") then
 		return false
 	end
 end)
 
-hook.Add( "Think", "chatBox_Think", function()
+fw.hook.Add( "Think", "chatBox_Think", function()
 	if (IsValid(LocalPlayer()) and not (chatBox.Initialized)) then
 		chatBox:Init()
 		chatBox.Initialized = true
