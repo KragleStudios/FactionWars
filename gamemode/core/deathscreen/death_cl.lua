@@ -1,10 +1,3 @@
-surface.CreateFont( "deathFont", { -- Sorry last, I've got to make a non stylish font for a part
-    font = "Roboto",
-    size = 100,
-    weight = 1000,
-    antialias = true
-})
-
 net.Receive("playerDeath", function()
         local deathText
 	local suicide = net.ReadBool()
@@ -31,7 +24,7 @@ net.Receive("playerDeath", function()
 		local speed = seed % 4 + 1 + (seed * 0.05)
 		local lolTick = (CurTime() * 2 + tick * speed * 100) % w
 
-		draw.SimpleText("RIP", "deathFont", lolTick, 0 + (h*2/4) + math.sin(lolTick/200) * 100, color_white)
+		draw.SimpleText("RIP", fw.fonts.default:atSize(100)", lolTick, 0 + (h*2/4) + math.sin(lolTick/200) * 100, color_white)
 	end
 
 	-- Label
@@ -39,7 +32,7 @@ net.Receive("playerDeath", function()
 	deathLabel:Dock(BOTTOM)
 	deathLabel:SetText(deathText)
   	deathLabel:SetTextColor(color_white)
-	deathLabel:SetFont(fw.fonts.default:fitToView(deathPanel:GetWide(), deathPanel:GetTall(), deathLabel:GetText()))
+	deathLabel:SetFont(fw.fonts.default:atSize(100))
 	deathLabel:SetAutoStretchVertical(true)
 	deathLabel:SetWrap(true)
 
