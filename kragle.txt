@@ -1,6 +1,6 @@
 "kragle"
 {
-	"base"		"base"
+	"base"		"sandbox"
 	"title"		"Faction Wars"
 	"maps"		"^ttt_"
 	"menusystem"	"1"

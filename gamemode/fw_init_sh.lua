@@ -1,10 +1,11 @@
 require 'ra'
-
+DeriveGamemode("sandbox")
 local function load()
 
 fw = {
 	--debug = true
 }
+
 
 -- gamemode variables
 (GM or GAMEMODE).Name = "Faction Wars"

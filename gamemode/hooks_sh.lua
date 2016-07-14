@@ -45,6 +45,14 @@ end
 function GM:Initialize(...)
 	return fw.hook.Call("Initialize", ...)
 end
+
+function GM:PlayerSpawnedProp(...)
+	return fw.hook.Call("PlayerSpawnedProp", ...)
+end
+
+function GM:EntityTakeDamage(...)
+	return fw.hook.Call("EntityTakeDamage", ...)
+end
 --
 -- MODELE TEAMS
 --
