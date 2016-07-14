@@ -284,7 +284,7 @@ local Player = FindMetaTable("Player")
 function Player:getPrefModel()
 	return ply:GetFWData().pref_model
 end
-
+--[[
 if (CLIENT) then
 	local colors = {
 	head = Color(192, 57, 43, 255),
@@ -329,11 +329,7 @@ hook.Add("HUDPaint", "LoadGUI", function()
 	draw.SimpleText(boss, "btn", ScrW() / 2, 0, colors.text)
 end)
 
---[[
-fw.hook.Add("InitPostEntity", "UpdateTeamGroupsCL", function()
-	local tid = LocalPlayer():Team()
-	table.insert(fw.team.list[tid].players, LocalPlayer())
-end)]]--
+
 
 concommand.Add("teams", function()
 	if (!LocalPlayer():Alive()) then return end
@@ -402,4 +398,4 @@ concommand.Add("teams", function()
 	end
 end)
 
-end
+end]]--
