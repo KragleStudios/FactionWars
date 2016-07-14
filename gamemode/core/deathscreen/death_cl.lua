@@ -7,7 +7,6 @@ surface.CreateFont( "deathFont", { -- Sorry last, I've got to make a non stylish
 
 net.Receive("playerDeath", function()
         local deathText
-
 	local suicide = net.ReadBool()
         local attacker = net.ReadEntity()
     
@@ -22,8 +21,8 @@ net.Receive("playerDeath", function()
 	deathPanel:SetSize(ScrW(), ScrH())
 	deathPanel:Center()
 	deathPanel:SetTitle("")
-   	deathPanel:SetDraggable( false )
-	deathPanel:ShowCloseButton( false )
+   	deathPanel:SetDraggable(false)
+	deathPanel:ShowCloseButton(false)
 	deathPanel.Paint = function (self, w, h)
 	        Derma_DrawBackgroundBlur(self, 0)
 
@@ -35,7 +34,7 @@ net.Receive("playerDeath", function()
 		draw.SimpleText("RIP", "deathFont", lolTick, 0 + (h*2/4) + math.sin(lolTick/200) * 100, color_white)
 	end
 
-		-- Label
+	-- Label
 	local deathLabel = vgui.Create("DLabel", deathPanel)
 	deathLabel:Dock(BOTTOM)
 	deathLabel:SetText(deathText)
