@@ -24,7 +24,7 @@ net.Receive("playerDeath", function()
 		local speed = seed % 4 + 1 + (seed * 0.05)
 		local lolTick = (CurTime() * 2 + tick * speed * 100) % w
 
-		draw.SimpleText("RIP", fw.fonts.default:atSize(100)", lolTick, 0 + (h*2/4) + math.sin(lolTick/200) * 100, color_white)
+		draw.SimpleText("RIP", fw.fonts.default:atSize(100), lolTick, 0 + (h*2/4) + math.sin(lolTick/200) * 100, color_white)
 	end
 
 	-- Label
