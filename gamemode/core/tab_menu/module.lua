@@ -1,6 +1,7 @@
 require 'sty'
 fw.dep(CLIENT, 'hook')
 fw.dep(CLIENT, 'fonts')
+fw.dep(CLIENT, 'ui')
 
 if SERVER then
 	AddCSLuaFile()
@@ -81,6 +82,11 @@ fw.hook.Add('ScoreboardShow', function()
 	__FW_TABMENU:SetX(-__FW_TABMENU:GetWide())
 	__FW_TABMENU:MoveTo(0, __FW_TABMENU:GetY(), 0.1)
 	__FW_TABMENU:MakePopup()
+
+	vgui.Create('FWUIDropShadow')
+		:SetRadius(32)
+		:SetColor(Color(0, 0, 0, 155))
+		:ParentTo(__FW_TABMENU)
 end)
 
 fw.hook.Add('ScoreboardHide', function()
