@@ -74,6 +74,9 @@ function GM:Think(...)
 	return fw.hook.Call("Think", ...)
 end
 
+function GM:EntityRemoved(...)
+	return fw.hook.Call("EntityRemoved", ...)
+end
 --
 -- MODELE TEAMS
 --

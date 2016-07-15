@@ -4,7 +4,7 @@ net.Receive("playerDeath", function()
         local attacker = net.ReadEntity()
 
 	if suicide then
-	        deathText = "You commit suicide"
+	        deathText = "You committed suicide"
 	elseif IsValid(attacker) then
 		deathText = "You were killed by "..attacker:Nick()
 	end
