@@ -19,8 +19,8 @@ local function realignVotes()
 	end
 end
 
-local function removeVotePanel(pnl)
-	table.RemoveByValue(votePanels, pnl)
+local function removeVotePanel(pnl, index)
+	votePanels[index] = nil
 
 	realignVotes()
 end
@@ -34,8 +34,10 @@ local function wrapText(string, width)
 	return tbl
 end
 
+
+
 net.Receive("fw.sendVoteQuery", function()
-	local tbl = net.ReadTable()
+	local tbl = ndoc.table.fwVotes[net.ReadUInt(32)]
 
 	local vIndex = tbl.index
 	local vote = tbl
@@ -65,7 +67,7 @@ net.Receive("fw.sendVoteQuery", function()
 		end
 	end
 
-	table.insert(votePanels, pnl)
+	votePanels[vIndex] = pnl
 	realignVotes()
 
 	timer.Create("vote_"..vIndex, tbl.voteLength or vote_defLen, 1, function()
@@ -73,9 +75,7 @@ net.Receive("fw.sendVoteQuery", function()
 			pnl:Close()
 		end
 
-		removeVotePanel(pnl)
-		
-		table.remove(fw.vote.list, vIndex)
+		removeVotePanel(pnl, vIndex)
 	end)
 
 	local title_f = fw.fonts.default:fitToView(pnl:GetWide(), 75, title)
@@ -119,7 +119,7 @@ net.Receive("fw.sendVoteQuery", function()
 		end
 
 		draw.RoundedBox(0, 0, 0, w, h, col)
-		draw.SimpleText(yesText, yes_f, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(yesText .." ".. ndoc.table.fwVotes[vIndex].yes, yes_f, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	local no = vgui.Create("DButton", pnl)
@@ -136,26 +136,26 @@ net.Receive("fw.sendVoteQuery", function()
 		end
 
 		draw.RoundedBox(0, 0, 0, w, h, col)
-		draw.SimpleText(noText, no_f, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(noText .." ".. ndoc.table.fwVotes[vIndex].no, no_f, w / 2, h / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	function yes:DoClick()
-		net.Start("sendVoteResponse")
+		net.Start("fw.sendVoteResponse")
 			net.WriteInt(vIndex, 32)
 			net.WriteString(yesText)
 		net.SendToServer()
 
-		removeVotePanel(pnl)
+		removeVotePanel(pnl, vIndex)
 
 		pnl:Close()
 	end
 	function no:DoClick()
-		net.Start("sendVoteResponse")
+		net.Start("fw.sendVoteResponse")
 			net.WriteInt(vIndex, 32)
 			net.WriteString(noText)
 		net.SendToServer()
 
-		removeVotePanel(pnl)
+		removeVotePanel(pnl, vIndex)
 
 		pnl:Close()
 	end

@@ -5,7 +5,6 @@ end
 -- create the exported table
 fw.vote = fw.vote or {}
 fw.vote_defLen = 30 --seconds
-fw.vote.list = fw.vote.list or {}
 
 -- load internal dependencies
 fw.dep(SHARED, 'notif')

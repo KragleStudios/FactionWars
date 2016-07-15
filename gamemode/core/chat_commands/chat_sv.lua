@@ -207,7 +207,12 @@ end)
 fw.chat.addCMD("vote", "Makes a vote available to everyone", function(ply, desc)
 	fw.vote.createNew(ply:Nick().."'s vote", desc, player.GetAll(), 
 		function(decision, vote, results) 
-			PrintTable(results)
+			if (decision) then
+				decision = vote.yesText
+			else
+				decision = vote.noText
+			end
+
 			for k,v in pairs(player.GetAll()) do
 				v:FWChatPrint(Color(0, 0, 0), "[Votes]: ", Color(255, 255, 255), "'"..decision.. "' won in "..ply:Nick().."'s vote, with, ".. results[1] .." Yes votes, and ".. results[2] .." No votes!")
 			end
