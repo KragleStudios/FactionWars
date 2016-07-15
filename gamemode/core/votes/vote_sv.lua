@@ -6,22 +6,22 @@ util.AddNetworkString("fw.sendVote")
 local vCount = 1
 ndoc.table.fwVotes = {}
 
-local voteCache = {}
+local haveVoted = {}
 
 net.Receive("fw.sendVoteResponse", function(len, client)
 	local index = net.ReadInt(32)
 	local decision = net.ReadString()
 
 	--assign it!
-	voteCache[index] = voteCache[index] or {}
-
 	local vote = ndoc.table.fwVotes[index]
 	if (not vote) then 
 		client:FWChatPrint(Color(0, 0, 0), "[Votes]: ", Color(255, 255, 255), "This vote may no longer exist!") 
 		return 
 	end
-	
-	if (voteCache[index][client]) then
+
+	haveVoted[index] = haveVoted[index] or {}
+
+	if (haveVoted[index][client]) then
 		client:FWChatPrint(Color(0, 0, 0), "[Votes]: ", Color(255, 255, 255), "You have already voted!") 
 		return
 	end
@@ -34,7 +34,7 @@ net.Receive("fw.sendVoteResponse", function(len, client)
 	end
 
 	--cache it!
-	voteCache[index][client] = decision
+	haveVoted[index][client] = decision
 end)
 
 function fw.vote.getVoteStatus(index)
@@ -46,7 +46,7 @@ function fw.vote.getVoteStatus(index)
 	local yes     = ndoc.table.fwVotes[index].yes
 	local no      = ndoc.table.fwVotes[index].no
 
-	return yes > no, {yes, no, votes}
+	return yes > no, {yesVotes = yes, noVotes = no, totalVotes = votes}
 end
 
 function fw.vote.createNew(vTitle, vDesc, vPlayers, vCallback, vYText, vNText, vote_len)
@@ -55,16 +55,6 @@ function fw.vote.createNew(vTitle, vDesc, vPlayers, vCallback, vYText, vNText, v
 
 	--localize a version for the timer!!!! DUH ME
 	local count = vCount
-
-	local tbl = {
-		index = count,
-		title = vTitle, 
-		desc = vDesc, 
-		players = vPlayers, 
-		yesText = vYText or "Yes", 
-		noText = vNText or "No",
-		voteLength = vote_len or fw.vote_defLen
-	}
 
 	local syncTable = {
 		index = count,
@@ -80,20 +70,14 @@ function fw.vote.createNew(vTitle, vDesc, vPlayers, vCallback, vYText, vNText, v
 	timer.Create("vote_"..count, vote_len or fw.vote_defLen, 1, function()
 		local decision, vote_tbl = fw.vote.getVoteStatus(count)
 
-		vCallback(decision, tbl, vote_tbl)
+		vCallback(decision, syncTable, vote_tbl)
 
 		--clear the memory up
 		ndoc.table.fwVotes[count] = nil		
-		voteCache[count] = nil
+		haveVoted[count] = nil
 	end)
 
 	ndoc.table.fwVotes[count] = syncTable
-
-	for k,v in pairs(vPlayers) do
-		net.Start("fw.sendVoteQuery")
-			net.WriteUInt(count, 32)
-		net.Send(v)
-	end
 	
 	vCount = vCount + 1
 end

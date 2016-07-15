@@ -34,9 +34,8 @@ local function wrapText(string, width)
 	return tbl
 end
 
-
-
-net.Receive("fw.sendVoteQuery", function()
+-- play nice with lua refresh this does not.
+ndoc.addHook('fwVotes.?', function(voteIndex, tbl)
 	local tbl = ndoc.table.fwVotes[net.ReadUInt(32)]
 
 	local vIndex = tbl.index
