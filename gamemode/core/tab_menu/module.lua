@@ -10,25 +10,61 @@ end
 
 fw.tab_menu = {}
 
-
 vgui.Register('fwTabMenuTabButton', {
 	Init = function(self)
 		self.BaseClass.Init(self)
 	end,
 
+	PaintNormal = function(self, w, h)
+		surface.SetDrawColor(0, 0, 0, 200)
+		surface.DrawRect(0, 0, w, h)
+	end,
+
 	PaintHovered = function(self, w, h)
+		self:PaintNormal(w, h)
+
 		surface.SetDrawColor(255, 255, 255)
 		surface.DrawOutlinedRect(0, 0, w, h)
 	end,
 
 	PaintPressed = function(self, w, h)
-		surface.SetDrawColor(255, 255, 255, 10)
-		surface.DrawRect(0, 0, w, h)
+		self:PaintNormal(w, h)
 
 		self:PaintHovered(w, h)
+
+		surface.SetDrawColor(255, 255, 255, 20)
+		surface.DrawRect(0, 0, w, h)
+
 	end,
 }, 'STYButton')
 
+function fw.tab_menu.displayContentPanel(callback)
+	if not IsValid(__FW_TABMENU) then error "this function is intended for displaying content when the tab menu is open" end
+	if IsValid(__FW_CONTENTPANEL) then error "must first hide the existing content panel" end
+
+	__FW_CONTENTPANEL = vgui.Create('STYPanel')
+	__FW_CONTENTPANEL.Paint = function(self, w, h)
+		surface.SetDrawColor(0, 0, 0)
+		surface.DrawRect(0, 0, w, h)
+	end
+
+	local function calcCenter(panel)
+		local pw, ph = panel:GetParent():GetSize()
+		local w, h = panel:GetSize()
+		return (pw - w) * 0.5, (ph - h) * 0.5
+	end
+
+	__FW_CONTENTPANEL:SetSize(sty.ScrH * 0.7, sty.ScrH * 0.7)
+	__FW_CONTENTPANEL:Center()
+
+	if callback then callback(__FW_CONTENTPANEL) end
+end
+
+
+function fw.tab_menu.hideContentPanel(callback)
+	__FW_CONTENTPANEL:Remove()
+	if callback then callback() end
+end
 
 vgui.Register('fwTabMenu', {
 		Init = function(self)
@@ -49,8 +85,20 @@ vgui.Register('fwTabMenu', {
 			p.DoClick = doClick or ra.fn.noop
 		end,
 
-		AddView = function(self, title, panelClass)
+		-- @arg title:string
+		-- @arg keepOpen:bool should it stay open when tab is released 
+		AddView = function(self, title, keepOpen, populate)
+			sty.RestoreCursor('fw.tab_menu.' .. tostring(title))	
+			self:AddNavButton(title, function()
+				self:Hide(function() if IsValid(self) then self:Remove() end end)
+				fw.tab_menu.displayContentPanel(function(panel)
+					panel.keepOpen = keepOpen
 
+					panel.OnRemove = function()
+						sty.SaveCursor('fw.tab_menu.' .. tostring(title))
+					end
+				end)
+			end)
 		end,
 
 		PerformLayout = function(self)
@@ -64,39 +112,65 @@ vgui.Register('fwTabMenu', {
 		end,
 
 		Paint = function(self, w, h)
-			surface.SetDrawColor(0, 0, 0, 230)
+			surface.SetDrawColor(0, 0, 0, 200)
 			surface.DrawRect(0, 0, w, h)
 		end,
+
+		Show = function(self, onFinish)
+			sty.RestoreCursor('fw.tabmenu')
+
+			-- animate into view
+			self:PerformLayout()
+			self:SetX(-self:GetWide())
+			self:MoveTo(0, self:GetY(), fw.config.uiAnimTimeQuick, 0, -1, onFinish or ra.fn.noop)
+			self:MakePopup()
+
+		end,
+
+		Hide = function(self, onFinish)
+			sty.SaveCursor('fw.tabmenu')
+
+			self:MoveTo(-self:GetWide(), self:GetY(), fw.config.uiAnimTimeQuick, 0, -1, onFinish)
+		end,
+
 	}, 'STYPanel')
 
 
 fw.hook.Add('ScoreboardShow', function()
 	fw.print("Opening tab menu")
-	__FW_TABMENU = vgui.Create('fwTabMenu')
-	__FW_TABMENU:AddNavButton("JOBS / FACTIONS", nil)
-	__FW_TABMENU:AddNavButton("PLAYERS", nil)
-	__FW_TABMENU:AddNavButton("COMMANDS", nil)
 
-	-- animate into view
-	__FW_TABMENU:PerformLayout()
-	__FW_TABMENU:SetX(-__FW_TABMENU:GetWide())
-	__FW_TABMENU:MoveTo(0, __FW_TABMENU:GetY(), 0.1)
-	__FW_TABMENU:MakePopup()
+	local function open()
 
-	vgui.Create('FWUIDropShadow')
-		:SetRadius(32)
-		:SetColor(Color(0, 0, 0, 155))
-		:ParentTo(__FW_TABMENU)
+		__FW_TABMENU = vgui.Create('fwTabMenu')
+		__FW_TABMENU:AddView("JOBS / FACTIONS", false)
+		__FW_TABMENU:AddView("PLAYERS", false)
+		__FW_TABMENU:AddView("COMMANDS", false)
+		__FW_TABMENU:Show()
+
+		vgui.Create('FWUIDropShadow')
+			:SetRadius(32)
+			:SetColor(Color(0, 0, 0, 50))
+			:SetNoBackground(true)
+			:ParentTo(__FW_TABMENU)
+
+	end 
+
+	if IsValid(__FW_CONTENTPANEL) then
+		fw.tab_menu.hideContentPanel(open)
+	else 
+		open()
+	end
 end)
 
 fw.hook.Add('ScoreboardHide', function()
 	fw.print("Closing tab menu")
 	if IsValid(__FW_TABMENU) then
-		__FW_TABMENU:MoveTo(-__FW_TABMENU:GetWide(), __FW_TABMENU:GetY(), 0.1, 0, -1, function()
-			if IsValid(__FW_TABMENU) then
-				__FW_TABMENU:Remove()
-				__FW_TABMENU:MakePopup()
-			end
+		__FW_TABMENU:Hide(function()
+			if IsValid(__FW_TABMENU) then __FW_TABMENU:Remove() end
 		end)
+	end
+
+	if IsValid(__FW_CONTENTPANEL) and not __FW_CONTENTPANEL.keepOpen then
+		fw.tab_menu.hideContentPanel()
 	end
 end)

@@ -29,6 +29,11 @@ vgui.Register('FWUIDropShadow', {
 		return self  
 	end,
 
+	SetNoBackground = function(self, noBackground)
+		self._noBackground = noBackground 
+		return self 
+	end,
+
 	ParentTo = function(self, panel)
 		self._following = panel
 		self:SetParent(panel:GetParent())
@@ -45,9 +50,12 @@ vgui.Register('FWUIDropShadow', {
 
 	Paint = function(self, w, h)
 		local r = self._radius 
+
 		surface.SetDrawColor(self._color)
 
-		surface.DrawRect(r, r, w - 2 * r, h - 2 * r)
+		if not self._noBackground then
+			surface.DrawRect(r, r, w - 2 * r, h - 2 * r)
+		end
 
 		surface.SetMaterial(matH)
 		-- top horizontal
