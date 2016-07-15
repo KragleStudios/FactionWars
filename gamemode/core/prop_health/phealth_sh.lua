@@ -50,7 +50,7 @@ else
 	fw.hook.Add("HUDPaint", "ShowPropHealth", function()
 		local hit = LocalPlayer():GetEyeTrace()
 
-		if (hit.Entity and hit.Entity:GetClass() == "prop_physics" and (hit.HitPos:DistToSqr(LocalPlayer():GetPos()) < (100 * 100))) then
+		if (hit and IsValid(hit.Entity) and hit.Entity:GetClass() == "prop_physics" and (hit.HitPos:DistToSqr(LocalPlayer():GetPos()) < (100 * 100))) then
 			local health = ndoc.table.fwProps[hit.Entity:EntIndex()].health
 
 			draw.SimpleText("Health: ".. health, "Default", ScrW() / 2, ScrH() / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
