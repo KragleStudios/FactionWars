@@ -20,7 +20,7 @@ end
 
 function ENT:Use(event, ply)
 	if IsValid(ply) and ply:IsPlayer() then
-		local remain = self:GetNWInt("remaining")
+		local remain = self:GetRemaining()
 		if (remain - 1 < 0) then 
 			return 
 		end
@@ -30,7 +30,7 @@ function ENT:Use(event, ply)
 			return
 		end
 
-		self:SetNWInt("remaining", remain - 1)
+		self:SetRemaining(remaining - 1)
 
 		local ent = ents.Create(self.entity)
 		ent:SetPos(self:GetPos() + Vector(0, 0, 20))
@@ -60,11 +60,7 @@ function ENT:setEntity(class)
 	self.entity = class
 end
 
-function ENT:setName(name)
-	self:SetNWString("name", name)
-end
-
 function ENT:setShipmentAmount(count)
-	self:SetNWInt("remaining", count)
+	self:SetRemaining(count)
 end
 
