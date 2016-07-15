@@ -66,6 +66,14 @@ function GM:EntityTakeDamage(...)
 	return fw.hook.Call("EntityTakeDamage", ...)
 end
 
+function GM:StartChat(...)
+	return fw.hook.Call("StartChat", ...)
+end
+
+function GM:Think(...)
+	return fw.hook.Call("Think", ...)
+end
+
 --
 -- MODELE TEAMS
 --

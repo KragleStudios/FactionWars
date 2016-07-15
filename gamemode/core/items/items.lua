@@ -17,8 +17,8 @@ fw.ents.registerItem("Blowtorch", {
 fw.ents.registerItem("Tier 1 Money Printer", {
 	stringID = "t1printer",
 	color =  Color(211, 84, 0),
-	model = "models/props_c17/consolebox01a.mdl", --this is the model shown on the menu display, and doesn't have to mach the ent model
-	entity = "fw_printer_tier1", --this MUST be the entity classname 
+	model = "models/props_c17/consolebox01a.mdl",
+	entity = "fw_printer_tier1",
 	max = 0,
 	price = 1500,
 	removeOnDisc = true,
@@ -28,8 +28,8 @@ fw.ents.registerItem("Tier 1 Money Printer", {
 fw.ents.registerItem("Tier 2 Money Printer", {
 	stringID = "t2printer",
 	color =  Color(243, 156, 18),
-	model = "models/props_c17/consolebox01a.mdl", --this is the model shown on the menu display, and doesn't have to mach the ent model
-	entity = "fw_printer_tier2", --this MUST be the entity classname 
+	model = "models/props_c17/consolebox01a.mdl",
+	entity = "fw_printer_tier2",
 	max = 0,
 	price = 2750,
 	removeOnDisc = true,
@@ -39,8 +39,8 @@ fw.ents.registerItem("Tier 2 Money Printer", {
 fw.ents.registerItem("Tier 3 Money Printer", {
 	stringID = "t3printer",
 	color =  Color(52, 73, 94),
-	model = "models/props_c17/consolebox01a.mdl", --this is the model shown on the menu display, and doesn't have to mach the ent model
-	entity = "fw_printer_tier3", --this MUST be the entity classname 
+	model = "models/props_c17/consolebox01a.mdl",
+	entity = "fw_printer_tier3",
 	max = 0,
 	price = 5000,
 	removeOnDisc = true,
@@ -50,8 +50,8 @@ fw.ents.registerItem("Tier 3 Money Printer", {
 fw.ents.registerItem("Tier 4 Money Printer", {
 	stringID = "t4printer",
 	color =  Color(142, 68, 173),
-	model = "models/props_c17/consolebox01a.mdl", --this is the model shown on the menu display, and doesn't have to mach the ent model
-	entity = "fw_printer_tier4", --this MUST be the entity classname 
+	model = "models/props_c17/consolebox01a.mdl",
+	entity = "fw_printer_tier4",
 	max = 0,
 	price = 12500,
 	removeOnDisc = true,
@@ -61,8 +61,8 @@ fw.ents.registerItem("Tier 4 Money Printer", {
 fw.ents.registerItem("Tier 5 Money Printer", {
 	stringID = "t5printer",
 	color =  Color(192, 57, 43),
-	model = "models/props_c17/consolebox01a.mdl", --this is the model shown on the menu display, and doesn't have to mach the ent model
-	entity = "fw_printer_tier5", --this MUST be the entity classname 
+	model = "models/props_c17/consolebox01a.mdl",
+	entity = "fw_printer_tier5",
 	max = 0,
 	price = 25000,
 	removeOnDisc = true,
@@ -72,8 +72,8 @@ fw.ents.registerItem("Tier 5 Money Printer", {
 fw.ents.registerItem("Titan Money Printer", {
 	stringID = "titan",
 	color =  Color(44, 62, 80),
-	model = "models/props_c17/consolebox01a.mdl", --this is the model shown on the menu display, and doesn't have to mach the ent model
-	entity = "fw_printer_titan", --this MUST be the entity classname 
+	model = "models/props_c17/consolebox01a.mdl",
+	entity = "fw_printer_titan",
 	max = 0,
 	price = 40000,
 	removeOnDisc = true,
