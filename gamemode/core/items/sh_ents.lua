@@ -8,6 +8,7 @@ function fw.ents.registerItem(name, tbl)
 	assert(tbl.entity, "must provide entity class name for: "..name)
 	assert(tbl.price, "must provide price for: "..name)
 	assert(tbl.max, "must provide max for: "..name)
+	assert(tbl.storable, "must dictate storability for: "..name)
 
 	tbl.name = name
 	tbl.color = tbl.color or Color(100, 100, 100)

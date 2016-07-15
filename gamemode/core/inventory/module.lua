@@ -3,7 +3,7 @@ if SERVER then
 end
 
 -- create the exported table
-fw.ents = fw.ents or {}
+fw.inv = fw.inv or {}
 
 -- load internal dependencies
 fw.dep(SHARED, 'notif')

@@ -5,6 +5,7 @@ fw.ents.registerItem("Blowtorch", {
 	entity = "ent_class", --this MUST be the entity classname 
 	max = 0,
 	price = 100,
+	storable = false,
 	--optional
 	--removeOnDisc = true/false, remove this when the player leaves
 	--category = "General Merch, custom cat",
@@ -14,7 +15,6 @@ fw.ents.registerItem("Blowtorch", {
 	--canBuy = function(item, ply) return true/false end
 	--shipment = true/false,
 	--shipmentCount = 10 -- how many come in a shipment?
-	--shipmentCost  = 1000
 })
 
 fw.ents.registerItem("Tier 1 Money Printer", {
@@ -27,6 +27,7 @@ fw.ents.registerItem("Tier 1 Money Printer", {
 	removeOnDisc = true,
 	category = "Printers",
 	shipment = false,
+	storable = false,
 })
 
 fw.ents.registerItem("Tier 2 Money Printer", {
@@ -39,6 +40,7 @@ fw.ents.registerItem("Tier 2 Money Printer", {
 	removeOnDisc = true,
 	category = "Printers",
 	shipment = false,
+	storable = false,
 })
 
 fw.ents.registerItem("Tier 3 Money Printer", {
@@ -51,6 +53,7 @@ fw.ents.registerItem("Tier 3 Money Printer", {
 	removeOnDisc = true,
 	category = "Printers",
 	shipment = false,
+	storable = false,
 })
 
 fw.ents.registerItem("Tier 4 Money Printer", {
@@ -63,6 +66,7 @@ fw.ents.registerItem("Tier 4 Money Printer", {
 	removeOnDisc = true,
 	category = "Printers",
 	shipment = false,
+	storable = false,
 })
 
 fw.ents.registerItem("Tier 5 Money Printer", {
@@ -75,6 +79,7 @@ fw.ents.registerItem("Tier 5 Money Printer", {
 	removeOnDisc = true,
 	category = "Printers",
 	shipment = false,
+	storable = false,
 })
 
 fw.ents.registerItem("Titan Money Printer", {
@@ -87,4 +92,5 @@ fw.ents.registerItem("Titan Money Printer", {
 	removeOnDisc = true,
 	category = "Printers",
 	shipment = false,
+	storable = false,
 })
