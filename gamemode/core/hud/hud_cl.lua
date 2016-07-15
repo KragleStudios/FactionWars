@@ -73,7 +73,7 @@ vgui.Register('fwHudInfo', {
 
 				local function updateMoney()
 					if not IsValid(self.money) then return end
-					self.money:SetText('MONEY: ' .. fw.config.currencySymbol .. tostring(LocalPlayer():getMoney()))
+					self.money:SetText('MONEY: ' .. fw.config.currencySymbol .. string.Comma(tostring(LocalPlayer():getMoney())))
 				end
 				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'money'), 'set', updateMoney)
 				updateMoney()

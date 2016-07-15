@@ -132,7 +132,7 @@ function fw.chat.parseString(ply, str)
 
 		local value = args[k] --where are we in the string the player sent?
 		if (not value) then
-			ply:FWChatPrintError(Color(0, 0, 0), '[Faction Wars] ', Color(255, 0, 0), ' Command requires ' .. #params .. ' arguments, failed to run.')
+			ply:FWChatPrintError(Color(255, 0, 0), ' Command requires ' .. #params .. ' arguments, failed to run.')
 			return str
 		end
 
@@ -201,7 +201,7 @@ fw.chat.addCMD("help", "Prints a help log to your screen", function(ply)
 		end
 		ply:FWConPrint("Usage: "..usage)
 	end
-	ply:FWChatPrint(Color(0, 0, 0), '[Faction Wars]: ', Color(255, 255, 255), 'A list of all available commands has printed to your console!')
+	ply:FWChatPrint(Color(255, 255, 255), 'A list of all available commands has printed to your console!')
 end)
 
 fw.chat.addCMD("vote", "Makes a vote available to everyone", function(ply, desc)
@@ -209,7 +209,7 @@ fw.chat.addCMD("vote", "Makes a vote available to everyone", function(ply, desc)
 		function(decision, vote, results) 
 			PrintTable(results)
 			for k,v in pairs(player.GetAll()) do
-				v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Votes]: ", Color(255, 255, 255), "'"..decision.. "' won in "..ply:Nick().."'s vote, with, ".. results[1] .." Yes votes, and ".. results[2] .." No votes!")
+				v:FWChatPrint(Color(0, 0, 0), "[Votes]: ", Color(255, 255, 255), "'"..decision.. "' won in "..ply:Nick().."'s vote, with, ".. results[1] .." Yes votes, and ".. results[2] .." No votes!")
 			end
 		end, "Yes", "No", 15)
 end):addParam("description", "string")
