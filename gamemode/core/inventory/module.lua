@@ -10,6 +10,8 @@ fw.dep(SHARED, 'notif')
 fw.dep(SHARED, 'hook')
 fw.dep(SERVER, 'data')
 fw.dep(SHARED, 'items')
+fw.dep(CLIENT, 'fonts')
+fw.dep(CLIENT, 'ui')
 
 -- proper include system
 fw.include_sh 'inventory_sh.lua'

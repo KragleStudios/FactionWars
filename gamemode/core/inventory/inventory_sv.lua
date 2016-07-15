@@ -82,3 +82,8 @@ function fw.inv.addItem(ply, entity)
 	net.Start("fw.refreshInventory")
 	net.Send(ply)
 end
+
+fw.chat.addCMD("inv", "Opens your inventory", function(ply)
+	net.Start("fw.openInventory")
+	net.Send(ply)
+end)

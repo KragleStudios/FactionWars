@@ -145,6 +145,7 @@ fw.hook.Add('ScoreboardShow', function()
 		__FW_TABMENU:AddView("JOBS / FACTIONS", false)
 		__FW_TABMENU:AddView("PLAYERS", false)
 		__FW_TABMENU:AddView("COMMANDS", false)
+		__FW_TABMENU:AddView("INVENTORY", false)
 		__FW_TABMENU:Show()
 
 		vgui.Create('FWUIDropShadow')
