@@ -23,10 +23,8 @@ fw.hook.Add("CanPlayerBuyItem", "CanBuyItem", function(ply, item_index)
 		return false
 	end
 
-	ply.cur_items = ply.cur_items or {}
-
 	local maxItem  = i.max
-	local curItems = ply.cur_items[item_index]
+	local curItems = ndoc.table.items[ply].inventory[i.stringID]
 	local factionOnly = i.factionOnly
 	local jobOnly = i.jobOnly
 	local price = i.price

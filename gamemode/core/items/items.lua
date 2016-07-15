@@ -12,6 +12,9 @@ fw.ents.registerItem("Blowtorch", {
 	--jobOnly = {table of teams, TEAM_*}
 	--onSpawn = function(item, ply) end,
 	--canBuy = function(item, ply) return true/false end
+	--shipment = true/false,
+	--shipmentCount = 10 -- how many come in a shipment?
+	--shipmentCost  = 1000
 })
 
 fw.ents.registerItem("Tier 1 Money Printer", {
@@ -23,6 +26,7 @@ fw.ents.registerItem("Tier 1 Money Printer", {
 	price = 1500,
 	removeOnDisc = true,
 	category = "Printers",
+	shipment = false,
 })
 
 fw.ents.registerItem("Tier 2 Money Printer", {
@@ -34,6 +38,7 @@ fw.ents.registerItem("Tier 2 Money Printer", {
 	price = 2750,
 	removeOnDisc = true,
 	category = "Printers",
+	shipment = false,
 })
 
 fw.ents.registerItem("Tier 3 Money Printer", {
@@ -45,6 +50,7 @@ fw.ents.registerItem("Tier 3 Money Printer", {
 	price = 5000,
 	removeOnDisc = true,
 	category = "Printers",
+	shipment = false,
 })
 
 fw.ents.registerItem("Tier 4 Money Printer", {
@@ -56,6 +62,7 @@ fw.ents.registerItem("Tier 4 Money Printer", {
 	price = 12500,
 	removeOnDisc = true,
 	category = "Printers",
+	shipment = false,
 })
 
 fw.ents.registerItem("Tier 5 Money Printer", {
@@ -67,6 +74,7 @@ fw.ents.registerItem("Tier 5 Money Printer", {
 	price = 25000,
 	removeOnDisc = true,
 	category = "Printers",
+	shipment = false,
 })
 
 fw.ents.registerItem("Titan Money Printer", {
@@ -78,4 +86,5 @@ fw.ents.registerItem("Titan Money Printer", {
 	price = 40000,
 	removeOnDisc = true,
 	category = "Printers",
+	shipment = false,
 })
