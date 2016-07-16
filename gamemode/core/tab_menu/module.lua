@@ -57,19 +57,10 @@ vgui.Register('fwTabMenu', {
 			p.DoClick = doClick or ra.fn.noop
 		end,
 
-		-- @arg title:string
-		-- @arg keepOpen:bool should it stay open when tab is released 
-		AddView = function(self, title, keepOpen, populate)
-			sty.RestoreCursor('fw.tab_menu.' .. tostring(title))	
+		AddView = function(self, title, constructor)
 			self:AddNavButton(title, function()
-				self:Hide(function() if IsValid(self) then self:Remove() end end)
-				fw.tab_menu.displayContentPanel(function(panel)
-					panel.keepOpen = keepOpen
-
-					panel.OnRemove = function()
-						sty.SaveCursor('fw.tab_menu.' .. tostring(title))
-					end
-				end)
+				fw.tab_menu.hideScoreboard()
+				fw.tab_menu.displayContent(title, constructor, function() end)
 			end)
 		end,
 
@@ -109,41 +100,76 @@ vgui.Register('fwTabMenu', {
 
 
 fw.hook.Add('ScoreboardShow', function()
+	fw.tab_menu.showScoreboard()
+end)
+
+fw.hook.Add('ScoreboardHide', function()
+	fw.tab_menu.hideScoreboard()
+end)
+
+
+function fw.tab_menu.showScoreboard()
 	fw.print("Opening tab menu")
 
-	local function open()
+	fw.tab_menu.hideContent(function()
 
 		__FW_TABMENU = vgui.Create('fwTabMenu')
-		__FW_TABMENU:AddView("JOBS / FACTIONS", false)
-		__FW_TABMENU:AddView("PLAYERS", false)
-		__FW_TABMENU:AddView("COMMANDS", false)
-		__FW_TABMENU:AddView("INVENTORY", false)
 		__FW_TABMENU:Show()
+
+		__FW_TABMENU:AddView('PLAYERS', function()
+
+		end)
 
 		vgui.Create('FWUIDropShadow')
 			:SetRadius(32)
 			:SetColor(Color(0, 0, 0, 50))
 			:SetNoBackground(true)
 			:ParentTo(__FW_TABMENU)
+	end)
+end
 
-	end 
-
-	if IsValid(__FW_CONTENTPANEL) then
-		fw.tab_menu.hideContentPanel(open)
-	else 
-		open()
-	end
-end)
-
-fw.hook.Add('ScoreboardHide', function()
+function fw.tab_menu.hideScoreboard(callback)
 	fw.print("Closing tab menu")
 	if IsValid(__FW_TABMENU) then
 		__FW_TABMENU:Hide(function()
 			if IsValid(__FW_TABMENU) then __FW_TABMENU:Remove() end
+			if callback then callback() end
 		end)
 	end
+end
 
-	if IsValid(__FW_CONTENTPANEL) and not __FW_CONTENTPANEL.keepOpen then
-		fw.tab_menu.hideContentPanel()
+
+function fw.tab_menu.hideContent(callback)
+	if IsValid(__FW_TABMENU_CONTENT) then
+		local content = __FW_TABMENU_CONTENT
+		content:MoveTo(content:GetX(), sty.ScrH, fw.config.uiAnimTimeQuick, 0, -1, function()
+			content:Remove()
+			if callback then callback() end
+		end)
+		return 
 	end
-end)
+
+	callback()
+end
+
+function fw.tab_menu.displayContent(title, constructor, callback)
+	fw.tab_menu.hideContent(function()
+
+		__FW_TABMENU_CONTENT = vgui.Create('FWUIFrame')
+		local content = __FW_TABMENU_CONTENT
+
+		content:SetSize(sty.ScrH * 0.7, sty.ScrH * 0.7)
+		content:MakePopup()
+		content:SetTitle(title or 'Unknown Content Panel')
+		content:CenterHorizontal()
+
+		content:SetY(sty.ScrH)
+		content:MoveTo(
+			content:GetX(), 
+			(sty.ScrH - content:GetTall()) * 0.5, 
+			fw.config.uiAnimTimeQuick, 0, -1, 
+			callback or ra.fn.noop)
+
+		constructor(content)
+	end)
+end
