@@ -38,34 +38,6 @@ vgui.Register('fwTabMenuTabButton', {
 	end,
 }, 'STYButton')
 
-function fw.tab_menu.displayContentPanel(callback)
-	if not IsValid(__FW_TABMENU) then error "this function is intended for displaying content when the tab menu is open" end
-	if IsValid(__FW_CONTENTPANEL) then error "must first hide the existing content panel" end
-
-	__FW_CONTENTPANEL = vgui.Create('STYPanel')
-	__FW_CONTENTPANEL.Paint = function(self, w, h)
-		surface.SetDrawColor(0, 0, 0)
-		surface.DrawRect(0, 0, w, h)
-	end
-
-	local function calcCenter(panel)
-		local pw, ph = panel:GetParent():GetSize()
-		local w, h = panel:GetSize()
-		return (pw - w) * 0.5, (ph - h) * 0.5
-	end
-
-	__FW_CONTENTPANEL:SetSize(sty.ScrH * 0.7, sty.ScrH * 0.7)
-	__FW_CONTENTPANEL:Center()
-
-	if callback then callback(__FW_CONTENTPANEL) end
-end
-
-
-function fw.tab_menu.hideContentPanel(callback)
-	__FW_CONTENTPANEL:Remove()
-	if callback then callback() end
-end
-
 vgui.Register('fwTabMenu', {
 		Init = function(self)
 			local p = sty.ScreenScale(2)

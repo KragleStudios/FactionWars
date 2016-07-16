@@ -1,16 +1,6 @@
 local matH = Material 'kragle/drop-shadow-h.png'
 local matV = Material 'kragle/drop-shadow-v.png'
 
-vgui.Register('__FWUIDropShadowActual', {
-	Init = function()
-
-	end,
-
-	Paint = function(self, w, h)
-
-	end,
-})
-
 vgui.Register('FWUIDropShadow', {
 	Init = function(self)
 		self:SetRadius(32)
@@ -77,9 +67,8 @@ vgui.Register('FWUIDropShadow', {
 		surface.DrawTexturedRectUV(0, r, r, h - 2*r, 0, 0, 1, 0.5)
 		-- right vertical
 		surface.DrawTexturedRectUV(w - r, r, r, h - 2*r, 1, 0, 0, 0.5)
-
 	end,
-})
+}, 'STYPanel')
 
 
 concommand.Add('fw_ui_dropShadowTest', function()
