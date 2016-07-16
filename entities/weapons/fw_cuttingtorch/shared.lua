@@ -64,7 +64,10 @@ function SWEP:DrawHUD()
 	surface.SetDrawColor(32, 32, 32, 230)
 	surface.DrawRect(ScrW() * .5 - 200, 200, 400, 20)
 
-	local pcnt =  LocalPlayer():GetEyeTrace().Entity:getHealth() / LocalPlayer():GetEyeTrace().Entity:getMaxHealth() * 100
+	local pcnt = LocalPlayer():GetEyeTrace().Entity:getHealth() / LocalPlayer():GetEyeTrace().Entity:getMaxHealth() * 100
 	surface.SetDrawColor((100 - pcnt) * 2.5, pcnt * 2.5, 0)
 	surface.DrawRect(ScrW() * .5 - 200, 200, math.Clamp( pcnt * 4, 0, 400), 20)
+	
+	surface.SetDrawColor(color_black)
+	surface.DrawOutlinedRect(ScrW() * .5 - 200, 200, 400, 20)
 end
