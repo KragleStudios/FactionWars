@@ -33,6 +33,10 @@ function SWEP:Reload()
 	
 end
 
+function SWEP:SecondaryAttack()
+
+end
+
 function SWEP:PrimaryAttack()
 	if not IsFirstTimePredicted() then return end
 	local tr = self.Owner:GetEyeTrace()
