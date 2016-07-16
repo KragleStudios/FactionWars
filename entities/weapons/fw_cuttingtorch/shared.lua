@@ -52,6 +52,7 @@ function SWEP:DoImpactEffect(tr)
 	effectdata:SetOrigin( tr.HitPos + tr.HitNormal )
 	effectdata:SetNormal( tr.HitNormal )
 	util.Effect( "AR2Impact", effectdata )
+	util.Effect ("ManhackSparks", effectdata)
 
 end
 
