@@ -162,13 +162,13 @@ vgui.Register('fwHudInfo', {
 		end,
 
 		PerformLayout = function(self)
-			self.layout:SetTall(sty.ScreenScale(25))
+			self.layout:SetTall(sty.ScreenScale(20))
 
 			-- do layout
 			self.money:SetWide(sty.ScreenScale(100))
 			self.job:SetWide(sty.ScreenScale(100))
 			self.faction:SetWide(sty.ScreenScale(100))
-			self.hp:SetWide(sty.ScreenScale(50))
+			self.hp:SetWide(sty.ScreenScale(100))
 
 			local p = sty.ScreenScale(2)
 			self.layout:SetPadding(p)

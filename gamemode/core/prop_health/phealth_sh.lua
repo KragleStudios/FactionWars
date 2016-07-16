@@ -1,7 +1,7 @@
 local entity = FindMetaTable("Entity")
 
 function entity:getHealth()
-	return ndoc.table.fwProps[self:EntIndex()].health
+	return (ndoc.table.fwProps[self:EntIndex()] or {}).health
 end
 
 
@@ -50,10 +50,8 @@ else
 	fw.hook.Add("HUDPaint", "ShowPropHealth", function()
 		local hit = LocalPlayer():GetEyeTrace()
 
-		if (hit and IsValid(hit.Entity) and hit.Entity:GetClass() == "prop_physics" and (hit.HitPos:DistToSqr(LocalPlayer():GetPos()) < (100 * 100))) then
-			local health = ndoc.table.fwProps[hit.Entity:EntIndex()].health
-
-			draw.SimpleText("Health: ".. health, "Default", ScrW() / 2, ScrH() / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		if (IsValid(hit.Entity) and hit.Entity:GetClass() == "prop_physics" and (hit.HitPos:DistToSqr(LocalPlayer():GetPos()) < (100 * 100))) then
+			draw.SimpleText("Health: ".. tostring(hit.Entity:getHealth()), "Default", ScrW() / 2, ScrH() / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		end
 	end)
 end

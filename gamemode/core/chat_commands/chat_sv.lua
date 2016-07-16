@@ -27,7 +27,7 @@ function fw.chat.addCMD(cname, chelp, cfunc)
 
 	--support for calling commands via the console
 	concommand.Add("fw_" .. cname, function(ply, cmd, args, argStr)
-		fw.chat.parseString(ply, "!"..cmd:sub(4 --[[length of fw_ prefix + 1]]).." "..argStr) --spoof a chat command structure (lol)
+		fw.chat.parseString(ply, "!"..cmd:sub(4 --[[length of fw_ prefix + 1]]).." "..argStr)
 	end)
 
 	return obj
@@ -95,7 +95,6 @@ fw.chat.paramTypes['number'] = function(data) return tonumber(data) end
 fw.chat.paramTypes['string'] = function(data) return tostring(data) end
 
 function fw.chat.parseString(ply, str)
-
 	--get cmd name
 	local string_parts = string.Explode(" ", str)
 	local cmdn = string_parts[1]
@@ -103,7 +102,7 @@ function fw.chat.parseString(ply, str)
 	--make sure the player is trying to call a cmd
 	local first = string.sub(cmdn, 1, 1)
 	if (not first:match("^[!/$#@]")) then
-		return str
+		return
 	end
 
 	--make sure the command oject exists
@@ -179,9 +178,11 @@ fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 end)
 
 --basic /me command
+--[[ -- broken and not important enough to be worth fixing
 fw.chat.addCMD("me", "Sends a message spoofing yourself", function(ply, text)
 	ply:FWChatPrint(team.GetColor(ply:Team()), ply:Nick(), " ", text)
 end):addParam('message', 'string')
+]]
 
 --basic help command
 fw.chat.addCMD("help", "Prints a help log to your screen", function(ply)
@@ -207,14 +208,10 @@ end)
 fw.chat.addCMD("vote", "Makes a vote available to everyone", function(ply, desc)
 	fw.vote.createNew(ply:Nick().."'s vote", desc, player.GetAll(), 
 		function(decision, vote, results) 
-			if (decision) then
-				decision = vote.yesText
-			else
-				decision = vote.noText
-			end
 
-			for k,v in pairs(player.GetAll()) do
-				v:FWChatPrint(Color(0, 0, 0), "[Votes]: ", Color(255, 255, 255), "'"..decision.. "' won in "..ply:Nick().."'s vote, with, ".. results[1] .." Yes votes, and ".. results[2] .." No votes!")
-			end
+			decision = decision and vote.yesText or vote.noText 
+
+			fw.notif.chatPrint(player.GetAll(), color_black, "[Votes]: ", color_white, "'"..decision.. "' won in ", ply, "'s vote, with, ".. results.yesVotes .." Yes votes, and ".. results.noVotes .." No votes!")
+
 		end, "Yes", "No", 15)
 end):addParam("description", "string")
