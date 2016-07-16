@@ -116,9 +116,7 @@ function fw.tab_menu.showScoreboard()
 		__FW_TABMENU = vgui.Create('fwTabMenu')
 		__FW_TABMENU:Show()
 
-		__FW_TABMENU:AddView('PLAYERS', function()
-
-		end)
+		__FW_TABMENU:AddView('PLAYERS', fw.tab_menu.tabDisplayPlayersList)
 
 		vgui.Create('FWUIDropShadow')
 			:SetRadius(32)
@@ -153,6 +151,8 @@ function fw.tab_menu.hideContent(callback)
 end
 
 function fw.tab_menu.displayContent(title, constructor, callback)
+	lastContentName = title 
+
 	fw.tab_menu.hideContent(function()
 
 		__FW_TABMENU_CONTENT = vgui.Create('FWUIFrame')
@@ -162,6 +162,9 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 		content:MakePopup()
 		content:SetTitle(title or 'Unknown Content Panel')
 		content:CenterHorizontal()
+		content.DoClose = function()
+			fw.tab_menu.hideContent()
+		end
 
 		content:SetY(sty.ScrH)
 		content:MoveTo(
@@ -172,4 +175,29 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 
 		constructor(content)
 	end)
+end
+
+
+function fw.tab_menu.tabDisplayPlayersList(panel)
+
+	local space = vgui.Create('DScrollPanel', panel)
+	space:SetSize(panel:GetWide() - 10, panel:GetTall() - panel:GetHeaderYOffset())
+	space:SetPos(5, panel:GetHeaderYOffset() + 10)
+
+	local listLayout = vgui.Create('STYLayoutVertical', space)
+	listLayout:SetWide(panel:GetWide())
+	listLayout:SetPadding(sty.ScreenScale(2))
+
+	for k, v in pairs(player.GetAll()) do
+		local panel = vgui.Create('FWUIButton', listLayout)
+		panel:SetFont(fw.fonts.default)
+		panel:SetTall(sty.ScreenScale(15))
+		panel:SetText(v:Nick())
+
+		panel.DoClick = function()
+			// more info popup or something
+		end
+
+		panel:PerformLayout()
+	end
 end

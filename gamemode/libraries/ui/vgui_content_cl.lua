@@ -60,6 +60,10 @@ vgui.Register('FWUIButton', {
 		self._noBackground = bBackground 
 	end,
 
+	PerformLayout = function(self)
+		self.BaseClass.PerformLayout(self)
+	end,
+
 	-- KEY = normal or hovered or pressed
 	SetBackgroundTint = function(self, key, tint, intensity)
 		if tint == nil then 
@@ -110,7 +114,7 @@ vgui.Register('FWUIButton', {
 		end
 	end,
 
-	PaintOver = function(self, w, hi)
+	PaintOver = function(self, w, h)
 		if not self._noOutline then 
 			surface.SetDrawColor(255, 255, 255, 5)
 			surface.DrawOutlinedRect(0, 0, w, h)
@@ -149,14 +153,20 @@ vgui.Register('FWUIFrame', {
 		self:SetMouseInputEnabled(true)
 
 		self._titleBar._closeButton = sty.With(vgui.Create('FWUIButton', self._titleBar))
+			:SetFont(fw.fonts.default)
 			:SetText('X')
 			:Dock(RIGHT)
 			:SetNoBackground(true)
 			:SetNoOutline(true) ()
 		self._titleBar._closeButton.DoClick = function()
-			self:Remove()
+			self:DoClose()
 		end
 	end,
+
+	DoClose = function(self)
+		self:Remove()
+	end,
+
 
 	SetShowClose = function(self, bShowClose)
 		self._titleBar._closeButton:SetVisible(bShowClose)
