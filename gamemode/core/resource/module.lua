@@ -1,4 +1,4 @@
-if !SERVER then return end
+if not SERVER then return end
 
 fw.dep(SHARED, "hook")
 
