@@ -3,10 +3,9 @@ fw.team.spawns = fw.team.spawns or {}
 -- playerChangeTeam - handles player team switching
 -- @param ply:player object - the player object switching teams
 -- @param targ_team:int - the index of the team in the table
--- @param pref_model:string - the model selected on the switch team screen is sent here
 -- @param optional forced:bool - should we ignore canjoin conditions?
 -- @ret nothing
-function fw.team.playerChangeTeam(ply, targ_team, pref_model, forced)
+function fw.team.playerChangeTeam(ply, targ_team, forced)
 	local canjoin, message = hook.Call("CanPlayerJoinTeam", GAMEMODE, ply, targ_team)
 	
 	local t = fw.team.list[targ_team]
@@ -20,10 +19,7 @@ function fw.team.playerChangeTeam(ply, targ_team, pref_model, forced)
 		return false 
 	end
 
-	-- find a good pref_model
-	if not pref_model then
-		pref_model = ply:GetFWData().preferred_models and ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
-	end
+	local pref_model = ply:GetFWData().preferred_models and ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
 
 	-- remove player if they are the faction boss
 	if ply:isFactionBoss() then
@@ -39,7 +35,6 @@ function fw.team.playerChangeTeam(ply, targ_team, pref_model, forced)
 		ply:GetFWData().preferred_models = {}
 	end
 	ply:GetFWData().preferred_models[t.stringID] = pref_model
-	ply:GetFWData().pref_model = pref_model
 
 	-- respawn the player
 	ply:Spawn()

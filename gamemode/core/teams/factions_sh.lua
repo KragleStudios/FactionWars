@@ -68,6 +68,9 @@ end
 -- @param factionId:number - the faction to get the players of. nil for unaffiliated.
 -- @ret players:table
 function fw.team.getFactionPlayers(factionId)
+	if not factionId then
+		return player.GetAll()
+	end
 	return factionsList[factionId]:getPlayers()
 end
 

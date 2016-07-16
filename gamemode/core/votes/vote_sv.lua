@@ -70,11 +70,11 @@ function fw.vote.createNew(vTitle, vDesc, vPlayers, vCallback, vYText, vNText, v
 	timer.Create("vote_"..count, vote_len or fw.vote_defLen, 1, function()
 		local decision, vote_tbl = fw.vote.getVoteStatus(count)
 
-		vCallback(decision, syncTable, vote_tbl)
-
 		--clear the memory up
 		ndoc.table.fwVotes[count] = nil		
 		haveVoted[count] = nil
+
+		vCallback(decision, syncTable, vote_tbl)
 	end)
 
 	ndoc.table.fwVotes[count] = syncTable
