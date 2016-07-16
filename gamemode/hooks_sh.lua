@@ -27,7 +27,14 @@ function GM:HUDPaint(...)
 end
 
 function GM:HUDShouldDraw(...)
-	return fw.hook.Call('HUDShouldDraw', ...) ~= false 
+	if IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon().HUDShouldDraw then
+		local res = LocalPlayer():GetActiveWeapon():HUDShouldDraw(...)
+		if res != nil then
+			return res
+		end
+	end
+
+	return fw.hook.Call('HUDShouldDraw', ...) ~= false
 end
 
 function GM:OnEntityCreated(...)
