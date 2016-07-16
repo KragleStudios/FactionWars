@@ -4,6 +4,9 @@ function entity:getHealth()
 	return (ndoc.table.fwProps[self:EntIndex()] or {}).health
 end
 
+function entity:getMaxHealth()
+	return (ndoc.table.fwProps[self:EntIndex()] or {}).maxhealth
+end
 
 if (SERVER) then
 	ndoc.table.fwProps = {}
@@ -21,6 +24,7 @@ if (SERVER) then
 
 		ndoc.table.fwProps[ent:EntIndex()] = {}
 		ndoc.table.fwProps[ent:EntIndex()].health = health
+		ndoc.table.fwProps[ent:EntIndex()].maxhealth = health
 	end)
 
 	fw.hook.Add("EntityRemoved", "EntityIsDeleted", function(ent)
@@ -33,7 +37,6 @@ if (SERVER) then
 		if (ent:GetClass() != "prop_physics" or not IsValid(ent)) then return end
 		
 		local dmg = info:GetDamage()
-
 		local health = ent:getHealth()
 		local new_health = health - dmg
 		if (new_health < 0) then
