@@ -1,4 +1,4 @@
-if !SERVER then return end
+if not SERVER then return end
 
 local id = 1
 local resc = {}
@@ -8,7 +8,7 @@ resc.Resources = {}
 
 function resc.register(class, printname, colour, icon16)
 	if resc.exists(class) then return resc.Resources[class] end
-	local resource = setmetatable({ ["class"] = class, ["printname"] = (printname || class), ["id"] = id, ["colour"] = colour, ["icon"] = icon16}, resc)
+	local resource = setmetatable({ ["class"] = class, ["printname"] = (printname or class), ["id"] = id, ["colour"] = colour, ["icon"] = icon16}, resc)
 	resc.Resources[class] = resource
 	id = id + 1
 	return resource
