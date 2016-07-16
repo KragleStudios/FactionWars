@@ -35,6 +35,7 @@ if (SERVER) then
 
 	fw.hook.Add("EntityTakeDamage", "PropHealthDepreciate", function(ent, info)
 		if (ent:GetClass() != "prop_physics" or not IsValid(ent)) then return end
+		if (not ndoc.table.fwProps[ent:EntIndex()]) then return end --stupport for stuff
 		
 		local dmg = info:GetDamage()
 		local health = ent:getHealth()

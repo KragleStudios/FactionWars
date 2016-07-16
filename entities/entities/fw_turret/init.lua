@@ -5,7 +5,7 @@ include("shared.lua")
 
 function ENT:Initialize()
 	self:SetModel("models/props/de_nuke/IndustrialLight01.mdl")
-	self:PhysicsInit(SOLID_VPHYSICS)
+	self:PhysicsInit(SOLID_NONE)
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid(SOLID_VPHYSICS)
 
@@ -16,7 +16,7 @@ function ENT:Initialize()
 	end
 
 	self:SetUseType(SIMPLE_USE)
-	self:SetTrigger(true)
+	--self:SetTrigger(true)
 
 	self:SetUpgradeStatus(0)
 	self:SetOwner(self)
