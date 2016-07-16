@@ -4,6 +4,7 @@ function fw.weapons.createGun(name, config, entity)
 	assert(entity, "gun entity name not provided")
 	config.Name = name
 	config.PrintName = name
+	config.Spawnable = true
 	fw.weapons.weapons[entity] = config
 end
 

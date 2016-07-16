@@ -10,6 +10,9 @@ function fw.printers.createPrinter(name, config, entity)
 	-- Color is an optional property
 
 	config.Name = name
+	config.PrintName = name
+	config.Spawnable = true
+	config.AdminOnly = true
 	fw.printers.printers[entity] = config
 end
 

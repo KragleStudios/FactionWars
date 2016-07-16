@@ -7,3 +7,11 @@ fw.config.dataStore = 'text' -- text documents
 fw.config.data_cacheUpdateInterval = 60 -- SECONDS
 fw.config.data_storeUpdateInterval = 60 * 10 -- SECONDS
 assert(fw.config.data_storeUpdateInterval > fw.config.data_cacheUpdateInterval, "defeats the point of caching")
+
+fw.config.dropBlacklist = {
+	weapon_physgun = true,
+	weapon_physcannon = true,
+	gmod_tool = true,
+	gmod_camera = true,
+	weapon_fists = true,
+}

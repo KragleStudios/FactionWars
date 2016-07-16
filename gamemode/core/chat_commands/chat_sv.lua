@@ -215,3 +215,29 @@ fw.chat.addCMD("vote", "Makes a vote available to everyone", function(ply, desc)
 
 		end, "Yes", "No", 15)
 end):addParam("description", "string")
+
+fw.chat.addCMD("dropmoney", "Drops some money in front of you", function(ply, money)
+	money = math.abs(money)
+	if ply:canAfford(money) then
+		local tr = util.TraceLine( {
+			start = ply:EyePos(),
+			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 50,
+			filter = function( ent ) if ent != ply then return true end end
+		} )
+
+		ply:addMoney(-money)
+
+		local ent = ents.Create("fw_money")
+		ent:SetValue(money)
+		ent:SetPos(tr.HitPos)
+		ent:Spawn()
+	end
+end):addParam("money", "number")
+
+fw.chat.addCMD("drop", "Drop your weapon", function(ply)
+	if not fw.config.dropBlacklist[ply:GetActiveWeapon():GetClass()] then
+		ply:DropWeapon(ply:GetActiveWeapon())
+	else
+		ply:FWChatPrint("You cannot drop this weapon.")
+	end
+end)

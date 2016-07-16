@@ -1,6 +1,9 @@
 SWEP.PrintName = "Faction Wars Base Weapon"
 SWEP.Base = "weapon_base"
 SWEP.Slot = 1
+SWEP.Category = "Faction Wars"
+
+SWEP.Spawnable = false
 
 SWEP.WorldModel = "models/weapons/w_rif_ak47.mdl"
 SWEP.ViewModel = "models/weapons/v_rif_ak47.mdl"
