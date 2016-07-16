@@ -27,7 +27,7 @@ SWEP.Primary.ClipSize		= -1
 SWEP.Primary.DefaultClip	= -1
 SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo		= "none"
-SWEP.Primary.Power = 10
+SWEP.Primary.Power = 5
 
 function SWEP:Reload()
 	
