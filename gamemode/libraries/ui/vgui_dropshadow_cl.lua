@@ -31,19 +31,17 @@ vgui.Register('FWUIDropShadow', {
 		return self 
 	end,
 
-	Think = function(self)
+	Paint = function(self, w, h)
 		local panel = self._following
 		if not IsValid(panel) then self:Remove() return end
 		self:SetPos(panel:GetX() - self._radius, panel:GetY() - self._radius)
 		self:SetSize(panel:GetWide() + self._radius * 2, panel:GetTall() + self._radius * 2)
-	end,
 
-	Paint = function(self, w, h)
 		local r = self._radius 
 
 		surface.SetDrawColor(self._color)
 
-		if not self._noBackground then
+		if self._noBackground then
 			surface.DrawRect(r, r, w - 2 * r, h - 2 * r)
 		end
 

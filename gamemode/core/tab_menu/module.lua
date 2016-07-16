@@ -117,11 +117,12 @@ function fw.tab_menu.showScoreboard()
 		__FW_TABMENU:Show()
 
 		__FW_TABMENU:AddView('PLAYERS', fw.tab_menu.tabDisplayPlayersList)
+		__FW_TABMENU:AddView('JOBS', fw.tab_menu.tabDisplayJobsList)
+
 
 		vgui.Create('FWUIDropShadow')
 			:SetRadius(32)
 			:SetColor(Color(0, 0, 0, 50))
-			:SetNoBackground(true)
 			:ParentTo(__FW_TABMENU)
 	end)
 end
@@ -182,7 +183,7 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 
 	local space = vgui.Create('DScrollPanel', panel)
 	space:SetSize(panel:GetWide() - 10, panel:GetTall() - panel:GetHeaderYOffset())
-	space:SetPos(5, panel:GetHeaderYOffset() + 10)
+	space:SetPos(5, panel:GetHeaderYOffset())
 
 	local listLayout = vgui.Create('STYLayoutVertical', space)
 	listLayout:SetWide(panel:GetWide())
@@ -200,4 +201,16 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 
 		panel:PerformLayout()
 	end
+end
+
+function fw.tab_menu.tabDisplayJobsList(panel)
+	local space = vgui.Create('DScrollPanel', panel)
+	space:SetSize(panel:GetWide() - 10, panel:GetTall() - panel:GetHeaderYOffset())
+	space:SetPos(5, panel:GetHeaderYOffset())
+
+	local listLayout = vgui.Create('STYLayoutVertical', space)
+	listLayout:SetWide(panel:GetWide())
+	listLayout:SetPadding(sty.ScreenScale(2))
+
+	
 end

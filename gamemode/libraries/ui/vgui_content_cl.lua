@@ -135,17 +135,18 @@ vgui.Register('FWUIFrame', {
 
 		self._titleBar = vgui.Create('FWUIPanel', self)
 		self._titleBar._titleLabel = Label('Unnamed Frame', self._titleBar)
+		self._titleBar:SetBackgroundTint(color_black, 200)
 
 		self._titleBar.OnMousePressed = function(self)
 			local xoffset, yoffset = self:GetParent():CursorPos()
-			self:SetBackgroundTint(color_white, 20)
+			self:SetBackgroundTint(color_black, 130)
 
 			self.Think = function()
 				if input.IsMouseDown(MOUSE_LEFT) then
 					local x, y = input.GetCursorPos()
 					self:GetParent():SetPos(x - xoffset, y - yoffset)
 				else
-					self:SetBackgroundTint(nil)
+					self:SetBackgroundTint(color_black, 200)
 					self.Think = ra.util.noop 
 				end
 			end
