@@ -21,8 +21,10 @@ SWEP.Primary.Sound = Sound("Weapon_AK47.Single")
 SWEP.Primary.BaseSpread = 0.0125
 SWEP.Primary.BaseRecoil = 0.0075
 SWEP.Primary.MaxRecoil = 0.15
-SWEP.Primary.Shotgun = true
+SWEP.Primary.Shotgun = false
 SWEP.Primary.Bullets = 1
+SWEP.Primary.BurstFire = true
+SWEP.Primary.BurstAmount = 3
 
 SWEP.Secondary.Ammo = "none"
 
@@ -36,13 +38,19 @@ function SWEP:SetupDataTables()
 	self:NetworkVar("Bool", 3, "Reloading")
 	self:NetworkVar("Float", 4, "SequenceTime")
 	self:NetworkVar("Bool", 5, "ReloadState")
+	self:NetworkVar("Bool", 6, "Bursting")
+	self:NetworkVar("Int", 7, "BurstsLeft")
+	self:NetworkVar("Float", 8, "BurstTime")
 end
 
 function SWEP:PrimaryAttack()
 	self:SetReloading(false)
 	self:SetReloadState(false)
 	self:SetNextPrimaryFire(CurTime() + 60 / self.Primary.RPM)
+	self:Shoot()
+end
 
+function SWEP:Shoot()
 	if self:Clip1() <= 0 then self:EmitSound(self.EmptySound) self:SendWeaponAnim(ACT_VM_DRYFIRE) return end
 
 	local recoilMult = 1
@@ -78,7 +86,15 @@ function SWEP:PrimaryAttack()
 		self:SetCurrentRecoil(self:GetCurrentRecoil() + self.Primary.BaseRecoil * recoilMult)
 	end
 
-	self.Owner:ViewPunch(Angle(-self:GetCurrentRecoil() * 5, 0, 0))
+	if not self:GetScoped() then
+		self.Owner:ViewPunch(Angle(-self:GetCurrentRecoil() * 5, 0, 0))
+	end
+
+	if self:GetBursting() then
+		self:SetBurstsLeft(self:GetBurstsLeft() - 1)
+		self:SetBurstTime(CurTime() + (60 / self.Primary.RPM) / 2)
+	end
+
 	self:SetClip1(self:Clip1() - 1)
 end
 
@@ -87,6 +103,15 @@ function SWEP:SecondaryAttack()
 
 	if self.Scoped then
 		self:SetScope(not self:GetScoped())
+	elseif self.Primary.BurstFire and self:Clip1() > 0 then
+		self:SetBursting(true)
+		self:SetBurstsLeft(3)
+		self:SetBurstTime(CurTime())
+		self:SetNextPrimaryFire(CurTime() + (60 / self.Primary.RPM) * 5)
+		self:SetNextSecondaryFire(CurTime() + (60 / self.Primary.RPM) * 5)
+	elseif self:Clip1() <= 0 then
+		self:EmitSound(self.EmptySound)
+		self:SendWeaponAnim(ACT_VM_DRYFIRE)
 	end
 end
 
@@ -146,6 +171,7 @@ function SWEP:Initialize()
 	self.LastFireTime = 0
 	self.CurrentRecoil = 0
 	self:SetReloading(false)
+	self:SetScoped(false)
 end
 
 function SWEP:Think()
@@ -154,6 +180,12 @@ function SWEP:Think()
 	end
 
 	if self:GetReloading() then self:ShotgunReload() end
+
+	if self:GetBursting() and self:GetBurstsLeft() > 0 and self:GetBurstTime() < CurTime() and self:Clip1() > 0 then
+		self:Shoot()
+	elseif self:GetBurstsLeft() <= 0 or self:Clip1() <= 0 then
+		self:SetBursting(false)
+	end
 end
 
 function SWEP:Deploy()
