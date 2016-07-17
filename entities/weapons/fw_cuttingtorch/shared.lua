@@ -40,7 +40,7 @@ end
 function SWEP:PrimaryAttack()
 	if not IsFirstTimePredicted() then return end
 	local tr = self.Owner:GetEyeTrace()
-	if tr.Entity:GetClass() == "prop_physics" and tr.HitPos:Distance(tr.StartPos) <= 100 then
+	if tr.Entity:GetClass() == "prop_physics" and tr.HitPos:Distance(tr.StartPos) <= 50 then
 		self.Weapon:EmitSound("Weapon_StunStick.Activate")
 		if SERVER then
 			tr.Entity:TakeDamage(self.Primary.Power , self.Owner, self)
