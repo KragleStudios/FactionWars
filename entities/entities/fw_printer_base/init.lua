@@ -28,6 +28,8 @@ function ENT:Initialize()
 
 	self.Sound = CreateSound(self, "ambient/levels/labs/equipment_printer_loop1.wav")
 	self.Sound:SetSoundLevel(57)
+
+	self:ConnectToNet()
 end
 
 function ENT:Use(activator, ply)
