@@ -5,16 +5,31 @@ util.AddNetworkString('fw.notif.banner')
 
 local Player = FindMetaTable('Player')
 
-
 local function fwConPrint(players, ...)
+	local args = {...}
+
+	for k, v in ipairs(args) do
+		if (IsColor(v) and fw.notif.colors[v]) then
+			args[k] = fw.notif.colors[v]
+		end
+	end
+
 	net.Start('fw.notif.conprint')
-	net.WriteTable {...}
+		net.WriteTable(args)
 	net.Send(players)
 end
 
 local function fwChatPrint(players, ...)
+	local args = {...}
+
+	for k, v in ipairs(args) do
+		if (IsColor(v) and fw.notif.colors[v]) then
+			args[k] = fw.notif.colors[v]
+		end
+	end
+
 	net.Start('fw.notif.chatprint')
-	net.WriteTable {...}
+		net.WriteTable(args)
 	net.Send(players)
 end
 

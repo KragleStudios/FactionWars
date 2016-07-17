@@ -3,12 +3,38 @@ net.Receive('fw.notif.conprint', function()
 	local function printHelper(a, ...)
 		fw.print('[notif] ' .. (a or ''), ...)
 	end
-	printHelper(unpack(net.ReadTable()))
+
+	local table = net.ReadTable()
+
+	for k, v in ipairs(table) do
+		if (isnumber(v)) then
+			local color = _G.table.KeyFromValue(fw.notif.colors, v)
+
+			if (color) then
+				table[k] = color
+			end
+		end
+	end
+
+	printHelper(unpack(table))
 end)
 
 net.Receive('fw.notif.chatprint', function()
 	local table = net.ReadTable()
-	chat.AddText(color_black, '[' .. GAMEMODE.Name .. ']', color_white, unpack(table))
+
+	PrintTable(table)
+
+	for k, v in ipairs(table) do
+		if (isnumber(v)) then
+			local color = _G.table.KeyFromValue(fw.notif.colors, v)
+
+			if (color) then
+				table[k] = color
+			end
+		end
+	end
+
+	chat.AddText(color_black, '[' .. GAMEMODE.Name .. '] ', color_white, unpack(table))
 end)
 
 
