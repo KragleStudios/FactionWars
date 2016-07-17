@@ -22,8 +22,6 @@ end)
 net.Receive('fw.notif.chatprint', function()
 	local table = net.ReadTable()
 
-	PrintTable(table)
-
 	for k, v in ipairs(table) do
 		if (isnumber(v)) then
 			local color = _G.table.KeyFromValue(fw.notif.colors, v)
