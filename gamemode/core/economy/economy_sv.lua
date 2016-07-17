@@ -6,7 +6,7 @@ fw.data.addPersistField('money')
 -- @param amount:number - the amount of money to set
 -- @ret amount:number same as the amount set
 function Player:setMoney(amount)
-	if type(amount) ~= 'number' then error("player money must be a number") end
+	if type(amount) != 'number' then error("player money must be a number") end
 	if amount < 0 then error("value must be positive") end
 	self:GetFWData().money = amount
 	return amount
