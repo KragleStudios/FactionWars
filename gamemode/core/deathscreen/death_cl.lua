@@ -4,9 +4,9 @@ net.Receive("playerDeath", function()
         local attacker = net.ReadEntity()
 
 	if suicide then
-	        deathText = "You committed suicide"
+	    deathText = "You committed suicide"
 	elseif IsValid(attacker) then
-		deathText = "You were killed by "..attacker:Nick()
+		deathText = "You were killed by "..(attacker:IsPlayer() and attacker:Nick() or attacker:GetClass())
 	end
 
 	-- Death Screen Panel
