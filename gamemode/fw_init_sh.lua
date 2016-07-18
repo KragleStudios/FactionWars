@@ -129,8 +129,9 @@ if fw.debug then
 		local files, directories = file.Find(directory .. '/*', 'LUA')
 		for k,v in ipairs(files) do
 			local data = file.Read(directory .. '/' .. v, 'LUA')
+			if (not data) then continue end
 			for k, line in ipairs(string.Explode('\n', data)) do
-				if line:find('--') and line:find('TODO') then
+				if line and line:find('--') and line:find('TODO') then
 					MsgC(color_white, directory .. '/' .. v .. ':' .. k)
 					local start = string.find(line, 'TODO') + 5
 					MsgN(string.sub(line, start))

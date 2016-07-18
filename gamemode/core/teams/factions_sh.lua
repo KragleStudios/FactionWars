@@ -3,7 +3,11 @@ fw.team.factions = {}
 local factionsList = fw.team.factions
 
 if SERVER then
-	ndoc.fwFactions = {}
+	ndoc.table.fwFactions = {}
+
+	concommand.Add("fw_faction_leave", function(ply)
+		fw.team.removePlayerFromFaction(ply)
+	end)
 end
 
 local faction_mt = {
@@ -17,9 +21,13 @@ local faction_mt = {
 	end,
 
 	getNWData = function(self)
-		return ndoc.fwFactions[self.index] or {}
+		return ndoc.table.fwFactions[self.index] or {}
+	end,
+	getBoss = function(self)
+		return self:getNWData().boss
 	end,
 }
+faction_mt.__index = faction_mt
 
 -- fw.team.registerFaction
 -- @param factionName:string
@@ -29,13 +37,31 @@ function fw.team.registerFaction(factionName, tbl)
 	-- assert structure
 	assert(tbl.stringID, 'faction.stringID must be defined')
 
+	setmetatable(tbl, faction_mt)
+
 	tbl.index = table.insert(fw.team.factions, tbl)
-	tbl.name = factionName
+	fw.team.factions[tbl.index].command = "fw_join_"..tbl.stringID
+	fw.team.factions[tbl.index].name = factionName
 
 	if SERVER then
-		ndoc.fwFactions[tbl.index] = {
+		concommand.Add("fw_join_"..tbl.stringID, function(ply)
+			local canjoin, message = fw.team.canJoinFaction(ply, fw.team.factions[tbl.index])
+
+			if (not canjoin) then
+				if (not message) then message = "You can't join this faction!" end
+				
+				ply:FWChatPrint(message)
+				return
+			end
+
+			fw.team.addPlayerToFaction(ply, tbl.index)
+		end)
+
+
+		ndoc.table.fwFactions[tbl.index] = {
 			money = 10000,
-			boss = nil,
+			boss = "None",
+			inventory = {},
 			-- all other data to come...
 		}
 		-- boss = nil
@@ -43,6 +69,20 @@ function fw.team.registerFaction(factionName, tbl)
 	end
 
 	return tbl.index -- return the faction id
+end
+
+function fw.team.canJoinFaction(ply, faction)
+	local players = #player.GetAll()
+
+	local factionPlayers = #faction:getPlayers()
+
+	if (factionPlayers / players < (1/3)) then
+		return true
+	end 
+
+	local canjoin, msg = fw.hook.Call("PlayerCanJoinFaction", GAMEMODE, ply, faction)
+
+	return canjoin, msg
 end
 
 -- fw.team.getFactionByID
