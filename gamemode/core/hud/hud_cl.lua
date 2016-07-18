@@ -103,7 +103,7 @@ vgui.Register('fwHudInfo', {
 					if not IsValid(self.faction) then return end
 
 					if LocalPlayer():inFaction() then
-						local factionMeta = fw.team.getFactionById(LocalPlayer():getFaction())
+						local factionMeta = fw.team.getFactionByID(LocalPlayer():getFaction())
 						if not factionMeta then return end
 						self.faction:SetText('FACTION: ' .. factionMeta:getName())
 					else
@@ -116,8 +116,6 @@ vgui.Register('fwHudInfo', {
 			end
 			
 			do
-				if (not LocalPlayer():inFaction()) then return end
-
 				self.boss = vgui.Create('fwHudInfoCell', self.layout)
 
 				local function updateBoss()
@@ -130,13 +128,14 @@ vgui.Register('fwHudInfo', {
 						end
 
 						self.boss:SetText('BOSS: ' .. boss)
+						self.boss:SetVisible(true)
 					else
-						self.boss:SetText('NO BOSS')
+						self.boss:SetVisible(false)
 					end
 				end
 				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateBoss)
+				ndoc.addHook('fwFactions.?.boss', 'set', updateBoss)
 				updateBoss()
-
 			end
 
 			do

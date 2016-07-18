@@ -148,7 +148,7 @@ function fw.tab_menu.hideContent(callback)
 		return 
 	end
 
-	callback()
+	if callback then callback() end
 end
 
 function fw.tab_menu.displayContent(title, constructor, callback)
@@ -173,14 +173,18 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 			(sty.ScrH - content:GetTall()) * 0.5, 
 			fw.config.uiAnimTimeQuick, 0, -1, 
 			callback or ra.fn.noop)
+		content:PerformLayout()
 
-		constructor(content)
+		local wrapper = vgui.Create('STYPanel', content)
+		fw.print("header y offset: " .. content:GetHeaderYOffset())
+		wrapper:SetPos(0, content:GetHeaderYOffset())
+		wrapper:SetSize(content:GetWide(), content:GetTall() - content:GetHeaderYOffset())
+
+		constructor(wrapper)
 	end)
 end
 
-
 function fw.tab_menu.tabDisplayPlayersList(panel)
-
 	local space = vgui.Create('DScrollPanel', panel)
 	space:SetSize(panel:GetWide() - 10, panel:GetTall() - panel:GetHeaderYOffset())
 	space:SetPos(5, panel:GetHeaderYOffset())
@@ -201,16 +205,72 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 
 		panel:PerformLayout()
 	end
+
+	vgui.Create('DPanel')
 end
 
 function fw.tab_menu.tabDisplayJobsList(panel)
 	local space = vgui.Create('DScrollPanel', panel)
-	space:SetSize(panel:GetWide() - 10, panel:GetTall() - panel:GetHeaderYOffset())
-	space:SetPos(5, panel:GetHeaderYOffset())
+	space:SetSize(panel:GetSize())
 
 	local listLayout = vgui.Create('STYLayoutVertical', space)
 	listLayout:SetWide(panel:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(2))
 
-	
+	local factionsListSection = vgui.Create('FWUITableViewSection', listLayout)
+	factionsListSection:SetTitle('FACTIONS')
+	factionsListSection.content:SetPadding(10)
+
+	local function createFactionButton(fname, players, doClickJoin)
+		local panel = vgui.Create('FWUIPanel')
+		factionsListSection:Add(panel)
+
+		local joinButton = vgui.Create('FWUIButton', panel)
+		joinButton:SetText('JOIN FACTION')
+		joinButton.DoClick = doClickJoin
+		joinButton:SetWide(sty.ScreenScale(40))
+
+		local title = vgui.Create('FWUITextBox', panel)
+		title:SetText(fname)
+
+		joinButton:Dock(RIGHT)
+		title:Dock(FILL)
+	end
+
+	for index, faction in pairs(fw.team.factions) do
+		if LocalPlayer():getFaction() == faction:getID() then continue end
+
+		createFactionButton(faction:getName(), 0, function()
+			LocalPlayer():ConCommand(faction.command)
+			fw.tab_menu.hideContent()
+		end)
+	end
+
+	-- leave faction
+	if LocalPlayer():inFaction() then 
+		local panel = vgui.Create('FWUIPanel')
+		factionsListSection:Add(panel)
+
+		local joinButton = vgui.Create('FWUIButton', panel)
+		joinButton:SetText('LEAVE')
+		joinButton.DoClick = function()
+			--TODO @thelastpenguin implement this command
+			LocalPlayer():ConCommand('fw_faction_leave')
+		end
+
+		joinButton:SetWide(sty.ScreenScale(40))
+
+		local title = vgui.Create('FWUITextBox', panel)
+		title:SetText('Leave ' .. fw.team.getFactionByID(LocalPlayer():getFaction()):getName())
+
+		joinButton:Dock(RIGHT)
+		title:Dock(FILL)
+
+		panel:SetBackgroundTint(Color(200, 0, 0), 10)
+	end 
+
+
+	-- list of jobs
+
+
 end

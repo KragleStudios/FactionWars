@@ -135,7 +135,7 @@ vgui.Register('FWUIFrame', {
 
 		self._titleBar = vgui.Create('FWUIPanel', self)
 		self._titleBar._titleLabel = Label('Unnamed Frame', self._titleBar)
-		self._titleBar:SetBackgroundTint(color_black, 200)
+		self._titleBar:SetBackgroundTint(color_black, 230)
 
 		self._titleBar.OnMousePressed = function(self)
 			local xoffset, yoffset = self:GetParent():CursorPos()
@@ -188,8 +188,9 @@ vgui.Register('FWUIFrame', {
 
 		local w, h = self:GetSize()
 
-		self._titleBar:SetSize(w, sty.ScreenScale(13))
+		self._titleBar:SetSize(w, self:GetHeaderYOffset())
 		sty.With(self._titleBar._titleLabel)
+			:SetPos(0, 0)
 			:SetFont(
 				fw.fonts.default:fitToView(
 					self._titleBar,
@@ -211,7 +212,7 @@ vgui.Register('FWUIFrame', {
 	end,
 
 	GetHeaderYOffset = function(self) -- the yoffset for content demmanded by the space used by the header
-		return self._titleBar:GetTall() 
+		return sty.ScreenScale(13)
 	end,
 
 	Paint = function(self, w, h)
@@ -219,6 +220,50 @@ vgui.Register('FWUIFrame', {
 		surface.DrawRect(0, 0, w, h)
 	end,
 }, 'EditablePanel')
+
+vgui.Register('FWUITextBox', {
+	Init = function(self)
+		self._label = Label('', self)
+		self:SetFont(fw.fonts.default)
+		self:SetInset(0)
+		self._align = fw.ui.CENTER 
+	end,
+
+	SetText = function(self, title)
+		self._label:SetText(title)
+	end, 
+
+	SetColor = function(self, color)
+		self._label:SetColor(color)
+	end,
+
+	SetInset = function(self, nInset)
+		self._inset = nInset 
+	end,
+
+	SetFont = function(self, font)
+		self._font = font 
+	end,
+
+	PerformLayout = function(self)
+		self._label:SetFont(self._font:fitToView(self, self._inset, self._label:GetText()))
+		self._label:SizeToContents()
+
+		if self._align == fw.ui.LEFT then
+			self._label:SetX(0)
+			self._label:CenterVertical()
+		elseif self._align == fw.ui.RIGHT then
+			self._label:SetX(self:GetWide() - self._label:GetWide())
+			self._label:CenterVertical()
+		elseif self._align == fw.ui.CENTER then
+			self._label:Center()
+		end
+	end,
+})
+
+
+
+
 
 concommand.Add('fw_ui_testFrame', function()
 	if IsValid(__FWUI_TESTFRAME) then
