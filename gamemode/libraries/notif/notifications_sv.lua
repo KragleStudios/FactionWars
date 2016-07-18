@@ -45,5 +45,5 @@ function Player:FWChatPrint(...)
 end
 
 function Player:FWChatPrintError(...)
-	fwChatPrint(self, color_black, '[Error]', Color(255, 0, 0), ...)
+	fwChatPrint(self, color_black, '[Error] ', Color(255, 0, 0), ...)
 end
