@@ -138,8 +138,21 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	end
 	
 	-- enforce t.max players
-	if t.max and #t:getPlayers() > t.max then 
-		return false 
+	if t.max then
+		if (t.factionOnly and t.faction) then
+			local count = 0
+			for k,v in pairs(t:getPlayers()) do
+				if (v:getFaction() == t.faction) then
+					count = count + 1
+				end
+			end
+
+			if (count == t.max) then
+				return false
+			end
+		elseif (#t:getPlayers() >= t.max) then
+			return false
+		end 
 	end
 
 	-- can't join a team you're already on
