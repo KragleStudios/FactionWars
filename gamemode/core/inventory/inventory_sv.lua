@@ -29,7 +29,6 @@ net.Receive("fw.dropItem", function(_, ply)
 		shipCount = inv[item.stringID].remaining or item.shipmentCount
 	end
 
-
 	local ent = ents.Create(class)
 	ent:SetPos(ply:GetPos() + Vector(20, 20, 20))
 	ent:Spawn()
@@ -86,10 +85,4 @@ end
 fw.chat.addCMD("inv", "Opens your inventory", function(ply)
 	net.Start("fw.openInventory")
 	net.Send(ply)
-end)
-fw.chat.addCMD("test", "Opens your test", function(ply)
-	local ent = ents.Create("fw_turret")
-	ent:SetPos(ply:GetPos() + Vector(20, 20, 20))
-	ent:Spawn()
-	ent:Activate()
 end)
