@@ -5,12 +5,24 @@ util.AddNetworkString('fw.notif.banner')
 
 local Player = FindMetaTable('Player')
 
+local function cachedColor(color)
+	for k, v in ipairs(fw.notif.colors) do
+		if (v == color) then
+			return k
+		end
+	end
+end
+
 local function fwConPrint(players, ...)
 	local args = {...}
 
 	for k, v in ipairs(args) do
-		if (IsColor(v) and fw.notif.colors[v]) then
-			args[k] = fw.notif.colors[v]
+		if (IsColor(v)) then
+			local id = cachedColor(v)
+
+			if (id) then
+				args[k] = id
+			end
 		end
 	end
 
@@ -23,8 +35,12 @@ local function fwChatPrint(players, ...)
 	local args = {...}
 
 	for k, v in ipairs(args) do
-		if (IsColor(v) and fw.notif.colors[v]) then
-			args[k] = fw.notif.colors[v]
+		if (IsColor(v)) then
+			local id = cachedColor(v)
+
+			if (id) then
+				args[k] = id
+			end
 		end
 	end
 
