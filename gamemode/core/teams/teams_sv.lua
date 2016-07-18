@@ -5,15 +5,14 @@ fw.team.spawns = fw.team.spawns or {}
 -- @param targ_team:int - the index of the team in the table
 -- @param optional forced:bool - should we ignore canjoin conditions?
 -- @ret nothing
-function fw.team.playerChangeTeam(ply, targ_team, forced)
-	local canjoin, message = hook.Call("CanPlayerJoinTeam", GAMEMODE, ply, targ_team)
-	
+function fw.team.playerChangeTeam(ply, targ_team, forced)	
 	local t = fw.team.list[targ_team]
 	if not t then
 		ply:FWChatPrintError("no such team ", tostring(targ_team))
 		return false 
 	end
 
+	local canjoin, message = fw.team.canChangeTo(ply, targ_team, forced)
 	if (not forced and not canjoin) then
 		ply:FWChatPrintError(message or ("can't join team " .. t:getName()))
 		return false 
@@ -129,57 +128,6 @@ function fw.team.setPreferredModel(team_id, ply, model)
 	-- update the preferred model!
 	ply:GetFWData().preferred_models[t.stringID] = pref_model
 end
-
--- handles the ability of whether or not a player can join a team
-fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
-	local t = fw.team.list[targ_team]
-	if (not t) then 
-		return false 
-	end
-	
-	-- enforce t.max players
-	if t.max then
-		if (t.factionOnly and t.faction) then
-			local count = 0
-			for k,v in pairs(t:getPlayers()) do
-				if (v:getFaction() == t.faction) then
-					count = count + 1
-				end
-			end
-
-			if (count == t.max) then
-				return false
-			end
-		elseif (#t:getPlayers() >= t.max) then
-			return false
-		end 
-	end
-
-	-- can't join a team you're already on
-	if (ply:Team() == targ_team) then 
-		return false 
-	end
-
-	-- SUPPORT FOR FACTION ONLY JOBS
-	if ((t.factionOnly and not t.faction) and not ply:getFaction()) then 
-		return false
-	end 
-	-- notify incorrect faction
-	if ((t.factionOnly and t.faction) and (ply:getFaction() != t.faction)) then
-		return false
-	end
-
-	local canjoin = t.canJoin
-	if canjoin then
-		if (istable(canjoin)) then
-			return table.HasValue(canjoin, ply:Team())
-		else
-			return canjoin(t, ply) ~= false
-		end
-	end
-	return true
-end)
-
 
 -- handles all spawning related functionality 
 fw.hook.Add("PlayerSpawn", "TeamSpawn", function(ply)

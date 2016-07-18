@@ -1,12 +1,6 @@
-
-
 function fw.team.addPlayerToFaction(ply, factionId)
-	if ply:inFaction() then
-		fw.team.remvoePlayerFromFaction(ply)
-	end
-
-	ply.GetFWData().faction = factionId
-	hook.Call('PlayerJoinedFaction', factionId)
+	ply:GetFWData().faction = factionId
+	hook.Run('PlayerJoinedFaction', factionId)
 end
 
 function fw.team.removePlayerFromFaction(ply)
@@ -21,7 +15,7 @@ function fw.team.removePlayerFromFaction(ply)
 	local oldFaction = ply:getFaction()
 	ply:GetFWData().faction = nil
 
-	hook.Call('PlayerLeftFaction', oldFaction)
+	hook.Run('PlayerLeftFaction', oldFaction)
 end
 
 function fw.team.setFactionBoss(factionId, ply)

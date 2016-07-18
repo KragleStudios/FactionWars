@@ -5,6 +5,14 @@ FACTION_POLICE = fw.team.registerFaction('Police', {
 	stringID = 'f_police',
 })
 
+FACTION_GANGA = fw.team.registerFaction('Gang A', {
+	stringID = 'f_gangA',
+})
+
+FACTION_GANGB = fw.team.registerFaction('Gang B', {
+	stringID = 'f_gangB',
+})
+
 --
 -- TEAMS/CLASSES
 --

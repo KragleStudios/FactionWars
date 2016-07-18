@@ -68,9 +68,24 @@ function fw.team.register(name, tbl)
 	return tbl
 end
 
-
+-- getByIndex(index)
+-- @param index:number - the index of the team to get
+-- @ret team object
 function fw.team.getByIndex(index)
 	return fw.team.list[index]
+end
+
+-- canChangeTeam - tells you if a player can join targ_team 
+-- @param ply:player object - the player switching teams
+-- @param targ_team:int - the index of the team in the table
+-- @param optional forced:bool should we ignore canjoin conditions
+-- @ret nothing
+function fw.team.canChangeTo(ply, targ_team, forced)
+	if forced then return true, nil end
+
+	local canjoin, message = hook.Call("CanPlayerJoinTeam", GAMEMODE, ply, targ_team)
+
+	return canjoin ~= false, message 
 end
 
 -- fw.team.getByStringId - Gets a team's data by the string used, "civilian", "police_officer"
@@ -91,3 +106,55 @@ local Player = FindMetaTable("Player")
 function Player:getPrefModel()
 	return ply:GetFWData().pref_model
 end
+
+--
+-- HOOKS
+--  
+-- handles the ability of whether or not a player can join a team
+fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
+	local t = fw.team.list[targ_team]
+	if (not t) then 
+		return false 
+	end
+	
+	-- enforce t.max players
+	if t.max then
+		if (t.factionOnly and t.faction) then
+			local count = 0
+			for k,v in pairs(t:getPlayers()) do
+				if (v:getFaction() == t.faction) then
+					count = count + 1
+				end
+			end
+
+			if (count == t.max) then
+				return false
+			end
+		elseif (#t:getPlayers() >= t.max) then
+			return false
+		end 
+	end
+
+	-- can't join a team you're already on
+	if (ply:Team() == targ_team) then 
+		return false 
+	end
+
+	-- SUPPORT FOR FACTION ONLY JOBS
+	if ((t.factionOnly and not t.faction) and not ply:getFaction()) then 
+		return false
+	end 
+	-- notify incorrect faction
+	if ((t.factionOnly and t.faction) and (ply:getFaction() != t.faction)) then
+		return false
+	end
+
+	local canjoin = t.canJoin
+	if canjoin then
+		if (istable(canjoin)) then
+			return table.HasValue(canjoin, ply:Team())
+		else
+			return canjoin(t, ply) ~= false
+		end
+	end
+end)

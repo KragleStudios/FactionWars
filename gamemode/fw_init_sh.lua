@@ -111,13 +111,43 @@ for k,v in pairs(fw.module_srcs) do
 end
 
 
--- fw.dep without printing
+-- fw.dep without printing for things that get loaded later
 function fw.dep(name)
 	if fw.loaded_modules[name] then return fw[name] end
 	fw.loaded_modules[name] = true
 	fw[name] = include(fw.module_srcs[name])
 	return fw[name]
 end
+
+
+-- todo crawler
+if fw.debug then
+	print "--------------------------"
+	print " factionwars todo list    "
+	print "--------------------------"
+	local function todoFinder(directory)
+		local files, directories = file.Find(directory .. '/*', 'LUA')
+		for k,v in ipairs(files) do
+			local data = file.Read(directory .. '/' .. v, 'LUA')
+			for k, line in ipairs(string.Explode('\n', data)) do
+				if line:find('--') and line:find('TODO') then
+					MsgC(color_white, directory .. '/' .. v .. ':' .. k)
+					local start = string.find(line, 'TODO') + 5
+					MsgN(string.sub(line, start))
+				end
+			end
+		end
+
+		for k,v in ipairs(directories) do
+			todoFinder(directory .. '/' .. v)
+		end
+	end
+
+	for k,v in ipairs(fw.module_search_paths) do
+		todoFinder(v)
+	end
+end
+
 
 end load() -- local function load()
 
