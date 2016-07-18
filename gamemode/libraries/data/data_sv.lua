@@ -15,6 +15,13 @@ file.CreateDir(data._rootdir)
 
 local engine = fw.include_sv 'engine_text_sv.lua'
 
+if (fw.config.dataStore == 'text') then
+	engine = include 'engine_text_sv.lua'
+elseif (fw.config.dataStore == 'sql') then
+	engine = include 'engine_sql_sv.lua'
+	engine.database:connect()
+end
+
 --
 -- CREATE PLAYER DATA TABLE
 -- 
