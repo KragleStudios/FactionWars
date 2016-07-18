@@ -1,8 +1,8 @@
 --
 -- FACTIONS
 --
-FACTION_DEFAULT = fw.team.registerFaction('Common Wealth', {
-	stringID = 'f_default',
+FACTION_POLICE = fw.team.registerFaction('Police', {
+	stringID = 'f_police',
 })
 
 --
