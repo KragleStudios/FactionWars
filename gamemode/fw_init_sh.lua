@@ -3,7 +3,7 @@ DeriveGamemode("sandbox")
 local function load()
 
 fw = {
-	--debug = true
+	debug = true
 }
 
 
