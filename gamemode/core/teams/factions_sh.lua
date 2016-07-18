@@ -20,6 +20,7 @@ local faction_mt = {
 		return ndoc.fwFactions[self.index] or {}
 	end,
 }
+faction_mt.__index = faction_mt
 
 -- fw.team.registerFaction
 -- @param factionName:string
@@ -28,6 +29,8 @@ local faction_mt = {
 function fw.team.registerFaction(factionName, tbl)
 	-- assert structure
 	assert(tbl.stringID, 'faction.stringID must be defined')
+
+	setmetatable(tbl, faction_mt)
 
 	tbl.index = table.insert(fw.team.factions, tbl)
 	tbl.name = factionName
@@ -49,7 +52,7 @@ end
 -- returns the faction by it's numeric id
 -- @param index:number
 -- @ret faction:table
-function fw.team.getFactionByID(factionId)
+function fw.team.getFactionById(factionId)
 	return fw.team.factions[factionId]
 end
 

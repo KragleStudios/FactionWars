@@ -5,8 +5,8 @@ function fw.team.addPlayerToFaction(ply, factionId)
 		fw.team.remvoePlayerFromFaction(ply)
 	end
 
-	ply.GetFWData().faction = factionId
-	hook.Call('PlayerJoinedFaction', factionId)
+	ply:GetFWData().faction = factionId
+	hook.Call('PlayerJoinedFaction', GAMEMODE, factionId)
 end
 
 function fw.team.removePlayerFromFaction(ply)
@@ -21,7 +21,7 @@ function fw.team.removePlayerFromFaction(ply)
 	local oldFaction = ply:getFaction()
 	ply:GetFWData().faction = nil
 
-	hook.Call('PlayerLeftFaction', oldFaction)
+	hook.Call('PlayerLeftFaction', GAMEMODE, oldFaction)
 end
 
 function fw.team.setFactionBoss(factionId, ply)
@@ -31,3 +31,10 @@ end
 function fw.team.removeFactionBoss(factionId)
 	fw.team.setFactionBoss(factionId, nil)
 end
+
+--default faction!
+fw.hook.Add("PlayerInitialSpawn", "SetDefaultFaction", function(ply)
+	if (not ply:inFaction()) then
+		fw.team.addPlayerToFaction(ply, FACTION_DEFAULT)
+	end
+end)
