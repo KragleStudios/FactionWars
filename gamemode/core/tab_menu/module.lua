@@ -118,6 +118,12 @@ function fw.tab_menu.showScoreboard()
 
 		__FW_TABMENU:AddView('PLAYERS', fw.tab_menu.tabDisplayPlayersList)
 		__FW_TABMENU:AddView('JOBS', fw.tab_menu.tabDisplayJobsList)
+		if (LocalPlayer():isFactionBoss()) then
+			__FW_TABMENU:AddView('FACTION', fw.tab_menu.factionAdministration)
+		end
+		if (LocalPlayer():IsAdmin()) then
+			__FW_TABMENU:AddView('ADMIN', fw.tab_menu.administration)
+		end
 
 
 		vgui.Create('FWUIDropShadow')
@@ -179,6 +185,7 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 		fw.print("header y offset: " .. content:GetHeaderYOffset())
 		wrapper:SetPos(0, content:GetHeaderYOffset())
 		wrapper:SetSize(content:GetWide(), content:GetTall() - content:GetHeaderYOffset())
+		wrapper.headerOffset = content:GetHeaderYOffset()
 
 		constructor(wrapper)
 	end)
@@ -186,29 +193,58 @@ end
 
 function fw.tab_menu.tabDisplayPlayersList(panel)
 	local space = vgui.Create('DScrollPanel', panel)
-	space:SetSize(panel:GetWide() - 10, panel:GetTall() - panel:GetHeaderYOffset())
-	space:SetPos(5, panel:GetHeaderYOffset())
+	space:SetSize(panel:GetWide() - 10, panel:GetTall() - panel.headerOffset / 2)
+	space:SetPos(5, panel.headerOffset / 2)
 
 	local listLayout = vgui.Create('STYLayoutVertical', space)
 	listLayout:SetWide(panel:GetWide())
-	listLayout:SetPadding(sty.ScreenScale(2))
+	listLayout:SetPadding(sty.ScreenScale(5))
 
-	for k, v in pairs(player.GetAll()) do
-		local panel = vgui.Create('FWUIButton', listLayout)
-		panel:SetFont(fw.fonts.default)
-		panel:SetTall(sty.ScreenScale(15))
-		panel:SetText(v:Nick())
+	for k, v in pairs(fw.team.factions) do
+		local plys = fw.team.getFactionPlayers(v.index) 
 
-		panel.DoClick = function()
-			// more info popup or something
+		if (#plys == 0) then continue end
+
+		local factionPlayers = vgui.Create('FWUITableViewSection', listLayout)
+		factionPlayers:SetTitle(v.name)
+		factionPlayers:SetPadding(sty.ScreenScale(2))
+
+		for k,v in pairs(plys) do
+			local panel = vgui.Create('FWUIPanel', factionPlayers)
+			panel:SetTall(sty.ScreenScale(15))
+			
+			local moreButton = vgui.Create('FWUIButton', panel)
+			moreButton:SetFont(fw.fonts.default)
+			moreButton:SetText('MORE')
+			moreButton.DoClick = function(self)
+				--TODO: fancy popup 
+			end
+			moreButton:SetWide(sty.ScreenScale(40))
+
+			local title = vgui.Create('FWUITextBox', panel)
+			title:SetText(v:Nick())
+
+			local job = vgui.Create('FWUITextBox', panel)
+			job:SetText(fw.team.list[v:Team()].name)
+			job:SizeToContents()
+
+			title:Dock(LEFT)
+			moreButton:Dock(RIGHT)
+			job:Dock(RIGHT)
 		end
-
-		panel:PerformLayout()
+		
 	end
-
-	vgui.Create('DPanel')
 end
 
+function fw.tab_menu.factionAdministration(pnl)
+
+end
+
+function fw.tab_menu.administration(pnl)
+
+end
+
+--job menu display! :D
 function fw.tab_menu.tabDisplayJobsList(panel)
 	local space = vgui.Create('DScrollPanel', panel)
 	space:SetSize(panel:GetSize())
@@ -290,7 +326,6 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 		join:SetWide(sty.ScreenScale(40))
 		function join:DoClick()
 			if (#job:getModels() > 1 and not selectedModel) then
-				print("X")
 				return
 			end
 			

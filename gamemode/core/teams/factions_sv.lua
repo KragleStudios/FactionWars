@@ -1,6 +1,7 @@
 function fw.team.addPlayerToFaction(ply, factionId)
 	local t = fw.team.list[ply:Team()]
-	if t and (t.faction ~= nil) then
+	print(ply:getFaction())
+	if ply:getFaction() and t and (t.faction ~= nil) then
 		if (istable(t.faction) and not table.HasValue(t.faction, TEAM_DEFAULT)) then 
 			fw.team.demotePlayer(ply)
 		elseif (t.faction ~= TEAM_DEFAULT) then

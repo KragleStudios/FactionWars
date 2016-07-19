@@ -1,7 +1,5 @@
 fw.team.factions = {}
 
-local factionsList = fw.team.factions
-
 if SERVER then
 	ndoc.table.fwFactions = {}
 	concommand.Add("fw_faction_leave", function(ply)
@@ -23,9 +21,6 @@ local faction_mt = {
 	end,
 	getNWData = function(self)
 		return ndoc.table.fwFactions[self.index] or {}
-	end,
-	getBoss = function(self)
-		return self:getNWData().boss
 	end,
 	getBoss = function(self)
 		return self:getNWData().boss
@@ -72,8 +67,6 @@ function fw.team.registerFaction(factionName, tbl)
 		}
 	end
 
-	setmetatable(tbl, faction_mt)
-
 	return tbl.index -- return the faction id
 end
 
@@ -96,7 +89,7 @@ end
 -- @param index:number
 -- @ret faction:table
 function fw.team.getFactionByID(factionId)
-	return factionsList[factionId]
+	return fw.team.factions[factionId]
 end
 
 -- fw.team.getFactionByStringId(stringID)
@@ -111,7 +104,7 @@ function fw.team.getFactionByStringID(stringID)
 end
 
 function fw.team.getBoss(factionId)
-	return factionsList[factionId]:getBoss()
+	return fw.team.factions[factionId]:getBoss()
 end
 
 -- fw.team.getFactionPlayers(factionID)
@@ -121,7 +114,7 @@ function fw.team.getFactionPlayers(factionId)
 	if not factionId then
 		return player.GetAll()
 	end
-	return factionsList[factionId]:getPlayers()
+	return fw.team.factions[factionId]:getPlayers()
 end
 
 local Player = FindMetaTable 'Player'
@@ -142,5 +135,5 @@ function Player:isFactionBoss()
 end
 
 function Player:getFactionBoss()
-	return factionsList[self:getFaction()]:getBoss() or NULL
+	return ndoc.table.fwFactions[self:getFaction()].boss
 end

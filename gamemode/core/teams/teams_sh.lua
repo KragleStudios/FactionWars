@@ -151,7 +151,7 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	if (t.faction) then
 		if istable(t.faction) and not table.HasValue(t.faction, ply:getFaction()) then
 			return false
-		elseif (t.faction ~= ply:getFaction()) then
+		elseif (not istable(t.faction) and t.faction ~= ply:getFaction()) then
 			return false
 		end
 	end

@@ -21,7 +21,7 @@ function fw.team.playerChangeTeam(ply, targ_team, forced)
 	local pref_model = ply:GetFWData().preferred_models and ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
 
 	-- remove player if they are the faction boss
-	if ply:isFactionBoss() then
+	if ply:getFaction() and ply:isFactionBoss() then
 		fw.notif.chatPrint(player.GetAll(), "Player ", ply, " is no longer the boss of " .. fw.team.getFactionByID(ply:getFaction()):getName())
 		fw.team.removeFactionBoss(ply:getFaction())
 	end
