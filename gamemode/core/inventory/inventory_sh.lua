@@ -1,5 +1,5 @@
 fw.hook.Add("CanRemoveFromInventory", "RemoveItem", function(ply, item)
-	if (not ply:inFaction() and item.factionOnly) then
+	if (not ply:inDefaultFaction() and item.factionOnly) then
 		return false, "You need to be in a faction to use this item!"
 	end
 	--TODO: This needs to be converted to use player team vars!! TEAM_* etc

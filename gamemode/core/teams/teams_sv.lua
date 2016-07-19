@@ -191,6 +191,7 @@ end)
 fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 	ply:FWConPrint("setting your team to team citizen")
 	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN:getID(), nil, true)
+	ply:GetFWData().faction = FACTION_DEFAULT
 end)
 
 -- handles all death related functionality
@@ -308,3 +309,14 @@ fw.chat.addCMD("demote", "Vote to demote a user", function(ply, target)
 		end, "Yes", "No", 15)
 
 end):addParam("target", "player")
+
+fw.chat.addCMD("setagenda", "Sets the agenda for a faction", function(ply, text)
+	if (not ply:isFactionBoss()) then ply:FWChatPrintError("You aren't the faction boss!") return end
+
+	local faction = ply:getFaction()
+	local players = fw.team.getFactionPlayers(faction)
+	fw.notif.chatPrint(players, ply, " has updated the agenda!")
+
+	ndoc.table.fwFactions[faction].agenda = text
+
+end):addParam("agenda", "string")

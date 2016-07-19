@@ -7,7 +7,7 @@ require 'sty'
 fw.dep(CLIENT, 'fonts')
 
 -- client side constants 
-if SERVER then 
+if not SERVER then 
 	fw.ui = {}
 	
 	fw.ui.const_darkgrey = Color(50, 50, 50)

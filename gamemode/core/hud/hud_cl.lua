@@ -123,8 +123,10 @@ vgui.Register('fwHudInfo', {
 
 					if LocalPlayer():inFaction() then
 						local boss =  fw.team.factions[LocalPlayer():getFaction()]:getBoss()
-						if (not isstring(boss)) then
+						if (boss and boss:IsPlayer()) then
 							boss = boss:Nick()
+						else
+							boss = "None"
 						end
 
 						self.boss:SetText('BOSS: ' .. boss)
@@ -144,9 +146,10 @@ vgui.Register('fwHudInfo', {
 
 				local function updateAgenda()
 					if not IsValid(self.agenda) then return end
+					print("UPDATING AGENDA")
 
 					if LocalPlayer():inFaction() then
-						local agenda =  fw.team.factionAgendas[faction] or "No agenda currently set!" 
+						local agenda =  ndoc.table.fwFactions[LocalPlayer():getFaction()].agenda or "No agenda currently set!" 
 
 						self.agenda:SetText(agenda)
 						self.agenda:SetVisible(true)
@@ -155,8 +158,11 @@ vgui.Register('fwHudInfo', {
 						self.agenda:SetVisible(false)
 						self.layout:PerformLayout()
 					end
+
+					self.agenda:PerformLayout()
 				end
 				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateAgenda)
+				ndoc.addHook('fwFactions.$.agenda', 'set', updateAgenda)
 				updateAgenda()
 
 			end

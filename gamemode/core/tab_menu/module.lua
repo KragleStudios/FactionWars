@@ -240,7 +240,7 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 	for index, faction in pairs(fw.team.factions) do
 		if LocalPlayer():getFaction() == faction:getID() then continue end
 
-		createFactionButton(faction:getName(), 0, function()
+		createFactionButton(faction:getName(), #faction:getPlayers(), function()
 			LocalPlayer():ConCommand(faction.command)
 			fw.tab_menu.hideContent()
 		end)
@@ -271,6 +271,91 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 
 
 	-- list of jobs
+	local jobListSection = vgui.Create("FWUITableViewSection", listLayout)
+	jobListSection:SetTitle("JOBS")
+	jobListSection.content:SetPadding(10)
+
+	local function createJobButton(job, players)
+		local selectedModel, pref_model
+		
+		local pnl = vgui.Create("FWUIPanel")
+		jobListSection:Add(pnl)
+
+		local join = vgui.Create("FWUIButton", pnl)
+		join:SetText("JOIN TEAM")
+		join:SetWide(sty.ScreenScale(50))
+		function join:DoClick()
+			if (#job:getModels() > 1 and not selectedModel) then
+				print("X")
+				return
+			end
+
+			
+			if (selectedModel) then
+				pref_model = selectedModel:GetModel()
+			end
+			LocalPlayer():ConCommand(job.command, pref_model)
+			fw.tab_menu.hideContent()
+		end
 
 
+		local title = vgui.Create("FWUITextBox", pnl)
+		title:SetText(job:getName())
+
+		local players = vgui.Create("FWUITextBox", pnl)
+		players:SetText(#job:getPlayers().."/"..job.max)
+
+		local mdls = job:getModels()
+		if (#mdls > 1) then
+			pnl:SetTall(pnl:GetTall() * 3)
+			join:SetEnabled(false)
+
+			local height = pnl:GetTall() - title:GetTall() - 5
+			local xOffset = 5
+			for k,v in pairs(mdls) do
+				local mdl = vgui.Create("DModelPanel", pnl)
+				mdl:SetPos(xOffset, pnl:GetTall() - height - 5)
+				mdl:SetModel(v)
+				mdl:SetSize(height, height)
+				function mdl:LayoutEntity()	end
+				local p = mdl.Paint
+				function mdl:Paint(w, h)
+					p(self, w, h)
+
+					if (selectedModel == self) then
+						surface.SetDrawColor(Color(255, 255, 255))
+						surface.DrawOutlinedRect(0, 0, w, h)
+					end
+				end
+
+				function mdl:DoClick()
+					selectedModel = self
+				end
+
+				local prefModelList = ndoc.table.fwPlayers[LocalPlayer()].preferred_models
+				if (prefModelList[job:getStringID()] == v) then
+					selectedModel = mdl
+				end
+
+				local eyes = mdl.Entity:GetBonePosition(mdl.Entity:LookupBone("ValveBiped.Bip01_Head1"))
+				mdl:SetLookAt(eyes)
+				mdl:SetCamPos(eyes - Vector(-12, 0, 0))
+
+				xOffset = xOffset + height + 5
+			end
+		end
+
+		title:Dock(LEFT)
+		title:Dock(TOP)
+		join:Dock(RIGHT)
+		players:Dock(RIGHT)
+
+	end
+
+	for i, job in pairs(fw.team.list) do
+		if (LocalPlayer():Team() == job:getID()) then continue end
+		if (not fw.team.canChangeTo(LocalPlayer(), job:getID(), false)) then continue end
+		
+		createJobButton(job, #job:getPlayers())
+	end
 end
