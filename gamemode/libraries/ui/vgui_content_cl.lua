@@ -28,7 +28,7 @@ vgui.Register('FWUIPanel', {
 		self.BaseClass.SetParent(self, ...)
 
 		local count = 0
-		local p = self
+		local p = self:GetParent()
 		while IsValid(p) do
 			if p.isFWUIPanel then
 				count = count + 1
@@ -36,7 +36,7 @@ vgui.Register('FWUIPanel', {
 			p = p:GetParent()
 		end
 
-		if count > 10 then count = 10 end
+		if count > 5 then count = 5 end
 		fw.print(count)
 		self._panelBg = Color(
 			panelBg.r + count * lightenRate, 
