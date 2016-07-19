@@ -118,6 +118,8 @@ function fw.tab_menu.showScoreboard()
 
 		__FW_TABMENU:AddView('PLAYERS', fw.tab_menu.tabDisplayPlayersList)
 		__FW_TABMENU:AddView('JOBS', fw.tab_menu.tabDisplayJobsList)
+		__FW_TABMENU:AddView('ITEMS', fw.tab_menu.itemManagement)
+		__FW_TABMENU:AddView('INVENTORY', fw.tab_menu.playerInventory)
 		if (LocalPlayer():isFactionBoss()) then
 			__FW_TABMENU:AddView('FACTION', fw.tab_menu.factionAdministration)
 		end
@@ -236,11 +238,23 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 	end
 end
 
+--TODO: Faction Administration Panel
 function fw.tab_menu.factionAdministration(pnl)
 
 end
 
+--TODO: Server administration Panel
 function fw.tab_menu.administration(pnl)
+
+end
+
+--TODO: Item purchasing panel
+function fw.tab_menu.itemManagement(pnl)
+
+end
+
+--TODO: Player inventory panel
+function fw.tab_menu.playerInventory(pnl)
 
 end
 
