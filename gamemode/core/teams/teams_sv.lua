@@ -117,13 +117,16 @@ function fw.team.setPreferredModel(team_id, ply, model)
 		return
 	end
 
-	if not table.HasValue(team:getModels(), args[2]) then
-		pl:FWConPrint("model " .. tostring(args[2]) .. " not available for team " .. tostring(args[1]))
+	if not table.HasValue(team:getModels(), model) then
+		pl:FWConPrint("model " .. tostring(model) .. " not available for team " .. tostring(team_id))
 		return 
 	end
 
 	-- update the preferred model!
-	ply:GetFWData().preferred_models[t.stringID] = pref_model
+	if not ply:GetFWData().preferred_models then
+		ply:GetFWData().preferred_models = {}
+	end
+	ply:GetFWData().preferred_models[team.stringID] = pref_model
 end
 
 -- handles all spawning related functionality 
@@ -223,10 +226,17 @@ end)
 --
 -- CONSOLE COMMANDS
 -- 
-concommand.Add("fw_team_preferredModel", function(pl, cmd, args)
-	if #args < 2 then pl:FWConPrint("too few argumetns") return end
-	local team = fw.team.getByStringID(args[1])
-	fw.team.setPreferredModel(team:getID(), pl, args[2])
+util.AddNetworkString('fw.team.preferredModel')
+net.Receive('fw.team.preferredModel', function(_, pl)
+	local team = net.ReadString()
+	local model = net.ReadString()
+	
+	local t = fw.team.getByStringID(team)
+	if not t then
+		pl:FWChatPrintError("no such team: " .. team:sub(1, 100))
+	end
+
+	fw.team.setPreferredModel(t:getID(), pl, model)
 end)
 
 --

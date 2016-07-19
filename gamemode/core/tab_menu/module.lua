@@ -213,14 +213,6 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 		for k,v in pairs(plys) do
 			local panel = vgui.Create('FWUIPanel', factionPlayers)
 			panel:SetTall(sty.ScreenScale(15))
-			
-			local moreButton = vgui.Create('FWUIButton', panel)
-			moreButton:SetFont(fw.fonts.default)
-			moreButton:SetText('MORE')
-			moreButton.DoClick = function(self)
-				--TODO: fancy popup 
-			end
-			moreButton:SetWide(sty.ScreenScale(40))
 
 			local title = vgui.Create('FWUITextBox', panel)
 			title:SetText(v:Nick())
@@ -228,9 +220,9 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 			local job = vgui.Create('FWUITextBox', panel)
 			job:SetText(fw.team.list[v:Team()].name)
 			job:SizeToContents()
+			job:SetWide(sty.ScreenScale(50))
 
-			title:Dock(LEFT)
-			moreButton:Dock(RIGHT)
+			title:Dock(FILL)
 			job:Dock(RIGHT)
 		end
 		
@@ -272,13 +264,14 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 
 	local function createFactionButton(fname, players, doClickJoin)
 		local panel = vgui.Create('FWUIPanel')
+		panel:SetTall(sty.ScreenScale(12))
 		factionsListSection:Add(panel)
 
 		local joinButton = vgui.Create('FWUIButton', panel)
 		joinButton:SetFont(fw.fonts.default)
 		joinButton:SetText('JOIN FACTION')
 		joinButton.DoClick = doClickJoin
-		joinButton:SetWide(sty.ScreenScale(40))
+		joinButton:SetWide(sty.ScreenScale(60))
 
 		local title = vgui.Create('FWUITextBox', panel)
 		title:SetText(fname)
@@ -299,16 +292,18 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 	-- leave faction
 	if LocalPlayer():inFaction() and LocalPlayer():getFaction() ~= FACTION_DEFAULT then 
 		local panel = vgui.Create('FWUIPanel')
+		panel:SetTall(sty.ScreenScale(12))
 		factionsListSection:Add(panel)
 
 		local joinButton = vgui.Create('FWUIButton', panel)
 		joinButton:SetText('LEAVE')
+		joinButton:SetFont(fw.fonts.default)
 		joinButton.DoClick = function()
 			fw.tab_menu .hideContent()
 			LocalPlayer():ConCommand('fw_faction_leave \n')
 		end
 
-		joinButton:SetWide(sty.ScreenScale(40))
+		joinButton:SetWide(sty.ScreenScale(60))
 
 		local title = vgui.Create('FWUITextBox', panel)
 		title:SetText('Leave ' .. fw.team.getFactionByID(LocalPlayer():getFaction()):getName())
@@ -329,81 +324,62 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 		local selectedModel, pref_model
 		
 		local pnl = vgui.Create("FWUIPanel")
+		pnl:SetTall(sty.ScreenScale(12))
 		jobListSection:Add(pnl)
+
+		local title = vgui.Create('FWUITextBox', pnl)
+		title:SetText(job:getName())
+		title:Dock(FILL)
 
 		local join = vgui.Create("FWUIButton", pnl)
 		join:SetText("JOIN TEAM")
 		join:SetFont(fw.fonts.default)
 		join:SetWide(sty.ScreenScale(40))
+		join:Dock(RIGHT)
 		function join:DoClick()
-			if (#job:getModels() > 1 and not selectedModel) then
-				return
-			end
-			
-			if (selectedModel) then
-				pref_model = selectedModel:GetModel()
-			end
-
-			LocalPlayer():ConCommand(job.command, pref_model)
+			LocalPlayer():ConCommand(job.command)
 			fw.tab_menu.hideContent()
 		end
 
+		if #job.models > 1 then
+			local pickModel = vgui.Create('FWUIButton', pnl)
+			pickModel:SetText("SET MODEL")
+			pickModel:SetFont(fw.fonts.default)
+			pickModel:SetWide(sty.ScreenScale(40))
+			pickModel:Dock(RIGHT)
 
-		local title = vgui.Create("FWUITextBox", pnl)
-		title:SetText(job:getName())
+			-- model panels
+			local mdlPanel = vgui.Create('FWUIPanel', self)
+			mdlPanel:SetVisible(false)
+			jobListSection:Add(mdlPanel)
 
-		local players = vgui.Create("FWUITextBox", pnl)
-		players:SetText(#job:getPlayers().."/"..job.max)
+			mdlPanel:SetTall(sty.ScreenScale(40))
 
-		local mdls = job:getModels()
-		if (#mdls > 1) then
-			pnl:SetTall(pnl:GetTall() * 3)
-			join:SetEnabled(false)
-
-			local height = pnl:GetTall() - title:GetTall() - 5
-			local xOffset = 5
-			for k,v in pairs(mdls) do
-				local mdl = vgui.Create("DModelPanel", pnl)
-				mdl:SetPos(xOffset, pnl:GetTall() - height - 5)
+			for k,v in ipairs(job.models) do
+				local mdl = vgui.Create('SpawnIcon', mdlPanel)
+				mdl:SetSize(mdlPanel:GetTall(), mdlPanel:GetTall())
+				mdl:PerformLayout()
 				mdl:SetModel(v)
-				mdl:SetSize(height, height)
-				function mdl:LayoutEntity()	end
-				local p = mdl.Paint
-				function mdl:Paint(w, h)
-					p(self, w, h)
 
-					if (selectedModel == self) then
-						surface.SetDrawColor(Color(255, 255, 255))
-						surface.DrawOutlinedRect(0, 0, w, h)
-					end
+				mdl.DoClick = function()
+					fw.team.setPreferredModel(job:getID(), v)
+					mdlPanel:SetVisible(false)
+					jobListSection:SizeToContents()
 				end
+				mdl:Dock(LEFT)
+			end
 
-				function mdl:DoClick()
-					selectedModel = self
-				end
-
-				local prefModelList = ndoc.table.fwPlayers[LocalPlayer()].preferred_models or {}
-				if (prefModelList[job:getStringID()] == v) then
-					selectedModel = mdl
-				end
-
-				local eyes = mdl.Entity:GetBonePosition(mdl.Entity:LookupBone("ValveBiped.Bip01_Head1"))
-				mdl:SetLookAt(eyes)
-				mdl:SetCamPos(eyes - Vector(-12, 0, 0))
-
-				xOffset = xOffset + height + 5
+			pickModel.DoClick = function()
+				mdlPanel:SetVisible(not mdlPanel:IsVisible())
+				jobListSection:SizeToContents()
 			end
 		end
 
-		title:Dock(LEFT)
-		title:Dock(TOP)
-		join:Dock(RIGHT)
-		players:Dock(RIGHT)
-
 	end
 
+	local myTeam = LocalPlayer():Team()
 	for i, job in pairs(fw.team.list) do
-		if (LocalPlayer():Team() == job:getID()) then continue end
+		if (myTeam == job:getID()) then continue end
 		if (not fw.team.canChangeTo(LocalPlayer(), job:getID(), false)) then continue end
 		
 		createJobButton(job, #job:getPlayers())

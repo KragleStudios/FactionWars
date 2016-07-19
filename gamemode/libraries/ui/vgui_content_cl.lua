@@ -1,10 +1,13 @@
 local panelBg = fw.ui.const_panel_background
 local frameBg = fw.ui.const_frame_background
+local lightenRate = fw.ui.const_nesting_lighten_rate
 
 vgui.Register('FWUIPanel', {
+	isFWUIPanel = function() end,
+
 	Paint = function(self, w, h)
 		if not self._noBackground then 
-			surface.SetDrawColor(panelBg)
+			surface.SetDrawColor(self._panelBg or panelBg)
 			surface.DrawRect(0, 0, w, h)
 		end
 
@@ -14,9 +17,32 @@ vgui.Register('FWUIPanel', {
 		end
 
 		if not self._noOutline then 
-			surface.SetDrawColor(255, 255, 255, 5)
+			surface.SetDrawColor(0, 0, 0, 50)
 			surface.DrawOutlinedRect(0, 0, w, h)
+			surface.SetDrawColor(255, 255, 255, 5)
+			surface.DrawOutlinedRect(1, 1, w-2, h-2)
 		end
+	end,
+
+	SetParent = function(self, ...)
+		self.BaseClass.SetParent(self, ...)
+
+		local count = 0
+		local p = self
+		while IsValid(p) do
+			if p.isFWUIPanel then
+				count = count + 1
+			end
+			p = p:GetParent()
+		end
+
+		if count > 10 then count = 10 end
+		fw.print(count)
+		self._panelBg = Color(
+			panelBg.r + count * lightenRate, 
+			panelBg.g + count * lightenRate, 
+			panelBg.b + count * lightenRate
+		)
 	end,
 
 	SetNoOutline = function(self, bOutline)

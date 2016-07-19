@@ -23,6 +23,7 @@ fw.ui.CENTER = 5
 
 fw.ui.const_panel_background = Color(45, 45, 45)
 fw.ui.const_frame_background = Color(34, 34, 34)
+fw.ui.const_nesting_lighten_rate = 5
 
 fw.include_cl 'vgui_dropshadow_cl.lua'
 fw.include_cl 'vgui_content_cl.lua'

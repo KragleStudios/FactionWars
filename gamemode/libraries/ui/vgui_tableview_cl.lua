@@ -73,7 +73,13 @@ vgui.Register('FWUITableViewSection', {
 		
 		self.contentWrapper:SetWide(w - self._padding * 2)
 		self.contentWrapper:SetPos(self._padding, self._padding + self.header:GetTall())
-		self:SetTall(self.header:GetTall() + self.contentWrapper:GetTall() + self._padding * 2)
+		self:SetTall(self.header:GetTall() + self.contentWrapper:GetTall() + (self.expanded and self._padding * 2 or 0))
+	end,
+
+	SizeToContents = function(self)
+		self._animating = nil
+		self.content:PerformLayout()
+		self:PerformLayout()
 	end,
 }, 'FWUIPanel')
 
