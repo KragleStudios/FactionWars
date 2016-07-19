@@ -219,13 +219,14 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 
 	local factionsListSection = vgui.Create('FWUITableViewSection', listLayout)
 	factionsListSection:SetTitle('FACTIONS')
-	factionsListSection.content:SetPadding(10)
+	factionsListSection:SetPadding(sty.ScreenScale(2))
 
 	local function createFactionButton(fname, players, doClickJoin)
 		local panel = vgui.Create('FWUIPanel')
 		factionsListSection:Add(panel)
 
 		local joinButton = vgui.Create('FWUIButton', panel)
+		joinButton:SetFont(fw.fonts.default)
 		joinButton:SetText('JOIN FACTION')
 		joinButton.DoClick = doClickJoin
 		joinButton:SetWide(sty.ScreenScale(40))
@@ -273,7 +274,7 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 	-- list of jobs
 	local jobListSection = vgui.Create("FWUITableViewSection", listLayout)
 	jobListSection:SetTitle("JOBS")
-	jobListSection.content:SetPadding(10)
+	jobListSection:SetPadding(sty.ScreenScale(2))
 
 	local function createJobButton(job, players)
 		local selectedModel, pref_model
@@ -283,7 +284,8 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 
 		local join = vgui.Create("FWUIButton", pnl)
 		join:SetText("JOIN TEAM")
-		join:SetWide(sty.ScreenScale(50))
+		join:SetFont(fw.fonts.default)
+		join:SetWide(sty.ScreenScale(40))
 		function join:DoClick()
 			if (#job:getModels() > 1 and not selectedModel) then
 				print("X")

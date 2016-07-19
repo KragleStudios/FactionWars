@@ -63,7 +63,6 @@ vgui.Register('FWUITableViewSection', {
 			self.header:SetSize(self:GetWide(), sty.ScreenScale(12))
 
 			self.content:SetWide(w - self._padding * 2)
-			self.content:SetPadding(sty.ScreenScale(2))
 
 			if self.expanded then 
 				self.contentWrapper:SetTall(self.content:GetTall())
