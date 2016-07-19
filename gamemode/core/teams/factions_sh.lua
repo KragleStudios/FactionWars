@@ -94,13 +94,13 @@ end
 -- @param index:number
 -- @ret faction:table
 function fw.team.getFactionByID(factionId)
-	return fw.team.factions[factionId]
+	return factionsList[factionId]
 end
 
 -- fw.team.getFactionByStringId(stringID)
 -- @param stringID:string - the faction to get by it's string id
 -- @ret faction:table - the meta data table for the faction
-function fw.team.getFactionByStringId(stringID)
+function fw.team.getFactionByStringID(stringID)
 	for k,v in ipairs(fw.team.factions) do
 		if v.stringID == stringID then
 			return v
@@ -138,5 +138,5 @@ function Player:isFactionBoss()
 end
 
 function Player:getFactionBoss()
-	return self:inFaction() and fw.team.factions[self:getFaction()].boss or NULL
+	return self:inFaction() and factionsList[self:getFaction()].boss or NULL
 end

@@ -28,8 +28,6 @@ TEAM_BOSS = fw.team.register("Boss", {
 })
 
 
-
-
 TEAM_CIVILIAN = fw.team.register("Civilian", {
 	stringID = "t_civilian",
 	models = {"models/player/mossman.mdl"},
