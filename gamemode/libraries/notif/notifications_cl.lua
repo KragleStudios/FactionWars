@@ -8,7 +8,7 @@ net.Receive('fw.notif.conprint', function()
 
 	for k, v in ipairs(table) do
 		if (isnumber(v)) then
-			local color = _G.table.KeyFromValue(fw.notif.colors, v)
+			local color = fw.notif.colors[v]
 
 			if (color) then
 				table[k] = color
@@ -24,7 +24,7 @@ net.Receive('fw.notif.chatprint', function()
 
 	for k, v in ipairs(table) do
 		if (isnumber(v)) then
-			local color = _G.table.KeyFromValue(fw.notif.colors, v)
+			local color = fw.notif.colors[v]
 
 			if (color) then
 				table[k] = color
