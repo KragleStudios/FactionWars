@@ -4,6 +4,7 @@ vgui.Register('FWUITableViewSection', {
 		self.contentWrapper = vgui.Create('STYPanel', self)
 		self.content = vgui.Create('STYLayoutVertical', self.contentWrapper)
 		self.expanded = true
+		self._padding = 0
 
 		self.header.DoClick = function()
 			self.expanded = not self.expanded
@@ -23,7 +24,7 @@ vgui.Register('FWUITableViewSection', {
 	end,
 
 	SetPadding = function(self, padding)
-		self._padding = GetPadding()
+		self._padding = self:GetPadding()
 		self.content:SetPadding(padding)
 
 		return self 
