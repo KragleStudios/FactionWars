@@ -4,7 +4,6 @@ vgui.Register('FWUITableViewSection', {
 		self.contentWrapper = vgui.Create('STYPanel', self)
 		self.content = vgui.Create('STYLayoutVertical', self.contentWrapper)
 		self.expanded = true
-
 		self:SetPadding(0)
 
 		self.header.DoClick = function()
@@ -63,7 +62,6 @@ vgui.Register('FWUITableViewSection', {
 		if not self._animating then 
 			self.header:SetSize(self:GetWide(), sty.ScreenScale(12))
 
-			self.contentWrapper:SetWide(w - self._padding * 2) 
 			self.content:SetWide(w - self._padding * 2)
 			self.content:SetPadding(sty.ScreenScale(2))
 
@@ -74,8 +72,8 @@ vgui.Register('FWUITableViewSection', {
 			end
 		end
 		
+		self.contentWrapper:SetWide(w - self._padding * 2)
 		self.contentWrapper:SetPos(self._padding, self._padding + self.header:GetTall())
-
 		self:SetTall(self.header:GetTall() + self.contentWrapper:GetTall() + self._padding * 2)
 	end,
 }, 'FWUIPanel')
