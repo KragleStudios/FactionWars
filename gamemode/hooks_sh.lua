@@ -81,6 +81,10 @@ function GM:Think(...)
 	return fw.hook.Call("Think", ...)
 end
 
+function GM:RenderScreenspaceEffects(...)
+	return fw.hook.Call('RenderScreenspaceEffects', ...)
+end
+
 function GM:EntityRemoved(...)
 	return fw.hook.Call("EntityRemoved", ...)
 end

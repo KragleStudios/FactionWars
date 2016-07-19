@@ -36,7 +36,6 @@ TEAM_CIVILIAN = fw.team.register("Civilian", {
 	weapons = {"weapon_fists"},
 	factionOnly = false,
 	salary = 50,
-	max = 0,
 })
 
 TEAM_DRUG = fw.team.register("Drug Dealer", {
