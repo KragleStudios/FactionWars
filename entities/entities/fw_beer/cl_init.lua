@@ -8,7 +8,7 @@ end
 
 fw.hook.Add("RenderScreenspaceEffects", "BeerEffects", function()
 	if (IsValid(LocalPlayer())) then
-		if (LocalPlayer():GetFWData().drunkTime and CurTime() <= LocalPlayer():GetFWData().drunkTime) then
+		if (LocalPlayer():GetFWData().beerTime and CurTime() <= LocalPlayer():GetFWData().beerTime) then
 			DrawSobel(0.5)
 		end
 	end
