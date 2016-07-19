@@ -54,6 +54,9 @@ function fw.team.register(name, tbl)
 	setmetatable(tbl, team_mt)
 	team.SetUp(tbl.index, name, tbl.color)
 
+	--reset team table with new data
+	fw.team.list[index] = tbl
+
 	if SERVER then
 		-- TODO: thelastpenguin: add a chat command for this
 		concommand.Add(tbl.command, function(pl, cmd, args)
@@ -65,7 +68,7 @@ function fw.team.register(name, tbl)
 		end)
 	end
 
-	return tbl
+	return tbl.index
 end
 
 -- getByIndex(index)
@@ -141,15 +144,16 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	end
 
 	-- SUPPORT FOR FACTION ONLY JOBS
-	if ((t.factionOnly and not t.faction) and ply:inDefaultFaction()) then 
-		return false
-	end 
-	if (t.factionOnly and not ply:inFaction()) then 
+	if (t.faction and not ply:inFaction() and ply:getFaction() ~= FACTION_DEFAULT) then 
 		return false
 	end 
 	-- notify incorrect faction
-	if ((t.factionOnly and t.faction) and (ply:getFaction() != t.faction)) then
-		return false
+	if (t.faction) then
+		if istable(t.faction) and not table.HasValue(t.faction, ply:getFaction()) then
+			return false
+		elseif (t.faction ~= ply:getFaction()) then
+			return false
+		end
 	end
 
 	local canjoin = t.canJoin

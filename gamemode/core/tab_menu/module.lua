@@ -239,6 +239,8 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 	end
 
 	for index, faction in pairs(fw.team.factions) do
+		if (index == FACTION_DEFAULT) then continue end
+
 		if LocalPlayer():getFaction() == faction:getID() then continue end
 
 		createFactionButton(faction:getName(), #faction:getPlayers(), function()
@@ -255,7 +257,7 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 		local joinButton = vgui.Create('FWUIButton', panel)
 		joinButton:SetText('LEAVE')
 		joinButton.DoClick = function()
-			--TODO @thelastpenguin implement this command
+			fw.tab_menu.hideContent()
 			LocalPlayer():ConCommand('fw_faction_leave')
 		end
 
@@ -291,11 +293,11 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 				print("X")
 				return
 			end
-
 			
 			if (selectedModel) then
 				pref_model = selectedModel:GetModel()
 			end
+
 			LocalPlayer():ConCommand(job.command, pref_model)
 			fw.tab_menu.hideContent()
 		end
@@ -334,7 +336,7 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 					selectedModel = self
 				end
 
-				local prefModelList = ndoc.table.fwPlayers[LocalPlayer()].preferred_models
+				local prefModelList = ndoc.table.fwPlayers[LocalPlayer()].preferred_models or {}
 				if (prefModelList[job:getStringID()] == v) then
 					selectedModel = mdl
 				end

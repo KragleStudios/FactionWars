@@ -102,7 +102,7 @@ vgui.Register('fwHudInfo', {
 				local function updateFaction()
 					if not IsValid(self.faction) then return end
 
-					if LocalPlayer():inFaction() then
+					if LocalPlayer():inFaction() or (LocalPlayer():getFaction() == FACTION_DEFAULT) then
 						local factionMeta = fw.team.getFactionByID(LocalPlayer():getFaction())
 						if not factionMeta then return end
 						self.faction:SetText('FACTION: ' .. factionMeta:getName())
@@ -121,7 +121,7 @@ vgui.Register('fwHudInfo', {
 				local function updateBoss()
 					if not IsValid(self.boss) then return end
 
-					if LocalPlayer():inFaction() then
+					if LocalPlayer():inFaction() or (LocalPlayer():getFaction() == FACTION_DEFAULT) then
 						local boss =  fw.team.factions[LocalPlayer():getFaction()]:getBoss()
 						if (boss and boss:IsPlayer()) then
 							boss = boss:Nick()
@@ -148,7 +148,7 @@ vgui.Register('fwHudInfo', {
 					if not IsValid(self.agenda) then return end
 					print("UPDATING AGENDA")
 
-					if LocalPlayer():inFaction() then
+					if LocalPlayer():inFaction() or (LocalPlayer():getFaction() == FACTION_DEFAULT) then
 						local agenda =  ndoc.table.fwFactions[LocalPlayer():getFaction()].agenda or "No agenda currently set!" 
 
 						self.agenda:SetText(agenda)

@@ -96,7 +96,7 @@ end
 function fw.team.demotePlayer(ply)
 	if (not IsValid(ply)) then return end
 	
-	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN:getID(), table.Random(TEAM_CIVILIAN:getModels()))
+	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN, true)
 end
 
 
@@ -190,7 +190,7 @@ end)
 -- sets the players team to 'Civilian' on the first spawn
 fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 	ply:FWConPrint("setting your team to team citizen")
-	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN:getID(), nil, true)
+	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN, nil, true)
 	ply:GetFWData().faction = FACTION_DEFAULT
 end)
 
@@ -292,7 +292,7 @@ fw.chat.addCMD("demote", "Vote to demote a user", function(ply, target)
 
 	if ply:isFactionBoss() then
 		fw.notif.chatPrint(player.GetAll(), ply, " forcefully demoted ", target, "!")
-		fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID())
+		fw.team.playerChangeTeam(target, TEAM_CIVILIAN)
 		return
 	end
 
@@ -301,7 +301,7 @@ fw.chat.addCMD("demote", "Vote to demote a user", function(ply, target)
 			if (not IsValid(target)) then return end
 
 			if (decision == "Yes") then
-				fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID())
+				fw.team.playerChangeTeam(target, TEAM_CIVILIAN)
 				fw.notif.chatPrint(player.GetAll(), target:Nick(), " was demoted to Citizen!")
 			else
 				fw.notif.chatPrint(player.GetAll(), target:Nick(), " was not demoted!")

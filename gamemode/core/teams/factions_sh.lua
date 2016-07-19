@@ -66,7 +66,7 @@ function fw.team.registerFaction(factionName, tbl)
 			money = 10000,
 			boss = nil,
 			inventory = {},
-			agenda = 'No Agenda'
+			agenda = nil
 			-- inventory = {}, -- TODO: determine if inventory sholud exist at faction level
 			-- all other data to come...
 		}
@@ -142,5 +142,5 @@ function Player:isFactionBoss()
 end
 
 function Player:getFactionBoss()
-	return self:inFaction() and factionsList[self:getFaction()]:getBoss() or NULL
+	return factionsList[self:getFaction()]:getBoss() or NULL
 end

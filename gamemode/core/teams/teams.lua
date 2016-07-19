@@ -20,7 +20,7 @@ TEAM_BOSS = fw.team.register("Boss", {
 	stringID = "t_boss",
 	models = {"models/player/breen.mdl"},
 	weapons = {"weapon_fists"},
-	factionOnly = true,
+	faction = {FACTION_GANGA, FACTION_GANGB},
 	salary = 50,
 	max = 1,
 	boss = true,
@@ -31,7 +31,6 @@ TEAM_MAYOR = fw.team.register("Mayor", {
 	stringID = "t_mayor",
 	models = {"models/player/breen.mdl","models/player/breen.mdl","models/player/breen.mdl"},
 	weapons = {"weapon_fists"},
-	factionOnly = true,
 	faction = FACTION_DEFAULT,
 	salary = 50,
 	max = 1,
@@ -43,7 +42,6 @@ TEAM_CIVILIAN = fw.team.register("Civilian", {
 	stringID = "t_civilian",
 	models = {"models/player/mossman.mdl"},
 	weapons = {"weapon_fists"},
-	factionOnly = false,
 	salary = 50,
 	max = 0
 })
@@ -52,7 +50,6 @@ TEAM_DRUG = fw.team.register("Drug Dealer", {
 	stringID = "t_drug_dealer",
 	models = {"models/player/eli.mdl"},
 	weapons = {"weapon_fists"},
-	factionOnly = false,
 	election = true,--testing
 	salary = 50,
 	max = 4,
@@ -62,7 +59,6 @@ TEAM_MERC = fw.team.register("Mercenary", {
 	stringID = "t_merc",
 	models = {"models/player/odessa.mdl"},
 	weapons = {"weapon_fists"},
-	factionOnly = false,
 	salary = 50,
 	max = 4,
 })
@@ -71,7 +67,6 @@ TEAM_GUN = fw.team.register("Gun Dealer", {
 	stringID = "t_gun_dealer",
 	models = {"models/player/monk.mdl"},
 	weapons = {"weapon_fists"},
-	factionOnly = true,
 	salary = 50,
 	max = 4,
 })
@@ -80,7 +75,7 @@ TEAM_MEDIC = fw.team.register("Medic", {
 	stringID = "t_medic",
 	models = {"models/player/kleiner.mdl"},
 	weapons = {"weapon_medkit", "weapon_fists"},
-	factionOnly = true,
+	faction = {FACTION_GANGA, FACTION_GANGB},
 	salary = 50,
 	max = 4,
 })
@@ -89,7 +84,7 @@ TEAM_SOLDIER = fw.team.register("Soldier", {
 	stringID = "soldier",
 	models = {"models/player/barney.mdl"},
 	weapons = {"weapon_fists"},
-	factionOnly = true,
+	faction = {FACTION_GANGA, FACTION_GANGB},
 	salary = 50,
 	max = 4,
 })
@@ -104,8 +99,7 @@ TEAM_POLICE = fw.team.register("Police Officer", {
 	stringID = "t_police_officer",
 	models = {"models/player/combine_soldier.mdl"},
 	weapons = {"weapon_357", "weapon_fists"},
-	factionOnly = false,
-	faction = FACTION_POLICE,
+	faction = FACTION_DEFAULT,
 	salary = 50,
 	max = 4,
 })
@@ -114,12 +108,11 @@ TEAM_POLICE_CHIEF = fw.team.register("Police Chief", {
 	stringID = "t_police_officer_chief",
 	models = {"models/player/combine_super_soldier.mdl"},
 	weapons = {"weapon_fists"},
-	factionOnly = true,
-	faction = FACTION_POLICE,
+	faction = FACTION_DEFAULT,
 	salary = 50,
 	boss = true,
 	max = 1,
 	canJoin = function(pc_team, ply)
-		return ply:GetFWData().team == TEAM_POLICE:getID()
+		return ply:GetFWData().team == TEAM_POLICE
 	end,
 })
