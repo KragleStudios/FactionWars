@@ -9,7 +9,7 @@ fw = {
 
 -- gamemode variables
 (GM or GAMEMODE).Name = "Faction Wars"
-(GM or GAMEMODE).Author = "thelastpenguin, Ott, Seris, Kalamitous, Mikey Howell, Nookyava, Spai, crazyscouter, meharryp"
+(GM or GAMEMODE).Author = "thelastpenguin, Mikey Howell, Spai, crazyscouter, meharryp, sanny"
 (GM or GAMEMODE).Email = ""
 (GM or GAMEMODE).Website = "https://github.com/GMFactionWars"
 (GM or GAMEMODE).Version = "0.1.0 Alpha"
@@ -133,7 +133,7 @@ if fw.debug then
 			for k, line in ipairs(string.Explode('\n', data)) do
 				if line and line:find('--') and line:find('TODO') then
 					MsgC(color_white, directory .. '/' .. v .. ':' .. k)
-					local start = string.find(line, 'TODO') + 5
+					local start = string.find(line, 'TODO') + 4
 					MsgN(string.sub(line, start))
 				end
 			end

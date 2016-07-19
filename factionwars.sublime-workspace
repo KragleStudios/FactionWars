@@ -4,6 +4,22 @@
 		"selected_items":
 		[
 			[
+				"notificat",
+				"notificationWrapper"
+			],
+			[
+				"__TPS",
+				"__TPSHUD__AGENDA__"
+			],
+			[
+				"table_to_call",
+				"table_to_call_hooks"
+			],
+			[
+				"table_to_hoo",
+				"table_to_inter_hooks"
+			],
+			[
 				"_allowed",
 				"_allowedKeyTypes"
 			],
@@ -23,6 +39,86 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "gamemode/core/tab_menu/module.lua",
+			"settings":
+			{
+				"buffer_size": 7623,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "gamemode/libraries/ui/vgui_tableview_cl.lua",
+			"settings":
+			{
+				"buffer_size": 1862,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "gamemode/core/resource/module.lua",
+			"settings":
+			{
+				"buffer_size": 445,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "gamemode/libraries/ui/vgui_content_cl.lua",
+			"settings":
+			{
+				"buffer_size": 6661,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "gamemode/fw_init_sh.lua",
+			"settings":
+			{
+				"buffer_size": 4529,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "gamemode/core/hud/hud_cl.lua",
+			"settings":
+			{
+				"buffer_size": 4817,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/panels/sty_layout.lua",
+			"settings":
+			{
+				"buffer_size": 2062,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/panels/sty_panel.lua",
+			"settings":
+			{
+				"buffer_size": 784,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "gamemode/core/teams/factions_sh.lua",
+			"settings":
+			{
+				"buffer_size": 2682,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "gamemode/core/teams/teams.lua",
+			"settings":
+			{
+				"buffer_size": 2485,
+				"line_ending": "Windows"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -79,7 +175,7 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 131.0,
+		"height": 88.0,
 		"last_filter": "install package",
 		"selected_items":
 		[
@@ -96,7 +192,7 @@
 				"Package Control: Install Package"
 			]
 		],
-		"width": 612.0
+		"width": 440.0
 	},
 	"console":
 	{
@@ -117,64 +213,157 @@
 	},
 	"expanded_folders":
 	[
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/includes",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/includes/modules",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/panels",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/modules",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/playerdata",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/hud",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/resource",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/tab_menu",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/3d2d",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/data",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/hook",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/ui",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/spon",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/spon/lua",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/spon/lua/includes",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/spon/lua/includes/modules",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc"
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/tpshud/lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/tpshud/lua/darkrp_modules",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/tpshud/lua/darkrp_modules/tpshud"
 	],
 	"file_history":
 	[
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/sty_util_cl.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/spon/lua/includes/modules/spon.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/data/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/_config_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc/net_synctable_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/_config_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/ui/vgui_dropshadow_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/ui/vgui_tableview_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/ui/vgui_content_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/panels/sty_panel.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams/factions_sv.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams/factions_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams/teams_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/ui/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/tpshud/lua/darkrp_modules/tpshud/cl_hud.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams/teams_sv.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/panels/sty_layout.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/panels/sty_views.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/data/factionwars/playerdata/p0.dat",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/data/factionwars/sessionCache.txt",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/tab_menu/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/hud/hud_cl.lua",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/fw_init_sh.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/3d2d/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/modules/print.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/_config_sv.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/prop_health/phealth_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/votes/vote_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/economy/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/economy/economy_sv.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/votes/vote_sv.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/chat_commands/chat_sv.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/sty_fonts_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/README.md",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/sty_util_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/hooks_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/darkrp/darkrp.txt",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/sty_core_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams/teams.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/ui",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/load_sh.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/sh_gmod.lua",
+		"/C/Users/Alpha/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/sh_util.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/cl_includes.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/cl_nova.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/sh_config.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/sh_nova.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/sv_includes.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/sh_networkable.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/sh_minifier.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/sh_syncable.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/sh_nova_init.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/tpshud/lua/darkrp_modules/tpshud/sv_hud.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/factions/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/votes/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/votes/vote_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/fonts/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/resource/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/notif/notifications_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/notif/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/notif/notifications_sv.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/factions/bank_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/chat_commands/readme.md",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/hook/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/yi22gp3a.axq.txt",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/0grmy1g5.xso.txt",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/hud/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/data/data_sv.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/data/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/hooks_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams/sh_teams.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/README.md",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/3d2d/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc/net_utils_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams/sv_teams.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/hud",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams/sh_team_overrides.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc/net_stringtable_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/notif/README.md",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/hook/README.md",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/data/README.md",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams/README.md",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/economy/README.md",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/fonts",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/playerdata/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/playerdata/economy_sv.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/economy/economy_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/notifications/notifications_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/notifications/notifications_sv.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/teams/cl_teams.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/notifications/module.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/modules/path.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/playerdata/economy_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/spon/lua/includes/modules/spon.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/p-voice-visualizer/lua/autorun/p-voice-visualizer.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/p-voice-visualizer.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/p_darkrp_main.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/p-voice-visualizer/lua/_pvv_config_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/3d2d-f4menu/lua/_3d2dF4_config_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/3d2d-f4menu/lua/3d2dF4/3d2d_ui_cl.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/pon 2.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/vgui_3d2d_cl.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/pon.lua",
+		"/C/Users/Alpha/AppData/Local/Temp/Temp1_nlr_zones_-_updated-2.2.0.zip/garrysmod-nlr-zone/lua/nlr/graphics_cl.moon",
+		"/C/Users/Alpha/AppData/Local/Temp/fz3temp-1/_pvv_config_cl.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/3d2d-f4menu/lua/3d2dF4/3d2d_init_sh.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/lua/helper.lua",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/lua/testtest.lua",
+		"/E/__stuffs/sites.txt",
+		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/data/fortwars/sessionCache.txt",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/init.lua",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/libraries/data/engine_text_sv.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/playerdata/economy_sv.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/playerdata/module.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/playerdata/economy_sh.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/economy/economy_sh.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/economy/economy_sv.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/economy/module.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/tpshud/lua/darkrp_modules/tpshud/cl_hud.lua",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc/init_sh.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/_config_sh.lua",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/New Text Document.txt",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/_config_cl.lua",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/sPON/includes/modules/spon.lua",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/lua/hook.lua",
 		"/D/ValveUnhandledExceptionFilter.txt",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/panels/sty_layout.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/panels/sty_panel.lua",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/modules/util.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/lua/helper.lua",
 		"/E/GarrysMod/x_ancient_archives/Web/LoadingScreen/index.html",
 		"/E/GarrysMod/x_ancient_archives/GmodServers/buildrp/gamemodes/darkrp/gamemode/config/addentities.lua",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/modules/fn.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/tpshud/lua/darkrp_modules/tpshud/sv_hud.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/sty_core_cl.lua",
 		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/includes/modules/sty.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc/net_synctable_sh.lua",
 		"/F/gmod-cpp-workspaces/gm_http/BuildProjects.lua",
 		"/E/GarrysMod/C++/modules/gm_mc_v3/gm_mc_v3/World.cpp",
 		"/E/GarrysMod/C++/modules/gm_mc_v3/gm_mc_v3/World.h",
@@ -182,98 +371,11 @@
 		"/E/GarrysMod/C++/modules/gm_mc_v3/gm_mc_v3/util_UserData.cpp",
 		"/E/GarrysMod/C++/modules/gm_mc_v3/gm_mc_v3/util_UserData.h",
 		"/E/GarrysMod/C++/modules/gm_mc_v3/gm_mc_v3/MultiVerse.h",
-		"/E/GarrysMod/C++/leveldb-module/gmsv_pleveldb/gmsv_pleveldb/main.cpp",
-		"/E/GarrysMod/C++/leveldb-module/gmsv_pleveldb/gmsv_pleveldb/DatabaseIterator.h",
-		"/E/GarrysMod/C++/leveldb-module/gmsv_pleveldb/gmsv_pleveldb/Database.h",
-		"/F/gmod-cpp-workspaces/gm_http/src/client_http.hpp",
-		"/F/gmod-cpp-workspaces/gm_http/src/server_http.hpp",
-		"/C/local/boost_1_61_0/INSTALL",
-		"/E/GarrysMod/C++/_modules/gmcl_phack/BuildProjects.lua",
-		"/E/GarrysMod/C++/_modules/gm_cachemod/BuildProjects.lua",
-		"/F/gmod-code-bucket/_addon_archives/p-fft-vis/lua/pfft/fft_main_cl.lua",
-		"/E/GarrysMod/code_examples/C++/modules/hooking/detours.h",
-		"/E/GarrysMod/code_examples/C++/modules/hooking/hde.cpp",
-		"/E/GarrysMod/code_examples/C++/modules/iphax/src/main.cpp",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/darkrp/gamemode/modules/hud/cl_hud.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc/net_flex_sh.lua",
-		"/C/Users/Alpha/Desktop/password.txt",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/load_sh.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/tpshud/lua/darkrp_modules/tpshud/hud_cl.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/modules/debug.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/tpshud/lua/darkrp_modules/tpshud/init_cl.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/darkrp/gamemode/modules/f4menu/cl_init.lua",
-		"/E/workspaces/nodejs/pnet-cnc/bootstrap.lua",
-		"/E/workspaces/nodejs/pnet-cnc/loader.lua",
-		"/E/workspaces/C++/misc/password_generator/Release/passwords.txt",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/_config_sv.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/load_sh.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc/net_utils_sh.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/data/module.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/general/module.lua",
-		"/E/GarrysMod/x_ancient_archives/GmodServers/zombiesurvival/addons/p_chat/lua/autorun/p_chat.lua",
-		"/E/GarrysMod/x_ancient_archives/GmodServers/zombiesurvival/addons/_p_anticheat/lua/autorun/server/p_anticheat_sv.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/modules/async.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/data/engine_text_sv.lua",
-		"/E/__stuffs/sites.txt",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc/netdoc_sv.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc/netdoc_nw_sh.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/netdoc/lua/netdoc/netdoc_cl.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/sty_fonts_cl.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/hook/module.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/terrortown/terrortown.txt",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/kragle.txt",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/general/core_cl.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/general/core_sv.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/modules/path.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/init_cl.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/core/core_sv.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/core/module.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/fw_hooks_sh.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/hook/hooks.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/gamemode/core/hooks/module.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/modules/print.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/modules/bench.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/aui/lua/includes/modules/aui.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/aui/lua/aui/load_sh.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/aui/lua/aui/aui_core_cl.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/aui/lua/aui/panels/aui_labelview.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/aui/lua/aui/aui_fonts_cl.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/init_cl.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/gamemodes/kragle/init.lua",
-		"/C/Users/Alpha/AppData/Local/Temp/Temp1_pscoreboard.zip/LICENSE.txt",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/modules/oop.lua",
-		"/F/gmod stuff/_addon_archives/plib_v3/lua/includes/modules/xfn.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/includes/modules/ra.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/theia/lua/includes/modules/theia.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ra/lua/ra/oop",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ucore/lua/ucore/load_sh.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ucore/lua/includes/modules/ucore.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/ucore/includes/modules/ucore.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/uui/lua/includes/modules/uui.lua",
-		"/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/uui/autorun/uui.lua",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/garrysmod-phud-1.0.5/lua/phud/hud/player_names_cl.lua",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/garrysmod-phud-1.0.5/lua/phud/hud/player_names_cl.moon",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/garrysmod-phud-1.0.5/lua/phud/hud/police_cl.moon",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/garrysmod-pf4/lua/pf4-v2/tabs/jobs_cl.lua",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/plib_v3/lua/includes/modules/spon.lua",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/plib_v3/lua/includes/modules/netdoc.lua",
-		"/F/gmod stuff/x_disabled_zs/p_zs_v4/lua/pzs_v4/fonts_cl.moon",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/garrysmod-phud-1.0.5/lua/phud/hud/entity_info_cl.moon",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/garrysmod-phud-1.0.5/lua/phud/hud/entity_info_cl.lua",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/garrysmod-phud-1.0.5/lua/darkrp_modules/phud-v1/sh_init.moon",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/garrysmod-phud-1.0.5/lua/phud/languages/french.lua",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/garrysmod-phud-1.0.5/lua/phud/languages/english.lua",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/plib_v3/lua/includes/modules/xfn.lua",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/plib_v3/lua/includes/modules/netlib.lua",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/garrysmod-phud-1.0.5/lua/phud/hud/arrested_cl.moon",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/garrysmod-phud-1.0.5/lua/phud/compatability_cl.moon",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/buildrp-playtime/lua/autorun/brp-playtime-init.lua",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/plib_v3/lua/includes/modules/async.lua",
-		"/D/SteamLibrary/steamapps/common/GarrysMod/garrysmod/addons/buildrp-playtime/lua/ppt/playertime_cl.lua"
+		"/E/GarrysMod/C++/leveldb-module/gmsv_pleveldb/gmsv_pleveldb/main.cpp"
 	],
 	"find":
 	{
-		"height": 49.0
+		"height": 71.0
 	},
 	"find_in_files":
 	{
@@ -287,134 +389,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"xfn",
-			"xfn.noop",
-			"xfn",
-			"fwPlayers",
-			"loadPlayerData",
-			"valuetype",
-			"config",
-			"decoder",
+			"_tableWithId",
+			"TODO",
+			"fwFactions",
+			"boss",
+			"tabDisplayPlayersList",
+			"agenda",
+			"getPlayers",
+			"registerFaction",
+			"self.layout",
+			"sty.SCRW",
 			"end",
-			"\n		",
-			"self",
-			"se",
-			"Setup",
+			",\n",
+			"child",
+			"SetBackgroundTint",
 			")\n",
-			"(-)",
-			"end",
-			"\n				",
-			"\n			",
-			"actualW",
-			"map",
-			"end",
-			"minW",
-			"width",
-			"\n					",
-			"vgui.CreateFrom",
-			") ",
-			"mlj",
+			"offset",
+			"tabDisplayPlayersList",
+			"AddView",
+			"displayContent",
+			"SetTitle",
+			"_closeButton",
+			"SetBackgroundTint",
+			"self.label",
+			",\n",
 			")\n",
-			"ShouldDraw",
-			"LocalPlayer",
-			"Agenda",
-			"propogateExistingHooks",
-			"TODO: op",
-			"hookType",
-			"callHook",
-			"key",
+			"setPreferredModel",
+			"pref_model",
+			"playerChangeTeam",
 			"\n			",
-			"callHooks",
-			"then",
-			"stack_store",
-			"store_stack",
-			"stack_store",
-			"		\n",
-			"depth",
-			"store_hook",
-			"()\n",
-			"v",
-			"_idToProxy",
+			"yesText",
+			"keepOpen",
+			"vote_tbl",
 			"tbl",
-			"if key == nil then\n		\n	end",
-			"end",
-			"local",
-			"real",
-			"all_players",
-			"end",
-			"ra",
-			"requestSync",
-			"ndoc.addNetString",
-			"_syncStringTableWithPlayer",
-			"all_players",
-			"net_writeKey",
-			"tid",
-			"TYPE_NIL",
-			"key_decoders",
-			"net_readkey",
-			"net_bytesWritten",
-			"net_",
-			"_stringToId",
-			"_allowedKeyTypes",
-			"tableWithId",
-			"ndoc.tableGetId",
-			"ndoc",
-			"_proxyToId",
-			"writeValue",
-			"readValue",
-			"readKey",
-			"writeKey",
-			"ra.",
-			"stringtable",
-			"all_players",
-			"net_Send",
-			"\n					",
-			"_originalToProxy",
-			"createTable",
-			"\n	",
-			"\n		",
-			"getTableId",
-			")]\n",
-			"value_encoders",
-			"gettableid",
-			"getTableId",
-			"tableWithId",
-			")]))",
-			"value_decoders",
-			"readValue",
-			"value_decoder",
-			"WriteUINt",
-			"then",
-			"WriteUInt",
-			"type",
-			"_syncTable",
-			"\n				",
-			"end",
-			" \n",
-			"net_WriteFloat",
-			"net_WriteString",
-			"util.AddNetworkString('netdoc.u.addnetstring')",
-			"hook_Call",
-			"(\"",
-			"end",
-			"kjg",
-			"fw",
-			"\".\")",
-			"end",
-			"\n	",
-			"max",
-			"ej",
-			"xej",
-			"fn",
+			"1",
+			")\n",
+			"0.5, 0, 1, 0)",
+			"team.getById",
+			"STYButton",
+			")\n",
+			"PaintHovered",
+			"require",
 			"			\n",
-			"< ",
-			"bench",
-			"xfn",
-			"drawWantedInfo",
-			"model",
-			"callback",
-			" ,",
-			"function"
+			"ScreenScale",
+			"vote_defLen",
+			"updateAgenda",
+			"(\"",
+			"getFaction",
+			"boss",
+			"vote",
+			"faction",
+			"findBestSpawn",
+			"_waitForLocalPlayerValidity",
+			"ndoc.path",
+			"currencySymbol",
+			"pref_model",
+			"data",
+			". ",
+			"playerChangeTeam",
+			"targ_team",
+			"no such team",
+			"last_team",
+			"pref_model",
+			"		ply:GetFWData().last_team = ply:Team() \n",
+			"canJoin",
+			"getTeam",
+			"t.ind",
+			"t.index",
+			"\n	",
+			"players",
+			":Team",
+			"job",
+			"opts.job",
+			"end",
+			"getTeam",
+			"NETWORK",
+			"//",
+			"Player",
+			"player",
+			"\n	",
+			"end",
+			"updateStore",
+			"loads",
+			"{\n",
+			"',\n",
+			"}",
+			"call this",
+			"pcall",
+			"'))\n",
+			"table",
+			"spon",
+			"\")\n",
+			"~=",
+			"Team",
+			"getTeam",
+			"money",
+			"//",
+			"SetTeam",
+			"//",
+			"\n				",
+			"10",
+			"\n				",
+			"x1",
+			"\"] ",
+			"self",
+			"  ",
+			"')",
+			"')\n",
+			"64",
+			"fwPlayers",
+			"modified",
+			"engine",
+			"modified",
+			"argStack",
+			"GetHoveredPanelOrig",
+			"vgui.",
+			"Begin3D",
+			"DoCursor",
+			"p3dUIv1",
+			"p3d",
+			"Paint3D",
+			"P3D2DV1",
+			"Panel",
+			"P3D2DV2",
+			"checkHovered",
+			":GetCHildren",
+			"Hovered",
+			"IsHovered",
+			"hovered"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -422,6 +524,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"self._label",
+			"--",
 			"net_writeValue",
 			"net_readValue",
 			"net_readKey",
@@ -440,14 +544,304 @@
 	"groups":
 	[
 		{
+			"selected": 2,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "gamemode/core/tab_menu/module.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7623,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7221,
+								7221
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GMod Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 5153.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "gamemode/libraries/ui/vgui_tableview_cl.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1862,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								533,
+								533
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GMod Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "gamemode/core/resource/module.lua",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 445,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GMod Lua/Lua.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "gamemode/libraries/ui/vgui_content_cl.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6661,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5694,
+								5694
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GMod Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2277.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "gamemode/fw_init_sh.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4529,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4301,
+								4301
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GMod Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 2484.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "gamemode/core/hud/hud_cl.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4817,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1641,
+								1641
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GMod Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 800.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/panels/sty_layout.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2062,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								372,
+								372
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GMod Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/F/Steam Library/steamapps/common/GarrysMod/garrysmod/addons/stylish/lua/sty/panels/sty_panel.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 784,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								784,
+								784
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GMod Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "gamemode/core/teams/factions_sh.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2682,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1498,
+								1503
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GMod Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 966.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "gamemode/core/teams/teams.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2485,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								859,
+								859
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/GMod Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 40.0
+		"height": 33.0
 	},
 	"input":
 	{
@@ -488,7 +882,7 @@
 	"project": "factionwars.sublime-project",
 	"replace":
 	{
-		"height": 76.0
+		"height": 116.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -526,7 +920,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 219.0,
+	"side_bar_width": 381.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
