@@ -226,7 +226,21 @@ vgui.Register('FWUITextBox', {
 		self._label = Label('', self)
 		self:SetFont(fw.fonts.default)
 		self:SetInset(0)
-		self._align = fw.ui.CENTER 
+		self._align = fw.ui.LEFT 
+	end,
+
+	SetAlign = function(self, align)
+		if type(align) == 'string' then
+			align = align:lower()
+			if align == 'left' then
+				align = fw.ui.LEFT
+			elseif align == 'right' then
+				align = fw.ui.RIGHT
+			elseif align == 'center' then
+				align = fw.ui.CENTER
+			end
+		end
+		self._align = align 
 	end,
 
 	SetText = function(self, title)
