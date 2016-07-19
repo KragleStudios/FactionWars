@@ -47,7 +47,9 @@ ndoc.table.fwPlayers = {}
 function data.loadPlayer(player)
 	fw.print("loading data for " .. tostring(player).. ".")
 
-	ndoc.table.fwPlayers[player] = {}
+	if not ndoc.table.fwPlayers[player] then 
+		ndoc.table.fwPlayers[player] = {}
+	end
 	engine.loadPlayerData(player:SteamID64() or '0', function(_data)
 		-- copy the data to data.player
 		data.player[player] = _data

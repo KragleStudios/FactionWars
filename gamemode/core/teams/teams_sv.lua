@@ -12,16 +12,18 @@ function fw.team.playerChangeTeam(ply, targ_team, forced)
 		return false 
 	end
 
-	local canjoin, message = fw.team.canChangeTo(ply, targ_team, forced)
-	if (not forced and not canjoin) then
-		ply:FWChatPrintError(message or ("can't join team " .. t:getName()))
-		return false 
+	if not forced then 
+		local canjoin, message = fw.team.canChangeTo(ply, targ_team, forced)
+		if (not canjoin) then
+			ply:FWChatPrintError(message or ("can't join team " .. t:getName()))
+			return false 
+		end
 	end
 
 	local pref_model = ply:GetFWData().preferred_models and ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
 
 	-- remove player if they are the faction boss
-	if ply:getFaction() and ply:isFactionBoss() then
+	if ply:isFactionBoss() then
 		fw.notif.chatPrint(player.GetAll(), "Player ", ply, " is no longer the boss of " .. fw.team.getFactionByID(ply:getFaction()):getName())
 		fw.team.removeFactionBoss(ply:getFaction())
 	end
@@ -30,17 +32,12 @@ function fw.team.playerChangeTeam(ply, targ_team, forced)
 
 	-- set the player's team and preferred model data
 	ply:SetTeam(targ_team)
-	if not ply:GetFWData().preferred_models then
-		ply:GetFWData().preferred_models = {}
-	end
-	ply:GetFWData().preferred_models[t.stringID] = pref_model
 
 	-- respawn the player
 	ply:Spawn()
 
 	-- make the player the faction boss if their team is flagged as a boss team
 	if t.boss then
-		-- make the player the new boss of the faction!
 		fw.team.setFactionBoss(ply:getFaction(), ply)
 	end
 
@@ -190,8 +187,10 @@ end)
 -- sets the players team to 'Civilian' on the first spawn
 fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 	ply:FWConPrint("setting your team to team citizen")
-	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN, nil, true)
+	
 	ply:GetFWData().faction = FACTION_DEFAULT
+	hook.Run('PlayerJoinedFaction', ply, FACTION_DEFAULT)
+	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN, true)
 end)
 
 -- handles all death related functionality

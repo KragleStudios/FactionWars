@@ -1,7 +1,10 @@
 fw.team.factions = {}
+local factionsList = fw.team.factions
 
 if SERVER then
-	ndoc.table.fwFactions = {}
+	if not ndoc.table.fwFactions then 
+		ndoc.table.fwFactions = {}
+	end
 	concommand.Add("fw_faction_leave", function(ply)
 		fw.team.removePlayerFromFaction(ply)
 	end)
@@ -44,7 +47,7 @@ function fw.team.registerFaction(factionName, tbl)
 
 	if SERVER then
 		concommand.Add(tbl.command, function(ply)
-			local canjoin, message = fw.team.canJoinFaction(ply, fw.team.factions[tbl.index])
+			local canjoin, message = fw.team.canJoinFaction(ply, tbl.index)
 
 			if (not canjoin) then
 				if (not message) then message = "You can't join this faction!" end
@@ -55,7 +58,6 @@ function fw.team.registerFaction(factionName, tbl)
 
 			fw.team.addPlayerToFaction(ply, tbl.index)
 		end)
-
 
 		ndoc.table.fwFactions[tbl.index] = {
 			money = 10000,
@@ -70,18 +72,21 @@ function fw.team.registerFaction(factionName, tbl)
 	return tbl.index -- return the faction id
 end
 
-function fw.team.canJoinFaction(ply, faction)
+function fw.team.canJoinFaction(ply, factionId)
 	local players = #player.GetAll()
 
+	local faction = factionsList[factionId]
+	if not faction then return false, "No such faction" end
+
 	local factionPlayers = #faction:getPlayers()
+	local factionMeta = factionsList[factionId]
 
-	if (factionPlayers / players < 0.333) then
-		return true
-	end 
+	if (factionPlayers / players > (factionMeta.fraction or (1.0 / #factionMeta))) then
+		return true, "Faction already full!"
+	end
 
-	local canjoin, msg = fw.hook.Call("PlayerCanJoinFaction", GAMEMODE, ply, faction)
-
-	return canjoin, msg
+	local canjoin, msg = hook.Call("PlayerCanJoinFaction", GAMEMODE, ply, faction)
+	return canjoin ~= false, msg
 end
 
 -- fw.team.getFactionByID
@@ -89,7 +94,7 @@ end
 -- @param index:number
 -- @ret faction:table
 function fw.team.getFactionByID(factionId)
-	return fw.team.factions[factionId]
+	return factionsList[factionId]
 end
 
 -- fw.team.getFactionByStringId(stringID)
@@ -104,7 +109,7 @@ function fw.team.getFactionByStringID(stringID)
 end
 
 function fw.team.getBoss(factionId)
-	return fw.team.factions[factionId]:getBoss()
+	return factionsList[factionId]:getBoss()
 end
 
 -- fw.team.getFactionPlayers(factionID)
@@ -114,7 +119,7 @@ function fw.team.getFactionPlayers(factionId)
 	if not factionId then
 		return player.GetAll()
 	end
-	return fw.team.factions[factionId]:getPlayers()
+	return factionsList[factionId]:getPlayers()
 end
 
 local Player = FindMetaTable 'Player'
@@ -124,10 +129,8 @@ function Player:getFaction()
 	return self:GetFWData().faction
 end
 
---if they're in the default faction they aren't in a faction :o
 function Player:inFaction()
-	local f = self:GetFWData().faction
-	return f ~= nil and f ~= FACTION_DEFAULT
+	return self:GetFWData().faction ~= nil 
 end
 
 function Player:isFactionBoss()
@@ -135,5 +138,9 @@ function Player:isFactionBoss()
 end
 
 function Player:getFactionBoss()
-	return ndoc.table.fwFactions[self:getFaction()].boss
+	return factionsList[self:getFaction()].boss
+end
+
+function Player:getFactionObj()
+	return factionsList[self:getFaction()]
 end

@@ -105,7 +105,7 @@ vgui.Register('fwHudInfo', {
 					if LocalPlayer():inFaction() or (LocalPlayer():getFaction() == FACTION_DEFAULT) then
 						local factionMeta = fw.team.getFactionByID(LocalPlayer():getFaction())
 						if not factionMeta then return end
-						self.faction:SetText('FACTION: ' .. factionMeta:getName())
+						self.faction:SetText(factionMeta:getName())
 					else
 						self.faction:SetText('NO FACTION')
 					end
@@ -121,7 +121,7 @@ vgui.Register('fwHudInfo', {
 				local function updateBoss()
 					if not IsValid(self.boss) then return end
 
-					if LocalPlayer():inFaction() or (LocalPlayer():getFaction() == FACTION_DEFAULT) then
+					if LocalPlayer():inFaction() then
 						local boss =  fw.team.factions[LocalPlayer():getFaction()]:getBoss()
 						if (boss and boss:IsPlayer()) then
 							boss = boss:Nick()
@@ -141,6 +141,8 @@ vgui.Register('fwHudInfo', {
 				updateBoss()
 			end
 
+			--[[
+			--TODO move this to it's own panel does not belong here
 			do			
 				self.agenda = vgui.Create('fwHudInfoCell', self.layout)
 
@@ -148,15 +150,13 @@ vgui.Register('fwHudInfo', {
 					if not IsValid(self.agenda) then return end
 					print("UPDATING AGENDA")
 
-					if LocalPlayer():inFaction() or (LocalPlayer():getFaction() == FACTION_DEFAULT) then
+					if LocalPlayer():inFaction() then
 						local agenda =  ndoc.table.fwFactions[LocalPlayer():getFaction()].agenda or "No agenda currently set!" 
 
 						self.agenda:SetText(agenda)
 						self.agenda:SetVisible(true)
 					else
-						self.agenda:SetText('NO AGENDA')
 						self.agenda:SetVisible(false)
-						self.layout:PerformLayout()
 					end
 
 					self.agenda:PerformLayout()
@@ -166,16 +166,18 @@ vgui.Register('fwHudInfo', {
 				updateAgenda()
 
 			end
+			]]
 		end,
 
 		PerformLayout = function(self)
-			self.layout:SetTall(sty.ScreenScale(20))
+			self.layout:SetTall(sty.ScreenScale(14))
 
 			-- do layout
 			self.money:SetWide(sty.ScreenScale(100))
 			self.job:SetWide(sty.ScreenScale(100))
 			self.faction:SetWide(sty.ScreenScale(100))
 			self.hp:SetWide(sty.ScreenScale(100))
+			self.boss:SetWide(sty.ScreenScale(100))
 
 			local p = sty.ScreenScale(2)
 			self.layout:SetPadding(p)

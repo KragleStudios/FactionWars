@@ -107,6 +107,10 @@ function GM:PlayerJoinedFaction(factionId)
 	return fw.hook.Call('PlayerJoinedFaction', factionId)
 end
 
+function GM:PlayerCanJoinFaction(...)
+	return fw.hook.Call('PlayerCanJoinFaction', ...)
+end
+
 --
 -- MODULE ITEMS
 --

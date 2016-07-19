@@ -1,4 +1,5 @@
 fw.team.list = fw.team.list or {}
+local teamList = fw.team.list 
 fw.team.factionAgendas = fw.team.factionAgendas or {}
 
 -- meta table for a team
@@ -47,6 +48,7 @@ function fw.team.register(name, tbl)
 	tbl.weapons = tbl.weapons or {}
 	tbl.models = tbl.models or {tbl.model}
 	tbl.election = tbl.election or false
+	if tbl.faction and not istable(tbl.faction) then tbl.faction = {tbl.faction} end
 
 	tbl.command = 'fw_job_' .. tbl.stringID
 
@@ -105,7 +107,9 @@ function fw.team.getByStringID(id)
 end
 
 local Player = FindMetaTable("Player")
-
+function Player:getTeamObj()
+	return teamList[self:Team()]
+end
 function Player:getPrefModel()
 	return ply:GetFWData().pref_model
 end

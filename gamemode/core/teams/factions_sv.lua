@@ -1,39 +1,22 @@
 function fw.team.addPlayerToFaction(ply, factionId)
 	local t = fw.team.list[ply:Team()]
-	print(ply:getFaction())
-	if ply:getFaction() and t and (t.faction ~= nil) then
-		if (istable(t.faction) and not table.HasValue(t.faction, TEAM_DEFAULT)) then 
-			fw.team.demotePlayer(ply)
-		elseif (t.faction ~= TEAM_DEFAULT) then
-			fw.team.demotePlayer(ply)
-		end
+	local f = fw.team.factions[factionId]
+	if not f then return end
+
+	-- if no team or the new faction doesn't have access to the team
+	if not t or (ply:Team() ~= TEAM_CITIZEN and t.factions ~= nil and not table.HasValue(t.factions)) then
+		ply:FWChatPrint("You have been set to citizen since your new faction doesn't have access to your old job!")
+		fw.team.demotePlayer(ply)
 	end
-
-	local oldFaction = ply:getFaction()
-
-	hook.Run("PlayerLeftFaction", ply, oldFaction)
-
+	
+	hook.Run("PlayerLeftFaction", ply, ply:getFaction())
 	ply:GetFWData().faction = factionId
 	hook.Run('PlayerJoinedFaction', ply, factionId)
 end
 
 function fw.team.removePlayerFromFaction(ply)
-	if not ply:inFaction() then return end
-	
-	local t = fw.team.list[ply:Team()]
-	if t and (t.faction ~= nil) then
-		if (istable(t.faction) and not table.HasValue(t.faction, TEAM_DEFAULT)) then 
-			fw.team.demotePlayer(ply) 
-		elseif (t.faction ~= TEAM_DEFAULT) then
-			fw.team.demotePlayer(ply)
-		end
-	end
-
-	local oldFaction = ply:getFaction()
-	
+	if not ply:inFaction() or ply:getFaction() == FACTION_DEFAULT then return end
 	fw.team.addPlayerToFaction(ply, FACTION_DEFAULT)
-	
-	hook.Run('PlayerLeftFaction', ply, oldFaction)
 end
 
 function fw.team.setFactionBoss(factionId, ply)
