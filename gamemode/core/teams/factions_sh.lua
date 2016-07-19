@@ -4,7 +4,6 @@ local factionsList = fw.team.factions
 
 if SERVER then
 	ndoc.table.fwFactions = {}
-
 	concommand.Add("fw_faction_leave", function(ply)
 		fw.team.removePlayerFromFaction(ply)
 	end)
@@ -19,9 +18,14 @@ local faction_mt = {
 			return ply:getFaction() == self.index
 		end)
 	end,
-
+	getColor = function(self)
+		return self
+	end,
 	getNWData = function(self)
 		return ndoc.table.fwFactions[self.index] or {}
+	end,
+	getBoss = function(self)
+		return self:getNWData().boss
 	end,
 	getBoss = function(self)
 		return self:getNWData().boss
@@ -40,11 +44,11 @@ function fw.team.registerFaction(factionName, tbl)
 	setmetatable(tbl, faction_mt)
 
 	tbl.index = table.insert(fw.team.factions, tbl)
-	fw.team.factions[tbl.index].command = "fw_join_"..tbl.stringID
-	fw.team.factions[tbl.index].name = factionName
+	tbl.name = factionName
+	tbl.command = 'fw_joinfaction_' .. tbl.stringID
 
 	if SERVER then
-		concommand.Add("fw_join_"..tbl.stringID, function(ply)
+		concommand.Add(tbl.command, function(ply)
 			local canjoin, message = fw.team.canJoinFaction(ply, fw.team.factions[tbl.index])
 
 			if (not canjoin) then
@@ -61,13 +65,17 @@ function fw.team.registerFaction(factionName, tbl)
 		ndoc.table.fwFactions[tbl.index] = {
 			money = 10000,
 			boss = nil,
+<<<<<<< HEAD
 			inventory = {},
 			agenda = 'No Agenda'
+=======
+			-- inventory = {}, -- TODO: determine if inventory sholud exist at faction level
+>>>>>>> origin/master
 			-- all other data to come...
 		}
-		-- boss = nil
-		-- money = nil
 	end
+
+	setmetatable(tbl, faction_mt)
 
 	return tbl.index -- return the faction id
 end
@@ -77,7 +85,7 @@ function fw.team.canJoinFaction(ply, faction)
 
 	local factionPlayers = #faction:getPlayers()
 
-	if (factionPlayers / players < (1/3)) then
+	if (factionPlayers / players < 0.333) then
 		return true
 	end 
 
@@ -103,6 +111,10 @@ function fw.team.getFactionByStringId(stringID)
 			return v
 		end
 	end
+end
+
+function fw.team.getBoss(factionId)
+	return factionsList[factionId]:getBoss()
 end
 
 -- fw.team.getFactionPlayers(factionID)
