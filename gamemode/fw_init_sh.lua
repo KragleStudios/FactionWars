@@ -132,7 +132,7 @@ if fw.debug then
 			for k, line in ipairs(string.Explode('\n', data)) do
 				if line:find('--') and line:find('TODO') then
 					MsgC(color_white, directory .. '/' .. v .. ':' .. k)
-					local start = string.find(line, 'TODO') + 5
+					local start = string.find(line, 'TODO') + 4
 					MsgN(string.sub(line, start))
 				end
 			end

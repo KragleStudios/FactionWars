@@ -3,7 +3,7 @@ fw.team.factions = {}
 local factionsList = fw.team.factions
 
 if SERVER then
-	ndoc.fwFactions = {}
+	ndoc.table.fwFactions = {}
 end
 
 local faction_mt = {
@@ -15,11 +15,17 @@ local faction_mt = {
 			return ply:getFaction() == self.index
 		end)
 	end,
-
+	getColor = function(self)
+		return self
+	end,
 	getNWData = function(self)
 		return ndoc.fwFactions[self.index] or {}
 	end,
+	getBoss = function(self)
+		return self:getNWData().boss
+	end,
 }
+faction_mt.__index = faction_mt
 
 -- fw.team.registerFaction
 -- @param factionName:string
@@ -31,16 +37,25 @@ function fw.team.registerFaction(factionName, tbl)
 
 	tbl.index = table.insert(fw.team.factions, tbl)
 	tbl.name = factionName
+	tbl.command = 'fw_joinfaction_' .. tbl.stringID
 
 	if SERVER then
-		ndoc.fwFactions[tbl.index] = {
+		ndoc.table.fwFactions[tbl.index] = {
 			money = 10000,
 			boss = nil,
 			-- all other data to come...
 		}
 		-- boss = nil
 		-- money = nil
+
+		concommand.Add(tbl.command, function(ply)
+			if not IsValid(ply) then return end 
+
+			fw.team.addPlayerToFaction(ply, tbl.index)
+		end)
 	end
+
+	setmetatable(tbl, faction_mt)
 
 	return tbl.index -- return the faction id
 end
@@ -62,6 +77,10 @@ function fw.team.getFactionByStringId(stringID)
 			return v
 		end
 	end
+end
+
+function fw.team.getBoss(factionId)
+	return factionsList[factionId]:getBoss()
 end
 
 -- fw.team.getFactionPlayers(factionID)
