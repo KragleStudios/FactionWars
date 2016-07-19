@@ -123,7 +123,13 @@ vgui.Register('fwHudInfo', {
 
 					if LocalPlayer():inFaction() then
 						local boss =  fw.team.factions[LocalPlayer():getFaction()]:getBoss()
-						self.boss:SetText('BOSS: ' .. boss:Nick())
+						if (boss and boss:IsPlayer()) then
+							boss = boss:Nick()
+						else
+							boss = "None"
+						end
+
+						self.boss:SetText('BOSS: ' .. boss)
 						self.boss:SetVisible(true)
 					else
 						self.boss:SetVisible(false)
