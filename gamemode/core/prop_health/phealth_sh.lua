@@ -64,12 +64,40 @@ if (SERVER) then
 		end
 	end)
 else
+	fw.propCache = {}
+
+	local function LerpColor(val, from, to)
+		local r = Lerp(val, from.r, to.r)
+		local g = Lerp(val, from.g, to.g)
+		local b = Lerp(val, from.b, to.b)
+
+		return Color(r, g, b, from.a)
+	end
+
 	fw.hook.Add("HUDPaint", "ShowPropHealth", function()
 		local hit = LocalPlayer():GetEyeTrace()
 
 		if (IsValid(hit.Entity) and hit.Entity:GetClass() == "prop_physics" and (hit.HitPos:DistToSqr(LocalPlayer():GetPos()) < (100 * 100))) then
 			draw.SimpleText("Health: " .. tostring(math.floor(hit.Entity:getHealth())), fw.fonts.default:atSize(18), ScrW() / 2, ScrH() / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		end
+
+		for k,v in pairs(fw.propCache) do
+			local ent = ents.GetByIndex(k)
+			if IsValid(ent) and ent:GetColor() != Color(255, 255, 255) then
+				ent:SetColor(LerpColor(0.1, ent:GetColor(), Color(255, 255, 255)))
+			end
+		end
+	end)
+
+	ndoc.addHook("fwProps.?.health", "set", function(entIndex, health)
+		if fw.propCache[entIndex] and fw.propCache[entIndex] > health then
+			local ent = ents.GetByIndex(entIndex)
+			if IsValid(ent) then
+				ent:SetColor(Color(255, 0, 0))
+			end
+		end
+
+		fw.propCache[entIndex] = health
 	end)
 end
 
