@@ -60,8 +60,9 @@ function fw.team.registerFaction(factionName, tbl)
 
 		ndoc.table.fwFactions[tbl.index] = {
 			money = 10000,
-			boss = "None",
+			boss = nil,
 			inventory = {},
+			agenda = 'No Agenda'
 			-- all other data to come...
 		}
 		-- boss = nil
@@ -121,8 +122,14 @@ function Player:getFaction()
 	return self:GetFWData().faction
 end
 
+--if the player is in the default faction, then we want to spoof the system and say "they are not"
+function Player:inDefaultFaction()
+	return self:getFaction() == FACTION_DEFAULT
+end
+
+--if they're in the default faction they aren't in a faction :o
 function Player:inFaction()
-	return self:GetFWData().faction ~= nil 
+	return self:GetFWData().faction != nil
 end
 
 function Player:isFactionBoss()
@@ -130,5 +137,5 @@ function Player:isFactionBoss()
 end
 
 function Player:getFactionBoss()
-	return self:inFaction() and fw.team.factions[self:getFaction()].boss or NULL
+	return self:inFaction() and fw.team.factions[self:getFaction()]:getBoss() or NULL
 end

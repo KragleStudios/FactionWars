@@ -21,7 +21,7 @@ local team_mt = {
 	getPlayers = function(self)
 		return team.GetPlayers(self.index) 
 	end,
-	addPlayer = function(self, pref_mdoel, forced)
+	addPlayer = function(self, ply, pref_mdoel, forced)
 		fw.team.playerChangeTeam(ply, self.index, pref_model, forced)
 	end
 }
@@ -56,12 +56,12 @@ function fw.team.register(name, tbl)
 
 	if SERVER then
 		-- TODO: thelastpenguin: add a chat command for this
-		concommand.Add('fw_team_' .. tbl.command, function(pl, cmd, args)
+		concommand.Add(tbl.command, function(pl, cmd, args)
 			if args[1] then -- preferred model is the first argument
 				fw.team.setPreferredModel(tbl.index, pl, args[1])
 			end
 
-			self:addPlayer(nil, nil)
+			tbl:addPlayer(pl, args[1])
 		end)
 	end
 
@@ -118,7 +118,7 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	end
 	
 	-- enforce t.max players
-	if t.max then
+	if t.max and t.max != 0 then
 		if (t.factionOnly and t.faction) then
 			local count = 0
 			for k,v in pairs(t:getPlayers()) do
@@ -141,7 +141,10 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	end
 
 	-- SUPPORT FOR FACTION ONLY JOBS
-	if ((t.factionOnly and not t.faction) and not ply:getFaction()) then 
+	if ((t.factionOnly and not t.faction) and ply:inDefaultFaction()) then 
+		return false
+	end 
+	if (t.factionOnly and not ply:inFaction()) then 
 		return false
 	end 
 	-- notify incorrect faction
