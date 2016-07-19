@@ -4,7 +4,7 @@ function fw.team.addPlayerToFaction(ply, factionId)
 end
 
 function fw.team.removePlayerFromFaction(ply)
-	if (not ply:inFaction()) then return end
+	if (ply:inDefaultFaction()) then return end
 	
 	local t = fw.team.list[ply:Team()]
 	if t ~= nil and (t.faction ~= nil or team.factionOnly) then

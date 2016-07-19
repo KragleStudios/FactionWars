@@ -1,8 +1,8 @@
 --
 -- FACTIONS
 --
-FACTION_POLICE = fw.team.registerFaction('Police', {
-	stringID = 'f_police',
+FACTION_DEFAULT = fw.team.registerFaction('Common Wealth', {
+	stringID = 'f_default',
 })
 
 FACTION_GANGA = fw.team.registerFaction('Gang A', {
@@ -27,6 +27,17 @@ TEAM_BOSS = fw.team.register("Boss", {
 	election = true
 })
 
+TEAM_MAYOR = fw.team.register("Mayor", {
+	stringID = "t_mayor",
+	models = {"models/player/breen.mdl","models/player/breen.mdl","models/player/breen.mdl"},
+	weapons = {"weapon_fists"},
+	factionOnly = true,
+	faction = FACTION_DEFAULT,
+	salary = 50,
+	max = 1,
+	boss = true,
+	election = true
+})
 
 TEAM_CIVILIAN = fw.team.register("Civilian", {
 	stringID = "t_civilian",
@@ -34,6 +45,7 @@ TEAM_CIVILIAN = fw.team.register("Civilian", {
 	weapons = {"weapon_fists"},
 	factionOnly = false,
 	salary = 50,
+	max = 0
 })
 
 TEAM_DRUG = fw.team.register("Drug Dealer", {

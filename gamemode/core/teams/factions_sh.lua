@@ -65,6 +65,8 @@ function fw.team.registerFaction(factionName, tbl)
 		ndoc.table.fwFactions[tbl.index] = {
 			money = 10000,
 			boss = nil,
+			inventory = {},
+			agenda = 'No Agenda'
 			-- inventory = {}, -- TODO: determine if inventory sholud exist at faction level
 			-- all other data to come...
 		}
@@ -129,8 +131,9 @@ function Player:getFaction()
 	return self:GetFWData().faction
 end
 
+--if they're in the default faction they aren't in a faction :o
 function Player:inFaction()
-	return self:GetFWData().faction ~= nil 
+	return self:GetFWData().faction ~= FACTION_DEFAULT
 end
 
 function Player:isFactionBoss()
@@ -138,5 +141,5 @@ function Player:isFactionBoss()
 end
 
 function Player:getFactionBoss()
-	return self:inFaction() and factionsList[self:getFaction()].boss or NULL
+	return self:inFaction() and factionsList[self:getFaction()]:getBoss() or NULL
 end
