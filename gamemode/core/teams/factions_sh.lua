@@ -133,7 +133,8 @@ end
 
 --if they're in the default faction they aren't in a faction :o
 function Player:inFaction()
-	return self:GetFWData().faction ~= FACTION_DEFAULT
+	local f = self:GetFWData().faction
+	return f ~= nil and f ~= FACTION_DEFAULT
 end
 
 function Player:isFactionBoss()
