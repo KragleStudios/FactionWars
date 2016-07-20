@@ -214,60 +214,30 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 
 
 		for k, v in pairs(fw.team.list) do
-    	                local jobs = v:getName()
-    	                local jobPlayers = v:getPlayers()
+			local jobs = v:getName()
+			local jobPlayers = v:getPlayers()
+			if #jobPlayers == 0 then continue end
 
-    	                --if (#jobPlayers == 0) then continue end
+			local factionJobs = vgui.Create('FWUITableViewSection', factionPlayers)
+			factionJobs:SetTitle(jobs)
+			factionJobs:SetTitleTint(team.GetColor(v:getID())) 
+			factionJobs:SetPadding(sty.ScreenScale(2))
 
-		        local factionJobs = vgui.Create('FWUITableViewSection', factionPlayers)
-		        factionJobs:SetTitle(jobs)
-		        factionJobs:SetPadding(sty.ScreenScale(2))
-            
-                                for k,v in pairs(jobPlayers) do
-		                        local panel = vgui.Create('FWUIPanel', factionJobs)
-			                panel:SetTall(sty.ScreenScale(15))
-			                panel:SetBackgroundTint(team.GetColor(v:Team()), 20)
+			for k,v in pairs(jobPlayers) do
+				local panel = vgui.Create('FWUIPanel', factionJobs)
+				panel:SetTall(sty.ScreenScale(15))
+				panel:SetBackgroundTint(team.GetColor(v:Team()), 5)
 
-			                local title = vgui.Create('FWUITextBox', panel)
-			                title:SetText(v:Nick())
-			                title:DockMargin(3, 0, 0, 0)
+				local title = vgui.Create('FWUITextBox', panel)
+				title:SetInset(sty.ScreenScale(2))
+				title:SetText(v:Nick())
+				title:DockMargin(sty.ScreenScale(4), 0, 0, 0)
+				title:Dock(FILL)
+			end
 
-			                title:Dock(FILL)
-			                ping:Dock(RIGHT)
-			        end
-
-                end	 	    	
-	end
-end
---[[
-	for k, v in pairs(fw.team.factions) do
-		local plys = v:getPlayers()
-
-		if (#plys == 0) then continue end
-
-		local factionPlayers = vgui.Create('FWUITableViewSection', listLayout)
-		factionPlayers:SetTitle(v.name)
-		factionPlayers:SetPadding(sty.ScreenScale(2))
-
-		for k,v in pairs(plys) do
-			local panel = vgui.Create('FWUIPanel', factionPlayers)
-			panel:SetTall(sty.ScreenScale(15))
-
-			local title = vgui.Create('FWUITextBox', panel)
-			title:SetText(v:Nick())
-
-			local job = vgui.Create('FWUITextBox', panel)
-			job:SetText(fw.team.list[v:Team()].name)
-			job:SizeToContents()
-			job:SetWide(sty.ScreenScale(50))
-
-			title:Dock(FILL)
-			job:Dock(RIGHT)
 		end
-		
 	end
 end
-]]
 
 --TODO: Faction Administration Panel
 function fw.tab_menu.factionAdministration(pnl)

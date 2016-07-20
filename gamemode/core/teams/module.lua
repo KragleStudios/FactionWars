@@ -15,7 +15,6 @@ fw.dep(SERVER, 'chat_commands')
 fw.include_sh 'teams_sh.lua'
 fw.include_sv 'teams_sv.lua'
 fw.include_cl 'teams_cl.lua'
-fw.include_sh 'team_overrides_sh.lua'
 
 -- load faction system
 fw.include_sh 'factions_sh.lua'

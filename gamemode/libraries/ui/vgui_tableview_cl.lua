@@ -21,6 +21,10 @@ vgui.Register('FWUITableViewSection', {
 				end)
 			end
 		end
+
+		sty.Detour(self.contentWrapper, 'PerformLayout', function()
+			self:PerformLayout()
+		end)
 	end,
 
 	SetPadding = function(self, padding)
@@ -59,6 +63,8 @@ vgui.Register('FWUITableViewSection', {
 	PerformLayout = function(self)
 		local w, h = self:GetSize()
 
+		self.content:PerformLayout()
+
 		if not self._animating then 
 			self.header:SetSize(self:GetWide(), sty.ScreenScale(12))
 
@@ -74,11 +80,14 @@ vgui.Register('FWUITableViewSection', {
 		self.contentWrapper:SetWide(w - self._padding * 2)
 		self.contentWrapper:SetPos(self._padding, self._padding + self.header:GetTall())
 		self:SetTall(self.header:GetTall() + self.contentWrapper:GetTall() + (self.expanded and self._padding * 2 or 0))
+		
+		if IsValid(self:GetParent()) then
+			self:GetParent():PerformLayout()
+		end
 	end,
 
 	SizeToContents = function(self)
 		self._animating = nil
-		self.content:PerformLayout()
 		self:PerformLayout()
 	end,
 }, 'FWUIPanel')

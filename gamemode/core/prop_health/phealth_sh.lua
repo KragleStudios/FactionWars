@@ -78,7 +78,7 @@ else
 		local hit = LocalPlayer():GetEyeTrace()
 
 		if (IsValid(hit.Entity) and hit.Entity:GetClass() == "prop_physics" and (hit.HitPos:DistToSqr(LocalPlayer():GetPos()) < (100 * 100))) then
-			draw.SimpleText("Health: " .. tostring(math.floor(hit.Entity:getHealth())), fw.fonts.default:atSize(18), ScrW() / 2, ScrH() / 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			draw.SimpleText("Health: " .. tostring(math.floor(hit.Entity:getHealth())), fw.fonts.default:atSize(18), sty.ScrW * 0.5, sty.ScrH * 0.5, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		end
 
 		for k,v in pairs(fw.propCache) do

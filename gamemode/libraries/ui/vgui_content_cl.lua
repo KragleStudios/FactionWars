@@ -24,8 +24,18 @@ vgui.Register('FWUIPanel', {
 		end
 	end,
 
+	PerformLayout = function(self)
+		self:UpdateNestingTint()
+	end,
+
 	SetParent = function(self, ...)
 		self.BaseClass.SetParent(self, ...)
+		self:UpdateNestingTint()
+	end,
+
+	UpdateNestingTint = function(self)
+		if self._lastParent == self:GetParent() then return end
+		self._lastParent = self:GetParent()
 
 		local count = 0
 		local p = self:GetParent()
@@ -37,7 +47,6 @@ vgui.Register('FWUIPanel', {
 		end
 
 		if count > 5 then count = 5 end
-		fw.print(count)
 		self._panelBg = Color(
 			panelBg.r + count * lightenRate, 
 			panelBg.g + count * lightenRate, 
