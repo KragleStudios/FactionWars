@@ -14,10 +14,7 @@ function ENT:Initialize()
 	self:SetCharge(350)
 	self.LastCall = 0
 
-	local phys = self:GetPhysicsObject()
-		if (phys:IsValid()) then
-			phys:Wake()
-		end
+	self:PhysWake()
 end
 
 

@@ -15,10 +15,7 @@ function ENT:Initialize()
 
 	self.Timer = 45
 
-	local phys = self:GetPhysicsObject()
-		if (phys:IsValid()) then
-			phys:Wake()
-		end
+	self:PhysWake()
 
 	self.Pack = ents.Create("prop_physics")
 	self.Pack:SetModel("models/weapons/w_c4_planted.mdl")
