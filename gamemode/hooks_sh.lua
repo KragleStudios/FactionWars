@@ -96,6 +96,11 @@ end
 function GM:EntityRemoved(...)
 	return fw.hook.Call("EntityRemoved", ...)
 end
+
+function GM:PreRender(...)
+	return fw.hook.Call('PreRender', ...)
+end
+
 --
 -- MODELE TEAMS
 --

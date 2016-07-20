@@ -28,11 +28,6 @@ vgui.Register('FWUIPanel', {
 		self:UpdateNestingTint()
 	end,
 
-	SetParent = function(self, ...)
-		self.BaseClass.SetParent(self, ...)
-		self:UpdateNestingTint()
-	end,
-
 	UpdateNestingTint = function(self)
 		if self._lastParent == self:GetParent() then return end
 		self._lastParent = self:GetParent()

@@ -7,6 +7,8 @@ vgui.Register('FWUITableViewSection', {
 		self:SetPadding(0)
 
 		self.header.DoClick = function()
+			if self._animating then return end
+
 			self.expanded = not self.expanded
 			self._animating = true 
 			if self.expanded then 
@@ -81,8 +83,9 @@ vgui.Register('FWUITableViewSection', {
 		self.contentWrapper:SetPos(self._padding, self._padding + self.header:GetTall())
 		self:SetTall(self.header:GetTall() + self.contentWrapper:GetTall() + (self.expanded and self._padding * 2 or 0))
 		
-		if IsValid(self:GetParent()) then
-			self:GetParent():PerformLayout()
+		local parent = self:GetParent()
+		if IsValid(parent) and parent.PerformLayout then
+			parent:PerformLayout()
 		end
 	end,
 
@@ -92,3 +95,30 @@ vgui.Register('FWUITableViewSection', {
 	end,
 }, 'FWUIPanel')
 
+vgui.Register('FWUITableViewItem', {
+	SetText = function(self, text)
+		if self._text then
+			self._text:SetText(text)
+			return self 
+		end
+
+		self._text = vgui.Create('FWUITextBox', self)
+		self._text:DockMargin(sty.ScreenScale(2), sty.ScreenScale(1), sty.ScreenScale(1), 0)
+		self._text:Dock(FILL)
+		self._text:SetFont(fw.fonts.default)
+		self._text:SetText(text)
+
+		return self 
+	end,
+
+	AddButton = function(self, title, doClick)
+		local button = vgui.Create('FWUIButton', self)
+		button:SetFont(fw.fonts.default)
+		button:SetText(title)
+		button:Dock(RIGHT)
+		button:DockMargin(sty.ScreenScale(1), 0, 0, 0)
+		button.DoClick = doClick 
+
+		return button 
+	end,
+}, 'FWUIPanel')
