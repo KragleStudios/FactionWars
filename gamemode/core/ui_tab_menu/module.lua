@@ -212,7 +212,6 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 		factionPlayers:SetTitle(v.name.." - "..#plys.." PLAYER(S) TOTAL")
 		factionPlayers:SetPadding(sty.ScreenScale(2))
 
-
 		for k, v in pairs(fw.team.list) do
 			local jobs = v:getName()
 			local jobPlayers = v:getPlayers()
@@ -239,14 +238,81 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 	end
 end
 
---TODO: Faction Administration Panel
 function fw.tab_menu.factionAdministration(pnl)
 
 end
 
---TODO: Server administration Panel
 function fw.tab_menu.administration(pnl)
+	local space = vgui.Create('DScrollPanel', pnl)
+	space:SetSize(pnl:GetSize())
 
+	local listLayout = vgui.Create('STYLayoutVertical', space)
+	listLayout:SetWide(space:GetWide())
+	listLayout:SetPadding(sty.ScreenScale(5))
+
+	local playerList = vgui.Create('FWUITableViewSection', listLayout)
+	playerList:SetTitle("Players")
+	playerList:SetPadding(sty.ScreenScale(2))
+
+	for k,v in pairs(player.GetAll()) do
+		local plyButton = vgui.Create('FWUIButton', playerList)
+		plyButton:SetText(v:Nick())
+		plyButton:SetTall(sty.ScreenScale(15))
+		plyButton.ply = v
+		plyButton.DoClick = function(self)
+			local ply = self.ply
+			local menu = DermaMenu(plyButton)
+			menu:AddOption("Kick", function()
+				Derma_StringRequest("Kick Player", "Enter reason...", "Reason...", function(reason) RunConsoleCommand("fw_kick", ply:Nick(), reason) end)
+			end)
+			menu:AddOption("Ban", function()
+				Derma_StringRequest("Ban Player", "Enter reason...", "Reason...", function(reason) 
+					Derma_StringRequest("Ban Player", "Enter time...", "60", function(time) RunConsoleCommand("fw_ban", ply:Nick(), reason, tonumber(time)) end)
+				end)
+			end)
+			menu:AddOption("Slay", function() RunConsoleCommand("fw_slay", ply:Nick()) end)
+			menu:AddOption("Mute", function() RunConsoleCommand("fw_mute", ply:Nick()) end)
+			menu:AddOption("Unmute", function() RunConsoleCommand("fw_unmute", ply:Nick()) end)
+			menu:AddOption("Gag", function() RunConsoleCommand("fw_gag", ply:Nick()) end)
+			menu:AddOption("Ungag", function() RunConsoleCommand("fw_ungag", ply:Nick()) end)
+			menu:AddOption("Set job", function()
+				Derma_StringRequest("Set job", "Enter job StringID...", "t_citizen", function(job) RunConsoleCommand("fw_setjob", ply:Nick(), job) end)
+			end)
+			menu:AddOption("Set faction", function()
+				Derma_StringRequest("Set faction", "Enter faction StringID...", "f_commonwealth", function(faction) RunConsoleCommand("fw_setfaction", ply:Nick(), faction) end)
+			end)
+			menu:Open()
+		end
+	end
+
+	local aCvars = {"sbox_godmode", "sbox_maxballoons", "sbox_maxbuttons", "sbox_maxdynamite", "sbox_maxeffects", "sbox_maxemitters", "sbox_maxhoverballs",
+	"sbox_maxlamps", "sbox_maxlights", "sbox_maxnpcs", "sbox_maxprops", "sbox_maxragdolls", "sbox_maxsents", "sbox_maxthrusters", "sbox_maxvehicles", "sbox_maxwheels",
+	"sbox_noclip"}
+
+	if LocalPlayer():IsSuperAdmin() then
+		local settings = vgui.Create('FWUITableViewSection', listLayout)
+		settings:SetTitle("Server settings")
+		settings:SetPadding(sty.ScreenScale(2))
+
+		for k,v in pairs(aCvars) do
+			local panel = vgui.Create('FWUIPanel', settings)
+			panel:SetTall(sty.ScreenScale(15))
+
+			local title = vgui.Create('FWUITextBox', panel)
+			title:SetInset(sty.ScreenScale(2))
+			title:SetText(v)
+			title:DockMargin(sty.ScreenScale(4), 0, 0, 0)
+			title:Dock(FILL)
+
+			local val = vgui.Create("DNumberWang", panel)
+			val:Dock(RIGHT)
+			val:SetValue(GetConVar(v):GetInt())
+			val.cvar = GetConVar(v)
+			val.OnValueChanged = function(self, val)
+				RunConsoleCommand("fw_cvar", self.cvar:GetName(), val)
+			end
+		end
+	end
 end
 
 --TODO: Item purchasing with shipment compatability
