@@ -81,6 +81,14 @@ function GM:Think(...)
 	return fw.hook.Call("Think", ...)
 end
 
+function GM:OnReloaded(...)
+	if (SERVER) then
+		RunConsoleCommand('fw_reload')
+	end
+
+	return fw.hook.Call('OnReloaded', ...)
+end
+
 function GM:RenderScreenspaceEffects(...)
 	return fw.hook.Call('RenderScreenspaceEffects', ...)
 end
