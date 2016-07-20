@@ -81,6 +81,10 @@ function GM:Think(...)
 	return fw.hook.Call("Think", ...)
 end
 
+function GM:RenderScreenspaceEffects(...)
+	return fw.hook.Call('RenderScreenspaceEffects', ...)
+end
+
 function GM:EntityRemoved(...)
 	return fw.hook.Call("EntityRemoved", ...)
 end
@@ -101,6 +105,10 @@ end
 
 function GM:PlayerJoinedFaction(factionId)
 	return fw.hook.Call('PlayerJoinedFaction', factionId)
+end
+
+function GM:PlayerCanJoinFaction(...)
+	return fw.hook.Call('PlayerCanJoinFaction', ...)
 end
 
 --

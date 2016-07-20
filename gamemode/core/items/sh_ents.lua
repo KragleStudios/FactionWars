@@ -32,7 +32,7 @@ fw.hook.Add("CanPlayerBuyItem", "CanBuyItem", function(ply, item_index)
 
 	if (not ply:canAfford(price)) then return false end
 	if ((maxItem != 0) and curItems == maxItem) then return false end
-	if (factionOnly and isbool(factionOnly) and (ply:getFaction() == nil)) then return false end
+	if (factionOnly and isbool(factionOnly) and (not ply:inFaction())) then return false end
 	if (factionOnly and isstring(factionOnly) and (ply:getFaction() != factionOnly)) then return false end
 	--TODO: this needs to be in sync with team string ids, not team index values
 	if (jobOnly and istable(jobOnly) and (not table.HasValue(jobOnly, ply:Team()))) then return false end
