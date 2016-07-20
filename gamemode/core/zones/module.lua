@@ -15,11 +15,11 @@ function triangle_mt:ctor(x1, y1, x2, y2, x3, y3)
 	self.x3, self.y3 = x3, y3
 
 	-- compute the transformation to the unit triangle
-	local a, b = x2 - x1, x3 - x1
-	local c, d = y2 - y1, y3 - y1
-	local det = a * d - b * c 
-	local a, b = d/det, -b/det
-	local c, d = -c/det, a/det
+	local a1, b1 = x2 - x1, x3 - x1
+	local c1, d1 = y2 - y1, y3 - y1
+	local det = a1 * d1 - b1 * c1 
+	local a, b = d1/det, -b1/det
+	local c, d = -c1/det, a1/det
 
 	self.isPointInside = function(self, x, y)
 		x = x - x1 
