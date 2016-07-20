@@ -10,11 +10,7 @@ function ENT:Initialize()
 
 	self:SetUseType(SIMPLE_USE)
 
-	local phys = self:GetPhysicsObject()
-
-	if IsValid(phys) then
-		phys:Wake()
-	end
+	self:PhysWake()
 
 	self:SetTrigger(true)
 

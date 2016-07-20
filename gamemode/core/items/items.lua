@@ -2,15 +2,42 @@ fw.ents.registerItem("Blowtorch", {
 	stringID = "blowtorch",
 	color = Color(0, 0, 0),
 	model = "", --this is the model shown on the menu display, and doesn't have to mach the ent model
-	entity = "ent_class", --this MUST be the entity classname 
+	entity = "fw_cuttingtorch", --this MUST be the entity classname 
 	max = 0,
 	price = 100,
-	storable = false,
+	storable = true,
+	weapon = true,
+	useable = false,
+	jobs = {TEAM_MAYOR},
+	faction = {FACTION_DEFAULT}
 	--optional
 	--removeOnDisc = true/false, remove this when the player leaves
 	--category = "General Merch, custom cat",
-	--factionOnly = true/false for all factions, or "FACTION_*" for one faction,
-	--jobOnly = {table of teams, TEAM_*}
+	--faction = true/false for all factions, or {FACTION_*} for factions,
+	--jobs = {table of teams, TEAM_*}
+	--onSpawn = function(item, ply) end,
+	--canBuy = function(item, ply) return true/false end
+	--shipment = true/false,
+	--shipmentCount = 10 -- how many come in a shipment?
+})
+
+fw.ents.registerItem("Blowtorch Shipment", {
+	stringID = "blowtorchship",
+	color = Color(0, 0, 0),
+	model = "", --this is the model shown on the menu display, and doesn't have to mach the ent model
+	entity = "fw_cuttingtorch", --this MUST be the entity classname 
+	max = 0,
+	price = 1000,
+	storable = true,
+	weapon = true,
+	useable = false,
+	shipment = true,
+	shipmentCount = 10,
+	--optional
+	--removeOnDisc = true/false, remove this when the player leaves
+	--category = "General Merch, custom cat",
+	--faction = true/false for all factions, or {FACTION_*} for factions,
+	--jobs = {table of teams, TEAM_*}
 	--onSpawn = function(item, ply) end,
 	--canBuy = function(item, ply) return true/false end
 	--shipment = true/false,

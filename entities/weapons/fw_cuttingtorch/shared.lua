@@ -29,8 +29,12 @@ SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo		= "none"
 SWEP.Primary.Power = 5
 
+SWEP.Secondary.Ammo = "none"
+SWEP.Secondary.ClipSize = -1
+SWEP.Secondary.DefaultClip = -1
+
 function SWEP:Reload()
-	
+
 end
 
 function SWEP:SecondaryAttack()
@@ -41,9 +45,9 @@ function SWEP:PrimaryAttack()
 	if not IsFirstTimePredicted() then return end
 	local tr = self.Owner:GetEyeTrace()
 	if tr.Entity:GetClass() == "prop_physics" and tr.HitPos:Distance(tr.StartPos) <= 50 then
-		self.Weapon:EmitSound("Weapon_StunStick.Activate")
+		self:EmitSound("Weapon_StunStick.Activate")
 		if SERVER then
-			tr.Entity:TakeDamage(self.Primary.Power , self.Owner, self)
+			tr.Entity:TakeDamage(self.Primary.Power, self.Owner, self)
 		else
 			self:DoImpactEffect(tr)
 		end
@@ -71,7 +75,7 @@ function SWEP:DrawHUD()
 	local pcnt = LocalPlayer():GetEyeTrace().Entity:getHealth() / LocalPlayer():GetEyeTrace().Entity:getMaxHealth() * 100
 	surface.SetDrawColor((100 - pcnt) * 2.5, pcnt * 2.5, 0)
 	surface.DrawRect(ScrW() * .5 - 200, 200, math.Clamp( pcnt * 4, 0, 400), 20)
-	
+
 	surface.SetDrawColor(color_black)
 	surface.DrawOutlinedRect(ScrW() * .5 - 200, 200, 400, 20)
 end

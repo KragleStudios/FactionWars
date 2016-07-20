@@ -3,13 +3,13 @@ DeriveGamemode("sandbox")
 local function load()
 
 fw = {
-	--debug = true
+	debug = true
 }
 
 
 -- gamemode variables
 (GM or GAMEMODE).Name = "Faction Wars"
-(GM or GAMEMODE).Author = "thelastpenguin, Ott, Seris, Kalamitous, Mikey Howell, Nookyava, Spai, crazyscouter, meharryp"
+(GM or GAMEMODE).Author = "thelastpenguin, Mikey Howell, Spai, crazyscouter, meharryp, sanny"
 (GM or GAMEMODE).Email = ""
 (GM or GAMEMODE).Website = "https://github.com/GMFactionWars"
 (GM or GAMEMODE).Version = "0.1.0 Alpha"
@@ -111,13 +111,44 @@ for k,v in pairs(fw.module_srcs) do
 end
 
 
--- fw.dep without printing
+-- fw.dep without printing for things that get loaded later
 function fw.dep(name)
 	if fw.loaded_modules[name] then return fw[name] end
 	fw.loaded_modules[name] = true
 	fw[name] = include(fw.module_srcs[name])
 	return fw[name]
 end
+
+
+-- todo crawler
+if fw.debug then
+	print "--------------------------"
+	print " factionwars todo list    "
+	print "--------------------------"
+	local function todoFinder(directory)
+		local files, directories = file.Find(directory .. '/*', 'LUA')
+		for k,v in ipairs(files) do
+			local data = file.Read(directory .. '/' .. v, 'LUA')
+			if (not data) then continue end
+			for k, line in ipairs(string.Explode('\n', data)) do
+				if line and line:find('--') and line:find('TODO') then
+					MsgC(color_white, directory .. '/' .. v .. ':' .. k)
+					local start = string.find(line, 'TODO') + 4
+					MsgN(string.sub(line, start))
+				end
+			end
+		end
+
+		for k,v in ipairs(directories) do
+			todoFinder(directory .. '/' .. v)
+		end
+	end
+
+	for k,v in ipairs(fw.module_search_paths) do
+		todoFinder(v)
+	end
+end
+
 
 end load() -- local function load()
 
@@ -133,7 +164,13 @@ fw.include_sh 'hooks_sh.lua'
 concommand.Add('fw_reload', function(pl)
 	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
 	load()
-	fw.hook.GetTable().Initialize.LoadPrinters() -- Hacky printer reloading fix
+
+	fw.hook.Call('Initialize')
+	for k, pl in ipairs(player.GetAll()) do 
+		fw.hook.Call('PlayerInitialSpawn', pl)
+		fw.hook.Call('PlayerSpawn', pl)
+	end 
+	
 end)
 
 concommand.Add("fw_reloadmap", function(pl)

@@ -1,14 +1,13 @@
 fw.ents.item_list = fw.ents.item_list or {}
 
 function fw.ents.registerItem(name, tbl)
-	name = name or "Undefined"
-
 	assert(tbl.model or tbl.models, "must provide world model for: "..name)
 	assert(tbl.stringID, "must provide stringID for: "..name)
 	assert(tbl.entity, "must provide entity class name for: "..name)
 	assert(tbl.price, "must provide price for: "..name)
 	assert(tbl.max, "must provide max for: "..name)
 	tbl.sortable = tbl.sortable or false
+	tbl.command = tbl.command or "fw_item_"..tbl.stringID
 
 	tbl.name = name
 	tbl.color = tbl.color or Color(100, 100, 100)
@@ -16,29 +15,71 @@ function fw.ents.registerItem(name, tbl)
 
 	local ind = table.insert(fw.ents.item_list, tbl)
 	fw.ents.item_list[ind].index = ind	
+
+	if (SERVER) then
+		concommand.Add(tbl.command, function(ply)
+			fw.ents.buyItem(ply, ind)
+		end)
+
+		if (tbl.weapon) then
+			concommand.Add(tbl.command.."_equip", function(ply)
+				local count = ndoc.table.items[ply].inventory[tbl.stringID].count
+
+				if (count - 1 <= 0) then
+					ndoc.table.items[ply].inventory[tbl.stringID] = nil
+				else
+					ndoc.table.items[ply].inventory[tbl.stringID] = count - 1
+				end
+
+				ply:Give(tbl.entity)
+			end)
+		end
+
+		if (tbl.useable) then
+			concommand.Add(tbl.command.."_use", function(ply)
+				local count = ndoc.table.items[ply].inventory[tbl.stringID]
+
+				if (count - 1 <= 0) then
+					ndoc.table.items[ply].inventory[tbl.stringID] = nil
+				else
+					ndoc.table.items[ply].inventory[tbl.stringID] = count - 1
+				end
+
+				local ent = ents.Create(tbl.entity)
+				ent:Use(ply)
+			end)
+		end
+	end
 end
 
-fw.hook.Add("CanPlayerBuyItem", "CanBuyItem", function(ply, item_index)
-	local i = fw.ents.item_list[item_index]
+function fw.ents.canPlayerBuyItem(ply, itemID)
+	local i = fw.ents.item_list[itemID]
 	if (not i) then
 		return false
 	end
 
+	local canbuy, msg = fw.hook.Call("CanPlayerBuyItem", GAMEMODE, ply, i)
+
+	if (not canbuy and msg) then
+		return false, msg
+	end
+
 	local maxItem  = i.max
 	local curItems = ndoc.table.items[ply].inventory[i.stringID]
-	local factionOnly = i.factionOnly
-	local jobOnly = i.jobOnly
+	local faction = i.faction
+	local jobs = i.jobs
 	local price = i.price
 
-	if (not ply:canAfford(price)) then return false end
-	if ((maxItem != 0) and curItems == maxItem) then return false end
-	if (factionOnly and isbool(factionOnly) and (ply:getFaction() == nil)) then return false end
-	if (factionOnly and isstring(factionOnly) and (ply:getFaction() != factionOnly)) then return false end
-	--TODO: this needs to be in sync with team string ids, not team index values
-	if (jobOnly and istable(jobOnly) and (not table.HasValue(jobOnly, ply:Team()))) then return false end
+	if (i.jobs and not istable(i.jobs)) then i.jobs = {i.jobs} end
+	if (i.faction and not istable(i.faction)) then i.faction = {i.faction} end
+
+	if (not ply:canAfford(price)) then return false, "you can't afford this!" end
+	if ((maxItem != 0) and curItems and curItems.count == maxItem) then return false, "you already have the maximum allowed in your inventory!" end
+	if (faction and isstring(faction) and (ply:getFaction() != faction)) then return false, "you aren't the right faction for this!" end
+	if jobs and (not table.HasValue(jobs, ply:Team())) then return false, "you aren't the right job for this!" end
 	if (i.canBuy) then 
 		return i.canBuy(i, ply)
 	end
 
 	return true
-end)
+end

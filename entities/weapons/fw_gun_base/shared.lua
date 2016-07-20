@@ -11,6 +11,9 @@ SWEP.ViewModelFlip = true
 SWEP.HoldType = "AR2"
 SWEP.Scoped = false
 
+SWEP.Author = "The FactionWars Team"
+SWEP.Instructions = "Left Click: Shoot\nRight Click: Scope/Burst Fire"
+
 SWEP.Primary.Ammo = "SMG1"
 SWEP.Primary.ClipSize = 30
 SWEP.Primary.DefaultClip = 60

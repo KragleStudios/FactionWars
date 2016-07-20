@@ -8,11 +8,7 @@ function ENT:Initialize()
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid(SOLID_VPHYSICS)
 
-	local phys = self:GetPhysicsObject()
-
-	if IsValid(phys) then
-		phys:Wake()
-	end
+	self:PhysWake()
 
 	self:SetUseType(SIMPLE_USE)
 	self:SetTrigger(true)
@@ -30,7 +26,7 @@ function ENT:Use(event, ply)
 			return
 		end
 
-		self:SetRemaining(remaining - 1)
+		self:SetRemaining(self:GetRemaining() - 1)
 
 		local ent = ents.Create(self.entity)
 		ent:SetPos(self:GetPos() + Vector(0, 0, 20))

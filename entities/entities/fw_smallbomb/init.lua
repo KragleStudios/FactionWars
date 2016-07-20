@@ -15,10 +15,7 @@ function ENT:Initialize()
 
 	self.Timer = 45
 
-	local phys = self:GetPhysicsObject()
-		if (phys:IsValid()) then
-			phys:Wake()
-		end
+	self:PhysWake()
 
 	self.Pack = ents.Create("prop_physics")
 	self.Pack:SetModel("models/weapons/w_c4_planted.mdl")
@@ -55,7 +52,7 @@ function ENT:Think()
 end
 
 function ENT:SpawnFunction( ply, tr, ClassName )
-	if (  !tr.Hit ) then return end
+	if (  not tr.Hit ) then return end
 
 	local SpawnPos = tr.HitPos + tr.HitNormal * 16
 	local ent = ents.Create( ClassName )

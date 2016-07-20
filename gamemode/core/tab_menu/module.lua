@@ -2,6 +2,8 @@ require 'sty'
 fw.dep(CLIENT, 'hook')
 fw.dep(CLIENT, 'fonts')
 fw.dep(CLIENT, 'ui')
+fw.dep(CLIENT, 'teams')
+fw.dep(CLIENT, 'items')
 
 if SERVER then
 	AddCSLuaFile()
@@ -118,6 +120,14 @@ function fw.tab_menu.showScoreboard()
 
 		__FW_TABMENU:AddView('PLAYERS', fw.tab_menu.tabDisplayPlayersList)
 		__FW_TABMENU:AddView('JOBS', fw.tab_menu.tabDisplayJobsList)
+		__FW_TABMENU:AddView('ITEMS', fw.tab_menu.itemManagement)
+		__FW_TABMENU:AddView('INVENTORY', fw.tab_menu.playerInventory)
+		if (LocalPlayer():isFactionBoss()) then
+			__FW_TABMENU:AddView('FACTION', fw.tab_menu.factionAdministration)
+		end
+		if (LocalPlayer():IsAdmin()) then
+			__FW_TABMENU:AddView('ADMIN', fw.tab_menu.administration)
+		end
 
 
 		vgui.Create('FWUIDropShadow')
@@ -148,12 +158,10 @@ function fw.tab_menu.hideContent(callback)
 		return 
 	end
 
-	callback()
+	if callback then callback() end
 end
 
 function fw.tab_menu.displayContent(title, constructor, callback)
-	lastContentName = title 
-
 	fw.tab_menu.hideContent(function()
 
 		__FW_TABMENU_CONTENT = vgui.Create('FWUIFrame')
@@ -173,44 +181,308 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 			(sty.ScrH - content:GetTall()) * 0.5, 
 			fw.config.uiAnimTimeQuick, 0, -1, 
 			callback or ra.fn.noop)
+		content:PerformLayout()
 
-		constructor(content)
+		local wrapper = vgui.Create('STYPanel', content)
+		wrapper:SetPos(sty.CalcInsetPos(sty.ScreenScale(2), 0, content:GetHeaderYOffset()))
+		wrapper:SetSize(
+			sty.CalcInsetSize(
+				sty.ScreenScale(2), content:GetWide(), 
+				content:GetTall() - content:GetHeaderYOffset()
+			))
+
+		constructor(wrapper)
 	end)
 end
 
-
 function fw.tab_menu.tabDisplayPlayersList(panel)
-
 	local space = vgui.Create('DScrollPanel', panel)
-	space:SetSize(panel:GetWide() - 10, panel:GetTall() - panel:GetHeaderYOffset())
-	space:SetPos(5, panel:GetHeaderYOffset())
+	space:SetSize(panel:GetSize())
 
 	local listLayout = vgui.Create('STYLayoutVertical', space)
 	listLayout:SetWide(panel:GetWide())
-	listLayout:SetPadding(sty.ScreenScale(2))
+	listLayout:SetPadding(sty.ScreenScale(5))
 
-	for k, v in pairs(player.GetAll()) do
-		local panel = vgui.Create('FWUIButton', listLayout)
-		panel:SetFont(fw.fonts.default)
-		panel:SetTall(sty.ScreenScale(15))
-		panel:SetText(v:Nick())
+	for k, v in pairs(fw.team.factions) do
+		local plys = v:getPlayers()
 
-		panel.DoClick = function()
-			// more info popup or something
+		if (#plys == 0) then continue end
+
+		local factionPlayers = vgui.Create('FWUITableViewSection', listLayout)
+		factionPlayers:SetTitle(v.name)
+		factionPlayers:SetPadding(sty.ScreenScale(2))
+
+		for k,v in pairs(plys) do
+			local panel = vgui.Create('FWUIPanel', factionPlayers)
+			panel:SetTall(sty.ScreenScale(15))
+
+			local title = vgui.Create('FWUITextBox', panel)
+			title:SetText(v:Nick())
+
+			local job = vgui.Create('FWUITextBox', panel)
+			job:SetText(fw.team.list[v:Team()].name)
+			job:SizeToContents()
+			job:SetWide(sty.ScreenScale(50))
+
+			title:Dock(FILL)
+			job:Dock(RIGHT)
 		end
-
-		panel:PerformLayout()
+		
 	end
 end
 
+--TODO: Faction Administration Panel
+function fw.tab_menu.factionAdministration(pnl)
+
+end
+
+--TODO: Server administration Panel
+function fw.tab_menu.administration(pnl)
+
+end
+
+--TODO: Item purchasing with shipment compatability
+function fw.tab_menu.itemManagement(parent)
+	parent.categories = {}
+
+	local space = vgui.Create('DScrollPanel', parent)
+	space:SetSize(parent:GetSize())
+
+	local listLayout = vgui.Create('STYLayoutVertical', space)
+	listLayout:SetWide(parent:GetWide())
+	listLayout:SetPadding(sty.ScreenScale(2))
+
+	local function createItemPanel(item, category, doClickBuy)
+		if (not parent.categories[category]) then
+			local itemSelection = vgui.Create("FWUITableViewSection", listLayout)
+			itemSelection:SetTitle(string.upper(category))
+			itemSelection:SetPadding(sty.ScreenScale(2))
+
+			parent.categories[category] = itemSelection
+		end
+
+		local panel = vgui.Create('FWUIPanel')
+		panel:SetTall(sty.ScreenScale(12))
+
+		parent.categories[category]:Add(panel)
+
+		local buyButton = vgui.Create('FWUIButton', panel)
+		buyButton:SetFont(fw.fonts.default)
+		buyButton:SetText('BUY ITEM')
+		buyButton.DoClick = doClickBuy
+		buyButton:SetWide(sty.ScreenScale(60))
+
+		local title = vgui.Create('FWUITextBox', panel)
+		title:SetText(item)
+
+		buyButton:Dock(RIGHT)
+		title:Dock(LEFT)
+	end
+
+	for index, item in pairs(fw.ents.item_list) do
+		if (not fw.ents.canPlayerBuyItem(LocalPlayer(), item.index)) then continue end
+
+		createItemPanel(item.name, item.category or "General", function()
+			LocalPlayer():ConCommand(item.command)
+			fw.tab_menu.hideContent()
+		end)
+	end
+end
+
+--TODO: Player inventory panel
+function fw.tab_menu.playerInventory(pnl)
+	local space = vgui.Create('DScrollPanel', pnl)
+	space:SetSize(pnl:GetSize())
+
+	local icons = vgui.Create("DIconLayout", space)
+	icons:SetSize(space:GetWide() - 10, space:GetTall())
+	icons:SetPos(0, 0)
+	icons:SetSpaceY(2)
+	icons:SetSpaceX(2)
+
+	local inv = ndoc.table.items[LocalPlayer()].inventory
+
+	for k,item in pairs(fw.ents.item_list) do
+		if (not inv[item.stringID]) then continue end
+		local invData = inv[item.stringID]
+
+		local pnl = icons:Add("FWUIPanel")
+		pnl:SetSize(100, 60)
+
+		local text = vgui.Create("FWUITextBox", pnl)
+		text:SetText(item.name)
+
+		local c = vgui.Create("FWUITextBox", pnl)
+		c:SetText(ndoc.table.items[LocalPlayer()].inventory[item.stringID].count)
+
+		local box = vgui.Create("DComboBox", pnl)
+		box:SetSize(pnl:GetWide(), sty.ScreenScale(15))
+		box:SetPos(0, pnl:GetTall() - box:GetTall())
+		box:SetValue("ACTION")
+		box.values = {}
+		function box:OnSelect(ind, val)
+			box.values[val]()
+			icons:InvalidateLayout(true)
+			if (ndoc.table.items[LocalPlayer()].inventory[item.stringID].count - 1 <= 0) then
+				pnl:Remove()
+			end
+		end
+
+		local use, equip
+		if (item.weapon) then
+			box.values["EQUIP"] = function() LocalPlayer():ConCommand(item.command.."_equip") end
+		end
+		if (item.useable) then
+			box.values["USE"] = function() LocalPlayer():ConCommand(item.command.."_use") end
+		end
+		box.values["DROP"] = function()
+			net.Start("fw.dropItem")
+				net.WriteString(item.stringID)
+			net.SendToServer()
+		end
+
+		for k,v in pairs(box.values) do
+			box:AddChoice(k)
+		end
+
+		text:Dock(LEFT)
+		c:Dock(TOP)
+	end
+end
+
+--job menu display! :D
 function fw.tab_menu.tabDisplayJobsList(panel)
 	local space = vgui.Create('DScrollPanel', panel)
-	space:SetSize(panel:GetWide() - 10, panel:GetTall() - panel:GetHeaderYOffset())
-	space:SetPos(5, panel:GetHeaderYOffset())
+	space:SetSize(panel:GetSize())
 
 	local listLayout = vgui.Create('STYLayoutVertical', space)
 	listLayout:SetWide(panel:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(2))
 
-	
+	local factionsListSection = vgui.Create('FWUITableViewSection', listLayout)
+	factionsListSection:SetTitle('FACTIONS')
+	factionsListSection:SetPadding(sty.ScreenScale(2))
+
+	local function createFactionButton(fname, players, doClickJoin)
+		local panel = vgui.Create('FWUIPanel')
+		panel:SetTall(sty.ScreenScale(12))
+		factionsListSection:Add(panel)
+
+		local joinButton = vgui.Create('FWUIButton', panel)
+		joinButton:SetFont(fw.fonts.default)
+		joinButton:SetText('JOIN FACTION')
+		joinButton.DoClick = doClickJoin
+		joinButton:SetWide(sty.ScreenScale(60))
+
+		local title = vgui.Create('FWUITextBox', panel)
+		title:SetText(fname)
+
+		joinButton:Dock(RIGHT)
+		title:Dock(FILL)
+	end
+
+	for index, faction in pairs(fw.team.factions) do
+		if LocalPlayer():getFaction() == faction:getID() then continue end
+
+		createFactionButton(faction:getName(), #faction:getPlayers(), function()
+			LocalPlayer():ConCommand(faction.command)
+			fw.tab_menu.hideContent()
+		end)
+	end
+
+	-- leave faction
+	if LocalPlayer():inFaction() and LocalPlayer():getFaction() ~= FACTION_DEFAULT then 
+		local panel = vgui.Create('FWUIPanel')
+		panel:SetTall(sty.ScreenScale(12))
+		factionsListSection:Add(panel)
+
+		local joinButton = vgui.Create('FWUIButton', panel)
+		joinButton:SetText('LEAVE')
+		joinButton:SetFont(fw.fonts.default)
+		joinButton.DoClick = function()
+			fw.tab_menu .hideContent()
+			LocalPlayer():ConCommand('fw_faction_leave \n')
+		end
+
+		joinButton:SetWide(sty.ScreenScale(60))
+
+		local title = vgui.Create('FWUITextBox', panel)
+		title:SetText('Leave ' .. fw.team.getFactionByID(LocalPlayer():getFaction()):getName())
+
+		joinButton:Dock(RIGHT)
+		title:Dock(FILL)
+
+		panel:SetBackgroundTint(Color(200, 0, 0), 10)
+	end 
+
+
+	-- list of jobs
+	local jobListSection = vgui.Create("FWUITableViewSection", listLayout)
+	jobListSection:SetTitle("JOBS")
+	jobListSection:SetPadding(sty.ScreenScale(2))
+
+	local function createJobButton(job, players)
+		local selectedModel, pref_model
+		
+		local pnl = vgui.Create("FWUIPanel")
+		pnl:SetTall(sty.ScreenScale(12))
+		jobListSection:Add(pnl)
+
+		local title = vgui.Create('FWUITextBox', pnl)
+		title:SetText(job:getName())
+		title:Dock(FILL)
+
+		local join = vgui.Create("FWUIButton", pnl)
+		join:SetText("JOIN TEAM")
+		join:SetFont(fw.fonts.default)
+		join:SetWide(sty.ScreenScale(40))
+		join:Dock(RIGHT)
+		function join:DoClick()
+			LocalPlayer():ConCommand(job.command)
+			fw.tab_menu.hideContent()
+		end
+
+		if #job.models > 1 then
+			local pickModel = vgui.Create('FWUIButton', pnl)
+			pickModel:SetText("SET MODEL")
+			pickModel:SetFont(fw.fonts.default)
+			pickModel:SetWide(sty.ScreenScale(40))
+			pickModel:Dock(RIGHT)
+
+			-- model panels
+			local mdlPanel = vgui.Create('FWUIPanel', self)
+			mdlPanel:SetVisible(false)
+			jobListSection:Add(mdlPanel)
+
+			mdlPanel:SetTall(sty.ScreenScale(40))
+
+			for k,v in ipairs(job.models) do
+				local mdl = vgui.Create('SpawnIcon', mdlPanel)
+				mdl:SetSize(mdlPanel:GetTall(), mdlPanel:GetTall())
+				mdl:PerformLayout()
+				mdl:SetModel(v)
+
+				mdl.DoClick = function()
+					fw.team.setPreferredModel(job:getID(), v)
+					mdlPanel:SetVisible(false)
+					jobListSection:SizeToContents()
+				end
+				mdl:Dock(LEFT)
+			end
+
+			pickModel.DoClick = function()
+				mdlPanel:SetVisible(not mdlPanel:IsVisible())
+				jobListSection:SizeToContents()
+			end
+		end
+
+	end
+
+	local myTeam = LocalPlayer():Team()
+	for i, job in pairs(fw.team.list) do
+		if (myTeam == job:getID()) then continue end
+		if (not fw.team.canChangeTo(LocalPlayer(), job:getID(), false)) then continue end
+		
+		createJobButton(job, #job:getPlayers())
+	end
 end

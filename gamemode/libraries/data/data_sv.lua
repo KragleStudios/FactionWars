@@ -15,6 +15,13 @@ file.CreateDir(data._rootdir)
 
 local engine = fw.include_sv 'engine_text_sv.lua'
 
+if (fw.config.dataStore == 'text') then
+	engine = include 'engine_text_sv.lua'
+elseif (fw.config.dataStore == 'sql') then
+	engine = include 'engine_sql_sv.lua'
+	engine.database:connect()
+end
+
 --
 -- CREATE PLAYER DATA TABLE
 -- 
@@ -40,7 +47,9 @@ ndoc.table.fwPlayers = {}
 function data.loadPlayer(player)
 	fw.print("loading data for " .. tostring(player).. ".")
 
-	ndoc.table.fwPlayers[player] = {}
+	if not ndoc.table.fwPlayers[player] then 
+		ndoc.table.fwPlayers[player] = {}
+	end
 	engine.loadPlayerData(player:SteamID64() or '0', function(_data)
 		-- copy the data to data.player
 		data.player[player] = _data

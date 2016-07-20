@@ -1,10 +1,13 @@
 local panelBg = fw.ui.const_panel_background
 local frameBg = fw.ui.const_frame_background
+local lightenRate = fw.ui.const_nesting_lighten_rate
 
 vgui.Register('FWUIPanel', {
+	isFWUIPanel = function() end,
+
 	Paint = function(self, w, h)
 		if not self._noBackground then 
-			surface.SetDrawColor(panelBg)
+			surface.SetDrawColor(self._panelBg or panelBg)
 			surface.DrawRect(0, 0, w, h)
 		end
 
@@ -14,9 +17,32 @@ vgui.Register('FWUIPanel', {
 		end
 
 		if not self._noOutline then 
-			surface.SetDrawColor(255, 255, 255, 5)
+			surface.SetDrawColor(0, 0, 0, 50)
 			surface.DrawOutlinedRect(0, 0, w, h)
+			surface.SetDrawColor(255, 255, 255, 5)
+			surface.DrawOutlinedRect(1, 1, w-2, h-2)
 		end
+	end,
+
+	SetParent = function(self, ...)
+		self.BaseClass.SetParent(self, ...)
+
+		local count = 0
+		local p = self:GetParent()
+		while IsValid(p) do
+			if p.isFWUIPanel then
+				count = count + 1
+			end
+			p = p:GetParent()
+		end
+
+		if count > 5 then count = 5 end
+		fw.print(count)
+		self._panelBg = Color(
+			panelBg.r + count * lightenRate, 
+			panelBg.g + count * lightenRate, 
+			panelBg.b + count * lightenRate
+		)
 	end,
 
 	SetNoOutline = function(self, bOutline)
@@ -72,9 +98,9 @@ vgui.Register('FWUIButton', {
 		end
 
 		self._bgTint[key] = Color(
-			tint.r * 0.3 + 255 * 0.7, 
-			tint.g * 0.3 + 255 * 0.7, 
-			tint.b * 0.3 + 255 * 0.7, 
+			tint.r, 
+			tint.g, 
+			tint.b, 
 			intensity or 100)
 
 		return self 
@@ -135,7 +161,7 @@ vgui.Register('FWUIFrame', {
 
 		self._titleBar = vgui.Create('FWUIPanel', self)
 		self._titleBar._titleLabel = Label('Unnamed Frame', self._titleBar)
-		self._titleBar:SetBackgroundTint(color_black, 200)
+		self._titleBar:SetBackgroundTint(color_black, 230)
 
 		self._titleBar.OnMousePressed = function(self)
 			local xoffset, yoffset = self:GetParent():CursorPos()
@@ -188,8 +214,9 @@ vgui.Register('FWUIFrame', {
 
 		local w, h = self:GetSize()
 
-		self._titleBar:SetSize(w, sty.ScreenScale(13))
+		self._titleBar:SetSize(w, self:GetHeaderYOffset())
 		sty.With(self._titleBar._titleLabel)
+			:SetPos(0, 0)
 			:SetFont(
 				fw.fonts.default:fitToView(
 					self._titleBar,
@@ -211,7 +238,7 @@ vgui.Register('FWUIFrame', {
 	end,
 
 	GetHeaderYOffset = function(self) -- the yoffset for content demmanded by the space used by the header
-		return self._titleBar:GetTall() 
+		return sty.ScreenScale(13)
 	end,
 
 	Paint = function(self, w, h)
@@ -219,6 +246,64 @@ vgui.Register('FWUIFrame', {
 		surface.DrawRect(0, 0, w, h)
 	end,
 }, 'EditablePanel')
+
+vgui.Register('FWUITextBox', {
+	Init = function(self)
+		self._label = Label('', self)
+		self:SetFont(fw.fonts.default)
+		self:SetInset(0)
+		self._align = fw.ui.LEFT 
+	end,
+
+	SetAlign = function(self, align)
+		if type(align) == 'string' then
+			align = align:lower()
+			if align == 'left' then
+				align = fw.ui.LEFT
+			elseif align == 'right' then
+				align = fw.ui.RIGHT
+			elseif align == 'center' then
+				align = fw.ui.CENTER
+			end
+		end
+		self._align = align 
+	end,
+
+	SetText = function(self, title)
+		self._label:SetText(title)
+	end, 
+
+	SetColor = function(self, color)
+		self._label:SetColor(color)
+	end,
+
+	SetInset = function(self, nInset)
+		self._inset = nInset 
+	end,
+
+	SetFont = function(self, font)
+		self._font = font 
+	end,
+
+	PerformLayout = function(self)
+		self._label:SetFont(self._font:fitToView(self, self._inset, self._label:GetText()))
+		self._label:SizeToContents()
+
+		if self._align == fw.ui.LEFT then
+			self._label:SetX(0)
+			self._label:CenterVertical()
+		elseif self._align == fw.ui.RIGHT then
+			self._label:SetX(self:GetWide() - self._label:GetWide())
+			self._label:CenterVertical()
+		elseif self._align == fw.ui.CENTER then
+			self._label:Center()
+		end
+	end,
+})
+
+
+
+
 
 concommand.Add('fw_ui_testFrame', function()
 	if IsValid(__FWUI_TESTFRAME) then

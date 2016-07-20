@@ -1,9 +1,13 @@
 fw.team.factions = {}
-
 local factionsList = fw.team.factions
 
 if SERVER then
-	ndoc.fwFactions = {}
+	if not ndoc.table.fwFactions then 
+		ndoc.table.fwFactions = {}
+	end
+	concommand.Add("fw_faction_leave", function(ply)
+		fw.team.removePlayerFromFaction(ply)
+	end)
 end
 
 local faction_mt = {
@@ -15,11 +19,17 @@ local faction_mt = {
 			return ply:getFaction() == self.index
 		end)
 	end,
-
+	getColor = function(self)
+		return self
+	end,
 	getNWData = function(self)
-		return ndoc.fwFactions[self.index] or {}
+		return ndoc.table.fwFactions[self.index] or {}
+	end,
+	getBoss = function(self)
+		return self:getNWData().boss
 	end,
 }
+faction_mt.__index = faction_mt
 
 -- fw.team.registerFaction
 -- @param factionName:string
@@ -29,20 +39,54 @@ function fw.team.registerFaction(factionName, tbl)
 	-- assert structure
 	assert(tbl.stringID, 'faction.stringID must be defined')
 
+	setmetatable(tbl, faction_mt)
+
 	tbl.index = table.insert(fw.team.factions, tbl)
 	tbl.name = factionName
+	tbl.command = 'fw_joinfaction_' .. tbl.stringID
 
 	if SERVER then
-		ndoc.fwFactions[tbl.index] = {
+		concommand.Add(tbl.command, function(ply)
+			local canjoin, message = fw.team.canJoinFaction(ply, tbl.index)
+
+			if (not canjoin) then
+				if (not message) then message = "You can't join this faction!" end
+				
+				ply:FWChatPrint(message)
+				return
+			end
+
+			fw.team.addPlayerToFaction(ply, tbl.index)
+		end)
+
+		ndoc.table.fwFactions[tbl.index] = {
 			money = 10000,
 			boss = nil,
+			inventory = {},
+			agenda = nil
+			-- inventory = {}, -- TODO: determine if inventory sholud exist at faction level
 			-- all other data to come...
 		}
-		-- boss = nil
-		-- money = nil
 	end
 
 	return tbl.index -- return the faction id
+end
+
+function fw.team.canJoinFaction(ply, factionId)
+	local players = #player.GetAll()
+
+	local faction = factionsList[factionId]
+	if not faction then return false, "No such faction" end
+
+	local factionPlayers = #faction:getPlayers()
+	local factionMeta = factionsList[factionId]
+
+	if (factionPlayers / players > (factionMeta.fraction or (1.0 / #factionMeta))) then
+		return true, "Faction already full!"
+	end
+
+	local canjoin, msg = hook.Call("PlayerCanJoinFaction", GAMEMODE, ply, faction)
+	return canjoin ~= false, msg
 end
 
 -- fw.team.getFactionByID
@@ -50,18 +94,22 @@ end
 -- @param index:number
 -- @ret faction:table
 function fw.team.getFactionByID(factionId)
-	return fw.team.factions[factionId]
+	return factionsList[factionId]
 end
 
 -- fw.team.getFactionByStringId(stringID)
 -- @param stringID:string - the faction to get by it's string id
 -- @ret faction:table - the meta data table for the faction
-function fw.team.getFactionByStringId(stringID)
+function fw.team.getFactionByStringID(stringID)
 	for k,v in ipairs(fw.team.factions) do
 		if v.stringID == stringID then
 			return v
 		end
 	end
+end
+
+function fw.team.getBoss(factionId)
+	return factionsList[factionId]:getBoss()
 end
 
 -- fw.team.getFactionPlayers(factionID)
@@ -90,5 +138,9 @@ function Player:isFactionBoss()
 end
 
 function Player:getFactionBoss()
-	return self:inFaction() and fw.team.factions[self:getFaction()].boss or NULL
+	return factionsList[self:getFaction()].boss
+end
+
+function Player:getFactionObj()
+	return factionsList[self:getFaction()]
 end

@@ -5,18 +5,19 @@ fw.team.spawns = fw.team.spawns or {}
 -- @param targ_team:int - the index of the team in the table
 -- @param optional forced:bool - should we ignore canjoin conditions?
 -- @ret nothing
-function fw.team.playerChangeTeam(ply, targ_team, forced)
-	local canjoin, message = hook.Call("CanPlayerJoinTeam", GAMEMODE, ply, targ_team)
-	
+function fw.team.playerChangeTeam(ply, targ_team, forced)	
 	local t = fw.team.list[targ_team]
 	if not t then
 		ply:FWChatPrintError("no such team ", tostring(targ_team))
 		return false 
 	end
 
-	if (not forced and not canjoin) then
-		ply:FWChatPrintError(message or ("can't join team " .. t:getName()))
-		return false 
+	if not forced then 
+		local canjoin, message = fw.team.canChangeTo(ply, targ_team, forced)
+		if (not canjoin) then
+			ply:FWChatPrintError(message or ("can't join team " .. t:getName()))
+			return false 
+		end
 	end
 
 	local pref_model = ply:GetFWData().preferred_models and ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
@@ -31,17 +32,12 @@ function fw.team.playerChangeTeam(ply, targ_team, forced)
 
 	-- set the player's team and preferred model data
 	ply:SetTeam(targ_team)
-	if not ply:GetFWData().preferred_models then
-		ply:GetFWData().preferred_models = {}
-	end
-	ply:GetFWData().preferred_models[t.stringID] = pref_model
 
 	-- respawn the player
 	ply:Spawn()
 
 	-- make the player the faction boss if their team is flagged as a boss team
 	if t.boss then
-		-- make the player the new boss of the faction!
 		fw.team.setFactionBoss(ply:getFaction(), ply)
 	end
 
@@ -97,7 +93,7 @@ end
 function fw.team.demotePlayer(ply)
 	if (not IsValid(ply)) then return end
 	
-	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN:getID(), table.Random(TEAM_CIVILIAN:getModels()))
+	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN, true)
 end
 
 
@@ -121,52 +117,17 @@ function fw.team.setPreferredModel(team_id, ply, model)
 		return
 	end
 
-	if not table.HasValue(team:getModels(), args[2]) then
-		pl:FWConPrint("model " .. tostring(args[2]) .. " not available for team " .. tostring(args[1]))
+	if not table.HasValue(team:getModels(), model) then
+		pl:FWConPrint("model " .. tostring(model) .. " not available for team " .. tostring(team_id))
 		return 
 	end
 
 	-- update the preferred model!
-	ply:GetFWData().preferred_models[t.stringID] = pref_model
+	if not ply:GetFWData().preferred_models then
+		ply:GetFWData().preferred_models = {}
+	end
+	ply:GetFWData().preferred_models[team.stringID] = pref_model
 end
-
--- handles the ability of whether or not a player can join a team
-fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
-	local t = fw.team.list[targ_team]
-	if (not t) then 
-		return false 
-	end
-	
-	-- enforce t.max players
-	if t.max and #t:getPlayers() > t.max then 
-		return false 
-	end
-
-	-- can't join a team you're already on
-	if (ply:Team() == targ_team) then 
-		return false 
-	end
-
-	-- SUPPORT FOR FACTION ONLY JOBS
-	if ((t.factionOnly and not t.faction) and not ply:getFaction()) then 
-		return false
-	end 
-	-- notify incorrect faction
-	if ((t.factionOnly and t.faction) and (ply:getFaction() != t.faction)) then
-		return false
-	end
-
-	local canjoin = t.canJoin
-	if canjoin then
-		if (istable(canjoin)) then
-			return table.HasValue(canjoin, ply:Team())
-		else
-			return canjoin(t, ply) ~= false
-		end
-	end
-	return true
-end)
-
 
 -- handles all spawning related functionality 
 fw.hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
@@ -229,7 +190,10 @@ end)
 -- sets the players team to 'Civilian' on the first spawn
 fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 	ply:FWConPrint("setting your team to team citizen")
-	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN:getID(), nil, true)
+	
+	ply:GetFWData().faction = FACTION_DEFAULT
+	hook.Run('PlayerJoinedFaction', ply, FACTION_DEFAULT)
+	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN, true)
 end)
 
 -- handles all death related functionality
@@ -262,10 +226,17 @@ end)
 --
 -- CONSOLE COMMANDS
 -- 
-concommand.Add("fw_team_preferredModel", function(pl, cmd, args)
-	if #args < 2 then pl:FWConPrint("too few argumetns") return end
-	local team = fw.team.getByStringID(args[1])
-	fw.team.setPreferredModel(team:getID(), pl, args[2])
+util.AddNetworkString('fw.team.preferredModel')
+net.Receive('fw.team.preferredModel', function(_, pl)
+	local team = net.ReadString()
+	local model = net.ReadString()
+	
+	local t = fw.team.getByStringID(team)
+	if not t then
+		pl:FWChatPrintError("no such team: " .. team:sub(1, 100))
+	end
+
+	fw.team.setPreferredModel(t:getID(), pl, model)
 end)
 
 --
@@ -330,7 +301,7 @@ fw.chat.addCMD("demote", "Vote to demote a user", function(ply, target)
 
 	if ply:isFactionBoss() then
 		fw.notif.chatPrint(player.GetAll(), ply, " forcefully demoted ", target, "!")
-		fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID())
+		fw.team.playerChangeTeam(target, TEAM_CIVILIAN)
 		return
 	end
 
@@ -339,7 +310,7 @@ fw.chat.addCMD("demote", "Vote to demote a user", function(ply, target)
 			if (not IsValid(target)) then return end
 
 			if (decision == "Yes") then
-				fw.team.playerChangeTeam(target, TEAM_CIVILIAN:getID())
+				fw.team.playerChangeTeam(target, TEAM_CIVILIAN)
 				fw.notif.chatPrint(player.GetAll(), target:Nick(), " was demoted to Citizen!")
 			else
 				fw.notif.chatPrint(player.GetAll(), target:Nick(), " was not demoted!")
@@ -347,3 +318,14 @@ fw.chat.addCMD("demote", "Vote to demote a user", function(ply, target)
 		end, "Yes", "No", 15)
 
 end):addParam("target", "player")
+
+fw.chat.addCMD("setagenda", "Sets the agenda for a faction", function(ply, text)
+	if (not ply:isFactionBoss()) then ply:FWChatPrintError("You aren't the faction boss!") return end
+
+	local faction = ply:getFaction()
+	local players = fw.team.getFactionPlayers(faction)
+	fw.notif.chatPrint(players, ply, " has updated the agenda!")
+
+	ndoc.table.fwFactions[faction].agenda = text
+
+end):addParam("agenda", "string")
