@@ -98,9 +98,9 @@ vgui.Register('FWUIButton', {
 		end
 
 		self._bgTint[key] = Color(
-			tint.r * 0.3 + 255 * 0.7, 
-			tint.g * 0.3 + 255 * 0.7, 
-			tint.b * 0.3 + 255 * 0.7, 
+			tint.r, 
+			tint.g, 
+			tint.b, 
 			intensity or 100)
 
 		return self 
