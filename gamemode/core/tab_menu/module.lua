@@ -202,7 +202,44 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 	local listLayout = vgui.Create('STYLayoutVertical', space)
 	listLayout:SetWide(panel:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(5))
+	
+	for k, v in pairs(fw.team.factions) do
+		local plys = v:getPlayers()
 
+		if (#plys == 0) then continue end
+
+		local factionPlayers = vgui.Create('FWUITableViewSection', listLayout)
+		factionPlayers:SetTitle(v.name.." - "..#plys.." PLAYER(S) TOTAL")
+		factionPlayers:SetPadding(sty.ScreenScale(2))
+
+
+		for k, v in pairs(fw.team.list) do
+    	                local jobs = v:getName()
+    	                local jobPlayers = v:getPlayers()
+
+    	                --if (#jobPlayers == 0) then continue end
+
+		        local factionJobs = vgui.Create('FWUITableViewSection', factionPlayers)
+		        factionJobs:SetTitle(jobs)
+		        factionJobs:SetPadding(sty.ScreenScale(2))
+            
+                                for k,v in pairs(jobPlayers) do
+		                        local panel = vgui.Create('FWUIPanel', factionJobs)
+			                panel:SetTall(sty.ScreenScale(15))
+			                panel:SetBackgroundTint(team.GetColor(v:Team()), 20)
+
+			                local title = vgui.Create('FWUITextBox', panel)
+			                title:SetText(v:Nick())
+			                title:DockMargin(3, 0, 0, 0)
+
+			                title:Dock(FILL)
+			                ping:Dock(RIGHT)
+			        end
+
+                end	 	    	
+	end
+end
+--[[
 	for k, v in pairs(fw.team.factions) do
 		local plys = v:getPlayers()
 
@@ -230,6 +267,7 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 		
 	end
 end
+]]
 
 --TODO: Faction Administration Panel
 function fw.tab_menu.factionAdministration(pnl)
