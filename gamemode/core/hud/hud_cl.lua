@@ -162,7 +162,7 @@ vgui.Register('fwHudInfo', {
 					self.agenda:PerformLayout()
 				end
 				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateAgenda)
-				ndoc.addHook('fwFactions.$.agenda', 'set', updateAgenda)
+				ndoc.addHook('fwFactions.?.agenda', 'set', updateAgenda)
 				updateAgenda()
 
 			end

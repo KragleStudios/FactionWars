@@ -18,7 +18,7 @@ net.Receive("fw.dropItem", function(_, ply)
 	if (not item) then return end
 	local canRemove, msg = hook.Call("CanRemoveFromInventory", GAMEMODE, ply, item)
 
-	if (not canRemove) then 
+	if (msg and not canRemove) then 
 		ply:FWChatPrint(Color(0, 0, 0), "[Inventory]: ", Color(255, 255, 255), msg or "You can't do this!")
 		return
 	end
@@ -30,7 +30,8 @@ net.Receive("fw.dropItem", function(_, ply)
 	end
 
 	local ent = ents.Create(class)
-	ent:SetPos(ply:GetPos() + Vector(20, 20, 20))
+	--TODO: Change entity spawn pos
+	ent:SetPos(ply:GetEyeTrace().HitPos)
 	ent:Spawn()
 	ent:Activate()
 	ent.owner = ply

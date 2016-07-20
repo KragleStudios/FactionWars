@@ -2,19 +2,47 @@ util.AddNetworkString("playerBuyItem")
 
 ndoc.table.items = {}
 
-function fw.ents.buyItem(ply, item_index)
-	local canjoin = hook.Call("CanPlayerBuyItem", GAMEMODE, ply, item_index)
+fw.data.addPersistField('inventory')
 
-	if (not canjoin) then return end
+function fw.ents.buyItem(ply, item_index)
+	local canjoin, msg = fw.ents.canPlayerBuyItem(ply, item_index)
+
+	if (not canjoin) then 
+		if (msg) then
+			ply:FWChatPrintError(msg)
+		end
+		return 
+	end
 
 	local item = fw.ents.item_list[item_index]
-	local list = ndoc.table.items[ply].inventory[item.stringID].count
+	local list = ndoc.table.items[ply].inventory[item.stringID]
 
-	if (list) then
-		ndoc.table.items[ply].inventory[item.stringID].count = list + 1
-	else
+	if (not list and item.storable) then
+		ndoc.table.items[ply].inventory[item.stringID] = {}
 		ndoc.table.items[ply].inventory[item.stringID].count = 1
+	elseif (item.storable) then
+		ndoc.table.items[ply].inventory[item.stringID].count = list.count + 1
 	end
+	if (item.shipment and item.storable) then
+		ndoc.table.items[ply].inventory[item.stringID].remaining = item.shipmentCount
+	end
+	if (not item.storable) then
+		if (item.shipment) then
+			local ship = ents.Create("fw_shipment")
+			ship:SetPos(ply:GetEyeTrace().HitPos) --TODO: Change this to smth better, we don't want to do eye trace
+			ship:setEntity(item.entity)
+			ship:setEntityModel(item.model)
+			ship:setShipmentAmount(item.shipmentCount)
+			ship:Spawn()
+			ship:Activate()
+		else
+			local ent = ents.Create(item.entity)
+			ent:SetPos(ply:GetEyeTrace().HitPos) --TODO: Change this to smth better, we don't want to do eye trace
+			ent:Spawn()
+			ent:Activate()
+		end
+	end
+	--ply:addMoney(-item.price)
 end
 
 net.Receive("playerBuyItem", function(len, ply)

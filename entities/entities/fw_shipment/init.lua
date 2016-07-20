@@ -26,7 +26,7 @@ function ENT:Use(event, ply)
 			return
 		end
 
-		self:SetRemaining(remaining - 1)
+		self:SetRemaining(self:GetRemaining() - 1)
 
 		local ent = ents.Create(self.entity)
 		ent:SetPos(self:GetPos() + Vector(0, 0, 20))

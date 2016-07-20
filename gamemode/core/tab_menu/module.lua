@@ -2,6 +2,8 @@ require 'sty'
 fw.dep(CLIENT, 'hook')
 fw.dep(CLIENT, 'fonts')
 fw.dep(CLIENT, 'ui')
+fw.dep(CLIENT, 'teams')
+fw.dep(CLIENT, 'items')
 
 if SERVER then
 	AddCSLuaFile()
@@ -239,14 +241,113 @@ function fw.tab_menu.administration(pnl)
 
 end
 
---TODO: Item purchasing panel
-function fw.tab_menu.itemManagement(pnl)
+--TODO: Item purchasing with shipment compatability
+function fw.tab_menu.itemManagement(parent)
+	parent.categories = {}
 
+	local space = vgui.Create('DScrollPanel', parent)
+	space:SetSize(parent:GetSize())
+
+	local listLayout = vgui.Create('STYLayoutVertical', space)
+	listLayout:SetWide(parent:GetWide())
+	listLayout:SetPadding(sty.ScreenScale(2))
+
+	local function createItemPanel(item, category, doClickBuy)
+		if (not parent.categories[category]) then
+			local itemSelection = vgui.Create("FWUITableViewSection", listLayout)
+			itemSelection:SetTitle(string.upper(category))
+			itemSelection:SetPadding(sty.ScreenScale(2))
+
+			parent.categories[category] = itemSelection
+		end
+
+		local panel = vgui.Create('FWUIPanel')
+		panel:SetTall(sty.ScreenScale(12))
+
+		parent.categories[category]:Add(panel)
+
+		local buyButton = vgui.Create('FWUIButton', panel)
+		buyButton:SetFont(fw.fonts.default)
+		buyButton:SetText('BUY ITEM')
+		buyButton.DoClick = doClickBuy
+		buyButton:SetWide(sty.ScreenScale(60))
+
+		local title = vgui.Create('FWUITextBox', panel)
+		title:SetText(item)
+
+		buyButton:Dock(RIGHT)
+		title:Dock(LEFT)
+	end
+
+	for index, item in pairs(fw.ents.item_list) do
+		if (not fw.ents.canPlayerBuyItem(LocalPlayer(), item.index)) then continue end
+
+		createItemPanel(item.name, item.category or "General", function()
+			LocalPlayer():ConCommand(item.command)
+			fw.tab_menu.hideContent()
+		end)
+	end
 end
 
 --TODO: Player inventory panel
 function fw.tab_menu.playerInventory(pnl)
+	local space = vgui.Create('DScrollPanel', pnl)
+	space:SetSize(pnl:GetSize())
 
+	local icons = vgui.Create("DIconLayout", space)
+	icons:SetSize(space:GetWide() - 10, space:GetTall())
+	icons:SetPos(0, 0)
+	icons:SetSpaceY(2)
+	icons:SetSpaceX(2)
+
+	local inv = ndoc.table.items[LocalPlayer()].inventory
+
+	for k,item in pairs(fw.ents.item_list) do
+		if (not inv[item.stringID]) then continue end
+		local invData = inv[item.stringID]
+
+		local pnl = icons:Add("FWUIPanel")
+		pnl:SetSize(100, 60)
+
+		local text = vgui.Create("FWUITextBox", pnl)
+		text:SetText(item.name)
+
+		local c = vgui.Create("FWUITextBox", pnl)
+		c:SetText(ndoc.table.items[LocalPlayer()].inventory[item.stringID].count)
+
+		local box = vgui.Create("DComboBox", pnl)
+		box:SetSize(pnl:GetWide(), sty.ScreenScale(15))
+		box:SetPos(0, pnl:GetTall() - box:GetTall())
+		box:SetValue("ACTION")
+		box.values = {}
+		function box:OnSelect(ind, val)
+			box.values[val]()
+			icons:InvalidateLayout(true)
+			if (ndoc.table.items[LocalPlayer()].inventory[item.stringID].count - 1 <= 0) then
+				pnl:Remove()
+			end
+		end
+
+		local use, equip
+		if (item.weapon) then
+			box.values["EQUIP"] = function() LocalPlayer():ConCommand(item.command.."_equip") end
+		end
+		if (item.useable) then
+			box.values["USE"] = function() LocalPlayer():ConCommand(item.command.."_use") end
+		end
+		box.values["DROP"] = function()
+			net.Start("fw.dropItem")
+				net.WriteString(item.stringID)
+			net.SendToServer()
+		end
+
+		for k,v in pairs(box.values) do
+			box:AddChoice(k)
+		end
+
+		text:Dock(LEFT)
+		c:Dock(TOP)
+	end
 end
 
 --job menu display! :D
