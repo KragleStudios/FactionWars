@@ -34,6 +34,9 @@ SWEP.Secondary.Ammo = "none"
 SWEP.EmptySound = Sound("Weapon_Pistol.Empty")
 SWEP.ReloadSound = Sound("Weapon_AK47.Reload")
 
+SWEP.Buff = "none"
+SWEP.BuffApplied = false
+
 function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 0, "CurrentRecoil")
 	self:NetworkVar("Float", 1, "LastFireTime")
@@ -44,6 +47,7 @@ function SWEP:SetupDataTables()
 	self:NetworkVar("Bool", 6, "Bursting")
 	self:NetworkVar("Int", 7, "BurstsLeft")
 	self:NetworkVar("Float", 8, "BurstTime")
+	self:NetworkVar("String", 9, "Buff")
 end
 
 function SWEP:PrimaryAttack()
@@ -55,6 +59,7 @@ end
 
 function SWEP:Shoot()
 	if self:Clip1() <= 0 then self:EmitSound(self.EmptySound) self:SendWeaponAnim(ACT_VM_DRYFIRE) return end
+	self:ApplyBuff()
 
 	local recoilMult = 1
 	local sprayMult = 1
@@ -195,4 +200,11 @@ function SWEP:Deploy()
 	self:SendWeaponAnim(ACT_VM_DRAW)
 	self:SetNextPrimaryFire(CurTime() + 1)
 	self:SetHoldType(self.HoldType)
+end
+
+function SWEP:ApplyBuff()
+	if fw.weapons.buffs[self.Buff] and not self.BuffApplied then
+		fw.weapons.buffs[self.Buff](self)
+		self.BuffApplied = true
+	end
 end

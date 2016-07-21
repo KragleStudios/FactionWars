@@ -1,4 +1,18 @@
 fw.weapons.weapons = {}
+fw.weapons.buffs = {
+	damage = {
+		function(self)
+			self.Primary.Damage = self.Primary.Damage + (self.Primary.Damage * 0.2)
+		end,
+		"20% increased damage"
+	},
+	ammo = {
+		function(self)
+			self.Primary.ClipSize = self.Primary.ClipSize
+		end,
+		"20% increased ammo capacity",
+	}
+}
 
 function fw.weapons.createGun(name, config, entity)
 	assert(entity, "gun entity name not provided")
