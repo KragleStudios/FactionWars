@@ -28,15 +28,49 @@ end
 
 -- fields to persist
 data.persistFields = {}
-function data.addPersistField(name)
-	if not table.HasValue(data.persistFields, name) then
-		table.insert(data.persistFields, name)
 
-		ndoc.addHook('fwPlayers.?.' .. name, 'set', function(pl, value)
-			if not data.player[pl] then return end -- for some reason their data is not loaded yet. It can not be modified.
-			data.player[pl][name] = value
-		end)
+local function updateStorage(tbl, val, a, b, ...)
+	if b == nil then
+		tbl[a] = val
+		return 
 	end
+	if not tbl[a] then
+		tbl[a] = {}
+	end
+	updateStorage(tbl[a], val, b, ...)
+end
+
+function data.addPersistField(path)
+	local function addPersistHelper(...)
+		if not table.HasValue(data.persistFields, name) then
+			table.insert(data.persistFields, name)
+
+			-- work around to get the last key since it's not available
+			-- through tbl.__path BUT it might be provided by the wildcards so we must be careful
+			local lastKey = select(select('#', ...), ...)
+			if lastKey == ndoc.kWILDCARD then lastKey = nil end 
+
+			ndoc.addHook(ndoc.path('fwPlayers', ndoc.kWILDCARD, ...), 'set', function(pl, ...)
+				if not data.player[pl] then return end -- for some reason their data is not loaded yet. It can not be modified.
+				local value, tbl = select(select('#', ...) - 1, ...)
+				updateStorage(data.player[pl], value, select(3, tbl.__path(lastKey)))
+			end)
+		end
+	end
+
+	local compiledPath = ndoc.compilePath(path)
+
+	if select('#', compiledPath()) == 1 then
+		-- if its the simple case then we can do it very efficiently
+		ndoc.addHook(ndoc.path('fwPlayers', ndoc.kWILDCARD, compiledPath()), 'set', function(pl, value)
+			if not data.player[pl] then return end 
+			data.player[pl][path] = value
+		end)
+	else 
+		-- the general case for a path that may contain wildcards is far more complicated
+		addPersistHelper(compiledPath())
+	end
+
 end
 
 
