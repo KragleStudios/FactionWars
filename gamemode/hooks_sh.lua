@@ -53,10 +53,6 @@ function GM:PlayerSay(...)
 	return fw.hook.Call('PlayerSay', ...)
 end
 
-function GM:Initialize(...)
-	return fw.hook.Call("Initialize", ...)
-end
-
 function GM:ScoreboardShow(...)
 	return fw.hook.Call('ScoreboardShow', ...)
 end
@@ -82,11 +78,20 @@ function GM:Think(...)
 end
 
 function GM:OnReloaded(...)
-	if (SERVER) then
-		RunConsoleCommand('fw_reload')
-	end
+	_REFRESH = true
 
-	return fw.hook.Call('OnReloaded', ...)
+	local ret = fw.hook.Call('OnReloaded', ...)
+
+	fw.hook.Call('Initialize')
+
+	for k, pl in ipairs(player.GetAll()) do 
+		fw.hook.Call('PlayerInitialSpawn', pl)
+		fw.hook.Call('PlayerSpawn', pl)
+	end 
+
+	_REFRESH = nil
+
+	return ret
 end
 
 function GM:RenderScreenspaceEffects(...)

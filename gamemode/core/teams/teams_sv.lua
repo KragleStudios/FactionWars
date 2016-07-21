@@ -142,17 +142,19 @@ fw.hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
 
 	hook.Call('PlayerLoadout', GAMEMODE, ply)
 	hook.Call('PlayerSetModel', GAMEMODE, ply)
-	
-	local fac = nil
-	if (ply:inFaction()) then 
-		fac = ply:getFaction()
-	end
 
 	-- TODO: use PlayerSelectSpawn
-	local sp = fw.team.findBestSpawn(t.stringID, fac)
-	if (sp) then
-		ply:SetPos(sp.pos)
-		ply:SetAngles(sp.angle)
+	if (not _REFRESH) then
+		local fac = nil
+		if (ply:inFaction()) then 
+			fac = ply:getFaction()
+		end
+		
+		local sp = fw.team.findBestSpawn(t.stringID, fac)
+		if (sp) then
+			ply:SetPos(sp.pos)
+			ply:SetAngles(sp.angle)
+		end
 	end
 
 	if t.onSpawn then
@@ -189,11 +191,22 @@ end)
 
 -- sets the players team to 'Civilian' on the first spawn
 fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
-	ply:FWConPrint("setting your team to team citizen")
-	
-	ply:GetFWData().faction = FACTION_DEFAULT
-	hook.Run('PlayerJoinedFaction', ply, FACTION_DEFAULT)
-	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN, true)
+	if (not _REFRESH) then
+		ply:FWConPrint("setting your team to team citizen")
+		
+		ply:GetFWData().faction = FACTION_DEFAULT
+		hook.Run('PlayerJoinedFaction', ply, FACTION_DEFAULT)
+		fw.team.playerChangeTeam(ply, TEAM_CIVILIAN, true)
+	else
+		if (ply._faction) then
+			ply:GetFWData().faction = ply._faction
+		end
+	end
+end)
+
+-- retain faction after lua refresh
+ndoc.addHook('fwPlayers.?.faction', 'set', function(ply, value)
+	ply._faction = value--
 end)
 
 -- handles all death related functionality
