@@ -350,6 +350,7 @@ function fw.tab_menu.itemManagement(parent)
 		local title = vgui.Create('FWUITextBox', panel)
 		title:SetText(item)
 
+		title:Dock(FILL)
 		buyButton:Dock(RIGHT)
 		title:Dock(LEFT)
 	end

@@ -11,7 +11,8 @@ vgui.Register('fwHudInfoCell', {
 		end,
 
 		PerformLayout = function(self)
-			self.label:SetFont(fw.fonts.default:fitToView(self:GetWide() - 10, self:GetTall() - 10, self.label:GetText()))
+			local p = sty.ScreenScale(2)
+			self.label:SetFont(fw.fonts.default:fitToView(self:GetWide() - p * 2, self:GetTall() - p * 2, self.label:GetText()))
 			self.label:SizeToContents()
 			self.label:Center()
 		end,
@@ -40,8 +41,7 @@ vgui.Register('fwHudInfoCell', {
 
 		Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 255)
-			surface.DrawRect(0, 0, w, h)
-			
+			surface.DrawRect(0, 0, w, h) 
 			surface.SetDrawColor(0, 0, 0, 255)
 			surface.DrawOutlinedRect(0, 0, w, h)
 		end,
