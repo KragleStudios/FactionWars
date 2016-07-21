@@ -378,9 +378,12 @@ function fw.tab_menu.playerInventory(pnl)
 
 	local inv = ndoc.table.items[LocalPlayer()].inventory
 
-	for k,item in pairs(fw.ents.item_list) do
-		if (not inv[item.stringID]) then continue end
-		local invData = inv[item.stringID]
+	for k,v in ndoc.ipairs(inv.slots) do
+		print(k,v)
+		local item = fw.ents.item_list[v]
+		local slot = k
+
+		if (not item) then continue end
 
 		local pnl = icons:Add("FWUIPanel")
 		pnl:SetSize(100, 60)
@@ -389,7 +392,7 @@ function fw.tab_menu.playerInventory(pnl)
 		text:SetText(item.name)
 
 		local c = vgui.Create("FWUITextBox", pnl)
-		c:SetText(ndoc.table.items[LocalPlayer()].inventory[item.stringID].count)
+		c:SetText(count)
 
 		local box = vgui.Create("DComboBox", pnl)
 		box:SetSize(pnl:GetWide(), sty.ScreenScale(15))
@@ -399,23 +402,33 @@ function fw.tab_menu.playerInventory(pnl)
 		function box:OnSelect(ind, val)
 			box.values[val]()
 			icons:InvalidateLayout(true)
-			if (ndoc.table.items[LocalPlayer()].inventory[item.stringID].count - 1 <= 0) then
-				pnl:Remove()
-			end
 		end
 
 		local use, equip
-		if (item.weapon) then
-			box.values["EQUIP"] = function() LocalPlayer():ConCommand(item.command.."_equip") end
+		if (not item.shipment and item.weapon) then
+			box.values["EQUIP"] = function() LocalPlayer():ConCommand(item.command.."_equip "..slot) end
 		end
-		if (item.useable) then
-			box.values["USE"] = function() LocalPlayer():ConCommand(item.command.."_use") end
+		if (not item.shipment and item.useable) then
+			box.values["USE"] = function() LocalPlayer():ConCommand(item.command.."_use "..slot) end
 		end
 		box.values["DROP"] = function()
 			net.Start("fw.dropItem")
 				net.WriteString(item.stringID)
 			net.SendToServer()
 		end
+
+		--TODO: Replace hooks somewhere else?
+		ndoc.addHook("items.?.inventory.slots", 'set', function(ply, index)
+			print(index)
+
+			if (true) then return end
+
+			if (ply == LocalPlayer()) then
+				if (index == slot) then 
+					pnl:Remove()
+				end
+			end
+		end)
 
 		for k,v in pairs(box.values) do
 			box:AddChoice(k)

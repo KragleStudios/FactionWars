@@ -56,7 +56,15 @@ function ENT:setEntity(class)
 	self.entity = class
 end
 
+function ENT:GetEnt()
+	return self.entity
+end
+
 function ENT:setShipmentAmount(count)
 	self:SetRemaining(count)
+end
+
+function ENT:setName(name)
+	self:SetName(name)
 end
 

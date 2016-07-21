@@ -22,31 +22,22 @@ function fw.ents.registerItem(name, tbl)
 		end)
 
 		if (tbl.weapon) then
-			concommand.Add(tbl.command.."_equip", function(ply)
-				local count = ndoc.table.items[ply].inventory[tbl.stringID].count
-
-				if (count - 1 <= 0) then
-					ndoc.table.items[ply].inventory[tbl.stringID] = nil
-				else
-					ndoc.table.items[ply].inventory[tbl.stringID] = count - 1
+			concommand.Add(tbl.command.."_equip", function(ply, cmd, args)
+				if (not tbl.shipment) then				
+					local slot = args[1]
+					ply:GetFWData().inventory[slot] = nil
+					ply:Give(tbl.entity)
 				end
-
-				ply:Give(tbl.entity)
 			end)
 		end
 
 		if (tbl.useable) then
-			concommand.Add(tbl.command.."_use", function(ply)
-				local count = ndoc.table.items[ply].inventory[tbl.stringID]
-
-				if (count - 1 <= 0) then
-					ndoc.table.items[ply].inventory[tbl.stringID] = nil
-				else
-					ndoc.table.items[ply].inventory[tbl.stringID] = count - 1
+			concommand.Add(tbl.command.."_use", function(ply, cmd, args)
+				if (not tbl.shipment) then				
+					local slot = args[1]
+					ply:GetFWData().inventory[slot] = nil
+					ply:Give(tbl.entity)
 				end
-
-				local ent = ents.Create(tbl.entity)
-				ent:Use(ply)
 			end)
 		end
 	end

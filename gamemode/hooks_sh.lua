@@ -133,6 +133,17 @@ function GM:PlayerCanJoinFaction(...)
 	return fw.hook.Call('PlayerCanJoinFaction', ...)
 end
 
+function GM:KeyPress(...)
+	return fw.hook.Call("KeyPress", ...)
+end
+
+function GM:KeyRelease(...)
+	return fw.hook.Call("KeyRelease", ...)
+end
+
+function GM:PlayerCanPickupWeapon(...)
+	return fw.hook.Call("PlayerCanPickupWeapon", ...)
+end
 --
 -- MODULE ITEMS
 --

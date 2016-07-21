@@ -8,8 +8,6 @@ fw.ents.registerItem("Blowtorch", {
 	storable = true,
 	weapon = true,
 	useable = false,
-	jobs = {TEAM_MAYOR},
-	faction = {FACTION_DEFAULT}
 	--optional
 	--removeOnDisc = true/false, remove this when the player leaves
 	--category = "General Merch, custom cat",
@@ -27,7 +25,7 @@ fw.ents.registerItem("Blowtorch Shipment", {
 	model = "", --this is the model shown on the menu display, and doesn't have to mach the ent model
 	entity = "fw_cuttingtorch", --this MUST be the entity classname 
 	max = 0,
-	price = 1000,
+	price = 100,
 	storable = true,
 	weapon = true,
 	useable = false,

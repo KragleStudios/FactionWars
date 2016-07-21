@@ -6,3 +6,5 @@ fw.config.payrollTime = 60
 fw.config.useFactionBank = true
 --should the boss have powers, allowing them to demote and remove without votes?
 fw.config.bossPowers = true
+--how many slots should the player get for default in their inventory?
+fw.config.defaultInvSlots = 10

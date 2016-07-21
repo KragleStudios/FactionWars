@@ -15,18 +15,16 @@ function fw.ents.buyItem(ply, item_index)
 	end
 
 	local item = fw.ents.item_list[item_index]
-	local list = ndoc.table.items[ply].inventory[item.stringID]
-
-	if (not list and item.storable) then
-		ndoc.table.items[ply].inventory[item.stringID] = {}
-		ndoc.table.items[ply].inventory[item.stringID].count = 1
-	elseif (item.storable) then
-		ndoc.table.items[ply].inventory[item.stringID].count = list.count + 1
+	local slot = fw.inv.calcInvSpot(ply)
+	
+	if (not slot) then 
+		ply:FWChatPrintError("Your inventory is full, so you your item will be spawned instead!")
+	else 
+		item.slot = slot
+		ndoc.table.items[ply].inventory[slot] = item_index
 	end
-	if (item.shipment and item.storable) then
-		ndoc.table.items[ply].inventory[item.stringID].remaining = item.shipmentCount
-	end
-	if (not item.storable) then
+	
+	if (not item.storable or not slot) then
 		if (item.shipment) then
 			local ship = ents.Create("fw_shipment")
 			ship:SetPos(ply:GetEyeTrace().HitPos) --TODO: Change this to smth better, we don't want to do eye trace
@@ -35,13 +33,20 @@ function fw.ents.buyItem(ply, item_index)
 			ship:setShipmentAmount(item.shipmentCount)
 			ship:Spawn()
 			ship:Activate()
+			ship.itemData = item
+			ship.owner = ply
 		else
 			local ent = ents.Create(item.entity)
 			ent:SetPos(ply:GetEyeTrace().HitPos) --TODO: Change this to smth better, we don't want to do eye trace
 			ent:Spawn()
 			ent:Activate()
+			ent.itemData = item
+			ent.owner = ply
+			ent:SetOwner(ply)--turret compatability
 		end
 	end
+
+	--TODO: uncomment this line
 	--ply:addMoney(-item.price)
 end
 
@@ -52,6 +57,8 @@ end)
 fw.hook.Add("PlayerInitialSpawn", "LoadItems", function(ply)
 	ndoc.table.items[ply] = ndoc.table.items[ply] or {}
 	ndoc.table.items[ply].inventory = ndoc.table.items[ply].inventory or {}
+	ndoc.table.items[ply].inventory.slots = {}
+	ndoc.table.items[ply].inventory.slotCount = x or fw.config.defaultInvSlots
 end)
 
 fw.hook.Add("PlayerDisconnected", "RemoveSpareItems", function(ply)
