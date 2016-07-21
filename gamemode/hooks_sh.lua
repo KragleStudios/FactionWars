@@ -73,6 +73,10 @@ function GM:StartChat(...)
 	return fw.hook.Call("StartChat", ...)
 end
 
+function GM:GravGunPunt(...)
+	return false
+end
+
 function GM:Think(...)
 	return fw.hook.Call("Think", ...)
 end
