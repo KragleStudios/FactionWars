@@ -1,5 +1,11 @@
 fw.zone = {}
+
+
 require 'ra'
+
+local math = math 
+local net = net 
+
 
 fw.zone.list = {}
 
@@ -47,9 +53,7 @@ end
 --
 -- CREATE ZONE META OBJECT
 -- 
-
 local zone_mt = {}
-local nextZoneId = 0
 function zone_mt:ctor()
 	self.name = 'unknown'
 	self.triangles = {}
@@ -57,17 +61,11 @@ function zone_mt:ctor()
 	self.maxY = -math.huge 
 	self.minX = math.huge 
 	self.minY = math.huge
-
-	-- for serverside id generation
-	if SERVER then 
-		self.id = nextZoneId
-		nextZoneId = nextZoneId + 1
-	end
 end
 
 if SERVER then
 	function zone_mt:send()
-		net.WriteUInt(self.id)
+		net.WriteUInt(self.id, 16)
 		net.WriteString(self.name)
 		net.WriteUInt(#self.triangles, 12)
 		for k,v in ipairs(self.triangles) do
@@ -81,6 +79,7 @@ if SERVER then
 	end
 else
 	function zone_mt:receive()
+		self.id = net.ReadUInt(16)
 		self.name = net.ReadString()
 		for i = 1, net.ReadUInt(12) do
 			self:addTriangle(
@@ -96,6 +95,8 @@ else
 end
 
 function zone_mt:addTriangle(x1, y1, x2, y2, x3, y3)
+	x1, y1, x2, y2, x3, y3 = math.Round(x1), math.Round(y1), math.Round(x2), math.Round(y2), math.Round(x3), math.Round(y3)
+
 	table.insert(self.triangles, createTriangle(x1, y1, x2, y2, x3, y3))
 
 	self.maxX = math.max(self.maxX, math.max(x1, math.max(x2, x3)))
@@ -115,6 +116,61 @@ function zone_mt:isPointInZone(x, y)
 	return false 
 end
 
+-- writes a zone to a file
+function zone_mt:writeToFile(file)
+	file:WriteShort(self.id)
+	file:WriteByte(#self.name)
+	file:Write(self.name)
+	file:WriteShort(#self.triangles)
+	for k,v in ipairs(self.triangles) do
+		file:WriteLong(v.x1)
+		file:WriteLong(v.y1)
+		file:WriteLong(v.x2)
+		file:WriteLong(v.y2)
+		file:WriteLong(v.x3)
+		file:WriteLong(v.y3)
+	end
+end
+
+-- reads a zone from a file
+function zone_mt:readFromFile(file)
+	self.id = file:ReadShort()
+	self.name = file:Read(file:ReadByte())
+	for i = 1, file:ReadShort() do
+		self:addTriangle(
+				file:ReadLong(),
+				file:ReadLong(),
+				file:ReadLong(),
+				file:ReadLong(),
+				file:ReadLong(),
+				file:ReadLong()
+			)
+	end
+end
+
+
+
+
+
+function fw.zone.saveZonesToFile(filename)
+	local f = file.Open(filename, 'DATA', 'wb')
+
+	f:WriteShort(table.Count(fw.zone.list))
+	for k,v in pairs(fw.zone.list) do
+		v:writeToFile(f)
+	end
+
+	f:Close()
+end
+
+function fw.zone.loadZonesFromFile(filename)
+	-- TODO zone loading from file
+end
+
+
+
+
+
 
 
 
@@ -125,7 +181,9 @@ function fw.zone.playerGetZoneInside(ply)
 
 	for k, zone in ipairs(fw.zone.list) do
 		if zone:isPointInside(x, y) then
-			return zone.id
+			return zone
 		end
 	end
+
+	return nil
 end
