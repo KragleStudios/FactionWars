@@ -1,7 +1,6 @@
 
 -- BUGS BUGS EVERYWHERE:
 -- Entities sometimes dont update, at some point.. cant remember exactly when.. Ill work it out
--- Generators can only overload if there is more than 1 in the network.. Intended possibly? More than 10 printers cant be connected anyways
 -- Probably more but these are all that come to mind
 
 local network = {}
@@ -179,7 +178,7 @@ function network:GetNodes() -- This needs to be cached, and updated when the loc
 	end
 
 	for k,v in pairs(self.subnets) do
-		if v.net:GetID() == self:GetID() then continue end
+		if v.net and v.net:GetID() == self:GetID() then continue end
 		nodes[v.net:GetID()] = v.net
 		table.Merge(nodes, GetNodes(v.net))
 	end
