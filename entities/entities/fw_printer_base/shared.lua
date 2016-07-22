@@ -18,6 +18,10 @@ ENT.PaperDrain = 5 -- How many sheets of paper are consumed in each print?
 
 ENT.Color = Color(26, 188, 156, 100) -- Color of printer + UI elements
 
+ENT.GenerationRequirements = {
+	["res_power"] = 1 
+}
+
 function ENT:SetupDataTables()
 	self:NetworkVar("Float", 0, "NextPrintTime")
 	self:NetworkVar("Int", 1, "Money")
