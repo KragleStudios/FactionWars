@@ -37,6 +37,9 @@ function network:CheckRadius()
 end
 
 function network:Remove()
+	for k,v in pairs(self.receivers) do
+		v:RemoveNode()
+	end
 	network.networks[self.id] = nil
 end
 
