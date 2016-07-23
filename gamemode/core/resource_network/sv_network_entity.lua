@@ -1,9 +1,8 @@
-
 local mEntity = FindMetaTable("Entity")
 local defaultrad = 250
 
 function mEntity:GetNetworkRadius()
-	return self.NetworkRadius || defaultrad
+	return self.NetworkRadius or defaultrad
 end
 
 function mEntity:IsNode()
@@ -14,7 +13,7 @@ function mEntity:IsNode()
 end
 
 function mEntity:IsConnected()
-	if self.GenerationRequirements != nil && self.connectednet != nil then
+	if self.GenerationRequirements != nil and self.connectednet != nil then
 		return true
 	end
 	return false
@@ -50,7 +49,7 @@ end
 
 function mEntity:IsPowered()
 	--print(self:IsConnected(), self:GetNet():GetID(), self:GetNet():IsOverloaded() == false)
-	if self:IsConnected() && self:GetNode():IsOverloaded() == false then
+	if self:IsConnected() and self:GetNode():IsOverloaded() == false then
 		return true
 	end
 	return false
