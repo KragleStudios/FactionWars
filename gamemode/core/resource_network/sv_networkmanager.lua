@@ -1,5 +1,3 @@
-
-
 local Networks = {}
 Networks.EntNodes = {}
 
@@ -68,7 +66,7 @@ end
 
 
 function Networks.RegisterEntityNode(class, b)
-	Networks.EntNodes[class] = (b || true)
+	Networks.EntNodes[class] = (b or true)
 end
 
 function Networks.CreateNetwork(ent, radius)
@@ -79,7 +77,7 @@ end
 
 function Networks.CheckSubnets()
 	for k,v in pairs(Networks.network.networks) do
-		print(v, v:GetID() || "#error")
+		print(v, v:GetID() or "#error")
 		v:CheckNetValidity()
 	end
 end
