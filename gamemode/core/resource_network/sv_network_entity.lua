@@ -1,6 +1,8 @@
 local mEntity = FindMetaTable("Entity")
 local defaultrad = 250
 
+AccessorFunc(mEntity, "connectednet", "Node")
+
 function mEntity:GetNetworkRadius()
 	return self.NetworkRadius or defaultrad
 end
@@ -33,14 +35,6 @@ function mEntity:ConnectToNet()
 			break
 		end
 	end
-end
-
-function mEntity:GetNode()
-	return self.connectednet
-end
-
-function mEntity:SetNode(netwrk)
-	self.connectednet = netwrk
 end
 
 function mEntity:RemoveNode()

@@ -6,6 +6,12 @@
 local network = {}
 network.__index = network
 network.networks = {}
+
+AccessorFunc(network, "overloaded", "Overloaded", FORCE_BOOL)
+AccessorFunc(network, "enabled", "Enabled", FORCE_BOOL)
+AccessorFunc(network, "radius", "Radius")
+AccessorFunc(network, "src", "Pos")
+
 local id = 1
 
 function network.create(ent, radius)
@@ -218,13 +224,8 @@ function network:AddResource(class, val)
 	self.rescgen[class] = self.rescgen[class] + val
 end
 
-function network:SetOverloaded(b)
-	self.overloaded = b
-end
-
-function network:IsOverloaded()
-	return self.overloaded
-end
+network.IsOverloaded = network.GetOverloaded
+network.IsEnabled = network.GetEnabled
 
 function network:AddReceiver(ent)
 	self.receivers[ent:EntIndex()] = ent
@@ -236,30 +237,6 @@ end
 
 function network:GetReceivers()
 	return self.receivers
-end
-
-function network:SetEnable(b)
-	self.enabled = b
-end
-
-function network:IsEnabled() -- I dont this is consitent? But it sounds so much better..
-	return self.enabled
-end
-
-function network:SetPos(vec)
-	self.src = vec
-end
-
-function network:GetPos()
-	return self.src
-end
-
-function network:SetRadius(rad)
-	self.radius = rad
-end
-
-function network:GetRadius()
-	return self.radius
 end
 
 function network:GetEntity()
