@@ -111,7 +111,7 @@ function network:CheckReceivers()
 	local changed = false
 
 	for k,v in pairs(self.receivers) do -- Remove entities that are out of range or invalid
-		if !IsValid(v) then self.receivers[k] = nil continue end
+		if not IsValid(v) then self.receivers[k] = nil continue end
 		if v:GetPos():Distance(self:GetPos()) > self:GetRadius() then
 			print("Removed :", v , "No longer in distance for network")
 			--self.receivers[k] = nil
@@ -122,7 +122,7 @@ function network:CheckReceivers()
 	end
 
 	for k,v in pairs(ents.GetAll()) do -- Add any entities that are now in range
-		if v:IsNode() || v.GenerationRequirements == nil || v.connectednet != nil then continue end
+		if v:IsNode() or v.GenerationRequirements == nil or v.connectednet != nil then continue end
 		if v:GetPos():Distance(self:GetPos()) < self:GetRadius() then
 			--self.receivers[v:EntIndex()] = v
 			self:AddReceiver(v)
@@ -173,7 +173,7 @@ function network:GetNodes() -- This needs to be cached, and updated when the loc
 	local nodes = {}
 	local function GetNodes(net)
 		for k,v in pairs(net.subnets) do
-			if nodes[v.net:GetID()] || v.net:GetID() == self:GetID() then continue end
+			if nodes[v.net:GetID()] or v.net:GetID() == self:GetID() then continue end
 			nodes[v.net:GetID()] = v.net
 			GetNodes(v.net)
 		end
