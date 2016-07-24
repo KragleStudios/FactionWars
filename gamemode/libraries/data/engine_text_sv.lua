@@ -1,6 +1,5 @@
 local engine = {}
 
-file.CreateDir(fw.config.dataDir)
 file.CreateDir(fw.config.dataDir .. '/PlayerData')
 
 local dataDirPlayers = fw.config.dataDir .. '/PlayerData'

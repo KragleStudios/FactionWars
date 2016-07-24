@@ -1,5 +1,6 @@
 fw.config = fw.config or {}
-fw.ui = fw.ui or {}
+-- where should data get stored
+fw.config.dataDir = 'factionwars_cl'
 
 fw.config.currencySymbol = '$'
 

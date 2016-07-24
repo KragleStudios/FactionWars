@@ -3,6 +3,8 @@ if SERVER then AddCSLuaFile() end
 fw.dep(SHARED, 'notif')
 fw.dep(SERVER, 'hook')
 
+file.CreateDir(fw.config.dataDir)
+
 local Player = FindMetaTable('Player')
 -- Player:GetFWData()
 -- @param amount:number - the amount of money to add

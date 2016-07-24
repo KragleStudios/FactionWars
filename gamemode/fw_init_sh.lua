@@ -1,5 +1,6 @@
 require 'ra'
 DeriveGamemode("sandbox")
+
 local function load()
 
 fw = {
@@ -28,17 +29,11 @@ local resolvePath = function(fn)
 		return fn(resolvePathHelper(3, ...))
 	end
 end
-fw.include_sv = resolvePath(SERVER and include or function() end)
-fw.include_cl = resolvePath(SERVER and AddCSLuaFile or include) 
-fw.include_sh = resolvePath(function(path)
-	if SERVER then AddCSLuaFile(path) end
-	return include(path)
-end)
+fw.include_sv = resolvePath(ra.include_sv)
+fw.include_cl = resolvePath(ra.include_cl) 
+fw.include_sh = resolvePath(ra.include_sh)
 
-function fw.print(...)
-	Msg('[FW]')
-	ra.print(...)
-end
+fw.print = ra.print 
 
 
 -- module loader

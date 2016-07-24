@@ -35,12 +35,12 @@ function SWEP:PrimaryAttack()
 		filter = function(ent) return ent != self.Owner end
 	})
 
-	self:SetNextPrimaryFire(CurTime() + 0.3)
+	self:SetNextPrimaryFire(CurTime() + 0.2)
 
 	if IsValid(tr.Entity) and tr.Entity:GetClass() == "prop_physics" then
 		if tr.Entity:getMaxHealth() > tr.Entity:getHealth() then
 			if SERVER then
-				local val = (25 > tr.Entity:getMaxHealth() / 45 and 25 or math.floor(tr.Entity:getMaxHealth() / 45))
+				local val = (25 > tr.Entity:getMaxHealth() / 30 and 25 or math.floor(tr.Entity:getMaxHealth() / 30))
 				tr.Entity:setHealth(math.Clamp(tr.Entity:getHealth() + val, 0, tr.Entity:getMaxHealth()))
 
 				if tr.Entity:getHealth() > tr.Entity:getMaxHealth() / 2 then
@@ -55,7 +55,7 @@ function SWEP:PrimaryAttack()
 			util.Effect("ManhackSparks", effect)
 			self:EmitSound(self.Sound)
 		end
-		self:SetNextPrimaryFire(CurTime() + 1)
+		self:SetNextPrimaryFire(CurTime() + 0.5)
 	end
 	--self:EmitSound()
 end
