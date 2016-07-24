@@ -55,33 +55,31 @@ function zone_mt:ctor(id, name, polygon)
 	return self
 end
 
-if SERVER then
-	function zone_mt:send()
-		net.WriteUInt(self.id, 16)
-		net.WriteString(self.name)
-		net.WriteUInt(#self.polygon, 12)
+function zone_mt:send()
+	net.WriteUInt(self.id, 16)
+	net.WriteString(self.name)
+	net.WriteUInt(#self.polygon, 12)
 
-		for k,v in ipairs(self.polygon) do
-			net.WriteInt(v[1], 32)
-			net.WriteInt(v[2], 32)
-		end
-
-		return self 
+	for k,v in ipairs(self.polygon) do
+		net.WriteInt(v[1], 32)
+		net.WriteInt(v[2], 32)
 	end
-else
-	function zone_mt:receive()
-		local id = net.ReadUInt(16)
-		local name = net.ReadString(self.name)
-		local polygon = {}
 
-		for i = 1, net.ReadUInt(12) do
-			table.insert(polygon, ra.geom.point(net.ReadInt(32), net.ReadInt(32)))
-		end
+	return self 
+end
 
-		self:ctor(id, name, polygon)
+function zone_mt:receive()
+	local id = net.ReadUInt(16)
+	local name = net.ReadString(self.name)
+	local polygon = {}
 
-		return self 
+	for i = 1, net.ReadUInt(12) do
+		table.insert(polygon, ra.geom.point(net.ReadInt(32), net.ReadInt(32)))
 	end
+
+	self:ctor(id, name, polygon)
+
+	return self 
 end
 
 function zone_mt:isPointInZone(x, y)
@@ -106,6 +104,8 @@ function zone_mt:writeToFile(file)
 	end
 end
 
+
+
 -- reads a zone from a file
 function zone_mt:readFromFile(file)
 	local id = file:ReadShort()
@@ -123,6 +123,17 @@ function fw.zone.new()
 	return setmetatable({}, zone_mt)
 end
 
+-- get a new unused zone id
+function fw.zone.getUnusedZoneId()
+	local zoneId = nil
+	
+	repeat 
+		zoneId = math.random(1, 99999999)
+	until not fw.zone.zoneList[zoneId]
+
+	return zoneId
+end	
+
 --
 -- SAVE /LOAD ZONE FROM FILE
 --
@@ -137,10 +148,12 @@ function fw.zone.createZonesBackup()
 end
 
 function fw.zone.saveZonesToFile(filename)
-	local f = file.Open(filename, 'DATA', 'wb')
+	if not filename then filename = fw.zone.getSaveFileName() end 
 
-	f:WriteShort(table.Count(fw.zone.list))
-	for k,v in pairs(fw.zone.list) do
+	local f = file.Open(filename, 'wb', 'DATA')
+
+	f:WriteShort(table.Count(fw.zone.zoneList))
+	for k,v in pairs(fw.zone.zoneList) do
 		v:writeToFile(f)
 	end
 
@@ -148,7 +161,9 @@ function fw.zone.saveZonesToFile(filename)
 end
 
 function fw.zone.loadZonesFromFile(filename)
-	local f = file.Open(filename, 'DATA', 'rb')
+	if not filename then filename = zone.getSaveFileName() end
+
+	local f = file.Open(filename, 'rb', 'DATA')
 	for i = 1, file:ReadShort() do
 		local zone = fw.zone.new()
 		zone:readFromFile(f)

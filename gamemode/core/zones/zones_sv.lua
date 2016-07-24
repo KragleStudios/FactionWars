@@ -18,3 +18,19 @@ function fw.zone.createNewZone(zoneId, name, polygon)
 	fw.zone.zoneList[zone] = zone
 	return zone
 end
+
+concommand.Add('fw_zone_saveAllZones', function(pl)
+	if not pl:IsSuperAdmin() then
+		return pl:FWConPrint(Color(255, 0, 0), "you do not have permission to run this command")
+	end
+	
+	fw.zone.saveZonesToFile()
+end)
+
+concommand.Add('fw_zone_createBackup', function(pl)
+	if not pl:IsSuperAdmin() then
+		return pl:FWConPrint(Color(255, 0, 0), "you do not have permission to run this command")
+	end
+
+	fw.zone.createZonesBackup()
+end)

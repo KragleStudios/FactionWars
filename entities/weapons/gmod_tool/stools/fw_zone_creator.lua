@@ -19,14 +19,15 @@ function TOOL:LeftClick( trace, attach )
 	if SERVER then return false end
 	if not IsFirstTimePredicted() then return false end
 
-	print("INSERTING POINT")
 	table.insert(points, ra.geom.point(math.Round(trace.HitPos.x), math.Round(trace.HitPos.y)))
-	PrintTable(points)
-
+	
 	if #points >= 3 then
-		print("TRIANGLE MESH:")
-		zone = fw.zone.new():ctor(0, 'a name', points)
-		PrintTable(zone.triangles)
+		local oldZone = zone 
+		zone = fw.zone.new()
+		local succ = pcall(zone.ctor, zone, 0, 'a name', points)
+		if not succ then
+			zone = oldZone
+		end 
 	else
 		zone = nil
 	end
@@ -37,6 +38,31 @@ end
 function TOOL:RightClick( trace )
 	if game.SinglePlayer() then error "This tool will not work in single player." end
 	if not self:GetOwner():IsSuperAdmin() then return false end
+	if not IsFirstTimePredicted() then return false end
+
+	if zone then
+		-- we will upload that zone
+
+		local points = points 
+
+		Derma_Query(
+			"Are you sure you want to create this zone?", 
+			"Zone Creator", "YES", function()
+				Derma_StringRequest("Zone Creator", "Enter the zone name", "a zone", function(zoneName)
+					if string == 'zoneName' then return end
+					
+
+
+					fw.zone.createNewZone(zoneName, points)
+					
+					LocalPlayer():ConCommand('fw_zone_save')
+
+					chat.AddText(Color(0, 255, 0), "Created a new zone")
+				end)
+			end, "NO", ra.fn.noop)
+
+	end
+
 
 	points = {}
 	zone = nil 
@@ -56,14 +82,9 @@ hook.Add('PostDrawOpaqueRenderables', 'fw.toolgun.zonecreator', function()
 	local mypos = LocalPlayer():GetPos()
 	local me = LocalPlayer()
 
-	local traceLine = util.TraceLine {
-		startpos = mypos,
-		endpos = Vector(mypos.x, mypos.y, mypos.z - 1000),
-		mask = MASK_NPCWORLDSTATIC
-	}
+	local tr = util.QuickTrace(mypos, Vector(0, 0,-1000), me)
 
-
-	local z = traceLine.HitPos.z
+	local z = tr.HitPos.z
 	local sphere_color = Color(255, 0, 0, 255)
 	local line_color = Color(0, 255, 0, 255)
 
