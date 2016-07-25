@@ -138,6 +138,8 @@ end
 -- SAVE /LOAD ZONE FROM FILE
 --
 
+local zoneFileCRC32 = nil 
+
 function fw.zone.getSaveFileName()
 	return fw.zone.zoneDataDir .. game.GetMap() .. '.dat' -- since it's binary
 end
@@ -148,7 +150,10 @@ function fw.zone.createZonesBackup()
 end
 
 function fw.zone.saveZonesToFile(filename)
-	if not filename then filename = fw.zone.getSaveFileName() end 
+	zoneFileCRC32 = nil 
+	if not filename then
+		filename = fw.zone.getSaveFileName()
+	end 
 
 	local f = file.Open(filename, 'wb', 'DATA')
 
@@ -161,7 +166,10 @@ function fw.zone.saveZonesToFile(filename)
 end
 
 function fw.zone.loadZonesFromFile(filename)
-	if not filename then filename = zone.getSaveFileName() end
+	zoneFileCRC32 = nil 
+	if not filename then
+		filename = zone.getSaveFileName()
+	end
 
 	local f = file.Open(filename, 'rb', 'DATA')
 	for i = 1, file:ReadShort() do
@@ -169,6 +177,14 @@ function fw.zone.loadZonesFromFile(filename)
 		zone:readFromFile(f)
 		fw.zone.zoneList[zone.id] = zone
 	end
+end
+
+function fw.zone.getZoneFileCRC()
+	if zoneFileCRC32 then
+		return zoneFileCRC32
+	end
+	zoneFileCRC32 = util.CRC(file.Read(fw.zone.getSaveFileName(), 'DATA') or '')
+	return zoneFileCRC32
 end
 
 -- get the zone the player is inside

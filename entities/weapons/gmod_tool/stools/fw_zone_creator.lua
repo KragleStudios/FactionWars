@@ -50,19 +50,16 @@ function TOOL:RightClick( trace )
 			"Zone Creator", "YES", function()
 				Derma_StringRequest("Zone Creator", "Enter the zone name", "a zone", function(zoneName)
 					if string == 'zoneName' then return end
-					
-
 
 					fw.zone.createNewZone(zoneName, points)
 					
-					LocalPlayer():ConCommand('fw_zone_save')
+					LocalPlayer():ConCommand('fw_zone_saveAllZones')
 
 					chat.AddText(Color(0, 255, 0), "Created a new zone")
 				end)
 			end, "NO", ra.fn.noop)
 
 	end
-
 
 	points = {}
 	zone = nil 
