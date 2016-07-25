@@ -63,7 +63,8 @@ function fw.team.registerFaction(factionName, tbl)
 			money = 10000,
 			boss = nil,
 			inventory = {},
-			agenda = nil
+			agenda = nil,
+			stringID = tbl.stringID
 			-- inventory = {}, -- TODO: determine if inventory sholud exist at faction level
 			-- all other data to come...
 		}

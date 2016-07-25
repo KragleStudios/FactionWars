@@ -9,11 +9,12 @@ fw.faction = fw.faction or {}
 fw.dep(SHARED, 'notif')
 fw.dep(SHARED, 'hook')
 fw.dep(SERVER, 'data')
+fw.dep(SHARED, 'teams')
+fw.dep(SERVER, "chat_commands")
 
 -- TEMPORARILY DISABLED
 
 -- proper include system
--- fw.include_sh 'bank_sh.lua'
--- fw.include_cl 'bank_cl.lua'
--- fw.include_sv 'bank_sv.lua'
+fw.include_sh 'bank_sh.lua'
+fw.include_sv 'bank_sv.lua'
 -- fw.include_cl 'cl_ents.lua'

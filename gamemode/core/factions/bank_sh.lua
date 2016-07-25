@@ -1,1 +1,0 @@
-fw.faction.bank = fw.faction.bank or {}

@@ -5,21 +5,7 @@ fw.team.spawns = fw.team.spawns or {}
 -- @param targ_team:int - the index of the team in the table
 -- @param optional forced:bool - should we ignore canjoin conditions?
 -- @ret nothing
-function fw.team.playerChangeTeam(ply, targ_team, forced)	
-	local t = fw.team.list[targ_team]
-	if not t then
-		ply:FWChatPrintError("no such team ", tostring(targ_team))
-		return false 
-	end
-
-	if not forced then 
-		local canjoin, message = fw.team.canChangeTo(ply, targ_team, forced)
-		if (not canjoin) then
-			ply:FWChatPrintError(message or ("can't join team " .. t:getName()))
-			return false 
-		end
-	end
-
+function fw.team.doPlayerChange(ply, t, targ_team)
 	local pref_model = ply:GetFWData().preferred_models and ply:GetFWData().preferred_models[t.stringID] or table.Random(t.models)
 
 	-- remove player if they are the faction boss
@@ -42,6 +28,48 @@ function fw.team.playerChangeTeam(ply, targ_team, forced)
 	end
 
 	hook.Run('PlayerChangedTeam', prevTeam, ply:Team())
+end
+
+function fw.team.playerChangeTeam(ply, targ_team, forced)	
+	local t = fw.team.list[targ_team]
+	if not t then
+		ply:FWChatPrintError("no such team ", tostring(targ_team))
+		return false 
+	end
+
+	if (t.election and not forced) then
+		local players = t.facions and ply:inFaction() and fw.team.getFactionPlayers(ply:getFaction()) or player.GetAll()
+
+		fw.vote.createNew("Job Vote", ply:Nick().." for "..t.name, players, function(decision)
+			if (decision) then
+				--make sure the player can join it!
+				if not forced then 
+					local canjoin, message = fw.team.canChangeTo(ply, targ_team, forced)
+					if (not canjoin) then
+						ply:FWChatPrintError(message or ("can't join team " .. t:getName()))
+						return false 
+					end
+				end
+
+				fw.team.doPlayerChange(ply, t, targ_team)
+			else
+				ply:FWChatPrintError("You have not been made ".. t.name)
+			end
+		end, "Yes", "No", 15)
+
+		return
+	end
+
+	if not forced then 
+		local canjoin, message = fw.team.canChangeTo(ply, targ_team, forced)
+		if (not canjoin) then
+			ply:FWChatPrintError(message or ("can't join team " .. t:getName()))
+			return false 
+		end
+	end
+
+	fw.team.doPlayerChange(ply, t, targ_team)
+
 end
 
 
@@ -225,6 +253,7 @@ fw.hook.Add("PlayerDeath", "TeamSpawn", function(ply)
 	end
 end)
 
+--[[
 -- pay the team salary
 timer.Create('fw.teams.pay', fw.config.payrollTime, 0, function()
 	for k,v in pairs(player.GetAll()) do
@@ -234,7 +263,7 @@ timer.Create('fw.teams.pay', fw.config.payrollTime, 0, function()
 			v:FWChatPrint(color_black, "[Salary]: ", color_white, " You were paid $" .. t.salary)
 		end
 	end
-end)
+end)]]
 
 --
 -- CONSOLE COMMANDS

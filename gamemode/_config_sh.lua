@@ -8,3 +8,5 @@ fw.config.useFactionBank = true
 fw.config.bossPowers = true
 --how many slots should the player get for default in their inventory?
 fw.config.defaultInvSlots = 10
+--should faction currency persist over restart?
+fw.config.factionBankPersist = true

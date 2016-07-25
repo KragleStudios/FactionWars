@@ -3,14 +3,17 @@
 --
 FACTION_DEFAULT = fw.team.registerFaction('Common Wealth', {
 	stringID = 'f_default',
+	color = Color(255, 255, 255)
 })
 
 FACTION_GANGA = fw.team.registerFaction('Gang A', {
 	stringID = 'f_gangA',
+	color = Color(255, 25, 25)
 })
 
 FACTION_GANGB = fw.team.registerFaction('Gang B', {
 	stringID = 'f_gangB',
+	color = Color(25, 25, 255)
 })
 
 --
@@ -25,6 +28,15 @@ TEAM_BOSS = fw.team.register("Boss", {
 	max = 1,
 	boss = true,
 	election = true
+})
+
+TEAM_BMD = fw.team.register("Black Market Dealer", {
+	stringID = "t_bmd",
+	models = {"models/player/eli.mdl"},
+	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
+	faction = {FACTION_GANGA, FACTION_GANGB},
+	salary = 50,
+	max = 2,
 })
 
 TEAM_MAYOR = fw.team.register("Mayor", {

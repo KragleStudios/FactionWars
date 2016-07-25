@@ -4,6 +4,7 @@ fw.dep(CLIENT, 'fonts')
 fw.dep(CLIENT, 'ui')
 fw.dep(CLIENT, 'teams')
 fw.dep(CLIENT, 'items')
+fw.dep(CLIENT, 'faction_banks')
 
 if SERVER then
 	AddCSLuaFile()
@@ -124,7 +125,10 @@ function fw.tab_menu.showScoreboard()
 		__FW_TABMENU:AddView('INVENTORY', fw.tab_menu.playerInventory)
 		
 		if (LocalPlayer():isFactionBoss()) then
-			__FW_TABMENU:AddView('FACTION', fw.tab_menu.factionAdministration)
+			__FW_TABMENU:AddView('FACTION ADMIN', fw.tab_menu.factionAdministration)
+		end
+		if (LocalPlayer():inFaction()) then
+			__FW_TABMENU:AddView('FACTION', fw.tab_menu.faction)
 		end
 		if (LocalPlayer():IsAdmin()) then
 			__FW_TABMENU:AddView('ADMIN', fw.tab_menu.administration)
@@ -257,9 +261,88 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 	end
 end
 
----TODO: Faction Administration Panel
+--TODO: Faction Administration Panel
 function fw.tab_menu.factionAdministration(pnl)
+end
 
+--TODO: Faction Administration Panel
+function fw.tab_menu.faction(pnl)
+	local space = vgui.Create('DScrollPanel', pnl)
+	space:SetSize(pnl:GetSize())
+
+	local listLayout = vgui.Create('STYLayoutVertical', space)
+	listLayout:SetWide(space:GetWide())
+	listLayout:SetPadding(sty.ScreenScale(5))
+
+	local factionTools = vgui.Create('FWUITableViewSection', listLayout)
+	factionTools:SetTitle("Currency")
+	factionTools:SetPadding(sty.ScreenScale(2))
+
+	local currencyWrapper = vgui.Create("FWUIPanel", factionTools)
+	currencyWrapper:SetTall(sty.ScreenScale(60))
+	currencyWrapper:SetBackgroundTint(fw.team.factions[LocalPlayer():getFaction()].color or Color(255, 255, 255))
+
+	local amount = ndoc.table.fwFactions[LocalPlayer():getFaction()].money
+	local amountText = vgui.Create("FWUITextBox", currencyWrapper)
+	amountText:SetInset(sty.ScreenScale(2))
+	amountText:SetText("$"..string.Comma(amount))
+	amountText:Dock(FILL)
+	amountText:DockMargin((pnl:GetWide() / 2) - (amountText:GetWide() * 1.25), 0, 0, 15)
+
+	ndoc.addHook("fwFactions.?.money", "set", function(index, money)
+		if (index != LocalPlayer():getFaction()) then return end
+
+		amountText:SetText("$"..string.Comma(money))
+	end)
+
+	local depositBtn = vgui.Create("FWUIButton", currencyWrapper)
+	depositBtn:SetText("Deposit")
+	depositBtn:SetTall(sty.ScreenScale(15))
+	depositBtn:SetWide(pnl:GetWide() / 2)
+	function depositBtn:DoClick()
+		Derma_StringRequest("Deposit", "How much?", "0000", function(amt) local amt = tonumber(amt) if (not amt) then return end LocalPlayer():ConCommand("fw_faction_deposit "..amt) end)
+	end
+	depositBtn:SetPos(0, currencyWrapper:GetTall() - depositBtn:GetTall())
+
+	local withdrawBtn = vgui.Create("FWUIButton", currencyWrapper)
+	withdrawBtn:SetText("Withdraw")
+	withdrawBtn:SetTall(sty.ScreenScale(15))
+	withdrawBtn:SetWide(pnl:GetWide() / 2 - 3)
+	function withdrawBtn:DoClick()
+		Derma_StringRequest("Withdraw", "How much?", "0000", function(amt) local amt = tonumber(amt) if (not amt) then return end LocalPlayer():ConCommand("fw_faction_withdraw "..amt) end)
+	end
+	withdrawBtn:SetPos(depositBtn:GetWide(), currencyWrapper:GetTall() - withdrawBtn:GetTall())
+
+	local players = fw.team.getFactionPlayers(LocalPlayer():getFaction())
+	local pList = vgui.Create("FWUITableViewSection", listLayout)
+	pList:SetTitle("Players")
+	pList:SetPadding(sty.ScreenScale(2))
+
+	for k,v in pairs(players) do
+		for k, v in pairs(fw.team.list) do
+			local jobs = v:getName()
+			local jobPlayers = v:getPlayers()
+			if #jobPlayers == 0 then continue end
+
+			local factionJobs = vgui.Create('FWUITableViewSection', pList)
+			factionJobs:SetTitle(jobs)
+			factionJobs:SetTitleTint(team.GetColor(v:getID())) 
+			factionJobs:SetPadding(sty.ScreenScale(2))
+
+			for k,v in pairs(jobPlayers) do
+				local panel = vgui.Create('FWUIPanel', factionJobs)
+				panel:SetTall(sty.ScreenScale(15))
+				panel:SetBackgroundTint(team.GetColor(v:Team()), 5)
+
+				local title = vgui.Create('FWUITextBox', panel)
+				title:SetInset(sty.ScreenScale(2))
+				title:SetText(v:Nick())
+				title:DockMargin(sty.ScreenScale(4), 0, 0, 0)
+				title:Dock(FILL)
+			end
+
+		end
+	end
 end
 
 function fw.tab_menu.administration(pnl)
@@ -335,10 +418,8 @@ function fw.tab_menu.administration(pnl)
 	end
 end
 
---TODO: Item purchasing with shipment compatability
 function fw.tab_menu.itemManagement(parent)
 	parent.categories = {}
-
 	local space = vgui.Create('DScrollPanel', parent)
 	space:SetSize(parent:GetSize())
 
@@ -396,22 +477,21 @@ function fw.tab_menu.playerInventory(pnl)
 	icons:SetSpaceX(2)
 
 	local inv = ndoc.table.items[LocalPlayer()].inventory
+	local pnlWidth = (space:GetWide() - 10 - (5 * icons:GetSpaceX())) / 4
 
-	for k,v in ndoc.ipairs(inv.slots) do
-		print(k,v)
-		local item = fw.ents.item_list[v]
+	for k,v in ndoc.ipairs(ndoc.table.items[LocalPlayer()].inventory.slots) do
+		local item = fw.ents.item_list[v.itemIndex]
 		local slot = k
 
 		if (not item) then continue end
 
+		local count = item.shipment and v.remaining or 1
+
 		local pnl = icons:Add("FWUIPanel")
-		pnl:SetSize(100, 60)
+		pnl:SetSize(pnlWidth, 60)
 
 		local text = vgui.Create("FWUITextBox", pnl)
-		text:SetText(item.name)
-
-		local c = vgui.Create("FWUITextBox", pnl)
-		c:SetText(count)
+		text:SetText(item.name.." - "..count)
 
 		local box = vgui.Create("DComboBox", pnl)
 		box:SetSize(pnl:GetWide(), sty.ScreenScale(15))
@@ -420,41 +500,30 @@ function fw.tab_menu.playerInventory(pnl)
 		box.values = {}
 		function box:OnSelect(ind, val)
 			box.values[val]()
+			pnl:Remove()
 			icons:InvalidateLayout(true)
+
 		end
 
 		local use, equip
 		if (not item.shipment and item.weapon) then
-			box.values["EQUIP"] = function() LocalPlayer():ConCommand(item.command.."_equip "..slot) end
+			box.values["EQUIP"] = function() LocalPlayer():ConCommand(item.command.."_equip "..v.invID) end
 		end
 		if (not item.shipment and item.useable) then
-			box.values["USE"] = function() LocalPlayer():ConCommand(item.command.."_use "..slot) end
+			box.values["USE"] = function() LocalPlayer():ConCommand(item.command.."_use "..v.invID) end
 		end
 		box.values["DROP"] = function()
 			net.Start("fw.dropItem")
-				net.WriteString(item.stringID)
+				net.WriteInt(v.itemIndex, 32)
+				net.WriteInt(v.invID, 32)
 			net.SendToServer()
 		end
-
-		--TODO: Replace hooks somewhere else?
-		ndoc.addHook("items.?.inventory.slots", 'set', function(ply, index)
-			print(index)
-
-			if (true) then return end
-
-			if (ply == LocalPlayer()) then
-				if (index == slot) then 
-					pnl:Remove()
-				end
-			end
-		end)
 
 		for k,v in pairs(box.values) do
 			box:AddChoice(k)
 		end
 
-		text:Dock(LEFT)
-		c:Dock(TOP)
+		text:Dock(FILL)
 	end
 end
 
