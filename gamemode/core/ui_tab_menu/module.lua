@@ -122,13 +122,17 @@ function fw.tab_menu.showScoreboard()
 		__FW_TABMENU:AddView('JOBS', fw.tab_menu.tabDisplayJobsList)
 		__FW_TABMENU:AddView('ITEMS', fw.tab_menu.itemManagement)
 		__FW_TABMENU:AddView('INVENTORY', fw.tab_menu.playerInventory)
+		
 		if (LocalPlayer():isFactionBoss()) then
 			__FW_TABMENU:AddView('FACTION', fw.tab_menu.factionAdministration)
 		end
 		if (LocalPlayer():IsAdmin()) then
 			__FW_TABMENU:AddView('ADMIN', fw.tab_menu.administration)
 		end
-
+		
+		__FW_TABMENU:AddNavButton("HELP", function()
+                        gui.OpenURL("https://github.com/GMFactionWars/kragle")
+                end)
 
 		vgui.Create('FWUIDropShadow')
 			:SetRadius(32)
@@ -232,6 +236,21 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 				title:SetText(v:Nick())
 				title:DockMargin(sty.ScreenScale(4), 0, 0, 0)
 				title:Dock(FILL)
+				
+				local ping = vgui.Create('FWUITextBox', panel)
+				ping:SetInset(sty.ScreenScale(2))
+				ping:SetText("Ping: "..v:Ping())
+				ping:Dock(RIGHT)
+
+				local deaths = vgui.Create('FWUITextBox', panel)
+				deaths:SetInset(sty.ScreenScale(2))
+				deaths:SetText("Deaths: "..v:Deaths())
+				deaths:Dock(RIGHT)
+
+				local kills = vgui.Create('FWUITextBox', panel)
+				kills:SetInset(sty.ScreenScale(2))
+				kills:SetText("Kills: "..v:Frags())
+				kills:Dock(RIGHT)
 			end
 
 		end
