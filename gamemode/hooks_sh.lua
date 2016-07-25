@@ -140,10 +140,6 @@ end
 function GM:KeyRelease(...)
 	return fw.hook.Call("KeyRelease", ...)
 end
-
-function GM:PlayerCanPickupWeapon(...)
-	return fw.hook.Call("PlayerCanPickupWeapon", ...)
-end
 --
 -- MODULE ITEMS
 --
