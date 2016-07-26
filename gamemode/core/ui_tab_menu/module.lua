@@ -450,8 +450,8 @@ function fw.tab_menu.itemManagement(parent)
 		title:SetText(item)
 
 		title:Dock(FILL)
+		title:DockMargin(sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1))
 		buyButton:Dock(RIGHT)
-		title:Dock(LEFT)
 	end
 
 	for index, item in pairs(fw.ents.item_list) do
