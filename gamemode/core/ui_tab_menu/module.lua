@@ -124,10 +124,7 @@ function fw.tab_menu.showScoreboard()
 		__FW_TABMENU:AddView('ITEMS', fw.tab_menu.itemManagement)
 		__FW_TABMENU:AddView('INVENTORY', fw.tab_menu.playerInventory)
 		
-		if (LocalPlayer():isFactionBoss()) then
-			__FW_TABMENU:AddView('FACTION ADMIN', fw.tab_menu.factionAdministration)
-		end
-		if (LocalPlayer():inFaction()) then
+		if (LocalPlayer():inFaction() and LocalPlayer():getFaction() != FACTION_DEFAULT) then
 			__FW_TABMENU:AddView('FACTION', fw.tab_menu.faction)
 		end
 		if (LocalPlayer():IsAdmin()) then
@@ -288,11 +285,13 @@ function fw.tab_menu.faction(pnl)
 	amountText:SetText("$"..string.Comma(amount))
 	amountText:Dock(FILL)
 	amountText:DockMargin((pnl:GetWide() / 2) - (amountText:GetWide() * 1.25), 0, 0, 15)
+	amountText:SizeToContents()
 
 	ndoc.addHook("fwFactions.?.money", "set", function(index, money)
-		if (index != LocalPlayer():getFaction()) then return end
+		if (not IsValid(amountText) or index != LocalPlayer():getFaction()) then return end
 
 		amountText:SetText("$"..string.Comma(money))
+		amountText:SizeToContents()
 	end)
 
 	local depositBtn = vgui.Create("FWUIButton", currencyWrapper)

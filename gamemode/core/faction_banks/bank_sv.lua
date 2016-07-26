@@ -1,7 +1,6 @@
 function fw.team.factionDeposit(ply, amt)
 	local fac = ply:getFaction()
-	if (not ply:inFaction()) then 
-		ply:FWChatPrint("wat. u shouldn't be able to do dis :v")
+	if (not ply:inFaction() or ply:getFaction() == FACTION_DEFAULT) then 
 		return 
 	end
 	
@@ -20,8 +19,7 @@ end
 
 function fw.team.factionWithdraw(ply, amt)
 	local fac = ply:getFaction()
-	if (not ply:inFaction()) then 
-		ply:FWChatPrint("wat. u shouldn't be able to do dis :v")
+	if (not ply:inFaction() or ply:getFaction() == FACTION_DEFAULT) then 
 		return 
 	end
 
@@ -59,6 +57,7 @@ fw.chat.addCMD("faction_deposit", "Deposit money into the faction bank!", functi
 end):addParam("amount", "number")
 
 function fw.team.saveFactionBanks()
+	print("SAVING FACTION BANKS")
 	local masterTable = {}
 	for k,v in ndoc.pairs(ndoc.table.fwFactions) do
 		masterTable[v.stringID] = v.money
@@ -82,6 +81,7 @@ end
 	]]--
 function fw.team.loadFactionBanks()
 	local path = "faction_data/faction_bank.txt"
+	print("LOADING FACTION BANKS")
 
 	if (file.Exists(path, "DATA")) then
 		local table = file.Read(path, "DATA")
@@ -101,29 +101,23 @@ function fw.team.factionPayroll(faction)
 
 	for k,v in pairs(fac_players) do
 		local team = fw.team.list[v:Team()]
-		if (not team) then continue end
 
 		local salary = team.salary
 
-		--use the faction bank? okay can the faction afford it?
-		if (useFacBank and (fw.faction.bank[fac].money - salary > 0)) then
-			fw.faction.bank[fac].money = fw.faction.bank[fac] - salary
-
-			v:addMoney(salary)
-		else
-			v:addMoney(salary)
-		end
+		v:addMoney(salary)
 
 		local text = "Payroll has been issued! Your salary: $"..salary
-		v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), text)
+		v:FWChatPrint(Color(0, 0, 0), "[Faction]: ", Color(255, 255, 255), text)
 	end
 end
 
 local payroll = fw.config.payrollTime or 60
 
-if (fw.config.factionBankPersist) then
-	fw.team.loadFactionBanks()
-end
+hook.Add("Initialize", "LoadBanks", function()
+	if (fw.config.factionBankPersist) then
+		fw.team.loadFactionBanks()
+	end
+end)
 
 timer.Create("fw.teams.pay", payroll, 0, function() 
 	for k,v in pairs(fw.team.factions) do
