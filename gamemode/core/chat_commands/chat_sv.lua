@@ -241,3 +241,25 @@ fw.chat.addCMD("drop", "Drop your weapon", function(ply)
 		ply:FWChatPrint("You cannot drop this weapon.")
 	end
 end)
+
+
+local quotelist = {
+	['thelastpenguin'] = {
+		"takes forever to download, especially when you have downloads off",
+		"ask him if he's had an anol probe done recently, cuz dem errors, are coming out of his a**",
+		"im confused as to why that's confusing...",
+		"but rly mikey get lastest version of faction wars",
+	},
+	['Spai'] = {
+		"Editing DarkRP, anyone can do it, but it is all about how you edit it, that is what not everyone can do correctly. - Commander Grox",
+	},
+	['Mikey Howell'] = {
+		"do you realise you're saying lastest",
+	},
+}
+fw.chat.addCMD("quote", "", function(ply)
+	local rAuthor, name = table.Random(quotelist)
+	local rQuote = table.Random(rAuthor)
+
+	fw.notif.chatPrint(player.GetAll(), name, ': ', rQuote)
+end)
