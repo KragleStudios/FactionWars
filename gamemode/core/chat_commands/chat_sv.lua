@@ -258,6 +258,7 @@ local quotelist = {
 	['crazyscouter'] = {
 		"Use effects.halo.Add()",
 		"Guys I just realized I've been using the women's restroom the entire time I've been at this restaraunt",
+		"It's the kragle that keeps us together"
 	},
 }
 fw.chat.addCMD("quote", "", function(ply)
@@ -268,7 +269,6 @@ fw.chat.addCMD("quote", "", function(ply)
 end)
 
 fw.chat.addCMD("define", "Defines a given string", function(ply, searc)
-
 	http.Fetch("http://api.urbandictionary.com/v0/define?term="..searc, function(body)
 		local tbl = util.JSONToTable(body);
 

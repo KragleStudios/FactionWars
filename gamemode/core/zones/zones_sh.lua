@@ -38,8 +38,8 @@ function zone_mt:ctor(id, name, polygon)
 	-- convert it to points in the red black tree for nice snapping to grid :)
 	self.polygon = {}
 	for k,v in ipairs(polygon) do
-		v.x = math.floor(v[1])
-		v.y = math.floor(v[2])
+		v[1] = math.floor(v[1])
+		v[2] = math.floor(v[2])
 		self.polygon[k] = fw.zone.getPoint(v)
 	end
 
@@ -105,7 +105,6 @@ function zone_mt:writeToFile(file)
 end
 
 
-
 -- reads a zone from a file
 function zone_mt:readFromFile(file)
 	local id = file:ReadShort()
@@ -117,6 +116,131 @@ function zone_mt:readFromFile(file)
 	end
 
 	self:ctor(id, name, polygon)
+end
+
+-- renders a zone
+function zone_mt:render()
+	local polygon = self.polygon 
+
+	local edges = {}
+	local last = polygon[#polygon]
+	local inset = 5
+	for i = 1, #polygon do
+		local cur = polygon[i]
+		local N = (last - cur):normalize()
+		N = ra.geom.point(-N[2], N[1])
+
+		-- todo: apply intersection algorithms
+		table.insert(edges, ra.geom.edge(last + N * inset, cur + N * inset))
+
+		last = cur
+	end
+
+	local e1 = edges[#edges - 1]
+	local e2 = edges[#edges]
+	local e3 = edges[1]
+
+	for i = 2, #edges + 1 do
+
+		local didIntersect, x, y = e1:intersectWith(e2, true) -- true indicates it should ignore the length
+		if didIntersect then 
+			e1[2][1] = x
+			e1[2][2] = y
+			e2[1][1] = x
+			e2[1][2] = y
+		end
+
+		local didIntersect, x, y = e2:intersectWith(e3, true) -- true indicates that it should ignore the length
+		if didIntersect then 
+			e2[2][1] = x
+			e2[2][2] = y
+			e3[1][1] = x
+			e3[1][2] = y
+		end
+
+		e1 = e2
+		e2 = e3 
+		e3 = edges[i]
+	end
+
+	local z = LocalPlayer():GetPos().z 
+	for k, edge in ipairs(edges) do
+		render.DrawLine(Vector(edge[1][1], edge[1][2], z), Vector(edge[2][1], edge[2][2], z), Color(0, 0, 255))
+	end
+
+	--[[
+
+	local p1 = polygon[#polygon - 1]
+	local p2 = polygon[#polygon]
+	local p3 = polygon[1]
+
+	for i = 2, #polygon + 1 do
+		local u = (p1 - p2):normalize()
+		local v = (p3 - p2):normalize()
+		local d = (u + v):normalize()
+		if i == 3 then
+			render.DrawLine(Vector(0, 0, 0), Vector(u[1], u[2], 0) * 100, Color(0, 255, 0))
+			render.DrawLine(Vector(0, 0, 0), Vector(v[1], v[2], 0) * 100, Color(0, 0, 255))
+			render.DrawLine(Vector(0, 0, 0), Vector(d[1], d[2], 0) * 100, Color(255, 0, 255))
+		end
+		
+		local N = d:normalize()
+
+		-- 	N = ra.geom.point(-u[2], u[1]):normalize() -- (-uy/|u|, ux/|u|)
+
+		table.insert(points, {
+			p = p2,
+			N = N
+		})
+
+		p1 = p2
+		p2 = p3
+		p3 = polygon[i]
+	end 
+
+	local c = Color(255, 0, 0)
+	local z = LocalPlayer():GetPos().z
+	local w = 10 -- line weight
+
+	local last = points[#points]
+	for i = 1, #points do
+		local cur = points[i]
+
+		local p1 = Vector(last.p[1] + last.N[1] * w, last.p[2] + last.N[2] * w, z)
+		local p2 = Vector(cur.p[1] + cur.N[1] * w, cur.p[2] + cur.N[2] * w, z)
+
+		render.DrawLine(p1, p2, c)
+		last = cur 
+	end	
+
+	render.SetColorMaterial()
+	pcall(mesh.Begin, MATERIAL_QUADS, #points)
+		local last = points[#points]
+		for i = 1, #points do
+			local cur = points[i]
+
+			mesh.Position(Vector(last.p[1], last.p[2], z))
+			mesh.Color(255, 0, 0, 255)
+			mesh.AdvanceVertex()
+
+			mesh.Position(Vector(cur.p[1], cur.p[2], z))
+			mesh.Color(255, 0, 0, 255)
+			mesh.AdvanceVertex()
+
+			mesh.Position(Vector(cur.p[1] + cur.N[1] * w, cur.p[2] + cur.N[2], z))
+			mesh.Color(255, 0, 0, 255)
+			mesh.AdvanceVertex()
+
+			mesh.Position(Vector(last.p[1] + last.N[1] * w, last.p[2] + last.N[2], z))
+			mesh.Color(255, 0, 0, 255)
+			mesh.AdvanceVertex()
+
+			last = cur 
+		end	
+	mesh.End()
+
+	PrintTable(points)
+	]]
 end
 
 function fw.zone.new()
