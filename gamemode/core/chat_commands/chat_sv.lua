@@ -274,7 +274,8 @@ local quotelist = {
 		"It's the kragle that keeps us together"
 	},
 	['meharryp'] ={
-		"memes"
+		"memes",
+		"yeah go fuck a moose and drink your maple syrup"
 	},
 	['aStonedPenguin'] ={
 		"guys i make all my commits from the github website",
