@@ -273,6 +273,10 @@ local quotelist = {
 	},
 	['meharryp'] ={
 		"memes"
+	},
+	['aStonedPenguin'] ={
+		"guys i make all my commits from the github website",
+		"i just wanted ot be here"
 	}
 }
 fw.chat.addCMD("quote", "", function(ply)
