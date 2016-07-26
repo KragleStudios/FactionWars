@@ -79,29 +79,29 @@ function SWEP:Shoot()
 	self:EmitSound(self.Primary.Sound)
 	self:MuzzleFlash()
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
-
-	if IsFirstTimePredicted() then
-		self:FireBullets({
-			Attacker = self:GetOwner(),
-			Damage = self.Primary.Damage,
-			Force = self.Primary.Damage / 3,
-			AmmoType = self.Primary.Ammo,
-			Dir = self:GetOwner():GetAimVector() + Vector(0, 0, math.Clamp(self:GetCurrentRecoil(), 0, self.Primary.MaxRecoil * recoilMult)),
-			Src = self:GetOwner():GetShootPos(),
-			Spread = Vector(self.Primary.BaseSpread * sprayMult, self.Primary.BaseSpread * sprayMult, 0),
-			Num = (self.Primary.Shotgun and self.Primary.Bullets or 1)
-		})
-		self:SetLastFireTime(CurTime())
-		self:SetCurrentRecoil(self:GetCurrentRecoil() + self.Primary.BaseRecoil * recoilMult)
-	end
-
-	if not self:GetScoped() then
-		self.Owner:ViewPunch(Angle(-self:GetCurrentRecoil() * 5, 0, 0))
-	end
-
+	
+	self:FireBullets({
+		Attacker = self:GetOwner(),
+		Damage = self.Primary.Damage,
+		Force = self.Primary.Damage / 3,
+		AmmoType = self.Primary.Ammo,
+		Dir = self:GetOwner():GetAimVector() + Vector(0, 0, math.Clamp(self:GetCurrentRecoil(), 0, self.Primary.MaxRecoil * recoilMult)),
+		Src = self:GetOwner():GetShootPos(),
+		Spread = Vector(self.Primary.BaseSpread * sprayMult, self.Primary.BaseSpread * sprayMult, 0),
+		Num = (self.Primary.Shotgun and self.Primary.Bullets or 1)
+	})
+	
+	self:SetLastFireTime(CurTime())
+	
+	self:SetCurrentRecoil(self:GetCurrentRecoil() + self.Primary.BaseRecoil * recoilMult)
+	
 	if self:GetBursting() then
 		self:SetBurstsLeft(self:GetBurstsLeft() - 1)
 		self:SetBurstTime(CurTime() + (60 / self.Primary.RPM) / 2)
+	end
+	
+	if not self:GetScoped() then
+		self.Owner:ViewPunch(Angle(-self:GetCurrentRecoil() * 5, 0, 0))
 	end
 
 	self:SetClip1(self:Clip1() - 1)
@@ -176,7 +176,6 @@ function SWEP:ShotgunReload()
 end
 
 function SWEP:Initialize()
-	self:SendWeaponAnim(ACT_VM_IDLE)
 	self:SetLastFireTime(0)
 	self:SetCurrentRecoil(0)
 	self:SetReloading(false)
@@ -199,7 +198,7 @@ end
 
 function SWEP:Deploy()
 	self:SendWeaponAnim(ACT_VM_DRAW)
-	self:SetNextPrimaryFire(CurTime() + 1)
+	self:SetNextPrimaryFire(CurTime() + self:SequenceDuration())
 	self:SetHoldType(self.HoldType)
 end
 
