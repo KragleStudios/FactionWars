@@ -256,6 +256,10 @@ local quotelist = {
 	['Mikey Howell'] = {
 		"do you realise you're saying lastest",
 	},
+	['crazyscouter'] = {
+		"Use effects.halo.Add()",
+		"Guys I just realized I've been using the women's restroom the entire time I've been at this restaraunt",
+	},
 }
 fw.chat.addCMD("quote", "", function(ply)
 	local rAuthor, name = table.Random(quotelist)
