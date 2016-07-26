@@ -265,6 +265,7 @@ local quotelist = {
 	},
 	['Mikey Howell'] = {
 		"do you realise you're saying lastest",
+		"omg I make all my commits on the website too!",
 	},
 	['crazyscouter'] = {
 		"Use effects.halo.Add()",
