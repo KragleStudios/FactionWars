@@ -329,15 +329,23 @@ function fw.tab_menu.faction(pnl)
 			factionJobs:SetPadding(sty.ScreenScale(2))
 
 			for k,v in pairs(jobPlayers) do
-				local panel = vgui.Create('FWUIPanel', factionJobs)
+				local panel = vgui.Create('FWUIButton', factionJobs)
 				panel:SetTall(sty.ScreenScale(15))
-				panel:SetBackgroundTint(team.GetColor(v:Team()), 5)
+				panel:SetText(v:Nick())
+				function panel:DoClick()
+					local menu = DermaMenu(self)
 
-				local title = vgui.Create('FWUITextBox', panel)
-				title:SetInset(sty.ScreenScale(2))
-				title:SetText(v:Nick())
-				title:DockMargin(sty.ScreenScale(4), 0, 0, 0)
-				title:Dock(FILL)
+					local demoteButton = LocalPlayer():isFactionBoss() and "Force Demote" or "Vote Demote"
+					local kickButton = LocalPlayer():isFactionBoss() and "Force Kick" or "Vote Kick"
+
+					menu:AddOption(demoteButton, function()
+						LocalPlayer():ConCommand("fw_factiondemote "..v:SteamID())
+					end)
+					menu:AddOption(kickButton, function()
+						LocalPlayer():ConCommand("fw_factionkick "..v:SteamID())
+					end)
+					menu:Open()
+				end
 			end
 
 		end

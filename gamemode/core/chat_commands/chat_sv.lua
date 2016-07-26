@@ -258,6 +258,7 @@ local quotelist = {
 		"ask him if he's had an anol probe done recently, cuz dem errors, are coming out of his a**",
 		"im confused as to why that's confusing...",
 		"but rly mikey get lastest version of faction wars",
+		"he is the definition of a human fart. If only he'd just stink off and evaporate ",
 	},
 	['Spai'] = {
 		"Editing DarkRP, anyone can do it, but it is all about how you edit it, that is what not everyone can do correctly. - Commander Grox",
