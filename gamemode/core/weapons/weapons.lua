@@ -8,7 +8,6 @@ fw.weapons.createGun("AK-47", {
 	Primary = {
 		Ammo = "AR2",
 		ClipSize = 30,
-		DefaultClip = 60,
 		Automatic = true,
 		Damage = 27,
 		RPM = 600,
@@ -30,7 +29,6 @@ fw.weapons.createGun("AWP", {
 	Primary = {
 		Ammo = "AR2",
 		ClipSize = 10,
-		DefaultClip = 20,
 		Automatic = false,
 		Damage = 100,
 		RPM = 41,
@@ -51,7 +49,6 @@ fw.weapons.createGun("M3 Super 90", {
 	Primary = {
 		Ammo = "Buckshot",
 		ClipSize = 8,
-		DefaultClip = 16,
 		Automatic = false,
 		Damage = 14,
 		RPM = 68,
@@ -74,7 +71,6 @@ fw.weapons.createGun("P90", {
 	Primary = {
 		Ammo = "SMG1",
 		ClipSize = 50,
-		DefaultClip = 100,
 		Automatic = true,
 		Damage = 14,
 		RPM = 857,
@@ -95,7 +91,6 @@ fw.weapons.createGun("Five-Seven", {
 	Primary = {
 		Ammo = "pistol",
 		ClipSize = 20,
-		DefaultClip = 40,
 		Automatic = false,
 		Damage = 30,
 		RPM = 400,
@@ -116,7 +111,6 @@ fw.weapons.createGun("Desert Eagle", {
 	Primary = {
 		Ammo = "pistol",
 		ClipSize = 7,
-		DefaultClip = 35,
 		Automatic = false,
 		Damage = 52,
 		RPM = 100,
@@ -137,7 +131,6 @@ fw.weapons.createGun("Dualies", {
 	Primary = {
 		Ammo = "pistol",
 		ClipSize = 20,
-		DefaultClip = 100,
 		Automatic = false,
 		Damage = 23,
 		RPM = 500,
@@ -158,7 +151,6 @@ fw.weapons.createGun("Glock", {
 	Primary = {
 		Ammo = "pistol",
 		ClipSize = 18,
-		DefaultClip = 80,
 		Automatic = false,
 		Damage = 17,
 		RPM = 400,
@@ -181,7 +173,6 @@ fw.weapons.createGun("P228", {
 	Primary = {
 		Ammo = "pistol",
 		ClipSize = 12,
-		DefaultClip = 60,
 		Automatic = false,
 		Damage = 21,
 		RPM = 230,
@@ -202,7 +193,6 @@ fw.weapons.createGun("USP", {
 	Primary = {
 		Ammo = "pistol",
 		ClipSize = 10,
-		DefaultClip = 50,
 		Automatic = false,
 		Damage = 27,
 		RPM = 400,
@@ -224,7 +214,6 @@ fw.weapons.createGun("AUG", {
 	Primary = {
 		Ammo = "AR2",
 		ClipSize = 30,
-		DefaultClip = 180,
 		Automatic = true,
 		Damage = 27,
 		RPM = 600,
@@ -245,7 +234,6 @@ fw.weapons.createGun("Famas", {
 	Primary = {
 		Ammo = "AR2",
 		ClipSize = 25,
-		DefaultClip = 125,
 		Automatic = true,
 		Damage = 23,
 		RPM = 750,
@@ -268,7 +256,6 @@ fw.weapons.createGun("Galil", {
 	Primary = {
 		Ammo = "AR2",
 		ClipSize = 35,
-		DefaultClip = 175,
 		Automatic = true,
 		Damage = 20,
 		RPM = 650,
@@ -289,7 +276,6 @@ fw.weapons.createGun("M4A1", {
 	Primary = {
 		Ammo = "AR2",
 		ClipSize = 20,
-		DefaultClip = 100,
 		Automatic = true,
 		Damage = 27,
 		RPM = 625,
@@ -311,7 +297,6 @@ fw.weapons.createGun("SG552", {
 	Primary = {
 		Ammo = "AR2",
 		ClipSize = 25,
-		DefaultClip = 125,
 		Automatic = true,
 		Damage = 22,
 		RPM = 600,
@@ -332,7 +317,6 @@ fw.weapons.createGun("XM-1014", {
 	Primary = {
 		Ammo = "Buckshot",
 		ClipSize = 8,
-		DefaultClip = 24,
 		Automatic = true,
 		Damage = 11,
 		RPM = 108,
@@ -355,7 +339,6 @@ fw.weapons.createGun("Mac 10", {
 	Primary = {
 		Ammo = "SMG1",
 		ClipSize = 30,
-		DefaultClip = 120,
 		Automatic = true,
 		Damage = 12,
 		RPM = 957,
@@ -376,7 +359,6 @@ fw.weapons.createGun("MP5", {
 	Primary = {
 		Ammo = "SMG1",
 		ClipSize = 30,
-		DefaultClip = 120,
 		Automatic = true,
 		Damage = 19,
 		RPM = 800,
@@ -397,7 +379,6 @@ fw.weapons.createGun("TMP", {
 	Primary = {
 		Ammo = "SMG1",
 		ClipSize = 30,
-		DefaultClip = 120,
 		Automatic = true,
 		Damage = 14,
 		RPM = 1000,
@@ -418,7 +399,6 @@ fw.weapons.createGun("UMP", {
 	Primary = {
 		Ammo = "SMG1",
 		ClipSize = 30,
-		DefaultClip = 120,
 		Automatic = true,
 		Damage = 17,
 		RPM = 720,
@@ -440,7 +420,6 @@ fw.weapons.createGun("Scout", {
 	Primary = {
 		Ammo = "AR2",
 		ClipSize = 10,
-		DefaultClip = 36,
 		Automatic = false,
 		Damage = 80,
 		RPM = 48,
@@ -462,7 +441,6 @@ fw.weapons.createGun("G3SG1", {
 	Primary = {
 		Ammo = "AR2",
 		ClipSize = 10,
-		DefaultClip = 30,
 		Automatic = true,
 		Damage = 65,
 		RPM = 240,

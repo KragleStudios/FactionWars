@@ -219,11 +219,11 @@ end):addParam("description", "string")
 fw.chat.addCMD("dropmoney", "Drops some money in front of you", function(ply, money)
 	money = math.abs(money)
 	if ply:canAfford(money) then
-		local tr = util.TraceLine( {
+		local tr = util.TraceLine({
 			start = ply:EyePos(),
 			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 50,
 			filter = function( ent ) if ent != ply then return true end end
-		} )
+		})
 
 		ply:addMoney(-money)
 
@@ -235,8 +235,18 @@ fw.chat.addCMD("dropmoney", "Drops some money in front of you", function(ply, mo
 end):addParam("money", "number")
 
 fw.chat.addCMD("drop", "Drop your weapon", function(ply)
-	if not fw.config.dropBlacklist[ply:GetActiveWeapon():GetClass()] then
-		ply:DropWeapon(ply:GetActiveWeapon())
+	if IsValid(ply:GetActiveWeapon()) and not fw.config.dropBlacklist[ply:GetActiveWeapon():GetClass()] then
+		local tr = util.TraceLine({
+			start = ply:EyePos(),
+			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 50,
+			filter = function( ent ) if ent != ply then return true end end
+			})
+
+		local ent = ents.Create("fw_gun")
+		ent:setWeapon(ply)
+		ent:SetPos(tr.HitPos)
+		ent:Spawn()
+		ply:GetActiveWeapon():Remove()
 	else
 		ply:FWChatPrint("You cannot drop this weapon.")
 	end
@@ -260,6 +270,9 @@ local quotelist = {
 		"Guys I just realized I've been using the women's restroom the entire time I've been at this restaraunt",
 		"It's the kragle that keeps us together"
 	},
+	['meharryp'] ={
+		"memes"
+	}
 }
 fw.chat.addCMD("quote", "", function(ply)
 	local rAuthor, name = table.Random(quotelist)
