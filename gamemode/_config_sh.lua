@@ -10,3 +10,5 @@ fw.config.bossPowers = true
 fw.config.defaultInvSlots = 10
 --should faction currency persist over restart?
 fw.config.factionBankPersist = true
+--should the physgun color be set as the faction's color?
+fw.config.physgunColorFactionColor = true

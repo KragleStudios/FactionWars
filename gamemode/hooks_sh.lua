@@ -110,6 +110,10 @@ function GM:PreRender(...)
 	return fw.hook.Call('PreRender', ...)
 end
 
+function GM:PlayerSwitchWeapon(...)
+	return fw.hook.Call("PlayerSwitchWeapon", ...)
+end
+
 --
 -- MODELE TEAMS
 --
