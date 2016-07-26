@@ -311,13 +311,13 @@ function ENT:Draw()
 	self:DrawModel()
 	local on = self:GetStatus()
 
+	if (not self.form) then
+		self.form = createMenu(self)
+	end
+
 	if (LocalPlayer():GetPos():DistToSqr(self:GetPos()) > 1000 * 1000) then
 		self.form:SetVisible(false)
 		return 
-	end
-
-	if (not self.form) then
-		self.form = createMenu(self)
 	end
 
 	function self.form.toggle:DoClick()

@@ -104,11 +104,10 @@ end
 
 --determines whether an entity is abled to be targeted
 function ENT:ShouldTarget(target)
-	if (fw.debug) then return true end
-
 	if (not table.HasValue(self.targetable_ents, target:GetClass())) then return false end
 	if (not target:inFaction()) then return false end
-	if (self:GetOwner() and target:getFaction() != self:GetOwner():getFaction()) then return false end
+	if (IsValid(self:GetOwner()) and IsValid(target) and target:getFaction() == self:GetOwner():getFaction()) then return false end
+	if (self:GetOwner() == target) then return false end
 
 	return true
 end
