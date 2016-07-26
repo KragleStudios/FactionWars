@@ -242,7 +242,6 @@ fw.chat.addCMD("drop", "Drop your weapon", function(ply)
 	end
 end)
 
-
 local quotelist = {
 	['thelastpenguin'] = {
 		"takes forever to download, especially when you have downloads off",
@@ -267,3 +266,62 @@ fw.chat.addCMD("quote", "", function(ply)
 
 	fw.notif.chatPrint(player.GetAll(), name, ': ', rQuote)
 end)
+
+fw.chat.addCMD("define", "Defines a given string", function(ply, searc)
+
+	http.Fetch("http://api.urbandictionary.com/v0/define?term="..searc, function(body)
+		local tbl = util.JSONToTable(body);
+
+		local def = tbl["list"][1];
+
+		if (!def) then
+			fw.notif.chatPrint(player.GetAll(), Color(0, 0, 0), "[Bot] ", Color(255, 255, 255), "No definition found, sorry!");
+			return;
+		end
+
+		fw.notif.chatPrint(player.GetAll(), Color(0, 0, 0), "[Bot] ", Color(255, 255, 255), "Definition of "..searc..": "..def["definition"].."\n".."Usage: "..def["example"])
+
+	end, function(errr)
+
+	end)
+end):addParam("string_to_search", "string")
+
+fw.chat.addCMD("@", "Sends a message to online admins", function(ply, msg)
+	local header = ply:IsAdmin() and "[Admin Chat]" or "[Admin Request]"
+
+	local plys = {}
+	for k,v in pairs(player.GetAll()) do
+		if (v:IsAdmin()) then
+			table.insert(plys, v)
+		end
+	end
+
+	fw.notif.chatPrint(plys, Color(255, 25, 25), header," ", team.GetColor(ply:Team()), ply:Nick(), ": ", Color(255, 255, 255), msg)
+end):addParam("message", "string")
+
+--TODO: Find new api service for querying titles from web pages
+--[[
+local function ParseURL(sURL, fCallback) //since it's not instant we won't return anything.
+	http.Fetch("http://decenturl.com/api-title?u="..sURL or "http://www.google.com", function(body, len, headers, code)
+		print(body)
+		local tbl = util.JSONToTable(body or "[]");
+		if (not tbl or not tbl[2]) then tbl = "No title! :(" else tbl = tbl[2] end
+		fCallback(tbl, headers);
+	end, function(err)
+		ErrorNoHalt(err);
+	end)
+end
+
+hook.Add("PlayerSay", "QueryForURL", function(ply, text)
+	if (string.find(text, "www.")) then
+		local exp = string.Explode(" ", text);
+		for k, v in ipairs(exp) do
+			if (string.find(v, "www.")) then
+				ParseURL(v, function(str)
+					fw.notif.chatPrint(player.GetAll(), Color(0, 0, 0), "[Bot] ", Color(255, 255, 255), str)
+				end)
+			end
+		end
+	end
+end)]]
+
