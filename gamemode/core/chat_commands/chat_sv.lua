@@ -219,11 +219,11 @@ end):addParam("description", "string")
 fw.chat.addCMD("dropmoney", "Drops some money in front of you", function(ply, money)
 	money = math.abs(money)
 	if ply:canAfford(money) then
-		local tr = util.TraceLine( {
+		local tr = util.TraceLine({
 			start = ply:EyePos(),
 			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 50,
 			filter = function( ent ) if ent != ply then return true end end
-		} )
+		})
 
 		ply:addMoney(-money)
 
@@ -235,8 +235,18 @@ fw.chat.addCMD("dropmoney", "Drops some money in front of you", function(ply, mo
 end):addParam("money", "number")
 
 fw.chat.addCMD("drop", "Drop your weapon", function(ply)
-	if not fw.config.dropBlacklist[ply:GetActiveWeapon():GetClass()] then
-		ply:DropWeapon(ply:GetActiveWeapon())
+	if IsValid(ply:GetActiveWeapon()) and not fw.config.dropBlacklist[ply:GetActiveWeapon():GetClass()] then
+		local tr = util.TraceLine({
+			start = ply:EyePos(),
+			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 50,
+			filter = function( ent ) if ent != ply then return true end end
+			})
+
+		local ent = ents.Create("fw_gun")
+		ent:setWeapon(ply)
+		ent:SetPos(tr.HitPos)
+		ent:Spawn()
+		ply:GetActiveWeapon():Remove()
 	else
 		ply:FWChatPrint("You cannot drop this weapon.")
 	end
@@ -248,18 +258,29 @@ local quotelist = {
 		"ask him if he's had an anol probe done recently, cuz dem errors, are coming out of his a**",
 		"im confused as to why that's confusing...",
 		"but rly mikey get lastest version of faction wars",
+		"he is the definition of a human fart. If only he'd just stink off and evaporate ",
 	},
 	['Spai'] = {
 		"Editing DarkRP, anyone can do it, but it is all about how you edit it, that is what not everyone can do correctly. - Commander Grox",
 	},
 	['Mikey Howell'] = {
 		"do you realise you're saying lastest",
+		"omg I make all my commits on the website too!",
+		"i just made french toast. call me daddy",
 	},
 	['crazyscouter'] = {
 		"Use effects.halo.Add()",
 		"Guys I just realized I've been using the women's restroom the entire time I've been at this restaraunt",
 		"It's the kragle that keeps us together"
 	},
+	['meharryp'] ={
+		"memes",
+		"yeah go fuck a moose and drink your maple syrup"
+	},
+	['aStonedPenguin'] ={
+		"guys i make all my commits from the github website",
+		"i just wanted ot be here"
+	}
 }
 fw.chat.addCMD("quote", "", function(ply)
 	local rAuthor, name = table.Random(quotelist)

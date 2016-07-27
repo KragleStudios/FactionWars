@@ -116,6 +116,10 @@ end
 
 function GM:PostDrawTranslucentRenderables(...)
 	return fw.hook.Call('PostDrawTranslucentRenderables', ...)
+end 
+
+function GM:PlayerSwitchWeapon(...)
+	return fw.hook.Call("PlayerSwitchWeapon", ...)
 end
 
 --

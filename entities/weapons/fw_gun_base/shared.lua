@@ -16,7 +16,7 @@ SWEP.Instructions = "Left Click: Shoot\nRight Click: Scope/Burst Fire"
 
 SWEP.Primary.Ammo = "SMG1"
 SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 60
+SWEP.Primary.DefaultClip = 0 -- Removed due to exploit with dropping guns
 SWEP.Primary.Automatic = true
 SWEP.Primary.Damage = 10
 SWEP.Primary.RPM = 600
@@ -34,20 +34,19 @@ SWEP.Secondary.Ammo = "none"
 SWEP.EmptySound = Sound("Weapon_Pistol.Empty")
 SWEP.ReloadSound = Sound("Weapon_AK47.Reload")
 
-SWEP.Buff = "none"
 SWEP.BuffApplied = false
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 0, "CurrentRecoil")
-	self:NetworkVar("Float", 1, "LastFireTime")
-	self:NetworkVar("Bool", 2, "Scoped")
-	self:NetworkVar("Bool", 3, "Reloading")
-	self:NetworkVar("Float", 4, "SequenceTime")
-	self:NetworkVar("Bool", 5, "ReloadState")
-	self:NetworkVar("Bool", 6, "Bursting")
-	self:NetworkVar("Int", 7, "BurstsLeft")
-	self:NetworkVar("Float", 8, "BurstTime")
-	self:NetworkVar("String", 9, "Buff")
+	self:NetworkVar("String", 1, "Buff")
+	self:NetworkVar("Float", 2, "LastFireTime")
+	self:NetworkVar("Bool", 3, "Scoped")
+	self:NetworkVar("Bool", 4, "Reloading")
+	self:NetworkVar("Float", 5, "SequenceTime")
+	self:NetworkVar("Bool", 6, "ReloadState")
+	self:NetworkVar("Bool", 7, "Bursting")
+	self:NetworkVar("Int", 8, "BurstsLeft")
+	self:NetworkVar("Float", 9, "BurstTime")
 end
 
 function SWEP:PrimaryAttack()
@@ -78,29 +77,31 @@ function SWEP:Shoot()
 
 	self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 	self:EmitSound(self.Primary.Sound)
-
-	if IsFirstTimePredicted() then
-		self:FireBullets({
-			Attacker = self:GetOwner(),
-			Damage = self.Primary.Damage,
-			Force = 10,
-			AmmoType = self.Primary.Ammo,
-			Dir = self:GetOwner():GetAimVector() + Vector(0, 0, math.Clamp(self:GetCurrentRecoil(), 0, self.Primary.MaxRecoil * recoilMult)),
-			Src = self:GetOwner():GetShootPos(),
-			Spread = Vector(self.Primary.BaseSpread * sprayMult, self.Primary.BaseSpread * sprayMult, 0),
-			Num = (self.Primary.Shotgun and self.Primary.Bullets or 1)
-		})
-		self:SetLastFireTime(CurTime())
-		self:SetCurrentRecoil(self:GetCurrentRecoil() + self.Primary.BaseRecoil * recoilMult)
-	end
-
-	if not self:GetScoped() then
-		self.Owner:ViewPunch(Angle(-self:GetCurrentRecoil() * 5, 0, 0))
-	end
-
+	self:MuzzleFlash()
+	self.Owner:SetAnimation(PLAYER_ATTACK1)
+	
+	self:FireBullets({
+		Attacker = self:GetOwner(),
+		Damage = self.Primary.Damage,
+		Force = self.Primary.Damage / 3,
+		AmmoType = self.Primary.Ammo,
+		Dir = self:GetOwner():GetAimVector() + Vector(0, 0, math.Clamp(self:GetCurrentRecoil(), 0, self.Primary.MaxRecoil * recoilMult)),
+		Src = self:GetOwner():GetShootPos(),
+		Spread = Vector(self.Primary.BaseSpread * sprayMult, self.Primary.BaseSpread * sprayMult, 0),
+		Num = (self.Primary.Shotgun and self.Primary.Bullets or 1)
+	})
+	
+	self:SetLastFireTime(CurTime())
+	
+	self:SetCurrentRecoil(self:GetCurrentRecoil() + self.Primary.BaseRecoil * recoilMult)
+	
 	if self:GetBursting() then
 		self:SetBurstsLeft(self:GetBurstsLeft() - 1)
 		self:SetBurstTime(CurTime() + (60 / self.Primary.RPM) / 2)
+	end
+	
+	if not self:GetScoped() then
+		self.Owner:ViewPunch(Angle(-self:GetCurrentRecoil() * 5, 0, 0))
 	end
 
 	self:SetClip1(self:Clip1() - 1)
@@ -175,9 +176,8 @@ function SWEP:ShotgunReload()
 end
 
 function SWEP:Initialize()
-	self:SendWeaponAnim(ACT_VM_IDLE)
-	self.LastFireTime = 0
-	self.CurrentRecoil = 0
+	self:SetLastFireTime(0)
+	self:SetCurrentRecoil(0)
 	self:SetReloading(false)
 	self:SetScoped(false)
 end
@@ -198,13 +198,13 @@ end
 
 function SWEP:Deploy()
 	self:SendWeaponAnim(ACT_VM_DRAW)
-	self:SetNextPrimaryFire(CurTime() + 1)
+	self:SetNextPrimaryFire(CurTime() + self:SequenceDuration())
 	self:SetHoldType(self.HoldType)
 end
 
 function SWEP:ApplyBuff()
-	if fw.weapons.buffs[self.Buff] and not self.BuffApplied then
-		fw.weapons.buffs[self.Buff](self)
+	if fw.weapons.buffs[self:GetBuff()] and not self.BuffApplied then
+		fw.weapons.buffs[self:GetBuff()][1](self)
 		self.BuffApplied = true
 	end
 end

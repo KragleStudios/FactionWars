@@ -132,8 +132,8 @@ function fw.tab_menu.showScoreboard()
 		end
 		
 		__FW_TABMENU:AddNavButton("HELP", function()
-                        gui.OpenURL("https://github.com/GMFactionWars/kragle")
-                end)
+            gui.OpenURL("https://github.com/GMFactionWars/kragle")
+        end)
 
 		vgui.Create('FWUIDropShadow')
 			:SetRadius(32)
@@ -200,6 +200,21 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 	end)
 end
 
+--organizes a group of players into teams
+local function sortPlayersByTeam(plys)
+	local masterList = {}
+
+	for k,v in pairs(plys) do
+		if (not masterList[v:Team()]) then 
+			masterList[v:Team()] = {}
+		end
+
+		table.insert(masterList[v:Team()], v)
+	end
+
+	return masterList
+end
+
 function fw.tab_menu.tabDisplayPlayersList(panel)
 	local space = vgui.Create('DScrollPanel', panel)
 	space:SetSize(panel:GetSize())
@@ -208,58 +223,59 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 	listLayout:SetWide(panel:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(5))
 	
-	for k, v in pairs(fw.team.factions) do
-		local plys = v:getPlayers()
+	for k, fac in pairs(fw.team.factions) do
+		local plys = fac:getPlayers()
 
 		if (#plys == 0) then continue end
 
 		local factionPlayers = vgui.Create('FWUITableViewSection', listLayout)
-		factionPlayers:SetTitle(v.name.." - "..#plys.." PLAYER(S) TOTAL")
+		factionPlayers:SetTitle(fac.name.." - "..#plys.." PLAYER(S) TOTAL")
 		factionPlayers:SetPadding(sty.ScreenScale(2))
 
-		for k, v in pairs(fw.team.list) do
-			local jobs = v:getName()
-			local jobPlayers = v:getPlayers()
-			if #jobPlayers == 0 then continue end
+		local teamList = sortPlayersByTeam(plys)
+
+		for k, job in pairs(fw.team.list) do
+			local jobs = job:getName()
+			local jobPlayers = teamList[k]
+			if not jobPlayers or #jobPlayers == 0 then continue end
 
 			local factionJobs = vgui.Create('FWUITableViewSection', factionPlayers)
 			factionJobs:SetTitle(jobs)
-			factionJobs:SetTitleTint(team.GetColor(v:getID())) 
+			factionJobs:SetTitleTint(team.GetColor(job:getID())) 
 			factionJobs:SetPadding(sty.ScreenScale(2))
 
-			for k,v in pairs(jobPlayers) do
+			for k,ply in pairs(jobPlayers) do
+				print(fac)
+				if (ply:getFaction() != fac:getID()) then continue end
+
 				local panel = vgui.Create('FWUIPanel', factionJobs)
 				panel:SetTall(sty.ScreenScale(15))
-				panel:SetBackgroundTint(team.GetColor(v:Team()), 5)
+				panel:SetBackgroundTint(team.GetColor(ply:Team()), 5)
 
 				local title = vgui.Create('FWUITextBox', panel)
 				title:SetInset(sty.ScreenScale(2))
-				title:SetText(v:Nick())
+				title:SetText(ply:Nick())
 				title:DockMargin(sty.ScreenScale(4), 0, 0, 0)
 				title:Dock(FILL)
 				
 				local ping = vgui.Create('FWUITextBox', panel)
 				ping:SetInset(sty.ScreenScale(2))
-				ping:SetText("Ping: "..v:Ping())
+				ping:SetText("Ping: "..ply:Ping())
 				ping:Dock(RIGHT)
 
 				local deaths = vgui.Create('FWUITextBox', panel)
 				deaths:SetInset(sty.ScreenScale(2))
-				deaths:SetText("Deaths: "..v:Deaths())
+				deaths:SetText("Deaths: "..ply:Deaths())
 				deaths:Dock(RIGHT)
 
 				local kills = vgui.Create('FWUITextBox', panel)
 				kills:SetInset(sty.ScreenScale(2))
-				kills:SetText("Kills: "..v:Frags())
+				kills:SetText("Kills: "..ply:Frags())
 				kills:Dock(RIGHT)
 			end
 
 		end
 	end
-end
-
---TODO: Faction Administration Panel
-function fw.tab_menu.factionAdministration(pnl)
 end
 
 --TODO: Faction Administration Panel
@@ -329,15 +345,23 @@ function fw.tab_menu.faction(pnl)
 			factionJobs:SetPadding(sty.ScreenScale(2))
 
 			for k,v in pairs(jobPlayers) do
-				local panel = vgui.Create('FWUIPanel', factionJobs)
+				local panel = vgui.Create('FWUIButton', factionJobs)
 				panel:SetTall(sty.ScreenScale(15))
-				panel:SetBackgroundTint(team.GetColor(v:Team()), 5)
+				panel:SetText(v:Nick())
+				function panel:DoClick()
+					local menu = DermaMenu(self)
 
-				local title = vgui.Create('FWUITextBox', panel)
-				title:SetInset(sty.ScreenScale(2))
-				title:SetText(v:Nick())
-				title:DockMargin(sty.ScreenScale(4), 0, 0, 0)
-				title:Dock(FILL)
+					local demoteButton = LocalPlayer():isFactionBoss() and "Force Demote" or "Vote Demote"
+					local kickButton = LocalPlayer():isFactionBoss() and "Force Kick" or "Vote Kick"
+
+					menu:AddOption(demoteButton, function()
+						LocalPlayer():ConCommand("fw_factiondemote "..v:SteamID())
+					end)
+					menu:AddOption(kickButton, function()
+						LocalPlayer():ConCommand("fw_factionkick "..v:SteamID())
+					end)
+					menu:Open()
+				end
 			end
 
 		end

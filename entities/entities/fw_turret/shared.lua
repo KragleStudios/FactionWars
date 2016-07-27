@@ -11,10 +11,6 @@ ENT.clip = 100
 ENT.damage = 5
 ENT.show_radius = true
 
---want entity classes should we be able to target
-ENT.targetable_ents = {
-	"player",
-}
 --default offset for shots to be fired
 ENT.fire_offset = 8 --ms
 --how much should ammo cost(full clip, part clips are calculated)

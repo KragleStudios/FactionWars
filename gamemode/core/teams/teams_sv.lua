@@ -300,8 +300,13 @@ fw.chat.addCMD("factionkick", "Vote to remove a user from a faction", function(p
 	end
 
 	if (target:getFaction() ~= ply:getFaction()) then 
-		ply:FWChatPrintError(Color(0, 0, 0), "This person isn't in the same faction as you!")
+		ply:FWChatPrintError("This person isn't in the same faction as you!")
 		return 
+	end
+
+	if (target:getFaction() == FACTION_DEFAULT) then
+		ply:FWChatPrintError("You can't kcik someone from the default faction!")
+		return
 	end
 
 	local faction = ply:getFaction()
@@ -317,7 +322,7 @@ fw.chat.addCMD("factionkick", "Vote to remove a user from a faction", function(p
 		function(decision, vote, results) 
 			if (not IsValid(target)) then return end
 
-			if (decision == "Yes") then
+			if (decision) then
 				fw.team.removePlayerFromFaction(target)
 				fw.notif.chatPrint(players, color_black, '[Votes]: ', color_white, target:Nick(), " was removed from the faction!")
 			else
@@ -328,13 +333,23 @@ fw.chat.addCMD("factionkick", "Vote to remove a user from a faction", function(p
 end):addParam("target", "player")
 
 --vote to demote a player to civilian within a faction
-fw.chat.addCMD("demote", "Vote to demote a user", function(ply, target)
+fw.chat.addCMD("factiondemote", "Vote to demote a user", function(ply, target)
 	local faction = ply:getFaction()
 	local players = player.GetAll()
 
 	if (target:getFaction() ~= ply:getFaction()) then 
 		ply:FWChatPrintError("This person isn't in the same faction as you!")
 		return 
+	end
+
+	if (target:Team() == TEAM_CIVILIAN) then
+		ply:FWChatPrintError("This person can't be demoted further!")
+		return
+	end
+
+	if (ply == target) then
+		ply:FWChatPrintError("You can't demote yourself!")
+		return
 	end
 	
 	if (faction == target:getFaction()) then
@@ -351,7 +366,7 @@ fw.chat.addCMD("demote", "Vote to demote a user", function(ply, target)
 		function(decision, vote, results) 
 			if (not IsValid(target)) then return end
 
-			if (decision == "Yes") then
+			if (decision) then
 				fw.team.playerChangeTeam(target, TEAM_CIVILIAN)
 				fw.notif.chatPrint(player.GetAll(), target:Nick(), " was demoted to Citizen!")
 			else

@@ -3,7 +3,6 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
-	self:SetModel("models/props/cs_assault/money.mdl")
 	self:PhysicsInit(SOLID_VPHYSICS)
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid(SOLID_VPHYSICS)
@@ -13,14 +12,15 @@ function ENT:Initialize()
 end
 
 function ENT:setWeapon(ply)
-	self.Gun = ply:GetActiveWeapon():GetClass()
+	self.Gun = ply:GetActiveWeapon()
 	self:SetModel(ply:GetActiveWeapon().WorldModel)
 	self:PhysicsInit(SOLID_VPHYSICS)
-	self.Buff = self.Gun.Buff
+	self:SetBuff(self.Gun:GetBuff())
+	self:SetWeapon(self.Gun:GetClass())
 end
 
 function ENT:Use(event, ply)
-	local gun = ply:GiveWeapon(self.Gun)
-	gun:SetBuff(self.Buff)
+	local gun = ply:Give(self:GetWeapon())
+	gun:SetBuff(self:GetBuff())
 	self:Remove()
 end

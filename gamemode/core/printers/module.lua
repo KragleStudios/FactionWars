@@ -11,5 +11,5 @@ fw.include_sh 'printers.lua'
 
 concommand.Add("fw_reloadprinters", function(ply, cmd, args)
 	if IsValid(ply) and not ply:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
-	fw.hook.GetTable("Initialize").LoadPrinters()
+	fw.hook.GetTable().Initialize.LoadPrinters()
 end)

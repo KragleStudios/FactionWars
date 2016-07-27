@@ -20,7 +20,6 @@ function fw.team.removePlayerFromFaction(ply)
 end
 
 function fw.team.setFactionBoss(factionId, ply)
-	print(factionId, ply)
 	ndoc.table.fwFactions[factionId].boss = ply
 end
 

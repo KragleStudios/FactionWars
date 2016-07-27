@@ -16,5 +16,5 @@ fw.include_sh 'weapons.lua'
 
 concommand.Add("fw_reloadguns", function(ply, cmd, args)
 	if IsValid(ply) and not ply:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
-	fw.hook.GetTable("Initialize").LoadWeapons()
+	fw.hook.GetTable().Initialize.LoadWeapons()
 end)
