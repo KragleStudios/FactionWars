@@ -106,7 +106,6 @@ end
 function ENT:ShouldTarget(target)
 	if (not target:IsPlayer()) then return false end
 	if (not target:inFaction()) then return false end
-	print(self:GetOwner():inFaction(), target:inFaction())
 	if (IsValid(self:GetOwner()) and IsValid(target) and target:getFaction() == self:GetOwner():getFaction()) then return false end
 	if (self:GetOwner() == target) then return false end
 
@@ -248,7 +247,7 @@ net.Receive("fw.updateTurretStatus", function()
 	local ent = net.ReadEntity()
 	local bool = net.ReadBool()
 
-	if (not ent:ShouldFire()) then return end
+	if (not IsValid(ent) or not ent:ShouldFire()) then return end
 
 	ent:SetStatus(bool)
 end)
