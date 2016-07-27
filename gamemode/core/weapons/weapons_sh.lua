@@ -2,13 +2,13 @@ fw.weapons.weapons = {}
 fw.weapons.buffs = {
 	damage = {
 		function(self)
-			self.Primary.Damage = self.Primary.Damage + (self.Primary.Damage * 0.2)
+			self.Primary.Damage = self.Primary.Damage * 1.2
 		end,
 		"20% increased damage"
 	},
 	ammo = {
 		function(self)
-			self.Primary.ClipSize = self.Primary.ClipSize
+			self.Primary.ClipSize = self.Primary.ClipSize * 1.2
 		end,
 		"20% increased ammo capacity",
 	}
