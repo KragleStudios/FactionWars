@@ -34,10 +34,10 @@ if (SERVER) then
 			return
 		end
 
-		ent:setHealth(0)
-		ent:SetRenderMode(RENDERMODE_TRANSALPHA)
-		ent:SetColor(Color(255, 255, 255, 180))
-		ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS_TRIGGER)
+		ent:setHealth(health)
+		--ent:SetRenderMode(RENDERMODE_TRANSALPHA)
+		--ent:SetColor(Color(255, 255, 255, 180))
+		--ent:SetCollisionGroup(COLLISION_GROUP_DEBRIS_TRIGGER)
 	end)
 
 	fw.hook.Add("EntityRemoved", "EntityIsDeleted", function(ent)
@@ -53,7 +53,7 @@ if (SERVER) then
 		local dmg = info:GetDamage()
 		local health = ent:getHealth()
 		local new_health = health - dmg
-		if (new_health < 0) then
+		if (math.Round(new_health) <= 0) then
 			local data = EffectData()
 			data:SetOrigin(ent:GetPos())
 
