@@ -333,7 +333,6 @@ function fw.tab_menu.faction(pnl)
 	pList:SetTitle("Players")
 	pList:SetPadding(sty.ScreenScale(2))
 
-	for k,v in pairs(players) do
 		for k, v in pairs(fw.team.list) do
 			local jobs = v:getName()
 			local jobPlayers = v:getPlayers()
@@ -345,6 +344,8 @@ function fw.tab_menu.faction(pnl)
 			factionJobs:SetPadding(sty.ScreenScale(2))
 
 			for k,v in pairs(jobPlayers) do
+				if (v:getFaction != LocalPlayer():getFaction()) then continue end
+
 				local panel = vgui.Create('FWUIButton', factionJobs)
 				panel:SetTall(sty.ScreenScale(15))
 				panel:SetText(v:Nick())
@@ -365,7 +366,6 @@ function fw.tab_menu.faction(pnl)
 			end
 
 		end
-	end
 end
 
 function fw.tab_menu.administration(pnl)
