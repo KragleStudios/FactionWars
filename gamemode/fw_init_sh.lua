@@ -144,6 +144,9 @@ if fw.debug then
 	end
 end
 
+if SERVER then
+	GetConVar("sbox_godmode"):SetInt(0)
+end
 
 end load() -- local function load()
 
