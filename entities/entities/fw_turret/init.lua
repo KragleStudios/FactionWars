@@ -104,8 +104,9 @@ end
 
 --determines whether an entity is abled to be targeted
 function ENT:ShouldTarget(target)
-	if (not table.HasValue(self.targetable_ents, target:GetClass())) then return false end
+	if (not target:IsPlayer()) then return false end
 	if (not target:inFaction()) then return false end
+	print(self:GetOwner():inFaction(), target:inFaction())
 	if (IsValid(self:GetOwner()) and IsValid(target) and target:getFaction() == self:GetOwner():getFaction()) then return false end
 	if (self:GetOwner() == target) then return false end
 
@@ -121,12 +122,12 @@ function ENT:FindNearest()
 	if (#entlist == 0) then return end
 
 	for _,ent in pairs(entlist) do
-		if (table.HasValue(self.targetable_ents, ent:GetClass())) then
-			local dis = self:GetPos():DistToSqr(ent:GetPos())
-			if (dis <= range) then
-				near = ent
-				range = dis
-			end
+		if (not ent:IsPlayer() and not self:ShouldTarget(ent)) then continue end
+
+		local dis = self:GetPos():DistToSqr(ent:GetPos())
+		if (dis <= range) then
+			near = ent
+			range = dis
 		end
 	end
 
