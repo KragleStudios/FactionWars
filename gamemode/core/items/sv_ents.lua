@@ -18,7 +18,6 @@ function fw.ents.buyItem(ply, item_index)
 
 	local item = fw.ents.item_list[item_index]
 	local slot = fw.inv.calcInvSpot(ply)
-	print("SLOT", slot)
 	
 	if (not slot) then 
 		ply:FWChatPrintError("Your inventory is full, so you your item will be spawned instead!")

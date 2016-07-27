@@ -40,8 +40,6 @@ if (SERVER) then
 				local col = fw.team.factions[ply:getFaction()].color
 				local r, g, b = col.r / 255, col.g / 255, col.b / 255
 
-				print(r,g,b)
-
 				ply:SetWeaponColor(Vector(r, g, b))
 			end
 		end
