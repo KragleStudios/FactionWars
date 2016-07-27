@@ -110,6 +110,14 @@ function GM:PreRender(...)
 	return fw.hook.Call('PreRender', ...)
 end
 
+function GM:PostDrawOpaqueRenderables(...)
+	return fw.hook.Call('PostDrawOpaqueRenderables', ...)
+end
+
+function GM:PostDrawTranslucentRenderables(...)
+	return fw.hook.Call('PostDrawTranslucentRenderables', ...)
+end
+
 --
 -- MODELE TEAMS
 --

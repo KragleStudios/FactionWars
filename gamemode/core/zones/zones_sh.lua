@@ -1,5 +1,3 @@
-
-
 local math = math 
 local net = net 
 
@@ -52,6 +50,11 @@ function zone_mt:ctor(id, name, polygon)
 		if v[2] < self.minY then self.minY = v[2] end
 	end
 
+	-- setup rendering code
+	if CLIENT then 
+		self:setupRendering()
+	end
+	
 	return self
 end
 
@@ -104,7 +107,6 @@ function zone_mt:writeToFile(file)
 	end
 end
 
-
 -- reads a zone from a file
 function zone_mt:readFromFile(file)
 	local id = file:ReadShort()
@@ -118,13 +120,12 @@ function zone_mt:readFromFile(file)
 	self:ctor(id, name, polygon)
 end
 
--- renders a zone
-function zone_mt:render()
+-- geometric algorithms
+function zone_mt:getPointsInsetByAmount(inset)
 	local polygon = self.polygon 
 
 	local edges = {}
 	local last = polygon[#polygon]
-	local inset = 5
 	for i = 1, #polygon do
 		local cur = polygon[i]
 		local N = (last - cur):normalize()
@@ -163,84 +164,75 @@ function zone_mt:render()
 		e3 = edges[i]
 	end
 
-	local z = LocalPlayer():GetPos().z 
-	for k, edge in ipairs(edges) do
-		render.DrawLine(Vector(edge[1][1], edge[1][2], z), Vector(edge[2][1], edge[2][2], z), Color(0, 0, 255))
+	local result = {}
+	for k,edge in ipairs(edges) do
+		table.insert(result, edge[2])
 	end
 
-	--[[
+	return result
+end
 
-	local p1 = polygon[#polygon - 1]
-	local p2 = polygon[#polygon]
-	local p3 = polygon[1]
+--
+-- RENDERING ALGORITHMS
+-- 
+function zone_mt:setupRendering(color)
+	color = color or Color(255, 255, 255, 55)
 
-	for i = 2, #polygon + 1 do
-		local u = (p1 - p2):normalize()
-		local v = (p3 - p2):normalize()
-		local d = (u + v):normalize()
-		if i == 3 then
-			render.DrawLine(Vector(0, 0, 0), Vector(u[1], u[2], 0) * 100, Color(0, 255, 0))
-			render.DrawLine(Vector(0, 0, 0), Vector(v[1], v[2], 0) * 100, Color(0, 0, 255))
-			render.DrawLine(Vector(0, 0, 0), Vector(d[1], d[2], 0) * 100, Color(255, 0, 255))
-		end
-		
-		local N = d:normalize()
+	-- compute inset polygon
+	self.polygon_inner = self:getPointsInsetByAmount(3)
 
-		-- 	N = ra.geom.point(-u[2], u[1]):normalize() -- (-uy/|u|, ux/|u|)
+	-- build the mesh
+	local m = Mesh()
 
-		table.insert(points, {
-			p = p2,
-			N = N
-		})
+	local last_outer = self.polygon[#self.polygon]
+	local last_inner = self.polygon_inner[#self.polygon]
 
-		p1 = p2
-		p2 = p3
-		p3 = polygon[i]
-	end 
+	mesh.Begin(m, MATERIAL_QUADS, #self.polygon)
 
-	local c = Color(255, 0, 0)
-	local z = LocalPlayer():GetPos().z
-	local w = 10 -- line weight
+	for i = 1, #self.polygon do
+		local outer = self.polygon[i]
+		local inner = self.polygon_inner[i]
 
-	local last = points[#points]
-	for i = 1, #points do
-		local cur = points[i]
+		mesh.Position(Vector(last_outer[1], last_outer[2], 0))
+		mesh.Color(color.r, color.g, color.b, color.a)
+		mesh.AdvanceVertex()
 
-		local p1 = Vector(last.p[1] + last.N[1] * w, last.p[2] + last.N[2] * w, z)
-		local p2 = Vector(cur.p[1] + cur.N[1] * w, cur.p[2] + cur.N[2] * w, z)
+		mesh.Position(Vector(outer[1], outer[2], 0))
+		mesh.Color(color.r, color.g, color.b, color.a)
+		mesh.AdvanceVertex()
 
-		render.DrawLine(p1, p2, c)
-		last = cur 
-	end	
+		mesh.Position(Vector(inner[1], inner[2], 0))
+		mesh.Color(color.r, color.g, color.b, color.a)
+		mesh.AdvanceVertex()
 
-	render.SetColorMaterial()
-	pcall(mesh.Begin, MATERIAL_QUADS, #points)
-		local last = points[#points]
-		for i = 1, #points do
-			local cur = points[i]
+		mesh.Position(Vector(last_inner[1], last_inner[2], 0))
+		mesh.Color(color.r, color.g, color.b, color.a)
+		mesh.AdvanceVertex()
 
-			mesh.Position(Vector(last.p[1], last.p[2], z))
-			mesh.Color(255, 0, 0, 255)
-			mesh.AdvanceVertex()
+		last_outer = outer
+		last_inner = inner
+	end
 
-			mesh.Position(Vector(cur.p[1], cur.p[2], z))
-			mesh.Color(255, 0, 0, 255)
-			mesh.AdvanceVertex()
-
-			mesh.Position(Vector(cur.p[1] + cur.N[1] * w, cur.p[2] + cur.N[2], z))
-			mesh.Color(255, 0, 0, 255)
-			mesh.AdvanceVertex()
-
-			mesh.Position(Vector(last.p[1] + last.N[1] * w, last.p[2] + last.N[2], z))
-			mesh.Color(255, 0, 0, 255)
-			mesh.AdvanceVertex()
-
-			last = cur 
-		end	
 	mesh.End()
 
-	PrintTable(points)
-	]]
+	self._meshcolor = color
+	self._rendermesh = m
+
+end
+
+function zone_mt:render(z_offset, color)
+	if not self._rendermesh then return end
+	-- apply the render color
+	if color and color ~= self._meshcolor then
+		self:setupRendering(color)
+	end
+
+	local matrix = Matrix()
+	matrix:SetTranslation(Vector(0, 0, z_offset or 0))
+	cam.PushModelMatrix(matrix)	
+		render.SetColorMaterial()
+		self._rendermesh:Draw()
+	cam.PopModelMatrix()
 end
 
 function fw.zone.new()
@@ -263,9 +255,10 @@ end
 --
 
 local zoneFileCRC32 = nil 
+local filename = fw.zone.zoneDataDir .. game.GetMap() .. '.dat'
 
 function fw.zone.getSaveFileName()
-	return fw.zone.zoneDataDir .. game.GetMap() .. '.dat' -- since it's binary
+	return filename -- since it's binary 
 end
 
 function fw.zone.createZonesBackup()
@@ -274,50 +267,47 @@ function fw.zone.createZonesBackup()
 end
 
 function fw.zone.saveZonesToFile(filename)
-	zoneFileCRC32 = nil 
-	if not filename then
-		filename = fw.zone.getSaveFileName()
-	end 
+	local filename = fw.zone.getSaveFileName()
+	zoneFileCRC32 = nil
 
 	local f = file.Open(filename, 'wb', 'DATA')
-
 	f:WriteShort(table.Count(fw.zone.zoneList))
 	for k,v in pairs(fw.zone.zoneList) do
 		v:writeToFile(f)
 	end
-
 	f:Close()
 end
 
-function fw.zone.loadZonesFromFile(filename)
-	zoneFileCRC32 = nil 
-	if not filename then
-		filename = zone.getSaveFileName()
-	end
+function fw.zone.loadZonesFromDisk()
+	local filename = fw.zone.getSaveFileName()
+	zoneFileCRC32 = nil
 
 	local f = file.Open(filename, 'rb', 'DATA')
-	for i = 1, file:ReadShort() do
+	for i = 1, f:ReadShort() do
 		local zone = fw.zone.new()
 		zone:readFromFile(f)
 		fw.zone.zoneList[zone.id] = zone
 	end
+	f:Close()
 end
 
 function fw.zone.getZoneFileCRC()
 	if zoneFileCRC32 then
 		return zoneFileCRC32
 	end
-	zoneFileCRC32 = util.CRC(file.Read(fw.zone.getSaveFileName(), 'DATA') or '')
+	local fname = fw.zone.getSaveFileName()
+	if not file.Exists(fname, 'DATA') then return 0 end
+	zoneFileCRC32 = util.CRC(file.Read(fname, 'DATA') or '')
 	return zoneFileCRC32
 end
 
 -- get the zone the player is inside
-function fw.zone.playerGetZoneInside(ply)
+function fw.zone.playerGetZone(ply)
 	local pos = ply:GetPos()
 	local x, y = pos.x, pos.y
 
 	for k, zone in pairs(fw.zone.zoneList) do
-		if zone:isPointInside(x, y) then
+		if zone:isPointInZone(x, y) then
 			return zone
 		end
 	end
@@ -325,4 +315,6 @@ function fw.zone.playerGetZoneInside(ply)
 	return nil
 end
 
-
+if file.Exists(fw.zone.getSaveFileName(), 'DATA') then
+	fw.zone.loadZonesFromDisk()
+end

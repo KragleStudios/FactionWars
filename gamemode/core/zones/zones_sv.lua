@@ -25,6 +25,7 @@ concommand.Add('fw_zone_saveAllZones', function(pl)
 	end
 	
 	fw.zone.saveZonesToFile()
+	pl:FWConPrint("Saved all zones.")
 end)
 
 concommand.Add('fw_zone_createBackup', function(pl)
@@ -33,4 +34,5 @@ concommand.Add('fw_zone_createBackup', function(pl)
 	end
 
 	fw.zone.createZonesBackup()
+	pl:FWConPrint(Color(0, 255, 0), "Created a backup of the zones file.")
 end)

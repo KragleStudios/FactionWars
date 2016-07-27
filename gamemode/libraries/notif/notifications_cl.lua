@@ -1,38 +1,37 @@
-net.Receive('fw.notif.conprint', function()
-	-- i never said it was pretty
-	local function printHelper(a, ...)
-		fw.print('[notif] ' .. (a or ''), ...)
+local net = net 
+
+local decodeHelper = function()
+	local t = net.ReadUInt(2)
+	if t == 0 then return end 
+	if t == 1 then
+		return Color(
+				net.ReadUInt(8),
+				net.ReadUInt(8),
+				net.ReadUInt(8),
+				255
+			), decodeHelper()
+	end 
+	if t == 2 then
+		return net.ReadString(), decodeHelper()
 	end
+end
 
-	local table = net.ReadTable()
-
-	for k, v in ipairs(table) do
-		if (isnumber(v)) then
-			local color = fw.notif.colors[v]
-
-			if (color) then
-				table[k] = color
-			end
+net.Receive('fw.notif.conprint', function()
+	local function printColorized(col, a, ...)
+		if not a then return print() end
+		if type(a) == 'table' then
+			printColorized(a, ...)
+		else
+			MsgC(col, a)
+			printColorized(col, ...)
 		end
 	end
 
-	printHelper(unpack(table))
+	printColorized(color_white, '![fw] ', Color(200, 200, 200), decodeHelper())
 end)
 
 net.Receive('fw.notif.chatprint', function()
-	local table = net.ReadTable()
-
-	for k, v in ipairs(table) do
-		if (isnumber(v)) then
-			local color = fw.notif.colors[v]
-
-			if (color) then
-				table[k] = color
-			end
-		end
-	end
-
-	chat.AddText(color_black, '[' .. GAMEMODE.Name .. '] ', color_white, unpack(table))
+	chat.AddText(Color(55,55,55), '[' .. GAMEMODE.Name .. '] ', color_white, decodeHelper())
 end)
 
 
