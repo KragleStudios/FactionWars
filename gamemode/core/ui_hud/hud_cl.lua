@@ -4,6 +4,8 @@ fw.hook.Add('HUDShouldDraw', 'fw.hud', function(name)
 	end
 end)
 
+local gradient = surface.GetTextureID("gui/gradient_down.vtf")
+
 local BASE_ALPHA = 225
 
 vgui.Register('fwHudInfoCell', {
@@ -69,7 +71,15 @@ vgui.Register('fwHudInfoCell', {
 
 		Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 255)
-			surface.DrawRect(0, 0, w, h) 
+			surface.DrawRect(0, 0, w, h)
+			
+			surface.SetDrawColor(color_black)
+			surface.DrawOutlinedRect(0, 0, w, h)
+			
+			surface.SetDrawColor(255, 255, 255, 25)
+			surface.SetTexture(gradient)
+	        	surface.DrawTexturedRect(0, 0, w, h)
+	        	
 			surface.SetDrawColor(self.color)
 			surface.DrawRect(0, 0, w, self._p)
 		end,
