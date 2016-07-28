@@ -15,6 +15,5 @@ fw.dep(SERVER, "chat_commands")
 -- TEMPORARILY DISABLED
 
 -- proper include system
-fw.include_sh 'bank_sh.lua'
 fw.include_sv 'bank_sv.lua'
 -- fw.include_cl 'cl_ents.lua'

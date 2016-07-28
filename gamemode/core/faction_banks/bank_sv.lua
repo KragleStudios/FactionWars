@@ -25,6 +25,16 @@ function fw.team.factionWithdraw(ply, amt)
 
 	--this boss is the only one who can approve withdraws, however if there isn't one, we need to ask the other members. DEMOCRACY! :D
 	local players = fw.team.getBoss(fac) or fw.team.getFactionPlayers(fac)
+	if (not fw.team.getBoss(fac) and #players < 5) then
+		ply:FWChatPrintError("There must be at least 5 players in the faction to approve a withdraw!")
+		return
+	end
+
+	--only allow 25% of the funds to be taken out at a time
+	if (amt > ndoc.table.fwFactions[fac].money * .1) then
+		ply:FWChatPrintError("You can only take out 25% of the funds at a time!")
+		return
+	end
 
 	if (ndoc.table.fwFactions[fac].money - amt < 0) then
 		ply:FWChatPrint("The faction can't afford this withdraw!")
