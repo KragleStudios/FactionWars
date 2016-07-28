@@ -19,7 +19,9 @@ function TOOL:LeftClick( trace, attach )
 	if SERVER then return false end
 	if not IsFirstTimePredicted() then return false end
 
-	table.insert(points, ra.geom.point(math.Round(trace.HitPos.x), math.Round(trace.HitPos.y)))
+	local pos = trace.HitPos + trace.Normal
+
+	table.insert(points, ra.geom.point(math.Round(pos.x), math.Round(pos.y)))
 	
 	if #points >= 3 then
 		local oldZone = zone 
@@ -94,7 +96,7 @@ hook.Add('PostDrawOpaqueRenderables', 'fw.toolgun.zonecreator', function()
 	end
 	
 	if zone then
-		zone:render()
+		zone:render(LocalPlayer():GetPos().z)
 		for k, triangle in ipairs(zone.triangles) do
 			render.DrawLine(pointToVector(triangle.p1), pointToVector(triangle.p2), line_color)
 			render.DrawLine(pointToVector(triangle.p1), pointToVector(triangle.p3), line_color)

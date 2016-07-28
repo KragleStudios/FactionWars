@@ -78,3 +78,23 @@ else
 		net.SendToServer()
 	end)
 end
+
+--
+-- PLAYER METHODS
+--
+
+timer.Create('fw.zone.updatePlayerZones', 1, 0, function()
+	for k, pl in ipairs(player.GetAll()) do
+		pl._fwZone = fw.zone.playerGetZone(pl)
+	end
+end)
+
+local Player = FindMetaTable('Player')
+
+function Player:GetFWZone()
+	return self._fwZone 
+end
+
+function Player:IsInZone()
+	return self._fwZone ~= nil 
+end

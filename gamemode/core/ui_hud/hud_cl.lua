@@ -4,12 +4,14 @@ fw.hook.Add('HUDShouldDraw', 'fw.hud', function(name)
 	end
 end)
 
+local BASE_ALPHA = 225
+
 vgui.Register('fwHudInfoCell', {
 		Init = function(self)
 			self.label = Label('', self)
 			self.label:SetTextColor(color_white)
-			self:SetAlpha(200)
-			self.color = Color(255, 255, 255)
+			self:SetAlpha(BASE_ALPHA)
+			self.color = Color(200, 200, 200)
 			self.color_full = Color(255, 255, 255)
 
 			self.highlight = vgui.Create('DPanel', self)
@@ -33,7 +35,7 @@ vgui.Register('fwHudInfoCell', {
 		end,
 
 		SetTint = function(self, color)
-			self.color = Color((color.r + 255) * 0.5, (color.g + 255) * 0.5, (color.b + 255) * 0.5)
+			-- self.color = Color((color.r + 255) * 0.5, (color.g + 255) * 0.5, (color.b + 255) * 0.5)
 			self.color_full = color
 		end,
 
@@ -49,7 +51,7 @@ vgui.Register('fwHudInfoCell', {
 				end)
 			end)
 			self:AlphaTo(255, 0.1, 0, function()
-				self:AlphaTo(200, 1, 0)
+				self:AlphaTo(BASE_ALPHA, 1, 0)
 			end)
 		end,
 
@@ -86,7 +88,7 @@ vgui.Register('fwHudInfo', {
 				self.hp:SetUpdater(function()
 					return LocalPlayer():Health()
 				end, function()
-					return 'HP: ' .. LocalPlayer():Health()
+					return 'HEALTH: ' .. LocalPlayer():Health()
 				end)
 			end
 

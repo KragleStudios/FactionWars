@@ -1,6 +1,7 @@
 local math = math 
 local net = net 
-
+local mesh = mesh 
+local ra = ra 
 
 fw.zone.zoneList = {}
 fw.zone.points = ra.ds.newRBTree()
@@ -43,18 +44,28 @@ function zone_mt:ctor(id, name, polygon)
 
 	-- triangulate the polygon and compute the bounds
 	self.triangles = ra.geom.triangulatePolygon(unpack(self.polygon))
+
+	self.center = ra.geom.point(0, 0)
+
 	for k,v in ipairs(self.polygon) do
+		self.center[1] = self.center[1] + v[1]
+		self.center[2] = self.center[2] + v[2]
 		if v[1] > self.maxX then self.maxX = v[1] end
 		if v[1] < self.minX then self.minX = v[1] end 
 		if v[2] > self.maxY then self.maxY = v[2] end
 		if v[2] < self.minY then self.minY = v[2] end
 	end
 
+	-- compute center and radius
+	self.center[1] = self.center[1] / #self.polygon 
+	self.center[2] = self.center[2] / #self.polygon
+	self.radius = math.sqrt((self.maxX - self.minX) * (self.maxX - self.minX) + (self.maxY - self.minY) * (self.maxY - self.minY))
+
 	-- setup rendering code
 	if CLIENT then 
 		self:setupRendering()
 	end
-	
+
 	return self
 end
 
@@ -176,6 +187,11 @@ end
 -- RENDERING ALGORITHMS
 -- 
 function zone_mt:setupRendering(color)
+	if self._rendermesh then
+		self._rendermesh:Destroy()
+		self._rendermesh = nil
+	end
+
 	color = color or Color(255, 255, 255, 55)
 
 	-- compute inset polygon
@@ -222,6 +238,7 @@ end
 
 function zone_mt:render(z_offset, color)
 	if not self._rendermesh then return end
+
 	-- apply the render color
 	if color and color ~= self._meshcolor then
 		self:setupRendering(color)
@@ -230,8 +247,8 @@ function zone_mt:render(z_offset, color)
 	local matrix = Matrix()
 	matrix:SetTranslation(Vector(0, 0, z_offset or 0))
 	cam.PushModelMatrix(matrix)	
-		render.SetColorMaterial()
-		self._rendermesh:Draw()
+	render.SetColorMaterial()
+	self._rendermesh:Draw()
 	cam.PopModelMatrix()
 end
 
