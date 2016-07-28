@@ -11,6 +11,12 @@ fw.weapons.buffs = {
 			self.Primary.ClipSize = self.Primary.ClipSize * 1.2
 		end,
 		"20% increased ammo capacity",
+	},
+	repair_speed = {
+		function(self, ply)
+			return ply:Team() == TEAM_ENGINEER and .1 or nil
+		end,
+		"20% Increased Repair Speed"
 	}
 }
 

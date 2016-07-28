@@ -39,6 +39,15 @@ TEAM_BMD = fw.team.register("Black Market Dealer", {
 	max = 2,
 })
 
+TEAM_ENGINEER = fw.team.register("Engineer", {
+	stringID = 't_eng',
+	models = {"models/player/barney.mdl"},
+	faction = {FACTION_DEFAULT, FACTION_GANGA, FACTION_GANGB},
+	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
+	salary = 50,
+	max = 3
+})
+
 TEAM_MAYOR = fw.team.register("Mayor", {
 	stringID = "t_mayor",
 	models = {"models/player/breen.mdl"},

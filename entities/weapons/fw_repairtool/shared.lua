@@ -35,7 +35,9 @@ function SWEP:PrimaryAttack()
 		filter = function(ent) return ent != self.Owner end
 	})
 
-	self:SetNextPrimaryFire(CurTime() + 0.2)
+	local buff = fw.weapons.buffs.repair_speed and fw.weapons.buffs.repair_speed[1](self, self.Owner) or .2
+
+	self:SetNextPrimaryFire(CurTime() + buff)
 
 	if IsValid(tr.Entity) and tr.Entity:GetClass() == "prop_physics" then
 		if tr.Entity:getMaxHealth() > tr.Entity:getHealth() then
