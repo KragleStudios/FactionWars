@@ -16,7 +16,7 @@ fw.weapons.buffs = {
 		function(self, ply)
 			return ply:Team() == TEAM_ENGINEER and .1 or nil
 		end,
-		"20% Increased Repair Speed"
+		"50% Increased Repair Speed"
 	}
 }
 
