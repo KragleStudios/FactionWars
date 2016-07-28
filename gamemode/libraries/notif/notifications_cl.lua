@@ -1,6 +1,6 @@
 local net = net 
 
-local decodeHelper = function()
+local function decodeHelper()
 	local t = net.ReadUInt(2)
 	if t == 0 then return end 
 	if t == 1 then

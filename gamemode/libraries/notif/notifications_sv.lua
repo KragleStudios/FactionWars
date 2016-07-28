@@ -7,17 +7,18 @@ local Player = FindMetaTable('Player')
 
 local net = net 
 
-local sendHelper = function(a, ...)
+local function sendHelper(a, ...)
 	if a == nil then return net.WriteUInt(0, 2) end
 	if type(a) == 'table' then 
 		net.WriteUInt(1, 2)
 		net.WriteUInt(a.r, 8)
 		net.WriteUInt(a.g, 8)
 		net.WriteUInt(a.b, 8)
-	else 
+	elseif type(a) == 'string' then
 		net.WriteUInt(2, 2)
 		net.WriteString(tostring(a))
 	end
+	sendHelper(...)
 end
 
 local function fwConPrint(players, ...)

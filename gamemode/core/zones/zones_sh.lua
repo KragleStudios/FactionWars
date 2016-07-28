@@ -97,7 +97,7 @@ end
 
 -- writes a zone to a file
 function zone_mt:writeToFile(file)
-	file:WriteShort(self.id)
+	file:WriteLong(self.id)
 	file:WriteByte(#self.name)
 	file:Write(self.name)
 	file:WriteShort(#self.polygon)
@@ -109,7 +109,7 @@ end
 
 -- reads a zone from a file
 function zone_mt:readFromFile(file)
-	local id = file:ReadShort()
+	local id = file:ReadLong()
 	local name = file:Read(file:ReadByte())
 
 	local polygon = {}

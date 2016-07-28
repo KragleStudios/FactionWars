@@ -7,23 +7,49 @@ end)
 vgui.Register('fwHudInfoCell', {
 		Init = function(self)
 			self.label = Label('', self)
-			self:SetAlpha(155)
+			self.label:SetTextColor(color_white)
+			self:SetAlpha(200)
+			self.color = Color(255, 255, 255)
+			self.color_full = Color(255, 255, 255)
+
+			self.highlight = vgui.Create('DPanel', self)
+			self.highlight.Paint = function(_, w, h)
+				surface.SetDrawColor(self.color_full)
+				surface.DrawRect(0, 0, w, h)
+			end
+			self.highlight:SetVisible(false)
 		end,
 
 		PerformLayout = function(self)
-			local p = sty.ScreenScale(2)
-			self.label:SetFont(fw.fonts.default:fitToView(self:GetWide() - p * 2, self:GetTall() - p * 2, self.label:GetText()))
+			local p = sty.ScreenScale(2.5)
+			self._p = p
+
+			self.highlight:SetSize(self:GetWide(), p)
+
+			self.label:SetFont(fw.fonts.default:fitToView(self:GetWide() - p * 2, self:GetTall() - p * 3, self.label:GetText()))
 			self.label:SizeToContents()
-			self.label:Center()
+			self.label:CenterHorizontal()
+			self.label:SetY((self:GetTall() - self.label:GetTall() - p) * 0.5 + p)
+		end,
+
+		SetTint = function(self, color)
+			self.color = Color((color.r + 255) * 0.5, (color.g + 255) * 0.5, (color.b + 255) * 0.5)
+			self.color_full = color
 		end,
 
 		SetText = function(self, value)
 			self.label:SetText(value)
-			self.label:SetTextColor(color_white)
 			self:InvalidateLayout(true)
 
+			self.highlight:SetVisible(true)
+			self.highlight:SetAlpha(0)
+			self.highlight:AlphaTo(255, 0.1, 0, function()
+				self.highlight:AlphaTo(0, 1, 0, function()
+					self.highlight:SetVisible(false)
+				end)
+			end)
 			self:AlphaTo(255, 0.1, 0, function()
-				self:AlphaTo(155, 1, 0)
+				self:AlphaTo(200, 1, 0)
 			end)
 		end,
 
@@ -42,14 +68,10 @@ vgui.Register('fwHudInfoCell', {
 		Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 255)
 			surface.DrawRect(0, 0, w, h) 
-			surface.SetDrawColor(0, 0, 0, 255)
-			surface.DrawOutlinedRect(0, 0, w, h)
+			surface.SetDrawColor(self.color)
+			surface.DrawRect(0, 0, w, self._p)
 		end,
 	}, 'STYPanel')
-
-vgui.Register('fwHudAgenda', {
-		-- TODO: flesh this out with the same style as fwHudInfo and general code too
-	})
 
 vgui.Register('fwHudInfo', {
 		Init = function(self)
@@ -59,6 +81,7 @@ vgui.Register('fwHudInfo', {
 			-- display hp
 			do
 				self.hp = vgui.Create('fwHudInfoCell', self.layout)
+				self.hp:SetTint(Color(255, 0, 0))
 
 				self.hp:SetUpdater(function()
 					return LocalPlayer():Health()
@@ -70,6 +93,7 @@ vgui.Register('fwHudInfo', {
 			-- display money
 			do
 				self.money = vgui.Create('fwHudInfoCell', self.layout)
+				self.money:SetTint(Color(0, 255, 0))
 
 				local function updateMoney()
 					if not IsValid(self.money) then return end
@@ -98,7 +122,6 @@ vgui.Register('fwHudInfo', {
 			-- display faction
 			do
 				self.faction = vgui.Create('fwHudInfoCell', self.layout)
-				
 				local function updateFaction()
 					if not IsValid(self.faction) then return end
 
@@ -115,13 +138,14 @@ vgui.Register('fwHudInfo', {
 
 			end
 			
+			-- display the boss
 			do
 				self.boss = vgui.Create('fwHudInfoCell', self.layout)
 
 				local function updateBoss()
 					if not IsValid(self.boss) then return end
 
-					if LocalPlayer():inFaction() then
+					if LocalPlayer():inFaction() and LocalPlayer():getFaction() ~= FACTION_DEFAULT then
 						local boss =  fw.team.factions[LocalPlayer():getFaction()]:getBoss()
 						if (boss and boss:IsPlayer()) then
 							boss = boss:Nick()
@@ -139,6 +163,23 @@ vgui.Register('fwHudInfo', {
 				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateBoss)
 				ndoc.addHook('fwFactions.?.boss', 'set', updateBoss)
 				updateBoss()
+			end
+
+			-- display the zone
+			do
+				self.zone = vgui.Create('fwHudInfoCell', self.layout)
+
+				self.zone:SetUpdater(function()
+					local zone = fw.zone.playerGetZone(LocalPlayer())
+					return zone 
+				end, function()
+					local zone = fw.zone.playerGetZone(LocalPlayer())
+					if zone == nil then
+						return 'NO MANS LAND'
+					else 
+						return zone.name or 'unknown zone' 
+					end 
+				end)
 			end
 
 			--[[
@@ -170,7 +211,7 @@ vgui.Register('fwHudInfo', {
 		end,
 
 		PerformLayout = function(self)
-			self.layout:SetTall(sty.ScreenScale(14))
+			self.layout:SetTall(sty.ScreenScale(17))
 
 			-- do layout
 			self.money:SetWide(sty.ScreenScale(100))
@@ -178,8 +219,9 @@ vgui.Register('fwHudInfo', {
 			self.faction:SetWide(sty.ScreenScale(100))
 			self.hp:SetWide(sty.ScreenScale(100))
 			self.boss:SetWide(sty.ScreenScale(100))
+			self.zone:SetWide(sty.ScreenScale(100))
 
-			local p = sty.ScreenScale(2)
+			local p = sty.ScreenScale(3)
 			self.layout:SetPadding(p)
 
 			self.layout:SetPos(p, p)
@@ -187,8 +229,6 @@ vgui.Register('fwHudInfo', {
 		end,
 
 		Paint = function(self, w, h)
-			surface.SetDrawColor(0, 0, 0, 150)
-			surface.DrawRect(0, 0, w, h)
 		end
 
 	})

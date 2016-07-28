@@ -19,6 +19,10 @@ net.Receive('fw.zone.new', function()
 	fw.zone.zoneList[zone.id] = zone
 end)
 
+net.Receive('fw.zone.remove', function()
+	fw.zone.zoneList[net.ReadUInt(32)] = nil
+end)
+
 
 fw.hook.Add('PostDrawOpaqueRenderables', 'fw.zones.render', function()
 

@@ -1,4 +1,5 @@
 util.AddNetworkString('fw.zone.new')
+util.AddNetworkString('fw.zone.remove')
 
 net.Receive('fw.zone.new', function(_, pl)
 	if not pl:IsSuperAdmin() then
@@ -26,6 +27,26 @@ concommand.Add('fw_zone_saveAllZones', function(pl)
 	
 	fw.zone.saveZonesToFile()
 	pl:FWConPrint("Saved all zones.")
+end)
+
+concommand.Add('fw_zone_removeZone', function(pl)
+	if not pl:IsSuperAdmin() then 
+		return pl:FWConPrint(Color(255, 0, 0), "you do not have permission to run this command")
+	end
+
+	local zone = fw.zone.playerGetZone(pl)
+	if not zone then
+		return pl:FWConPrint(Color(255, 0, 0), "You are not currently inside any zone.")
+	end
+
+	fw.zone.zoneList[zone.id] = nil -- remove the zone
+
+	pl:FWConPrint("Removed the zone with id " .. tostring(zone.id) .. ":" .. tostring(zone.name))
+	net.Start('fw.zone.remove')
+		net.WriteUInt(zone.id, 32)
+	net.Send(player.GetAll())
+
+	pl:ConCommand('fw_zone_saveAllZones\n')
 end)
 
 concommand.Add('fw_zone_createBackup', function(pl)
