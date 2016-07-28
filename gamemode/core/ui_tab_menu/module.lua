@@ -344,7 +344,7 @@ function fw.tab_menu.faction(pnl)
 			factionJobs:SetPadding(sty.ScreenScale(2))
 
 			for k,v in pairs(jobPlayers) do
-				if (v:getFaction != LocalPlayer():getFaction()) then continue end
+				if (v:getFaction() != LocalPlayer():getFaction()) then continue end
 
 				local panel = vgui.Create('FWUIButton', factionJobs)
 				panel:SetTall(sty.ScreenScale(15))
