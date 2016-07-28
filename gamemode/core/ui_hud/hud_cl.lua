@@ -6,7 +6,7 @@ end)
 
 local gradient = surface.GetTextureID("gui/gradient_down.vtf")
 
-local BASE_ALPHA = 225
+local BASE_ALPHA = 240
 
 vgui.Register('fwHudInfoCell', {
 		Init = function(self)
@@ -76,9 +76,9 @@ vgui.Register('fwHudInfoCell', {
 			surface.SetDrawColor(color_black)
 			surface.DrawOutlinedRect(0, 0, w, h)
 			
-			surface.SetDrawColor(255, 255, 255, 25)
+			surface.SetDrawColor(255, 255, 255, 15)
 			surface.SetTexture(gradient)
-	        	surface.DrawTexturedRect(0, 0, w, h)
+	        surface.DrawTexturedRect(0, 0, w, h)
 	        	
 			surface.SetDrawColor(self.color)
 			surface.DrawRect(0, 0, w, self._p)
@@ -183,7 +183,7 @@ vgui.Register('fwHudInfo', {
 
 				self.zone:SetUpdater(function()
 					local zone = fw.zone.playerGetZone(LocalPlayer())
-					return zone 
+					return zone or -1
 				end, function()
 					local zone = fw.zone.playerGetZone(LocalPlayer())
 					if zone == nil then
