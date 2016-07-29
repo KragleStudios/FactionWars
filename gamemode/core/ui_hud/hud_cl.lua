@@ -13,7 +13,7 @@ vgui.Register('fwHudInfoCell', {
 			self.label = Label('', self)
 			self.label:SetTextColor(color_white)
 			self:SetAlpha(BASE_ALPHA)
-			self.color = Color(200, 200, 200)
+			self.color = Color(255, 255, 255)
 			self.color_full = Color(255, 255, 255)
 
 			self.highlight = vgui.Create('DPanel', self)
@@ -72,14 +72,14 @@ vgui.Register('fwHudInfoCell', {
 		Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 255)
 			surface.DrawRect(0, 0, w, h)
-			
+
 			surface.SetDrawColor(color_black)
 			surface.DrawOutlinedRect(0, 0, w, h)
-			
+
 			surface.SetDrawColor(255, 255, 255, 15)
 			surface.SetTexture(gradient)
 	        surface.DrawTexturedRect(0, 0, w, h)
-	        	
+
 			surface.SetDrawColor(self.color)
 			surface.DrawRect(0, 0, w, self._p)
 		end,
@@ -126,7 +126,7 @@ vgui.Register('fwHudInfo', {
 					if not t then
 						return 'unknown team'
 					end
-					return t.name .. ' $' .. (t.salary or 0) 
+					return t.name .. ' $' .. (t.salary or 0)
 				end)
 
 			end
@@ -149,7 +149,7 @@ vgui.Register('fwHudInfo', {
 				updateFaction()
 
 			end
-			
+
 			-- display the boss
 			do
 				self.boss = vgui.Create('fwHudInfoCell', self.layout)
@@ -188,15 +188,15 @@ vgui.Register('fwHudInfo', {
 					local zone = fw.zone.playerGetZone(LocalPlayer())
 					if zone == nil then
 						return 'NO MANS LAND'
-					else 
-						return zone.name or 'unknown zone' 
-					end 
+					else
+						return zone.name or 'unknown zone'
+					end
 				end)
 			end
 
 			--[[
 			--TODO move this to it's own panel does not belong here
-			do			
+			do
 				self.agenda = vgui.Create('fwHudInfoCell', self.layout)
 
 				local function updateAgenda()
@@ -204,7 +204,7 @@ vgui.Register('fwHudInfo', {
 					print("UPDATING AGENDA")
 
 					if LocalPlayer():inFaction() then
-						local agenda =  ndoc.table.fwFactions[LocalPlayer():getFaction()].agenda or "No agenda currently set!" 
+						local agenda =  ndoc.table.fwFactions[LocalPlayer():getFaction()].agenda or "No agenda currently set!"
 
 						self.agenda:SetText(agenda)
 						self.agenda:SetVisible(true)

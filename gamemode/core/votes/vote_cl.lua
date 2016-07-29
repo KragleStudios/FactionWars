@@ -10,7 +10,7 @@ local function realignVotes()
 		--local c = #votePanels
 		v:SetPos( (ScrW() / 2) - (width / 2) + (8 * c), ScrH() - tall)
 		v:MoveToBack()
-		if (c != 0) then
+		if (c ~= 0) then
 			v:SetBG(true, c)
 		else
 			v:SetBG(false)
@@ -28,17 +28,16 @@ end
 -- play nice with lua refresh this does not.
 ndoc.addHook('fwVotes.?', 'set', function(vIndex, tbl)
 	if tbl == nil then
-		if IsValid(votePanels[vIndex]) then 
+		if IsValid(votePanels[vIndex]) then
 			votePanels[vIndex]:Remove()
 			fw.print("stopped vote with id #" .. vIndex)
 		end
-		return 
+		return
 	end
 
 
 	timer.Simple(0.5, function()
-		-- wait for the table to finish syncing. 
-		
+		-- wait for the table to finish syncing.
 
 		fw.print("vote started with id #" .. vIndex)
 
@@ -51,16 +50,14 @@ ndoc.addHook('fwVotes.?', 'set', function(vIndex, tbl)
 		local title  = vote.title
 		local desc   = vote.desc
 
-		
-                LocalPlayer():EmitSound("Friends/friend_join.wav", 100, 100)
-        	pnl = vgui.Create('FWUIFrame')
-        	pnl:SetSize(200, 150)
-        	pnl:MakePopup()
-        	pnl:SetTitle(title)
-        	pnl:Center()
-       		pnl.DoClose = function()
-            		pnl:Remove()
-        	end
+		LocalPlayer():EmitSound("Friends/friend_join.wav", 100, 100)
+		pnl = vgui.Create('FWUIFrame')
+		pnl:SetSize(200, 150)
+		pnl:SetTitle(title)
+		pnl:Center()
+			pnl.DoClose = function()
+		  		pnl:Remove()
+		end
 
 		function pnl:SetBG(bool, count)
 			if (bool) then
@@ -98,7 +95,7 @@ ndoc.addHook('fwVotes.?', 'set', function(vIndex, tbl)
 				draw.RoundedBox(0, 5, h - 75, (timeLeft / length) * (w -10) , 20, Color(255, 0, 0))
 				draw.SimpleText(math.Round(timeLeft).. " seconds", timeLeft_f, 10, (h - 71) , Color(255, 255, 255))
 			end
-			
+
 		end
 
 		local w,h = pnl:GetSize()
@@ -108,7 +105,7 @@ ndoc.addHook('fwVotes.?', 'set', function(vIndex, tbl)
         	no:Dock(BOTTOM)
         	no:SetText(noText .." ".. ndoc.table.fwVotes[vIndex].no)
         	no:SetFont(fw.fonts.default)
- 
+
         	local yes = vgui.Create('FWUIButton', pnl)
         	yes:SetSize((w / 2) - 7.5, 25)
         	yes:Dock(BOTTOM)
