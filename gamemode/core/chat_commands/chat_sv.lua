@@ -260,7 +260,7 @@ fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text, teamChat)
 		table.insert(players, v)
 	end
 
-	fw.notif.chatPrint(players, unpack(textCache))
+	fw.notif.chat(players, unpack(textCache))
 
 	return ""
 end)

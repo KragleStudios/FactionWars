@@ -30,6 +30,10 @@ net.Receive('fw.notif.conprint', function()
 	printColorized(color_white, '![fw] ', Color(200, 200, 200), decodeHelper())
 end)
 
+net.Receive("fw.notif.chat", function()
+	chat.AddText(color_white, decodeHelper())
+end)
+
 net.Receive('fw.notif.chatprint', function()
 	chat.AddText(Color(55,55,55), '[' .. GAMEMODE.CondensedName .. '] ', color_white, decodeHelper())
 end)

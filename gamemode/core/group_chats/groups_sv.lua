@@ -14,7 +14,7 @@ fw.chat.addCMD({"/", "all", "occ"}, "Sends a message out of character to all pla
 
 	table.insert(textCache, msg)
 
-	fw.notif.chatPrint(player.GetAll(), unpack(textCache))
+	fw.notif.chat(player.GetAll(), unpack(textCache))
 end):addParam("message", "string")
 
 fw.chat.addCMD({"admin", "a"}, "Sends a message as an admin", function(ply, msg)
@@ -25,7 +25,7 @@ fw.chat.addCMD({"admin", "a"}, "Sends a message as an admin", function(ply, msg)
 	table.insert(textCache, Color(255, 255, 255))
 	table.insert(textCache, msg)
 
-	fw.notif.chatPrint(player.GetAll(), unpack(textCache))
+	fw.notif.chat(player.GetAll(), unpack(textCache))
 end):addParam("message", "string"):restrictTo("admin")
 
 fw.chat.addCMD({"fac", "faction", "team"}, "Sends a message to all players in your faction", function(ply, msg)
@@ -46,7 +46,7 @@ fw.chat.addCMD({"fac", "faction", "team"}, "Sends a message to all players in yo
 
 	local players = fw.team.getFactionPlayers(ply:getFaction())
 
-	fw.notif.chatPrint(players, unpack(textCache))
+	fw.notif.chat(players, unpack(textCache))
 end):addParam("message", "string")
 
 fw.chat.addCMD({"pm", "msg"}, "Sends a message to a player", function(ply, target, msg)
@@ -63,7 +63,7 @@ fw.chat.addCMD({"pm", "msg"}, "Sends a message to a player", function(ply, targe
 	table.insert(textCache, Color(255, 255, 255))
 	table.insert(textCache, msg)
 
-	fw.notif.chatPrint(target, unpack(textCache))
+	fw.notif.chat(target, unpack(textCache))
 
 	target.reply_to = ply
 
@@ -80,7 +80,7 @@ fw.chat.addCMD({"pm", "msg"}, "Sends a message to a player", function(ply, targe
 	table.insert(textCache, Color(255, 255, 255))
 	table.insert(textCache, msg)
 
-	fw.notif.chatPrint(ply, unpack(textCache))
+	fw.notif.chat(ply, unpack(textCache))
 
 	ply.reply_to = target
 
@@ -102,7 +102,7 @@ fw.chat.addCMD({'reply'}, "Send a pm back to your latest PM conversation", funct
 	table.insert(textCache, Color(255, 255, 255))
 	table.insert(textCache, msg)
 
-	fw.notif.chatPrint(ply.reply_to, unpack(textCache))
+	fw.notif.chat(ply.reply_to, unpack(textCache))
 
 	local textCache = {}
 	table.insert(textCache, Color(0, 0, 0))
@@ -117,7 +117,7 @@ fw.chat.addCMD({'reply'}, "Send a pm back to your latest PM conversation", funct
 	table.insert(textCache, Color(255, 255, 255))
 	table.insert(textCache, msg)
 
-	fw.notif.chatPrint(ply, unpack(textCache))
+	fw.notif.chat(ply, unpack(textCache))
 end):addParam("message", "string")
 
 fw.chat.addCMD({"broadcast", "br"}, "Sends a message to your faction as the boss", function(ply, msg)
@@ -130,7 +130,7 @@ fw.chat.addCMD({"broadcast", "br"}, "Sends a message to your faction as the boss
 
 	local players = fw.team.getFactionPlayers(ply:getFaction())
 
-	fw.notif.chatPrint(players, unpack(textCache))
+	fw.notif.chat(players, unpack(textCache))
 end):addParam("message", "string"):restrictTo("boss")
 
 fw.chat.addCMD({"yell", "y"}, "Sends a message to players in your direct vacinity", function(ply, msg)
@@ -156,7 +156,7 @@ fw.chat.addCMD({"yell", "y"}, "Sends a message to players in your direct vacinit
 		table.insert(players, v)
 	end
 
-	fw.notif.chatPrint(players, unpack(textCache))
+	fw.notif.chat(players, unpack(textCache))
 end):addParam("message", "string")
 
 ---
@@ -197,7 +197,7 @@ fw.chat.addCMD({"g", "group"}, "Sends a message to players in your registered ch
 
 	table.insert(textCache, msg)
 
-	fw.notif.chatPrint(players, unpack(textCache))
+	fw.notif.chat(players, unpack(textCache))
 end):addParam("message", "string")
 
 fw.chat.addCMD({"radio", "r"}, "Toggles the player's group chat radio", function(ply)
@@ -217,7 +217,7 @@ fw.chat.addCMD({"radio", "r"}, "Toggles the player's group chat radio", function
 	end
 
 	local status = ply:GetNWBool("radio") and "on" or "off"
-	fw.notif.chatPrint(ply, 'voice radio toggled to '..status)
+	fw.notif.chat(ply, 'voice radio toggled to '..status)
 end)
 
 --TODO: MOVE THIS TO CONFIG
@@ -249,7 +249,7 @@ fw.chat.addCMD("911", "Sends a 911 prompt to all available police", function(ply
 
 	table.insert(textCache, msg)
 
-	fw.notif.chatPrint(players, unpack(textCache))
+	fw.notif.chat(players, unpack(textCache))
 end):addParam("message", "string")
 
 fw.hook.Add("PlayerCanHearPlayersVoice", "RadioPlayerVoice", function(listener, talker)

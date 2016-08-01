@@ -2,6 +2,7 @@
 util.AddNetworkString('fw.notif.conprint')
 util.AddNetworkString('fw.notif.chatprint')
 util.AddNetworkString('fw.notif.banner')
+util.AddNetworkString("fw.notif.chat")
 
 local Player = FindMetaTable('Player')
 
@@ -32,6 +33,14 @@ local function fwChatPrint(players, ...)
 		sendHelper(...)
 	net.Send(players)
 end
+
+local function fwChatComm(players, ...)
+	net.Start('fw.notif.chat')
+		sendHelper(...)
+	net.Send(players)
+end
+
+fw.notif.chat = fwChatComm
 
 fw.notif.chatPrint = fwChatPrint
 fw.notif.conPrint = fwConPrint
