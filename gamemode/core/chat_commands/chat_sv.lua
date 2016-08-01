@@ -1,4 +1,5 @@
 fw.chat.cmds = fw.chat.cmds or {}
+fw.chat.cmdCache = {}
 fw.chat.paramTypes = fw.chat.paramTypes or {}
 local cmdobj = {}
 
@@ -11,25 +12,35 @@ function cmdobj:addParam(name, type)
 	return self
 end
 
+local count = 1
 function fw.chat.addCMD(cname, chelp, cfunc)
 	local obj = {}
 
 	setmetatable(obj, {__index = cmdobj})
 
-	cname = string.lower(cname)
+	cname = not istable(cname) and {cname} or cname
 
-	obj.name = cname
+	--lowercase all the cmds
+	for k,v in pairs(cname) do
+		cname[k] = string.lower(v)
+
+		concommand.Add("fw_" .. cname[k], function(ply, cmd, args, argStr)
+			fw.chat.parseString(ply, "!"..cmd:sub(4 --[[length of fw_ prefix + 1]]).." "..argStr)
+		end)
+		
+		--assign all the possible chat command alternatives to an id, to be referenced by later when it's ran, so we don't make huge ass duplicates of cmds
+		fw.chat.cmdCache[ cname[k] ] = count
+	end
+
+	obj.id = count
 	obj.help = chelp
 	obj.callback = cfunc
 	obj.parameters = {}
 
-	fw.chat.cmds[cname] = obj
+	fw.chat.cmds[count] = obj
 
+	count = count + 1
 	--support for calling commands via the console
-	concommand.Add("fw_" .. cname, function(ply, cmd, args, argStr)
-		fw.chat.parseString(ply, "!"..cmd:sub(4 --[[length of fw_ prefix + 1]]).." "..argStr)
-	end)
-
 	return obj
 end
 
@@ -109,7 +120,12 @@ function fw.chat.parseString(ply, str)
 	cmdn = string.sub(cmdn, 2, string.len(cmdn))
 	cmdn = string.lower(cmdn)
 
-	local cmdObj = fw.chat.cmds[cmdn]
+	--grab the id associated with the command! :D
+	local cmdID = fw.chat.cmdCache[cmdn]
+	if (not cmdID) then fw.print('cmdid', cmdID, 'not found') return str end
+
+	--index the cmd based on the cmd id
+	local cmdObj = fw.chat.cmds[cmdID]
 	if (not cmdObj) then fw.print('cmdn', cmdn, 'not found') return str end
 
 	table.remove(string_parts, 1)
@@ -161,8 +177,7 @@ function fw.chat.parseString(ply, str)
 		count = count + 1
 	end
 
-	cmdObj.callback(ply, unpack(parsedArguments))
-	return ""
+	return cmdObj.callback(ply, unpack(parsedArguments)) or ""
 end
 
 fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
@@ -174,7 +189,11 @@ fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 		ply.lastmsg = text
 	end
 
-	return fw.chat.parseString(ply, text) or text
+	local returned = fw.chat.parseString(ply, text)
+
+	if (returned) then return returned end
+	
+	--TODO: do position based chat stuff!
 end)
 
 --basic /me command
