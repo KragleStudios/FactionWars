@@ -1,13 +1,29 @@
 fw.chat.cmds = fw.chat.cmds or {}
 fw.chat.cmdCache = {}
 fw.chat.paramTypes = fw.chat.paramTypes or {}
+fw.chat.restrictions = {}
 local cmdobj = {}
+
+fw.chat.restrictions["admin"] = function(ply) return ply:IsAdmin() end
+fw.chat.restrictions["superadmin"] = function(ply) return ply:IsSuperAdmin() end
+fw.chat.restrictions["boss"] = function(ply) return ply:isFactionBoss() end
+fw.chat.restrictions["faction"] = function(ply) return ply:inFaction() end
 
 function cmdobj:addParam(name, type)
 	table.insert(self.parameters, {
 		name = name, 
 		type = type
 	})
+
+	return self
+end
+
+function cmdobj:restrictTo(perm)
+	if (not fw.chat.restrictions[perm]) then
+		fw.print('invalid permission type attempted to be registered!', perm)
+	end
+
+	table.insert(self.permissions, perm)
 
 	return self
 end
@@ -36,6 +52,7 @@ function fw.chat.addCMD(cname, chelp, cfunc)
 	obj.help = chelp
 	obj.callback = cfunc
 	obj.parameters = {}
+	obj.permissions = {}
 
 	fw.chat.cmds[count] = obj
 
@@ -128,6 +145,17 @@ function fw.chat.parseString(ply, str)
 	local cmdObj = fw.chat.cmds[cmdID]
 	if (not cmdObj) then fw.print('cmdn', cmdn, 'not found') return str end
 
+	if (#cmdObj.permissions > 0) then
+		for k,v in pairs(cmdObj.permissions) do
+			local build = fw.chat.restrictions[v]
+
+			if (not build(ply)) then 
+				ply:FWChatPrintError("You don't meet the qualifications to run this command!")
+				return str
+			end
+		end
+	end
+
 	table.remove(string_parts, 1)
 
 	--get the arguments, with quote sensitivity
@@ -190,9 +218,7 @@ fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 	end
 
 	local returned = fw.chat.parseString(ply, text)
-
-	if (returned) then return returned end
-	
+	if (returned) then return returned end	
 	--TODO: do position based chat stuff!
 end)
 
