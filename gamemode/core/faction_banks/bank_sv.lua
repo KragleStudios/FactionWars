@@ -67,7 +67,6 @@ fw.chat.addCMD("faction_deposit", "Deposit money into the faction bank!", functi
 end):addParam("amount", "number")
 
 function fw.team.saveFactionBanks()
-	print("SAVING FACTION BANKS")
 	local masterTable = {}
 	for k,v in ndoc.pairs(ndoc.table.fwFactions) do
 		masterTable[v.stringID] = v.money
@@ -91,7 +90,6 @@ end
 	]]--
 function fw.team.loadFactionBanks()
 	local path = "faction_data/faction_bank.txt"
-	print("LOADING FACTION BANKS")
 
 	if (file.Exists(path, "DATA")) then
 		local table = file.Read(path, "DATA")
