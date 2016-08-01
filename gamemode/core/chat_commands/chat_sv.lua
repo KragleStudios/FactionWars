@@ -8,6 +8,8 @@ fw.chat.restrictions["admin"] = function(ply) return ply:IsAdmin() end
 fw.chat.restrictions["superadmin"] = function(ply) return ply:IsSuperAdmin() end
 fw.chat.restrictions["boss"] = function(ply) return ply:isFactionBoss() end
 fw.chat.restrictions["faction"] = function(ply) return ply:inFaction() end
+fw.chat.restrictions["alive"] = function(ply) return ply:Alive() end
+
 
 function cmdobj:addParam(name, type)
 	table.insert(self.parameters, {
@@ -26,6 +28,18 @@ function cmdobj:restrictTo(perm)
 	table.insert(self.permissions, perm)
 
 	return self
+end
+
+function fw.chat.getChatTag(ply)
+	
+	local user = ply:GetNWString("usergroup")
+	local data = fw.config.chatTags[user]
+
+	local col, pretty = data[1], data[2]
+
+	assert(col, "You have misconfigured chat tags! Usergroup ", user)
+
+	return pretty, col or Color(0, 0, 0)
 end
 
 local count = 1
@@ -205,7 +219,8 @@ function fw.chat.parseString(ply, str)
 		count = count + 1
 	end
 
-	return cmdObj.callback(ply, unpack(parsedArguments)) or ""
+	local returned = cmdObj.callback(ply, unpack(parsedArguments))
+	return returned and returned, true or ""
 end
 
 fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
@@ -217,9 +232,42 @@ fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 		ply.lastmsg = text
 	end
 
-	local returned = fw.chat.parseString(ply, text)
-	if (returned) then return returned end	
-	--TODO: do position based chat stuff!
+	--did the chat cmd ran, return a string? if so, then return the string is sent :D
+	local returnMsg, returned = fw.chat.parseString(ply, text)
+	if (returned) then 
+		returnMsg = not istable(returnMsg) and {returnMsg} or returnMsg
+
+		fw.notif.chatPrint(ply, unpack(returnMsg))
+
+		return ""
+	end	
+
+	local textCache = {}
+	if (not ply:Alive()) then
+		table.insert(textCache, Color(255, 0, 0))
+		table.insert(textCache, "*DEAD* ")
+	end
+
+	local user, color = fw.chat.getChatTag(ply)
+	table.insert(textCache, color)
+	table.insert(textCache, "["..user.."] ")
+
+	table.insert(textCache, team.GetColor(ply:Team()))
+	table.insert(textCache, ply:Nick() .. ": ")
+	table.insert(textCache, Color(255, 255, 255))
+
+	table.insert(textCache, text)
+
+	local players = {}
+	for k,v in pairs(ents.FindInSphere(ply:GetPos(), 260)) do
+		if (not v:IsPlayer()) then continue end
+		
+		table.insert(players, v)
+	end
+
+	fw.notif.chatPrint(players, unpack(textCache))
+
+	return ""
 end)
 
 --basic /me command

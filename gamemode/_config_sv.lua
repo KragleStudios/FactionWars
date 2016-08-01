@@ -24,3 +24,9 @@ fw.config.dropBlacklist = {
 	gmod_camera = true,
 	weapon_fists = true,
 }
+
+fw.config.chatTags = {
+	['user'] = {Color(0, 0, 0), "U"},
+	['admin'] = {Color(255, 0, 0), "A"},
+	['superadmin'] = {Color(0, 0, 255), "SA"}
+}
