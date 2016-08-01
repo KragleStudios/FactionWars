@@ -31,7 +31,7 @@ net.Receive('fw.notif.conprint', function()
 end)
 
 net.Receive('fw.notif.chatprint', function()
-	chat.AddText(Color(55,55,55), '[' .. GAMEMODE.Name .. '] ', color_white, decodeHelper())
+	chat.AddText(Color(55,55,55), '[' .. GAMEMODE.CondensedName .. '] ', color_white, decodeHelper())
 end)
 
 

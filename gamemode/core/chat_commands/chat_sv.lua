@@ -1,6 +1,15 @@
 fw.chat.cmds = fw.chat.cmds or {}
+fw.chat.cmdCache = {}
 fw.chat.paramTypes = fw.chat.paramTypes or {}
+fw.chat.restrictions = {}
 local cmdobj = {}
+
+fw.chat.restrictions["admin"] = function(ply) return ply:IsAdmin() end
+fw.chat.restrictions["superadmin"] = function(ply) return ply:IsSuperAdmin() end
+fw.chat.restrictions["boss"] = function(ply) return ply:isFactionBoss() end
+fw.chat.restrictions["faction"] = function(ply) return ply:inFaction() end
+fw.chat.restrictions["alive"] = function(ply) return ply:Alive() end
+
 
 function cmdobj:addParam(name, type)
 	table.insert(self.parameters, {
@@ -11,25 +20,58 @@ function cmdobj:addParam(name, type)
 	return self
 end
 
+function cmdobj:restrictTo(perm)
+	if (not fw.chat.restrictions[perm]) then
+		fw.print('invalid permission type attempted to be registered!', perm)
+	end
+
+	table.insert(self.permissions, perm)
+
+	return self
+end
+
+function fw.chat.getChatTag(ply)
+	
+	local user = ply:GetNWString("usergroup")
+	local data = fw.config.chatTags[user]
+
+	local col, pretty = data[1], data[2]
+
+	assert(col, "You have misconfigured chat tags! Usergroup ", user)
+
+	return pretty, col or Color(0, 0, 0)
+end
+
+local count = 1
 function fw.chat.addCMD(cname, chelp, cfunc)
 	local obj = {}
 
 	setmetatable(obj, {__index = cmdobj})
 
-	cname = string.lower(cname)
+	cname = not istable(cname) and {cname} or cname
 
-	obj.name = cname
+	--lowercase all the cmds
+	for k,v in pairs(cname) do
+		cname[k] = string.lower(v)
+
+		concommand.Add("fw_" .. cname[k], function(ply, cmd, args, argStr)
+			fw.chat.parseString(ply, "!"..cmd:sub(4 --[[length of fw_ prefix + 1]]).." "..argStr)
+		end)
+		
+		--assign all the possible chat command alternatives to an id, to be referenced by later when it's ran, so we don't make huge ass duplicates of cmds
+		fw.chat.cmdCache[ cname[k] ] = count
+	end
+
+	obj.id = count
 	obj.help = chelp
 	obj.callback = cfunc
 	obj.parameters = {}
+	obj.permissions = {}
 
-	fw.chat.cmds[cname] = obj
+	fw.chat.cmds[count] = obj
 
+	count = count + 1
 	--support for calling commands via the console
-	concommand.Add("fw_" .. cname, function(ply, cmd, args, argStr)
-		fw.chat.parseString(ply, "!"..cmd:sub(4 --[[length of fw_ prefix + 1]]).." "..argStr)
-	end)
-
 	return obj
 end
 
@@ -109,8 +151,24 @@ function fw.chat.parseString(ply, str)
 	cmdn = string.sub(cmdn, 2, string.len(cmdn))
 	cmdn = string.lower(cmdn)
 
-	local cmdObj = fw.chat.cmds[cmdn]
+	--grab the id associated with the command! :D
+	local cmdID = fw.chat.cmdCache[cmdn]
+	if (not cmdID) then fw.print('cmdid', cmdID, 'not found') return str end
+
+	--index the cmd based on the cmd id
+	local cmdObj = fw.chat.cmds[cmdID]
 	if (not cmdObj) then fw.print('cmdn', cmdn, 'not found') return str end
+
+	if (#cmdObj.permissions > 0) then
+		for k,v in pairs(cmdObj.permissions) do
+			local build = fw.chat.restrictions[v]
+
+			if (not build(ply)) then 
+				ply:FWChatPrintError("You don't meet the qualifications to run this command!")
+				return str
+			end
+		end
+	end
 
 	table.remove(string_parts, 1)
 
@@ -162,6 +220,7 @@ function fw.chat.parseString(ply, str)
 	end
 
 	cmdObj.callback(ply, unpack(parsedArguments))
+	
 	return ""
 end
 
@@ -174,7 +233,39 @@ fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 		ply.lastmsg = text
 	end
 
-	return fw.chat.parseString(ply, text) or text
+	--did the chat cmd ran, return a string? if so, then return the string is sent :D
+	local status = fw.chat.parseString(ply, text)
+	if (status) then 
+		return ""
+	end
+
+
+	local textCache = {}
+	if (not ply:Alive()) then
+		table.insert(textCache, Color(255, 0, 0))
+		table.insert(textCache, "*DEAD* ")
+	end
+
+	local user, color = fw.chat.getChatTag(ply)
+	table.insert(textCache, color)
+	table.insert(textCache, "["..user.."] ")
+
+	table.insert(textCache, team.GetColor(ply:Team()))
+	table.insert(textCache, ply:Nick() .. ": ")
+	table.insert(textCache, Color(255, 255, 255))
+
+	table.insert(textCache, text)
+
+	local players = {}
+	for k,v in pairs(player.findInSphere(ply:GetPos(), 260)) do
+		if (not v:IsPlayer()) then continue end
+		
+		table.insert(players, v)
+	end
+
+	fw.notif.chatPrint(players, unpack(textCache))
+
+	return ""
 end)
 
 --basic /me command

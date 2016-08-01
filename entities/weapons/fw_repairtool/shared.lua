@@ -10,6 +10,7 @@ SWEP.ViewModel = "models/weapons/c_crowbar.mdl"
 
 SWEP.Author = "meharryp"
 SWEP.Instructions = "Left Click: Repair a prop\nRight Click: Apply armor to a prop"
+SWEP.HoldType = "melee"
 
 SWEP.UseHands = true
 
@@ -83,4 +84,12 @@ function SWEP:SecondaryAttack()
 			self:TakeSecondaryAmmo(1)
 		end
 	end
+end
+
+function SWEP:Initialize()
+end
+
+function SWEP:Deploy()
+	self:SendWeaponAnim(ACT_VM_DRAW)
+	self:SetNextPrimaryFire(CurTime() + self:SequenceDuration())
 end
