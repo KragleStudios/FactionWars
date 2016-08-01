@@ -98,6 +98,10 @@ function GM:OnReloaded(...)
 	return ret
 end
 
+function GM:PlayerCanHearPlayersVoice(...)
+	return fw.hook.Call("PlayerCanHearPlayersVoice", ...)
+end
+
 function GM:RenderScreenspaceEffects(...)
 	return fw.hook.Call('RenderScreenspaceEffects', ...)
 end

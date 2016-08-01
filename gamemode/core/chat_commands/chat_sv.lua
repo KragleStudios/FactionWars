@@ -224,7 +224,6 @@ function fw.chat.parseString(ply, str)
 	return ""
 end
 
-
 fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 	if (text[1] == '^') then 
 		if (ply.lastmsg) then 
@@ -237,7 +236,7 @@ fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 	--did the chat cmd ran, return a string? if so, then return the string is sent :D
 	local status = fw.chat.parseString(ply, text)
 	if (status) then 
-		return status
+		return ""
 	end
 
 
