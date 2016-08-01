@@ -77,7 +77,7 @@ else
 	fw.hook.Add("HUDPaint", "ShowPropHealth", function()
 		for k,v in pairs(fw.propCache) do
 			local ent = ents.GetByIndex(k)
-			if IsValid(ent) and ent:GetColor().g > 254 then
+			if IsValid(ent) and ent:GetColor().g < 254 then
 				ent:SetColor(LerpColor(0.1, ent:GetColor(), Color(255, 255, 255)))
 			end
 		end
