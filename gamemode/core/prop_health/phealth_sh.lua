@@ -58,6 +58,13 @@ if (SERVER) then
 			data:SetOrigin(ent:GetPos())
 
 			util.Effect("Explosion", data)
+
+			if math.random(1, 10) == 1 then
+				local scrap = ents.Create("fw_gun_scrap")
+				scrap:SetPos(ent:GetPos())
+				scrap:Spawn()
+			end
+
 			ent:Remove()
 		else
 			ndoc.table.fwProps[ent:EntIndex()].health = new_health
