@@ -38,16 +38,3 @@ fw.hook.Add("Initialize", "LoadWeapons", function()
 		weapons.Register(gun, e)
 	end
 end)
-
-if (SERVER) then
-	fw.hook.Add("PlayerSwitchWeapon", "SetPhysgunColor", function(ply, _, newWep)
-		if (fw.config.physgunColorFactionColor) then
-			if (newWep:GetClass() == "weapon_physgun") then
-				local col = fw.team.factions[ply:getFaction()].color
-				local r, g, b = col.r / 255, col.g / 255, col.b / 255
-
-				ply:SetWeaponColor(Vector(r, g, b))
-			end
-		end
-	end)
-end
