@@ -24,3 +24,6 @@ fw.config.dropBlacklist = {
 	gmod_camera = true,
 	weapon_fists = true,
 }
+
+-- this is a fairly processing intensive operation. Making it too fast may cause lag. Too slow may cause players to notice.
+fw.config.resourceNetworkUpdateInterval = 10 -- seconds

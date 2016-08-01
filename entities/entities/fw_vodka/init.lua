@@ -23,6 +23,7 @@ function ENT:Use(event, ply)
 end
 
 fw.hook.Add("EntityTakeDamage", "VodkaEffects", function(entity, dmgInfo)
+	-- awesome
 	if (entity:IsPlayer() and entity:GetFWData().vodkaTime and CurTime() <= entity:GetFWData().vodkaTime) then
 		dmgInfo:ScaleDamage(0.9)
 	end

@@ -20,7 +20,7 @@ local resolvePath = function(fn)
 	local function resolvePathHelper(stackdepth, path)
 		if file.Exists(path, 'LUA') then return path end
 		local info = debug.getinfo(stackdepth, "S").short_src
-		info = info:sub(info:find('/') + 1) -- strip off the first / 
+		info = info:sub(info:find('/') + 1) -- strip off the first /
 		info = ra.path.normalize(ra.path.getFolder(info) .. '/' .. path)
 		if file.Exists(info, 'LUA') then return info end
 		return path
@@ -30,10 +30,10 @@ local resolvePath = function(fn)
 	end
 end
 fw.include_sv = resolvePath(ra.include_sv)
-fw.include_cl = resolvePath(ra.include_cl) 
+fw.include_cl = resolvePath(ra.include_cl)
 fw.include_sh = resolvePath(ra.include_sh)
 
-fw.print = ra.print 
+fw.print = ra.print
 
 
 -- module loader
@@ -158,17 +158,17 @@ fw.include_sh 'hooks_sh.lua'
 
 
 
--- allow for reloading 
+-- allow for reloading
 concommand.Add('fw_reload', function(pl)
 	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
 	load()
 
 	fw.hook.Call('Initialize')
-	for k, pl in ipairs(player.GetAll()) do 
+	for k, pl in ipairs(player.GetAll()) do
 		fw.hook.Call('PlayerInitialSpawn', pl)
 		fw.hook.Call('PlayerSpawn', pl)
-	end 
-	
+	end
+
 end)
 
 concommand.Add("fw_reloadmap", function(pl)
