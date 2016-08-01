@@ -5,10 +5,6 @@ fw.chat.addCMD({"/", "all", "occ"}, "Sends a message out of character to all pla
 		table.insert(textCache, "*DEAD* ")
 	end
 
-	local user, color = fw.chat.getChatTag(ply)
-	table.insert(textCache, color)
-	table.insert(textCache, "["..user.."] ")
-
 	table.insert(textCache, Color(0, 0, 0))
 	table.insert(textCache, "[Global] ")
 
@@ -38,9 +34,6 @@ fw.chat.addCMD({"fac", "faction", "team"}, "Sends a message to all players in yo
 		table.insert(textCache, Color(255, 0, 0))
 		table.insert(textCache, "*DEAD* ")
 	end
-	local user, color = fw.chat.getChatTag(ply)
-	table.insert(textCache, color)
-	table.insert(textCache, "["..user.."] ")
 
 	table.insert(textCache, Color(0, 0, 0))
 	table.insert(textCache, "[Faction] ")
@@ -147,10 +140,6 @@ fw.chat.addCMD({"yell", "y"}, "Sends a message to players in your direct vacinit
 		table.insert(textCache, "*DEAD* ")
 	end
 
-	local user, color = fw.chat.getChatTag(ply)
-	table.insert(textCache, color)
-	table.insert(textCache, "["..user.."] ")
-
 	table.insert(textCache, Color(255, 255, 0))
 	table.insert(textCache, "[Yell] ")
 
@@ -198,10 +187,6 @@ fw.chat.addCMD({"g", "group"}, "Sends a message to players in your registered ch
 		table.insert(textCache, Color(255, 0, 0))
 		table.insert(textCache, "*DEAD* ")
 	end
-
-	local user, color = fw.chat.getChatTag(ply)
-	table.insert(textCache, color)
-	table.insert(textCache, "["..user.."] ")
 
 	table.insert(textCache, Color(0, 0, 0))
 	table.insert(textCache, "["..g_name.."] ")

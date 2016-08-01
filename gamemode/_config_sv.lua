@@ -26,9 +26,3 @@ fw.config.dropBlacklist = {
 }
 
 fw.config.doorRespawnTime = 300 -- Amount of time for a dor to respawn, seconds
-
-fw.config.chatTags = {
-	['user'] = {Color(0, 0, 0), "U"},
-	['admin'] = {Color(255, 0, 0), "A"},
-	['superadmin'] = {Color(0, 0, 255), "SA"}
-}

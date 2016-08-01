@@ -30,18 +30,6 @@ function cmdobj:restrictTo(perm)
 	return self
 end
 
-function fw.chat.getChatTag(ply)
-	
-	local user = ply:GetNWString("usergroup")
-	local data = fw.config.chatTags[user]
-
-	local col, pretty = data[1], data[2]
-
-	assert(col, "You have misconfigured chat tags! Usergroup ", user)
-
-	return pretty, col or Color(0, 0, 0)
-end
-
 local count = 1
 function fw.chat.addCMD(cname, chelp, cfunc)
 	local obj = {}
@@ -246,9 +234,12 @@ fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 		table.insert(textCache, "*DEAD* ")
 	end
 
-	local user, color = fw.chat.getChatTag(ply)
-	table.insert(textCache, color)
-	table.insert(textCache, "["..user.."] ")
+	local user, color = fw.hook.Call("ChatTags", GAMEMODE, ply)
+
+	if (user and color) then
+		table.insert(textCache, color)
+		table.insert(textCache, user)
+	end
 
 	table.insert(textCache, team.GetColor(ply:Team()))
 	table.insert(textCache, ply:Nick() .. ": ")
