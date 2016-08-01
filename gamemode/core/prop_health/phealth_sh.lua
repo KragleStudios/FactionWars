@@ -41,18 +41,18 @@ if (SERVER) then
 	end)
 
 	fw.hook.Add("EntityRemoved", "EntityIsDeleted", function(ent)
-		if (ent:GetClass() != "prop_physics") then return end
+		if (ent:GetClass() ~= "prop_physics") then return end
 
 		ndoc.table.fwProps[ent:EntIndex()] = nil
 	end)
 
 	fw.hook.Add("EntityTakeDamage", "PropHealthDepreciate", function(ent, info)
-		if (ent:GetClass() != "prop_physics" or not IsValid(ent)) then return end
+		if (ent:GetClass() ~= "prop_physics" or not IsValid(ent)) then return end
 		if (not ndoc.table.fwProps[ent:EntIndex()]) then return end --stupport for stuff
 
 		local dmg = info:GetDamage()
 		local health = ent:getHealth()
-		local new_health = health - dmg
+		local new_health = math.Round(health - dmg)
 		if (math.Round(new_health) <= 0) then
 			local data = EffectData()
 			data:SetOrigin(ent:GetPos())
@@ -70,36 +70,4 @@ if (SERVER) then
 			ndoc.table.fwProps[ent:EntIndex()].health = new_health
 		end
 	end)
-else
-	fw.propCache = {}
-
-	local function LerpColor(val, from, to)
-		local r = Lerp(val, from.r, to.r)
-		local g = Lerp(val, from.g, to.g)
-		local b = Lerp(val, from.b, to.b)
-
-		return Color(r, g, b, from.a)
-	end
-
-	fw.hook.Add("HUDPaint", "ShowPropHealth", function()
-		for k,v in pairs(fw.propCache) do
-			local ent = ents.GetByIndex(k)
-			if IsValid(ent) and ent:GetColor().g < 254 then
-				ent:SetColor(LerpColor(0.1, ent:GetColor(), Color(255, 255, 255)))
-			end
-		end
-	end)
-
-	ndoc.addHook("fwProps.?.health", "set", function(entIndex, health)
-		if fw.propCache[entIndex] and fw.propCache[entIndex] > health then
-			local ent = ents.GetByIndex(entIndex)
-			if IsValid(ent) then
-				ent:SetColor(Color(255, 0, 0))
-			end
-		end
-
-		fw.propCache[entIndex] = health
-	end)
 end
-
-
