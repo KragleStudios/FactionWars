@@ -6,7 +6,9 @@ fw.admin.mutes = {}
 fw.admin.gags = {}
 
 local function AddAdminCommand(obj, type)
-	fw.admin.cmds[type][obj.name] = obj
+	obj = obj:restrictTo("admin")
+
+	fw.admin.cmds[type][obj.id] = obj
 end
 
 local function PermissionCheck(ply, superadmin)
@@ -28,67 +30,56 @@ fw.hook.Add("PlayerCanHearPlayersVoice", "AdminGagCheck", function(listener, tal
 end)
 
 AddAdminCommand(fw.chat.addCMD("slay", "Kill a player", function(ply, target)
-	if not PermissionCheck(ply) then ply:FWChatPrint("You do not have permission to use this command!") return end
 	target:Kill()
 	ply:FWChatPrint("You have slain " .. target:Nick())
 end):addParam("target", "player"), "player")
 
 AddAdminCommand(fw.chat.addCMD("sslay", "Kill a player silently", function(ply, target)
-	if not PermissionCheck(ply) then ply:FWChatPrint("You do not have permission to use this command!") return end
 	target:KillSilent()
 	ply:FWChatPrint("You have slain " .. target:Nick())
 end):addParam("target", "player"), "player")
 
 AddAdminCommand(fw.chat.addCMD("kick", "Kick a player", function(ply, target, reason)
-	if not PermissionCheck(ply) then ply:FWChatPrint("You do not have permission to use this command!") return end
 	target:Kick(reason)
 	ply:FWChatPrint("You kicked " .. target:Nick() .. " for " .. reason)
 end):addParam("target", "player"):addParam("reason", "string"), "player")
 
 AddAdminCommand(fw.chat.addCMD("ban", "Ban a player", function(ply, target, reason, time)
-	if not PermissionCheck(ply) then ply:FWChatPrint("You do not have permission to use this command!") return end
 	target:Ban(time)
 	target:Kick("BANNED: " .. reason .. "\nThis ban will expire in " .. time .. " minuites")
 	ply:FWChatPrint("You banned " .. target:Nick() .. " for " .. reason .. " for " .. time .. " minuites")
 end):addParam("target", "player"):addParam("reason", "string"):addParam("time", "number"), "player", "Ban")
 
 AddAdminCommand(fw.chat.addCMD("unban", "Unban a steamid", function(ply, target)
-	if not PermissionCheck(ply) then ply:FWChatPrint("You do not have permission to use this command!") return end
 	RunConsoleCommand("removeid", target)
 	ply:FWChatPrint("You kicked " .. target:Nick() .. " for " .. reason .. " for " .. time .. " minuites")
 end):addParam("target", "string"), "player")
 
 AddAdminCommand(fw.chat.addCMD("mute", "Prevent a player from talking in chat", function(ply, target)
-	if not PermissionCheck(ply) then ply:FWChatPrint("You do not have permission to use this command!") return end
 	fw.admin.mutes[target] = true
 	ply:FWChatPrint("You have muted " .. target:Nick())
 	target:FWChatPrint("You have been muted by an admin. You may no longer talk using text chat.")
 end):addParam("target", "player"), "player")
 
 AddAdminCommand(fw.chat.addCMD("unmute", "Unmutes a player", function(ply, target)
-	if not PermissionCheck(ply) then ply:FWChatPrint("You do not have permission to use this command!") return end
 	fw.admin.mutes[target] = false
 	ply:FWChatPrint("You have unmuted " .. target:Nick())
 	target:FWChatPrint("You have been unmuted by an admin. You may now talk using text chat.")
 end):addParam("target", "player"), "player")
 
 AddAdminCommand(fw.chat.addCMD("gag", "Prevent a player from talking in voice", function(ply, target)
-	if not PermissionCheck(ply) then ply:FWChatPrint("You do not have permission to use this command!") return end
 	fw.admin.gags[target] = true
 	ply:FWChatPrint("You have gagged " .. target:Nick())
 	target:FWChatPrint("You have been gagged by an admin. You may no longer talk using voice chat.")
 end):addParam("target", "player"), "player")
 
 AddAdminCommand(fw.chat.addCMD("ungag", "Remove a gag from a player", function(ply, target)
-	if not PermissionCheck(ply) then ply:FWChatPrint("You do not have permission to use this command!") return end
 	fw.admin.gags[target] = false
 	ply:FWChatPrint("You have ungagged " .. target:Nick())
 	target:FWChatPrint("You have been ungagged by an admin. You may now talk using voice chat.")
 end):addParam("target", "player"), "player")
 
 AddAdminCommand(fw.chat.addCMD("setjob", "Set a players job", function(ply, target, newTeam)
-	if not PermissionCheck(ply) then ply:FWChatPrint("You do not have permission to use this command!") return end
-	print(newTeam)
 	local teamID
 	local succ = pcall(function() teamID = fw.team.getByStringID(newTeam) end)
 
@@ -102,8 +93,6 @@ AddAdminCommand(fw.chat.addCMD("setjob", "Set a players job", function(ply, targ
 end):addParam("target", "player"):addParam("job", "string"), "player")
 
 AddAdminCommand(fw.chat.addCMD("setfaction", "Set a players faction", function(ply, target, newTeam)
-	if not PermissionCheck(ply) then ply:FWChatPrint("You do not have permission to use this command!") return end
-
 	local teamID
 	local succ = pcall(function() teamID = fw.team.getFactionByStringID(newTeam) end)
 
@@ -117,6 +106,5 @@ AddAdminCommand(fw.chat.addCMD("setfaction", "Set a players faction", function(p
 end):addParam("target", "player"):addParam("faction", "string"), "player")
 
 AddAdminCommand(fw.chat.addCMD("cvar", "Set a cvar on the server", function(ply, stringCvar, val) -- Superadmins only, this is a command for trusted users.
-	if not PermissionCheck(ply, true) then ply:FWChatPrint("You do not have permission to use this command!") return end
 	RunConsoleCommand(stringCvar, val)
 end):addParam("cvar", "string"):addParam("value", "string"), "server")
