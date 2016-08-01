@@ -212,13 +212,19 @@ function fw.chat.parseString(ply, str)
 	return ""
 end
 
-fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
+fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text, teamChat)
 	if (text[1] == '^') then 
 		if (ply.lastmsg) then 
 			text = ply.lastmsg
 		end
 	else 
 		ply.lastmsg = text
+	end
+
+	if (teamChat) then
+		ply:ConCommand("fw_group "..text)
+
+		return ""
 	end
 
 	--did the chat cmd ran, return a string? if so, then return the string is sent :D

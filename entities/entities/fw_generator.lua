@@ -44,6 +44,7 @@ if SERVER then
 	function ENT:OnRemove()
 		fw.resource.removeEntity(self)
 		timer.Destroy('generator-' .. self:EntIndex())
+	end
 else
 
 	function ENT:Draw()
