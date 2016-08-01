@@ -219,9 +219,11 @@ function fw.chat.parseString(ply, str)
 		count = count + 1
 	end
 
-	local returned = cmdObj.callback(ply, unpack(parsedArguments))
-	return returned and returned, true or ""
+	cmdObj.callback(ply, unpack(parsedArguments))
+	
+	return ""
 end
+
 
 fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 	if (text[1] == '^') then 
@@ -233,14 +235,11 @@ fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 	end
 
 	--did the chat cmd ran, return a string? if so, then return the string is sent :D
-	local returnMsg, returned = fw.chat.parseString(ply, text)
-	if (returned) then 
-		returnMsg = not istable(returnMsg) and {returnMsg} or returnMsg
+	local status = fw.chat.parseString(ply, text)
+	if (status) then 
+		return status
+	end
 
-		fw.notif.chatPrint(ply, unpack(returnMsg))
-
-		return ""
-	end	
 
 	local textCache = {}
 	if (not ply:Alive()) then
@@ -259,7 +258,7 @@ fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text)
 	table.insert(textCache, text)
 
 	local players = {}
-	for k,v in pairs(ents.FindInSphere(ply:GetPos(), 260)) do
+	for k,v in pairs(player.findInSphere(ply:GetPos(), 260)) do
 		if (not v:IsPlayer()) then continue end
 		
 		table.insert(players, v)
