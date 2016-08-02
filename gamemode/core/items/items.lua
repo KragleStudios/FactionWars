@@ -93,12 +93,26 @@ fw.ents.registerItem("Printer Paper", {
 --- BEGIN OTHER WEAPON REGISTRATION
 ---
 fw.ents.registerItem("Turret", {
-	stringID = "titan",
+	stringID = "turret",
 	color =  Color(44, 62, 80),
 	model = "models/combine_turrets/ground_turret.mdl",
 	entity = "fw_turret",
 	max = 0,
 	price = 40000,
+	removeOnDisc = false,
+	category = "Automated Weapons",
+	shipment = false,
+	storable = false,
+	factions = {FACTION_GANGA, FACTION_GANGB}
+})
+
+fw.ents.registerItem("Radar", {
+	stringID = "radar",
+	color =  Color(44, 62, 80),
+	model = "",
+	entity = "fw_radar",
+	max = 0,
+	price = 1,
 	removeOnDisc = false,
 	category = "Automated Weapons",
 	shipment = false,

@@ -44,7 +44,7 @@ function fw.ents.buyItem(ply, item_index)
 			ent:Activate()
 			ent.itemData = item
 			ent.owner = ply
-			ent:SetOwner(ply)--turret compatability
+			ent:SetNWEntity("owner", ply)--turret compatability
 		end
 	end
 
