@@ -18,13 +18,21 @@ function fw.ents.buyItem(ply, item_index)
 
 	local item = fw.ents.item_list[item_index]
 	local slot = fw.inv.calcInvSpot(ply)
-	
+
+	ply.maxItems = ply.maxItems or {}
+	if (ply.maxItems[item.entity] and item.max and item.max != 0 and ply.maxItems[item.entity] + 1 > item.max) then
+		ply:FWChatPrintError("You already have the max of this entity!")
+		return 
+	end
+
 	if (not slot) then 
 		ply:FWChatPrintError("Your inventory is full, so you your item will be spawned instead!")
-	else 
+	elseif (item.storable) then
 		local data = item.shipment and {itemIndex = item_index, invID = invItemID, remaining = item.shipmentCount} or {itemIndex = item_index, invID = invItemID}
 		ndoc.table.items[ply].inventory.slots[slot] = data
 	end
+
+	ply.maxItems[item.entity] = ply.maxItems[item.entity] and ply.maxItems[item.entity] + 1 or 1
 	
 	if (not item.storable or not slot) then
 		if (item.shipment) then
@@ -37,6 +45,7 @@ function fw.ents.buyItem(ply, item_index)
 			ship:Activate()
 			ship.itemData = item
 			ship.owner = ply
+			ent:SetNWEntity("owner", ply)
 		else
 			local ent = ents.Create(item.entity)
 			ent:SetPos(ply:GetEyeTrace().HitPos) --TODO: Change this to smth better, we don't want to do eye trace
@@ -46,12 +55,22 @@ function fw.ents.buyItem(ply, item_index)
 			ent.owner = ply
 			ent:SetNWEntity("owner", ply)--turret compatability
 		end
+
+		return
 	end
 
 	invItemID = invItemID + 1
-	--TODO: uncomment this line
-	--ply:addMoney(-item.price)
+	ply:addMoney(-item.price)
 end
+
+fw.hook.Add("OnEntityRemoved", "AdjustItemCount", function(ent)
+	local own = ent:GetNWEntity("owner") 
+	local class = ent:GetClass()
+
+	if (IsValid(own) and own.maxItems[class]) then
+		own.maxItems[class] = own.maxItems[class] and own.maxItems[class] - 1 or nil
+	end
+end)
 
 util.AddNetworkString("fw.openInventory")
 util.AddNetworkString("fw.refreshInventory")
@@ -120,7 +139,6 @@ end
 --removes the value from the player's inv and shifts all other values up :D
 function fw.inv.removeItem(ply, position)
 	for k,v in ndoc.pairs(ndoc.table.items[ply].inventory.slots) do
-		print(k, position)
 		if (k == position) then
 			ndoc.table.items[ply].inventory.slots[position] = nil --remove the value
 		end
