@@ -120,20 +120,6 @@ fw.ents.registerItem("Radar", {
 	factions = {FACTION_GANGA, FACTION_GANGB}
 })
 
-fw.ents.registerItem("Small Bomb", {
-	stringID = "smallbomb",
-	color =  Color(44, 62, 80),
-	model = "models/props_c17/oildrum001_explosive.mdl",
-	entity = "fw_smallbomb",
-	max = 0,
-	price = 2000,
-	removeOnDisc = false,
-	category = "Automated Weapons",
-	shipment = false,
-	storable = false,
-	factions = {FACTION_GANGA, FACTION_GANGB}
-})
-
 ---
 --- BEGIN RESOURCE REGISTRATION
 ---
@@ -171,6 +157,19 @@ fw.ents.registerItem("Armour Machine", {
 	entity = "fw_armourmachine",
 	max = 0,
 	price = 40000,
+	removeOnDisc = false,
+	category = "Entities",
+	shipment = false,
+	storable = false,
+})
+
+fw.ents.registerItem("Respawn Point", {
+	stringID = "spawnpoint",
+	color =  Color(44, 62, 80),
+	model = "",
+	entity = "fw_respawn_point",
+	max = 0,
+	price = 1,
 	removeOnDisc = false,
 	category = "Entities",
 	shipment = false,

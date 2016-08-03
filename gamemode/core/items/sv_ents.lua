@@ -35,9 +35,16 @@ function fw.ents.buyItem(ply, item_index)
 	ply.maxItems[item.entity] = ply.maxItems[item.entity] and ply.maxItems[item.entity] + 1 or 1
 	
 	if (not item.storable or not slot) then
+		local trace = {}
+        trace.start = ply:EyePos()
+        trace.endpos = trace.start + ply:GetAimVector() * 85
+        trace.filter = ply
+
+        local tr = util.TraceLine(trace).HitPos
+
 		if (item.shipment) then
 			local ship = ents.Create("fw_shipment")
-			ship:SetPos(ply:GetEyeTrace().HitPos) --TODO: Change this to smth better, we don't want to do eye trace
+			ship:SetPos(tr)
 			ship:setEntity(item.entity)
 			ship:setEntityModel(item.model)
 			ship:setShipmentAmount(item.shipmentCount)
@@ -48,12 +55,17 @@ function fw.ents.buyItem(ply, item_index)
 			ent:SetNWEntity("owner", ply)
 		else
 			local ent = ents.Create(item.entity)
-			ent:SetPos(ply:GetEyeTrace().HitPos) --TODO: Change this to smth better, we don't want to do eye trace
+			ent:SetPos(tr)
 			ent:Spawn()
 			ent:Activate()
 			ent.itemData = item
 			ent.owner = ply
 			ent:SetNWEntity("owner", ply)--turret compatability
+
+			--respawn point compatability
+			if (item.entity == "fw_respawn_point") then
+				ply:SetNWEntity("spawn_point", ent)
+			end
 		end
 
 		return
@@ -95,9 +107,15 @@ net.Receive("fw.dropItem", function(_, ply)
 	local class = item.shipment and "fw_shipment" or item.entity
 	local it, pos = fw.inv.getItemByInvID(ply, invID)
 
+	local trace = {}
+    trace.start = ply:EyePos()
+    trace.endpos = trace.start + ply:GetAimVector() * 85
+    trace.filter = ply
+
+    local tr = util.TraceLine(trace).HitPos
+
 	local ent = ents.Create(class)
-	--TODO: Change entity spawn pos
-	ent:SetPos(ply:GetEyeTrace().HitPos)
+	ent:SetPos(tr)
 	ent:Spawn()
 	ent:Activate()
 	ent:SetOwner(ply)
