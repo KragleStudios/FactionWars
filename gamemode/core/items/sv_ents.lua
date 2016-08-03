@@ -63,10 +63,10 @@ function fw.ents.buyItem(ply, item_index)
 	ply:addMoney(-item.price)
 end
 
-fw.hook.Add("OnEntityRemoved", "AdjustItemCount", function(ent)
+fw.hook.Add("EntityRemoved", "AdjustItemCount", function(ent)
 	local own = ent:GetNWEntity("owner") 
 	local class = ent:GetClass()
-
+	
 	if (IsValid(own) and own.maxItems[class]) then
 		own.maxItems[class] = own.maxItems[class] and own.maxItems[class] - 1 or nil
 	end
