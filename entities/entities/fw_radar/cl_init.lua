@@ -75,7 +75,7 @@ function ENT:Draw()
 			
 			--if the player has a bad weapon, show them as a threat if they aren't in the same faction
 			local wep = v.target:GetActiveWeapon()
-			if (wep and not self.WepBlacklist[wep:GetClass()] and LocalPlayer():getFaction() != v.target:getFaction()) then
+			if (IsValid(wep) and IsValid(LocalPlayer()) and not self.WepBlacklist[wep:GetClass()] and LocalPlayer():getFaction() != v.target:getFaction()) then
 				facCol = Color(255, 0, 0)
 			end
 
