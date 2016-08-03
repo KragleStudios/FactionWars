@@ -52,8 +52,10 @@ end
 function ENT:Touch(ent)
 	if ent:GetClass() == "fw_gun_parts" then
 		self.Parts = self.Parts + 1
+		ent:Remove()
 	elseif ent:GetClass() == "fw_gun_scrap" then
 		self.Scrap = self.Scrap + 1
+		ent:Remove()
 	end
 end
 

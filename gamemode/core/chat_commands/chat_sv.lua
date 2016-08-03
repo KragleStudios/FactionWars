@@ -327,8 +327,8 @@ fw.chat.addCMD("drop", "Drop your weapon", function(ply)
 		local tr = util.TraceLine({
 			start = ply:EyePos(),
 			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 50,
-			filter = function( ent ) if ent != ply then return true end end
-			})
+			filter = function(ent) if ent != ply then return true end end
+		})
 
 		local ent = ents.Create("fw_gun")
 		ent:setWeapon(ply)

@@ -36,7 +36,7 @@ function SWEP:PrimaryAttack()
 		filter = function(ent) return ent != self.Owner end
 	})
 
-	local buff = fw.weapons.buffs.repair_speed and fw.weapons.buffs.repair_speed[1](self, self.Owner) or .2
+	local buff = (ply:Team() == TEAM_ENGINEER and .1 or .2)
 
 	self:SetNextPrimaryFire(CurTime() + buff)
 
@@ -58,7 +58,6 @@ function SWEP:PrimaryAttack()
 			util.Effect("ManhackSparks", effect)
 			self:EmitSound(self.Sound)
 		end
-		self:SetNextPrimaryFire(CurTime() + 0.5)
 	end
 	--self:EmitSound()
 end

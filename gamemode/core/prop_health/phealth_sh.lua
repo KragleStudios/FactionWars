@@ -26,8 +26,10 @@ if (SERVER) then
 		ndoc.table.fwProps[ent:EntIndex()].health = health
 		ndoc.table.fwProps[ent:EntIndex()].maxhealth = health
 
-		if ply:canAfford(math.floor(mass / 10)) then
-			ply:addMoney(-math.floor(mass / 10))
+		local cost = (math.floor(mass / 10) > 10 and math.floor(mass / 10) or 10)
+
+		if ply:canAfford(cost) then
+			ply:addMoney(-cost)
 		else
 			ent:Remove()
 			ply:FWChatPrint("You cannot afford to spawn this prop!")

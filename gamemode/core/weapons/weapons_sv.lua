@@ -38,6 +38,21 @@ fw.hook.Add("EntityTakeDamage", "FuckDoors", function(ent, dmg)
 	end
 end)
 
+fw.hook.Add("DoPlayerDeath", "DropGunsOnDeath", function(ply)
+	if IsValid(ply:GetActiveWeapon()) and not fw.config.dropBlacklist[ply:GetActiveWeapon():GetClass()] then
+		local tr = util.TraceLine({
+			start = ply:EyePos(),
+			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 50,
+			filter = function(ent) if ent != ply then return true end end
+		})
+
+		local ent = ents.Create("fw_gun")
+		ent:setWeapon(ply)
+		ent:SetPos(tr.HitPos)
+		ent:Spawn()
+	end
+end)
+
 timer.Create("DoorSpawner", 5, 0, function()
 	for k,v in pairs(fw.weapons.deadDoors) do
 		if v and v[4] < CurTime() then
