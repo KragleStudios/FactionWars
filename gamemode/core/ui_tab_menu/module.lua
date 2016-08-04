@@ -8,7 +8,7 @@ fw.dep(CLIENT, 'faction_banks')
 
 if SERVER then
 	AddCSLuaFile()
-	return 
+	return
 end
 
 fw.tab_menu = {}
@@ -123,14 +123,14 @@ function fw.tab_menu.showScoreboard()
 		__FW_TABMENU:AddView('JOBS', fw.tab_menu.tabDisplayJobsList)
 		__FW_TABMENU:AddView('ITEMS', fw.tab_menu.itemManagement)
 		__FW_TABMENU:AddView('INVENTORY', fw.tab_menu.playerInventory)
-		
-		if (LocalPlayer():inFaction() and LocalPlayer():getFaction() != FACTION_DEFAULT) then
+
+		if (LocalPlayer():inFaction() and LocalPlayer():getFaction() ~= FACTION_DEFAULT) then
 			__FW_TABMENU:AddView('FACTION', fw.tab_menu.faction)
 		end
 		if (LocalPlayer():IsAdmin()) then
 			__FW_TABMENU:AddView('ADMIN', fw.tab_menu.administration)
 		end
-		
+
 		__FW_TABMENU:AddNavButton("HELP", function()
             gui.OpenURL("https://github.com/GMFactionWars/kragle")
         end)
@@ -160,7 +160,7 @@ function fw.tab_menu.hideContent(callback)
 			content:Remove()
 			if callback then callback() end
 		end)
-		return 
+		return
 	end
 
 	if callback then callback() end
@@ -182,9 +182,9 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 
 		content:SetY(sty.ScrH)
 		content:MoveTo(
-			content:GetX(), 
-			(sty.ScrH - content:GetTall()) * 0.5, 
-			fw.config.uiAnimTimeQuick, 0, -1, 
+			content:GetX(),
+			(sty.ScrH - content:GetTall()) * 0.5,
+			fw.config.uiAnimTimeQuick, 0, -1,
 			callback or ra.fn.noop)
 		content:PerformLayout()
 
@@ -192,7 +192,7 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 		wrapper:SetPos(sty.CalcInsetPos(sty.ScreenScale(2), 0, content:GetHeaderYOffset()))
 		wrapper:SetSize(
 			sty.CalcInsetSize(
-				sty.ScreenScale(2), content:GetWide(), 
+				sty.ScreenScale(2), content:GetWide(),
 				content:GetTall() - content:GetHeaderYOffset()
 			))
 
@@ -205,7 +205,7 @@ local function sortPlayersByTeam(plys)
 	local masterList = {}
 
 	for k,v in pairs(plys) do
-		if (not masterList[v:Team()]) then 
+		if (not masterList[v:Team()]) then
 			masterList[v:Team()] = {}
 		end
 
@@ -222,7 +222,7 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 	local listLayout = vgui.Create('STYLayoutVertical', space)
 	listLayout:SetWide(panel:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(5))
-	
+
 	for k, fac in pairs(fw.team.factions) do
 		local plys = fac:getPlayers()
 
@@ -241,7 +241,7 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 
 			local factionJobs = vgui.Create('FWUITableViewSection', factionPlayers)
 			factionJobs:SetTitle(jobs)
-			factionJobs:SetTitleTint(team.GetColor(job:getID())) 
+			factionJobs:SetTitleTint(team.GetColor(job:getID()))
 			factionJobs:SetPadding(sty.ScreenScale(2))
 
 			for k,ply in pairs(jobPlayers) do
@@ -257,7 +257,7 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 				title:SetText(ply:Nick())
 				title:DockMargin(sty.ScreenScale(4), 0, 0, 0)
 				title:Dock(FILL)
-				
+
 				local ping = vgui.Create('FWUITextBox', panel)
 				ping:SetInset(sty.ScreenScale(2))
 				ping:SetText("Ping: "..ply:Ping())
@@ -340,7 +340,7 @@ function fw.tab_menu.faction(pnl)
 
 			local factionJobs = vgui.Create('FWUITableViewSection', pList)
 			factionJobs:SetTitle(jobs)
-			factionJobs:SetTitleTint(team.GetColor(v:getID())) 
+			factionJobs:SetTitleTint(team.GetColor(v:getID()))
 			factionJobs:SetPadding(sty.ScreenScale(2))
 
 			for k,v in pairs(jobPlayers) do
@@ -392,7 +392,7 @@ function fw.tab_menu.administration(pnl)
 				Derma_StringRequest("Kick Player", "Enter reason...", "Reason...", function(reason) RunConsoleCommand("fw_kick", ply:Nick(), reason) end)
 			end)
 			menu:AddOption("Ban", function()
-				Derma_StringRequest("Ban Player", "Enter reason...", "Reason...", function(reason) 
+				Derma_StringRequest("Ban Player", "Enter reason...", "Reason...", function(reason)
 					Derma_StringRequest("Ban Player", "Enter time...", "60 Minutes", function(time) time = ra.util.timestring(time) if time != false then RunConsoleCommand("fw_ban", ply:Nick(), reason, tonumber(time)) else chat.AddText(color_black, "[Faction Wars] [Admin]", color_white, "You used an incorrectly formatted timestring!") end end)
 				end)
 			end)
@@ -591,7 +591,7 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 	end
 
 	-- leave faction
-	if LocalPlayer():inFaction() and LocalPlayer():getFaction() ~= FACTION_DEFAULT then 
+	if LocalPlayer():inFaction() and LocalPlayer():getFaction() ~= FACTION_DEFAULT then
 		local panel = vgui.Create('FWUIPanel')
 		panel:SetTall(sty.ScreenScale(12))
 		factionsListSection:Add(panel)
@@ -613,7 +613,7 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 		title:Dock(FILL)
 
 		panel:SetBackgroundTint(Color(200, 0, 0), 10)
-	end 
+	end
 
 
 	-- list of jobs
@@ -623,7 +623,7 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 
 	local function createJobButton(job, players)
 		local selectedModel, pref_model
-		
+
 		local pnl = vgui.Create("FWUIPanel")
 		pnl:SetTall(sty.ScreenScale(12))
 		jobListSection:Add(pnl)
@@ -682,7 +682,7 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 	for i, job in pairs(fw.team.list) do
 		if (myTeam == job:getID()) then continue end
 		if (not fw.team.canChangeTo(LocalPlayer(), job:getID(), false)) then continue end
-		
+
 		createJobButton(job, #job:getPlayers())
 	end
 end

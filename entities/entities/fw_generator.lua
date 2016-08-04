@@ -8,8 +8,11 @@ ENT.Author			= "Spai"
 ENT.Category        = "Faction Wars"
 
 ENT.NETWORK_SIZE = 500
-
-ENT.GeneratesResources = {
+ENT.Resources = true
+ENT.Produces = {
+	["power"] = 5
+}
+ENT.MaxProduction = {
 	["power"] = 5
 }
 
@@ -29,12 +32,24 @@ if SERVER then
 			phys:Wake()
 		end
 
-		fw.resource.resourceEntity(self)
+		fw.resource.addEntity(self)
 
-		timer.Create('generator-' .. self:EntIndex(), 10, 0, function()
-			self:ConsumeResource('gas', 1)
+		self.Produces = {
+			['power'] = 5
+		}
+
+		timer.Create('generator-' .. self:EntIndex(), 1, 0, function()
+			local succ = self:ConsumeResource('gas', 1)
+			if succ then
+				self.Produces = {
+					['power'] = 5,
+				}
+			else
+				self.Produces = {
+					['power'] = 0,
+				}
+			end
 		end)
-		self:ConsumeResource('gas', 0)
 	end
 
 	function ENT:Think()
@@ -45,10 +60,20 @@ if SERVER then
 		fw.resource.removeEntity(self)
 		timer.Destroy('generator-' .. self:EntIndex())
 	end
+
 else
 
 	function ENT:Draw()
 		self:DrawModel()
 	end
 
+	function ENT:GetDisplayPosition()
+		local obbcenter = self:OBBCenter()
+		local obbmax = self:OBBMaxs()
+		return Vector(obbcenter.x - 25, obbmax.y, obbcenter.z), Angle(0, 180, 90), 0.2
+	end
+end
+
+function ENT:IsActive()
+	return (self.fwResourcesStatic['gas'] or 0) >= 1
 end

@@ -8,44 +8,43 @@ ENT.Author			= "thelastpenguin"
 ENT.Category        = "Faction Wars"
 
 ENT.NETWORK_SIZE = 500
-
-ENT.GeneratesResources = {
-	["power"] = 5
+ENT.Resources = true
+ENT.MaxStorage = {
+	['gas'] = 100
 }
 
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 
 if SERVER then
-  function ENT:Initialize()
-  	self:SetModel "models/props_junk/gascan001a.mdl"
-  	self:PhysicsInit(SOLID_VPHYSICS)
-  	self:SetMoveType(MOVETYPE_VPHYSICS)
-  	self:SetSolid(SOLID_VPHYSICS)
-  	self:SetUseType(SIMPLE_USE)
+	function ENT:Initialize()
+		self:SetModel "models/props_junk/gascan001a.mdl"
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:SetUseType(SIMPLE_USE)
 
-  	local phys = self:GetPhysicsObject()
-  	if (phys:IsValid()) then
-  		phys:Wake()
-  	end
+		local phys = self:GetPhysicsObject()
+		if (phys:IsValid()) then
+			phys:Wake()
+		end
 
-  	fw.resource.resourceEntity(self)
+		fw.resource.addEntity(self)
 
-  	timer.Create('generator-' .. self:EntIndex(), 10, 0, function()
-  		self:ConsumeResource('gas', 1)
-  	end)
-  	self:ConsumeResource('gas', 0)
-  end
+		self.Storage = {
+			['gas'] = 100,
+		}
+	end
 
-  function ENT:OnRemove()
-    fw.resource.removeEntity(self)
-  end
+	function ENT:OnRemove()
+		fw.resource.removeEntity(self)
+	end
 
-  function ENT:Think()
-
-  end
+	function ENT:Think()
+		if self.Storage.gas == 0 then self:Remove() end
+	end
 else
-  function ENT:Draw()
-  	self:DrawModel()
-  end
+	function ENT:Draw()
+		self:DrawModel()
+	end
 end

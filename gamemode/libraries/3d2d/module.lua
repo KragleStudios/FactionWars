@@ -5,13 +5,13 @@ require 'ra'
 --[[
 RECOMMENDED VERSION
 VERSION 1.0.0
-Copyright thelastpenguin™ 
+Copyright thelastpenguin™
 	All rights are reserved.
 	Neither this script nor any edit of this script or partial code segment taken from this script
-	may be used in any form without explicit permission from it's creator thelastpenguin™ 
-	
+	may be used in any form without explicit permission from it's creator thelastpenguin™
+
 	If you modify the code for any purpose, the above still applies to the modified code.
-	
+
 	The author is not held responsible for any d amages incured from the use of 3d2d UI Lib
 ]]
 vgui3d = {};
@@ -27,47 +27,47 @@ FUNCTION: calculate cursor position and any panels the cursor is hovering over
 do
 	local function checkHovered( p, mx, my )
 		if not p:IsVisible() or not p:IsMouseInputEnabled() then return end
-		
+
 		local w, h = p:GetSize();
 		local x, y = p:GetPos();
 		mx, my = mx-x, my-y;
-		
+
 		if mx < 0 or my < 0 or mx > w or my > h then
 			return ;
 		end
-		
-			
+
+
 		local ph ;
 		for _,p in pairs( p:GetChildren( ) )do
 			ph = checkHovered( p, mx, my );
 			if ph then return ph end
 		end
-		
+
 		return p;
 	end
-	
+
 	local xfn_true = function() return true end
 	local xfn_false = function() return false end
 	function _R.Panel:DoCursor( vOrigin, cursorNormal )
 		local w, h = self:GetSize();
-		
+
 		-- perform projections
 		local mousex, mousey = self:ProjectCursor( vOrigin, cursorNormal );
 		self.mousex, self.mousey = mousex, mousey;
-		
+
 		local hovered = checkHovered( self, mousex, mousey );
-		
+
 		if self.hoveredPanel ~= hovered then
-			
+
 			-- reset the old hovered panel
 			if ValidPanel( self.hoveredPanel ) then
 				self.hoveredPanel.IsHovered = xfn_false;
 				self.hoveredPanel.Hovered = false;
-				
+
 				(self.hoveredPanel.OnCursorExited or ra.fn.noop)( self.hoveredPanel );
-				
+
 			end
-			
+
 			-- set the new hovered panel
 			if hovered then
 				hovered.IsHovered = xfn_true;
@@ -76,13 +76,13 @@ do
 			end
 			self.hoveredPanel = hovered;
 		end
-		
+
 		if not hovered then
 			self.HasCursor = true;
 		else
 			self.HasCursor = false;
 		end
-		
+
 	end
 end
 
@@ -98,16 +98,16 @@ function _R.Panel:Begin3D( vOrigin, vAngles, cursorNormal )
 	-- calculate the panel location
 	local pos, ang, scale = self:CalcLocation( vOrigin, vAngles )
 	local nUp, nForward, nRight = ang:Up(), ang:Forward(), ang:Right( );
-	
+
 	-- the top left corner
 	pos = pos - nForward*(self:GetWide()*0.5*scale) - nRight*(self:GetTall()*0.5*scale);
-	
-	self.wPos, self.wAng, self.wScale = pos, ang, scale 
-	
+
+	self.wPos, self.wAng, self.wScale = pos, ang, scale
+
 	vgui.GetHoveredPanel = function()
 		return self.hoveredPanel;
 	end
-	
+
 end
 function _R.Panel:End3D( )
 	vgui.GetHoveredPanel = vgui.GetHoveredPanelOrig ;
@@ -115,16 +115,16 @@ end
 
 --[[
 FUNCTION: paint the panel in 3d space
-		NOTE: should be called after :Begin3D 
+		NOTE: should be called after :Begin3D
 ]]
 function _R.Panel:Paint3D( )
 	cam.Start3D2D( self.wPos, self.wAng, self.wScale );
 		cam.IgnoreZ( true );
-		
+
 		self:SetPaintedManually( false );
 		self:PaintManual( );
 		self:SetPaintedManually( true );
-		
+
 		cam.IgnoreZ( false );
 	cam.End3D2D( );
 end
@@ -134,24 +134,24 @@ FUNCTION: project the cursor defined by noraml vector cursorNormal onto the worl
 RETURNS: mousex, mousey
 ]]
 function _R.Panel:ProjectCursor( vOrigin, cursorNormal ) -- gui.ScreenToVector( gui.MousePos() )
-	
+
 	-- cache variables.
 	local wPos, wAng, wScale = self.wPos, self.wAng, self.wScale;
 	local nUp, nForward, nRight = wAng:Up(), wAng:Forward(), wAng:Right( );
 
 	-- intersect the cursorNormal with the panel's world plane
 	local wCursor = util.IntersectRayWithPlane( vOrigin, cursorNormal, wPos, nUp ) or Vector(0,0,0);
-	
+
 	local ux = nForward -- unit vector on x axis.
 	local uy = nRight -- unit vector on y axis
-	
+
 	local w = wCursor-wPos;
 	local mousex = w:DotProduct(ux)/wScale;
 	local mousey = w:DotProduct(uy)/wScale;
-	
-		
+
+
 	return mousex, mousey;
-	
+
 end
 
 
@@ -161,7 +161,7 @@ end
 local userpanels = {};
 
 function vgui.make3d( panel )
-	table.insert( userpanels, panel );	
+	table.insert( userpanels, panel );
 end
 
 local _vOrigin, _vAngle
@@ -186,9 +186,9 @@ local function draw( )
 end
 
 hook.Add('PostDrawTranslucentRenderables', 'ba-3d2d-p', function()
-	
+
 	userpanels = ra.util.filter( userpanels, ValidPanel );
-	
+
 	-- PREVENT PIXELATION
 	for i = 1, 8 do
 		render.PushFilterMag( TEXFILTER.ANISOTROPIC )
@@ -199,11 +199,11 @@ hook.Add('PostDrawTranslucentRenderables', 'ba-3d2d-p', function()
 		MsgC( Color(255,0,0), 'FAILED TO DRAW TRANSLUCENT RENDERABLES!\n');
 		print( err );
 	end
-	
+
 	render.SetViewPort(0,0,ScrW(),ScrH());
 	render.SetScissorRect(0,0,0,0,false);
 	DisableClipping( true );
-	
+
 	for i = 1, 8 do
 		render.PopFilterMag()
 		render.PopFilterMin()
@@ -211,20 +211,20 @@ hook.Add('PostDrawTranslucentRenderables', 'ba-3d2d-p', function()
 end);
 
 
-function vgui.CalcParentedOffset( _offset, angle, scale )
-	
+function vgui.CalcParentedOffset(_offset, angle, scale )
+
 	local offset = angle:Forward()*_offset.x + angle:Right()*_offset.y + angle:Up()*_offset.z;
-	
+
 	local ang = offset:Angle();
 	ang:RotateAroundAxis( ang:Right(), 90 );
 	ang:RotateAroundAxis( ang:Up(), -90 );
 	ang.r = 90
-	
+
 	return function( self, pos, _ang )
 		local campos = pos + offset;
 		return campos, ang, scale;
 	end
-	
+
 end
 
 hook.Add( 'PlayerBindPress', '3d2d', function( pl, bind, pressed )

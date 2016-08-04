@@ -13,27 +13,38 @@ is used it will be taken away from the entity's CurrentStorage table
 Money Printer Example:
 ```Lua
 ENT.ConsumesResources = {
-  ['electricity'] = 2, -- a printer consumes electricity
-  ['water'] = 1, -- if water is available a printer will cool itself
+	['electricity'] = 2, -- a printer consumes electricity
 }
+
+ENT.ConsumesResourcesAtInterval = { -- special resources that last a certain amount of time for each 'consume'
+	['gas'] = {
+		amount = 1, -- takes one gas
+		interval = 10, -- every 10 seconds
+	},
+	['water'] = {
+		amount = 1,
+		interval = 10,
+	}
+}
+
 ENT.GeneratesResources = {
-  ['heat'] = 1, -- thermal recycler can use heat to produce a bit of extra energy if you want efficiency
+	['heat'] = 1, -- thermal recycler can use heat to produce a bit of extra energy if you want efficiency
 }
 ```
 
 Gas Canister Example
 ```Lua
 function ENT:Initialize()
-  ...
-  self.CurrentStorage = {
-    ['gas'] = 100, -- 100 units of gasoline that a printer can consume
-  }
+	...
+	self.CurrentStorage = {
+		['gas'] = 100, -- 100 units of gasoline that a printer can consume
+	}
 ```
 
 # Registration
 When a resource is registered it must be registered both server side and client side.
 ```
 fw.resource.register('electricity', {
-  ...
+	...
 })
 ```

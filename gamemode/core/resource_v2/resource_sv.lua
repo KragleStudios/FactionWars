@@ -1,9 +1,29 @@
 local fw = fw
 
+local net_WriteUInt = net.WriteUInt
+local pairs = pairs
+local ipairs = ipairs
+local setmetatable = setmetatable
+
 --
 -- RESOURCE ENTITIES
 --
-local resource_entities = fw.resource.resource_entities
+local resource_entities = __FW_RESOURCE_ENTITIES or {}
+__FW_RESOURCE_ENTITIES = resource_entities
+
+function fw.resource.addEntity(ent)
+	ent.fwResources = {} -- how much of each resource they have!
+	ent.fwResourcesStatic = {} -- resources that are static or don't get cleared every update
+	ent.fwProductionUse = {} -- how much of its production is actually getting used
+	table.insert(resource_entities, ent)
+	if SERVER then
+		fw.resource.updateNetworks()
+	end
+end
+
+function fw.resource.removeEntity(ent)
+	table.RemoveByValue(resource_entities, ent)
+end
 
 --
 -- FUN WITH ALGORITHMS
@@ -23,6 +43,8 @@ local autotable_mt = {
 	}
 
 function fw.resource.updateNetworks()
+	-- local startTime = SysTime()
+
 	-- fun algorithms by thelastpenguin
 	local resTypes = fw.resource.types
 
@@ -35,6 +57,13 @@ function fw.resource.updateNetworks()
 		local union_find_counts = {}
 
 		for k, ent in pairs(resource_entities) do
+			if not IsValid(ent) then -- check that entity is valid. note that removing an entity requires this entire function to run again. it's slow. just call the right functions.
+				ErrorNoHalt("[FactionWars] had te remove invalid entity from resource_entities. This should be handled by ENT:OnRemove. Badly coded entity in use.")
+				table.remove(resource_entities, k)
+				fw.resource.updateNetworks()
+				return
+			end
+
 			union_find[ent] = ent
 			union_find_counts[ent] = 1
 		end
@@ -55,27 +84,32 @@ function fw.resource.updateNetworks()
 			if union_find_counts[root2] > union_find_counts[root1] then
 				local tmp = root2
 				root2 = root1
-				root1 = temp
+				root1 = tmp
 			end
 			union_find[root2] = root1
 			union_find_counts[root1] = union_find_counts[root1] + union_find_counts[root2]
 			union_find_counts[root2] = nil
 		end
 
+		-- local startTime2 = SysTime()
+		-- TODO: thelastpenguin implement a kdtree benchmarks show that the algorithm spends 90% of it's time in this loop
 		for k, ent1 in pairs(resource_entities) do
+			local ent1Pos = ent1:GetPos()
+			local radius2 = ent1.NETWORK_SIZE * ent1.NETWORK_SIZE
 			for k, ent2 in pairs(resource_entities) do
-        -- TODO: thelastpenguin implement a kdtree
-				if ent1:GetPos():DistToSqr(ent2:GetPos()) < (ent1.NETWORK_SIZE or 200) then
+				if ent1 ~= ent2 and ent1Pos:DistToSqr(ent2:GetPos()) < radius2 then
 					union(ent1, ent2)
 				end
 			end
 		end
+		-- print("union find in ", (SysTime() - startTime2))
 
 		for k, ent in ipairs(resource_entities) do
 			local r = root(ent)
 			local groupId = r:EntIndex()
 			if not networks[groupId] then
 				networks[groupId] = {
+					id = groupId,
 					ents = {},
 				}
 			end
@@ -87,8 +121,6 @@ function fw.resource.updateNetworks()
 	-- STEP 2: UPDATE NETWORK TOTALS
 	--
 	for k, network in pairs(networks) do
-		print("processing network")
-
 		local total_consumption = setmetatable({}, autozero_mt)
 		local total_production = setmetatable({}, autozero_mt)
 		local total_storage = setmetatable({}, autozero_mt)
@@ -99,27 +131,26 @@ function fw.resource.updateNetworks()
 
 		-- compute available resources
 		for k, ent in ipairs(network.ents) do
-			if ent.ConsumesResources then
-				print ("entity consumes resources!")
-				for type, amount in ipairs(ent.ConsumesResources) do
+			if ent.Consumes then
+				for type, amount in pairs(ent.Consumes) do
 					if resTypes[type] then
-						total_consumpiton[type] = total_consumption[type] + amount
-						availableProduction[type][ent] = amount
-					end
-				end
-			end
-
-			if ent.GeneratesResources then
-				for type, amount in ipairs(ent.GeneratesResources) do
-					if resTypes[type] then
-						total_consumpiton[type] = total_consumption[type] + amount
+						total_consumption[type] = total_consumption[type] + amount
 						desiredConsumption[type][ent] = amount
 					end
 				end
 			end
 
+			if ent.Produces and (not ent.IsActive or ent:IsActive()) then
+				for type, amount in pairs(ent.Produces) do
+					if resTypes[type] then
+						total_production[type] = total_production[type] + amount
+						availableProduction[type][ent] = amount
+					end
+				end
+			end
+
 			if ent.Storage then
-				for type, amount in ipairs(ent.CurrentStorage) do
+				for type, amount in pairs(ent.Storage) do
 					if resTypes[type] then
 						total_storage[type] = total_storage[type] + amount
 						availableStorage[type][ent] = amount
@@ -132,49 +163,48 @@ function fw.resource.updateNetworks()
 		network.totalProduction = total_production
 		network.totalStorage = total_storage
 		network.producers = availableProduction
-		network.consumers = availableConsumption
+		network.consumers = desiredConsumption
 		network.storage = availableStorage
 
 		-- clear networking for resources that are no longer available
 		for k, ent in ipairs(network.ents) do
-			print("set ent.fwNetwork", ent)
 			ent.fwNetwork = network
 			for type, _ in pairs(ent.fwResources) do
 				ent.fwResources[type] = nil
 			end
+			for type, _ in pairs(ent.fwProductionUse) do
+				ent.fwProductionUse[type] = nil
+			end
 		end
 
-		-- update networking with new and improved values
-		for type, producers in pairs(availableProduction) do
-			local consumers = desiredConsumption[type]
-			if consumers then
-				local currentProducer, canProduce = next(producers, nil)
-
-				for ent, wanted in pairs(consumers) do
-					local amount = wanted
-					repeat
-						if canProduce < amount then
-							amount = amount - canProduce
-							currentProducer, canProduce = next(producers, currentProducer)
-						else
-							canProduce = canProduce - amount
-							amount = 0
-						end
-					until amount == 0 or not currentProducer
-
-					if amount == 0 then
-						consumers[ent] = nil
+		for type, consumers in pairs(desiredConsumption) do
+			local producers = availableProduction[type]
+			local currentProducer, canProduce = next(producers, nil)
+			if currentProducer then currentProducer.fwProductionUse[type] = 0 end
+			for ent, wanted in pairs(consumers) do
+				local amount = wanted
+				while currentProducer and amount > 0 do
+					if canProduce < amount then
+						amount = amount - canProduce
+						currentProducer.fwProductionUse[type] = curentProducer.Produces[type]
+						currentProducer, canProduce = next(producers, currentProducer)
 					else
-						consumers[ent] = amount
-						break
+						canProduce = canProduce - amount
+						amount = 0
 					end
-
-					ent.fwResources[type] = wanted - amount
 				end
+
+				if ent.fwResources[type] ~= (wanted - amount) then
+					ent.fwResources[type] = (wanted - amount)
+				end
+			end
+			if currentProducer then
+				currentProducer.fwProductionUse[type] = currentProducer.Produces[type] - canProduce
 			end
 		end
 	end
-	PrintTable(networks)
+
+	-- print("updated resources took " .. (SysTime() - startTime))
 end
 
 local Entity = FindMetaTable('Entity')
@@ -182,47 +212,43 @@ local Entity = FindMetaTable('Entity')
 -- Pass it the typeid of the resource and the amount to use
 --
 function Entity:ConsumeResource(type, amount)
-	if not self.fwNetwork or not self.fwConsumption then
+	if not self.fwNetwork or not self.fwResourcesStatic then
 		error("[ent] No resource network")
+	end
+
+	-- validate that there is storage available and there is something in the table
+	local storage = self.fwNetwork.storage[type]
+	if not storage then
+		self.fwResourcesStatic[type] = 0
+		return false, 0
+	end
+	local currentStore, available = next(storage, nil) -- this check might not be necessary but it is robust
+	if not currentStore then
+		self.fwResourcesStatic[type] = 0
+		return false, 0
 	end
 
 	local desiredAmount = amount -- the original amount
 
-	local storage = self.fwNetwork.producers[type]
-
-	if not storage then return false, 0 end
-	local currentStore, available = next(storage, nil)
-	if not currentStore then return false, 0 end
-
 	repeat
 		if available < amount then
 			amount = amount - available
-			currentStore.CurrentStorage[type] = 0
+			currentStore.Storage[type] = 0
 			storage[type][currentStore] = nil
 			currentStore, available = next(storage, currentStore)
 		else
-			currentStore.CurrentStorage[type] = currentStore.CurrentStorage[type] - amount
+			currentStore.Storage[type] = currentStore.Storage[type] - amount
 			amount = 0
 		end
 	until amount == 0 or not currentStore
 
-	self.fwConsumption[type] = desiredAmount - amount
+	self.fwResourcesStatic[type] = desiredAmount - amount
 
 	if amount == 0 then
 		return true, desiredAmount
 	else
 		return false, desiredAmount - amount
 	end
-end
-
---
--- Pass it the typeid of the resource
---
-function Entity:GetResourceLevel(type)
-	if not self.fwResources then
-		error '[ent] no resource network'
-	end
-	return self.fwResources[type]
 end
 
 --
@@ -236,32 +262,38 @@ end)
 --
 -- NETWORKING RESOURCE INFORMATION
 --
-local net_WriteUInt = net.WriteUInt
-util.AddNetworkString('fw.resource.getInfo')
-net.Receive('fw.resource.getInfo', function(_, pl)
+util.AddNetworkString('fw.resource.syncInfo')
+function fw.resource.sendEntityResourceInfo(ent, players)
+	if not ent.Resources or not ent.fwResources or not ent.fwNetwork then return end
 	local types = fw.resource.types
 
-	local ent = net.ReadEntity()
-	if not ent.fwResources or not ent.fwNetwork then return end
-
-	net_WriteUInt(#ent.fwNetwork.ents, 12)
-
 	-- confusingish binary networking! yay
-	local function helpWriteStatistics(table)
+	local function helpWriteStatistics(table, precision)
 		for type, statistic in pairs(table) do
 			local id = types[type].id
+			if not id then continue end
 			net_WriteUInt(id, 8)
-			net_WriteUInt(statistic, 24)
+			net_WriteUInt(statistic, precision)
 		end
 		net_WriteUInt(0, 8) -- the 0 id signals networking is over
 	end
 
 	-- write the statistics tables!
-	net.Start('fw.resource.getInfo')
-		helpWriteStatistics(ent.fwNetwork.totalProduction)
-		helpWriteStatistics(ent.fwNetwork.totalConsumption)
-		helpWriteStatistics(ent.fwNetwork.totalStorage)
-		helpWriteStatistics(ent.fwConsumption)
-		helpWriteStatistics(ent.fwResources)
-	net.Send(pl)
+	net.Start('fw.resource.syncInfo')
+		net_WriteUInt(#ent.fwNetwork.ents, 16)
+		helpWriteStatistics(ent.fwNetwork.totalProduction, 12)
+		helpWriteStatistics(ent.fwNetwork.totalConsumption, 12)
+		helpWriteStatistics(ent.fwNetwork.totalStorage, 12)
+		helpWriteStatistics(ent.Produces or {}, 12)
+		helpWriteStatistics(ent.Consumes or {}, 12)
+		helpWriteStatistics(ent.Storage or {}, 12)
+		helpWriteStatistics(ent.fwProductionUse, 12)
+		helpWriteStatistics(ent.fwResourcesStatic, 12)
+		helpWriteStatistics(ent.fwResources, 12)
+	net.Send(players or player.GetAll())
+end
+
+net.Receive('fw.resource.syncInfo', function(_, pl)
+	local ent = net.ReadEntity()
+	fw.resource.sendEntityResourceInfo(ent, pl)
 end)

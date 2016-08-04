@@ -2,7 +2,15 @@ if SERVER then
 	AddCSLuaFile()
 end
 
+-- require external libraries
 require 'ra'
+
+-- require internal libraries
+fw.dep(SHARED, 'hook')
+fw.dep(CLIENT, '3d2d')
+fw.dep(CLIENT, 'ui')
+
+-- core shared function definitions
 
 fw.resource = fw.resource or {}
 
@@ -22,19 +30,8 @@ function fw.resource.getIdByStringName(stringName)
 	return fw.resource.typeById[stringName].id
 end
 
-function fw.resource.resourceEntity(ent)
-	ent.fwResources = {}
-	ent.fwConsumption = {} -- special resources that are consumed using :ConsumeResource
-	table.insert(resource_entities, ent)
-	if SERVER then
-		fw.resource.updateNetworks()
-	end
-end
-
-function fw.resource.removeEntity(ent)
-	table.RemoveByValue(resource_entities, ent)
-end
-
+-- code too big to reasonably put here
 ra.include_sv 'resource_sv.lua'
 ra.include_cl 'resource_cl.lua'
+ra.include_cl 'display_cl.lua'
 ra.include_sh 'def_resources.lua'

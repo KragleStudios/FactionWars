@@ -17,7 +17,6 @@ fw.dep(SHARED, 'utils')
 -- proper include system
 fw.include_sh 'groups_sh.lua'
 fw.include_sv 'groups_sv.lua'
-fw.include_cl 'groups_cl.lua'
 
 -- should really be placed somewhere else
 fw.include_sh 'groups.lua'
