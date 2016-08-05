@@ -8,6 +8,9 @@ local setmetatable = setmetatable
 --
 -- RESOURCE ENTITIES
 --
+ndoc.table.fwEntityResources = ndoc.table.fwEntityResources or {}
+
+
 local resource_entities = __FW_RESOURCE_ENTITIES or {}
 __FW_RESOURCE_ENTITIES = resource_entities
 
@@ -16,12 +19,21 @@ function fw.resource.addEntity(ent)
 	ent.fwResourcesStatic = {} -- resources that are static or don't get cleared every update
 	ent.fwProductionUse = {} -- how much of its production is actually getting used
 	table.insert(resource_entities, ent)
+
+	ndoc.table.fwEntityResources[ent:EntIndex()] = {
+		haveResources = {}, -- how much of each resource it has
+		amProducing = {}, -- how much of each resource it produces
+		amStoring = {}, -- how much of each resource it stores
+		productionBeingUsed = {}, -- how much of what it produces gets used
+	}
+
 	if SERVER then
 		fw.resource.updateNetworks()
 	end
 end
 
 function fw.resource.removeEntity(ent)
+	ndoc.table.fwEntityResources[ent:EntIndex()] = nil
 	table.RemoveByValue(resource_entities, ent)
 end
 
@@ -204,7 +216,28 @@ function fw.resource.updateNetworks()
 		end
 	end
 
-	-- print("updated resources took " .. (SysTime() - startTime))
+	--
+	-- UPDATE THE NETDOC TABLE
+	--
+	local function syncupTables(mytable, netdocTable)
+		for k,v in pairs(mytable) do
+			if netdocTable[k] ~= v then
+				netdocTable[k] = v
+			end
+		end
+	end
+
+	local noTbl = {}
+	for k, ent in ipairs(resource_entities) do
+		local ntable = ndoc.table.fwEntityResources[ent:EntIndex()]
+		syncupTables(ent.Produces or noTbl, ntable.amProducing)
+		syncupTables(ent.fwProductionUse or noTbl, ntable.productionBeingUsed)
+		syncupTables(ent.Storage or noTbl, ntable.amStoring)
+
+		syncupTables(ent.fwResources or noTbl, ntable.haveResources, true)
+		syncupTables(ent.fwResourcesStatic or noTbl, ntable.haveResources, true) -- no delete since it gets merged with the rest of 'have resources'
+	end
+
 end
 
 local Entity = FindMetaTable('Entity')
@@ -230,17 +263,24 @@ function Entity:ConsumeResource(type, amount)
 
 	local desiredAmount = amount -- the original amount
 
-	repeat
-		if available < amount then
-			amount = amount - available
-			currentStore.Storage[type] = 0
-			storage[type][currentStore] = nil
-			currentStore, available = next(storage, currentStore)
-		else
-			currentStore.Storage[type] = currentStore.Storage[type] - amount
-			amount = 0
+	for currentStore, available in pairs(storage) do
+		if IsValid(currentStore) then
+			if available >= amount then
+				currentStore.Storage[type] = currentStore.Storage[type] - amount
+				storage[currentStore] = storage[currentStore] - amount
+				if storage[currentStore] == 0 then
+					storage[currentStore] = nil
+				end
+
+				amount = 0
+				break
+			else
+				amount = amount - available
+				currentStore.Storage[type] = 0
+				storage[currentStore] = nil
+			end
 		end
-	until amount == 0 or not currentStore
+	end
 
 	self.fwResourcesStatic[type] = desiredAmount - amount
 
@@ -256,44 +296,4 @@ end
 --
 timer.Create('fw.resourceNetwork.update', fw.config.resourceNetworkUpdateInterval, 0, function()
 	fw.resource.updateNetworks()
-end)
-
-
---
--- NETWORKING RESOURCE INFORMATION
---
-util.AddNetworkString('fw.resource.syncInfo')
-function fw.resource.sendEntityResourceInfo(ent, players)
-	if not ent.Resources or not ent.fwResources or not ent.fwNetwork then return end
-	local types = fw.resource.types
-
-	-- confusingish binary networking! yay
-	local function helpWriteStatistics(table, precision)
-		for type, statistic in pairs(table) do
-			local id = types[type].id
-			if not id then continue end
-			net_WriteUInt(id, 8)
-			net_WriteUInt(statistic, precision)
-		end
-		net_WriteUInt(0, 8) -- the 0 id signals networking is over
-	end
-
-	-- write the statistics tables!
-	net.Start('fw.resource.syncInfo')
-		net_WriteUInt(#ent.fwNetwork.ents, 16)
-		helpWriteStatistics(ent.fwNetwork.totalProduction, 12)
-		helpWriteStatistics(ent.fwNetwork.totalConsumption, 12)
-		helpWriteStatistics(ent.fwNetwork.totalStorage, 12)
-		helpWriteStatistics(ent.Produces or {}, 12)
-		helpWriteStatistics(ent.Consumes or {}, 12)
-		helpWriteStatistics(ent.Storage or {}, 12)
-		helpWriteStatistics(ent.fwProductionUse, 12)
-		helpWriteStatistics(ent.fwResourcesStatic, 12)
-		helpWriteStatistics(ent.fwResources, 12)
-	net.Send(players or player.GetAll())
-end
-
-net.Receive('fw.resource.syncInfo', function(_, pl)
-	local ent = net.ReadEntity()
-	fw.resource.sendEntityResourceInfo(ent, pl)
 end)

@@ -9,11 +9,11 @@ local invItemID = 1
 function fw.ents.buyItem(ply, item_index)
 	local canjoin, msg = fw.ents.canPlayerBuyItem(ply, item_index)
 
-	if (not canjoin) then 
+	if (not canjoin) then
 		if (msg) then
 			ply:FWChatPrintError(msg)
 		end
-		return 
+		return
 	end
 
 	local item = fw.ents.item_list[item_index]
@@ -22,10 +22,10 @@ function fw.ents.buyItem(ply, item_index)
 	ply.maxItems = ply.maxItems or {}
 	if (ply.maxItems[item.entity] and item.max and item.max != 0 and ply.maxItems[item.entity] + 1 > item.max) then
 		ply:FWChatPrintError("You already have the max of this entity!")
-		return 
+		return
 	end
 
-	if (not slot) then 
+	if (not slot) then
 		ply:FWChatPrintError("Your inventory is full, so you your item will be spawned instead!")
 	elseif (item.storable) then
 		local data = item.shipment and {itemIndex = item_index, invID = invItemID, remaining = item.shipmentCount} or {itemIndex = item_index, invID = invItemID}
@@ -33,7 +33,7 @@ function fw.ents.buyItem(ply, item_index)
 	end
 
 	ply.maxItems[item.entity] = ply.maxItems[item.entity] and ply.maxItems[item.entity] + 1 or 1
-	
+
 	if (not item.storable or not slot) then
 		local trace = {}
         trace.start = ply:EyePos()
@@ -76,9 +76,9 @@ function fw.ents.buyItem(ply, item_index)
 end
 
 fw.hook.Add("EntityRemoved", "AdjustItemCount", function(ent)
-	local own = ent:GetNWEntity("owner") 
+	local own = ent:GetNWEntity("owner")
 	local class = ent:GetClass()
-	
+
 	if (IsValid(own) and own.maxItems[class]) then
 		own.maxItems[class] = own.maxItems[class] and own.maxItems[class] - 1 or nil
 	end
@@ -99,7 +99,7 @@ net.Receive("fw.dropItem", function(_, ply)
 	if (not item) then return end
 	local canRemove, msg = fw.inv.canRemoveItem(ply, item)
 
-	if (msg) then 
+	if (msg) then
 		ply:FWChatPrint(Color(0, 0, 0), "[Inventory]: ", Color(255, 255, 255), msg or "You can't do this!")
 		return
 	end
@@ -126,8 +126,6 @@ net.Receive("fw.dropItem", function(_, ply)
 		ent:setShipmentAmount(ndoc.table.items[ply].inventory.slots[pos].remaining)
 		ent:setName(name)
 	end
-
-	
 
 	fw.inv.removeItem(ply, pos)
 end)
@@ -179,7 +177,7 @@ function fw.inv.addItem(ply, ent)
 	for k,v in pairs(fw.ents.item_list) do
 		if v.shipment and isShipment and (ent:GetEnt() == v.entity) then
 			item = v
-			index = k		
+			index = k
 		elseif (v.entity == ent:GetClass() and not v.shipment) then
 			item = v
 			index = k
@@ -217,7 +215,7 @@ fw.hook.Add("KeyPress", "Pickup items", function(ply, key)
 		if (tr.Hit and tr.Entity and ply:EyePos():DistToSqr(tr.HitPos) <= dis * dis) then
 			fw.inv.addItem(ply, tr.Entity)
 		end
-		
+
 		ply.in_shift = false
 	end
 end)
@@ -259,7 +257,7 @@ fw.hook.Add("PlayerDisconnected", "RemoveSpareItems", function(ply)
 		for k,v in pairs(ents.GetAll()) do
 			if (v.owner and (v.owner == ply) and (v.stringID and fw.ents.item_list[v.stringID].removeOnDisc)) then
 				v:Remove()
-			end 
+			end
 		end
 	end)
 end)

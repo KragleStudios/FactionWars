@@ -12,13 +12,12 @@ function ENT:Initialize()
 	self:SetAngles(Angle(0, 0, 0))
 	self:DropToFloor()
 
-	local l = self:GetPhysicsObject()
-	if l and l:IsValid() then
-		l:EnableMotion(false)
+	local phys = self:GetPhysicsObject()
+	if phys and phys:IsValid() then
+		phys:EnableMotion(false)
 	end
 
 	self:SetUseType(SIMPLE_USE)
-
 	self:SetHealt(self.Healt)
 end
 
@@ -28,37 +27,12 @@ function ENT:Think()
 	self:SetAngles(Angle(0, 0, 0))
 end
 
-function ENT:Health()
-	return self:GetHealt()
-end
-
-function ENT:SetHealth(amt)
-	self:SetHealt(amt)
-end
-
-function ENT:OnTakeDamage(dmg)
-	local dmg = dmg:GetDamage()
-	local cur = self:GetHealt()
-
-	if (cur - dmg <= 0) then
-		self:Remove()
-
-		local effect = EffectData()
-		effect:SetOrigin(self:GetPos())
-		util.Effect("Explosion", effect)
-
-		return
-	end
-
-	self:SetHealt(cur - dmg)
-end
-
-fw.hook.Add("PlayerSpawn", "SpawnatSpawnPoint", function(ply)
+fw.hook.Add("PlayerSpawn", "SpawnAtSpawnPoint", function(ply)
 	local sp = ply:GetNWEntity("spawn_point")
 
 	if (sp and IsValid(sp)) then
 		ply:SetPos(sp:GetPos())
-		
+
 		ply:FWChatPrint("You have been respawned at your respawn point!")
 
 		sp:Remove()

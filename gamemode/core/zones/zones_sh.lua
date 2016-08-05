@@ -1,14 +1,14 @@
-local math = math 
-local net = net 
-local mesh = mesh 
-local ra = ra 
+local math = math
+local net = net
+local mesh = mesh
+local ra = ra
 
 fw.zone.zoneList = {}
 fw.zone.points = ra.ds.newRBTree()
 
--- 
+--
 -- POINTS SYSTEM
--- 
+--
 function fw.zone.registerPoint(p)
 	fw.zone.points:insert(p)
 	return p
@@ -16,20 +16,20 @@ end
 
 function fw.zone.getPoint(p)
 	return fw.zone.points:find(p) or fw.zone.registerPoint(p)
-end 
+end
 
 
 --
 -- CREATE ZONE META OBJECT
--- 
+--
 local zone_mt = {}
 zone_mt.__index = zone_mt
 
 function zone_mt:ctor(id, name, polygon)
-	self.maxX = -math.huge 
-	self.minX = math.huge 
+	self.maxX = -math.huge
+	self.minX = math.huge
 	self.maxY = -math.huge
-	self.minY = math.huge 
+	self.minY = math.huge
 
 	self.id = id
 	self.name = name or 'unnamed'
@@ -51,18 +51,18 @@ function zone_mt:ctor(id, name, polygon)
 		self.center[1] = self.center[1] + v[1]
 		self.center[2] = self.center[2] + v[2]
 		if v[1] > self.maxX then self.maxX = v[1] end
-		if v[1] < self.minX then self.minX = v[1] end 
+		if v[1] < self.minX then self.minX = v[1] end
 		if v[2] > self.maxY then self.maxY = v[2] end
 		if v[2] < self.minY then self.minY = v[2] end
 	end
 
 	-- compute center and radius
-	self.center[1] = self.center[1] / #self.polygon 
+	self.center[1] = self.center[1] / #self.polygon
 	self.center[2] = self.center[2] / #self.polygon
 	self.radius = math.sqrt((self.maxX - self.minX) * (self.maxX - self.minX) + (self.maxY - self.minY) * (self.maxY - self.minY))
 
 	-- setup rendering code
-	if CLIENT then 
+	if CLIENT then
 		self:setupRendering()
 	end
 
@@ -79,7 +79,7 @@ function zone_mt:send()
 		net.WriteInt(v[2], 32)
 	end
 
-	return self 
+	return self
 end
 
 function zone_mt:receive()
@@ -93,17 +93,17 @@ function zone_mt:receive()
 
 	self:ctor(id, name, polygon)
 
-	return self 
+	return self
 end
 
 function zone_mt:isPointInZone(x, y)
 	if x >= self.maxX or x < self.minX or y >= self.maxY or y < self.minY then return false end
-	
+
 	for k,v in ipairs(self.triangles) do
-		if v:isPointInside(x, y) then return true end 
+		if v:isPointInside(x, y) then return true end
 	end
 
-	return false 
+	return false
 end
 
 -- writes a zone to a file
@@ -133,7 +133,7 @@ end
 
 -- geometric algorithms
 function zone_mt:getPointsInsetByAmount(inset)
-	local polygon = self.polygon 
+	local polygon = self.polygon
 
 	local edges = {}
 	local last = polygon[#polygon]
@@ -155,7 +155,7 @@ function zone_mt:getPointsInsetByAmount(inset)
 	for i = 2, #edges + 1 do
 
 		local didIntersect, x, y = e1:intersectWith(e2, true) -- true indicates it should ignore the length
-		if didIntersect then 
+		if didIntersect then
 			e1[2][1] = x
 			e1[2][2] = y
 			e2[1][1] = x
@@ -163,7 +163,7 @@ function zone_mt:getPointsInsetByAmount(inset)
 		end
 
 		local didIntersect, x, y = e2:intersectWith(e3, true) -- true indicates that it should ignore the length
-		if didIntersect then 
+		if didIntersect then
 			e2[2][1] = x
 			e2[2][2] = y
 			e3[1][1] = x
@@ -171,7 +171,7 @@ function zone_mt:getPointsInsetByAmount(inset)
 		end
 
 		e1 = e2
-		e2 = e3 
+		e2 = e3
 		e3 = edges[i]
 	end
 
@@ -185,7 +185,7 @@ end
 
 --
 -- RENDERING ALGORITHMS
--- 
+--
 function zone_mt:setupRendering(color)
 	if self._rendermesh then
 		self._rendermesh:Destroy()
@@ -217,11 +217,11 @@ function zone_mt:setupRendering(color)
 		mesh.Color(color.r, color.g, color.b, color.a)
 		mesh.AdvanceVertex()
 
-		mesh.Position(Vector(inner[1], inner[2], 1000))
+		mesh.Position(Vector(inner[1], inner[2], 0))
 		mesh.Color(color.r, color.g, color.b, color.a)
 		mesh.AdvanceVertex()
 
-		mesh.Position(Vector(last_inner[1], last_inner[2], 1000))
+		mesh.Position(Vector(last_inner[1], last_inner[2], 0))
 		mesh.Color(color.r, color.g, color.b, color.a)
 		mesh.AdvanceVertex()
 
@@ -245,7 +245,7 @@ function zone_mt:render(z_offset, color)
 
 	local matrix = Matrix()
 	matrix:SetTranslation(Vector(0, 0, z_offset or 0))
-	cam.PushModelMatrix(matrix)	
+	cam.PushModelMatrix(matrix)
 	render.SetColorMaterial()
 	self._rendermesh:Draw()
 	cam.PopModelMatrix()
@@ -258,23 +258,23 @@ end
 -- get a new unused zone id
 function fw.zone.getUnusedZoneId()
 	local zoneId = nil
-	
-	repeat 
+
+	repeat
 		zoneId = math.random(1, 99999999)
 	until not fw.zone.zoneList[zoneId]
 
 	return zoneId
-end	
+end
 
 --
 -- SAVE /LOAD ZONE FROM FILE
 --
 
-local zoneFileCRC32 = nil 
+local zoneFileCRC32 = nil
 local filename = fw.zone.zoneDataDir .. game.GetMap() .. '.dat'
 
 function fw.zone.getSaveFileName()
-	return filename -- since it's binary 
+	return filename -- since it's binary
 end
 
 function fw.zone.createZonesBackup()
@@ -337,7 +337,7 @@ end
 
 --returns the faction controlling a zone
 function fw.zone.getControllingFaction(zone)
-	return ndoc.table.zones[zone.id] and ndoc.table.zones[zone.id].controlling 
+	return ndoc.table.zones[zone.id] and ndoc.table.zones[zone.id].controlling
 end
 
 --returns the factiont trying to capture a zone
@@ -347,8 +347,8 @@ function fw.zone.getContestingFaction(zone)
 	if (not contestingData) then return end
 
 	local faction = fw.team.factions[contestingData.factionID]
-	
-	return faction	
+
+	return faction
 end
 
 --returns a tree structure like

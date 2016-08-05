@@ -30,8 +30,17 @@ function fw.resource.getIdByStringName(stringName)
 	return fw.resource.typeById[stringName].id
 end
 
+
+--
+-- META METHODS
+--
+local Entity = FindMetaTable('Entity')
+function Entity:FWGetResourceInfo()
+	if not ndoc.table.fwEntityResources then return end
+	return ndoc.table.fwEntityResources[self:EntIndex()]
+end
+
 -- code too big to reasonably put here
 ra.include_sv 'resource_sv.lua'
-ra.include_cl 'resource_cl.lua'
 ra.include_cl 'display_cl.lua'
 ra.include_sh 'def_resources.lua'

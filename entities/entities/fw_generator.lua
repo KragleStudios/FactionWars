@@ -9,11 +9,11 @@ ENT.Category        = "Faction Wars"
 
 ENT.NETWORK_SIZE = 500
 ENT.Resources = true
-ENT.Produces = {
-	["power"] = 5
-}
 ENT.MaxProduction = {
 	["power"] = 5
+}
+ENT.MaxConsumption = {
+	["gas"] = 1,
 }
 
 ENT.Spawnable = true
@@ -34,22 +34,22 @@ if SERVER then
 
 		fw.resource.addEntity(self)
 
-		self.Produces = {
-			['power'] = 5
-		}
-
-		timer.Create('generator-' .. self:EntIndex(), 1, 0, function()
+		local function consumeResources()
+			if not IsValid(self) then return end
 			local succ = self:ConsumeResource('gas', 1)
 			if succ then
 				self.Produces = {
 					['power'] = 5,
 				}
+				timer.Simple(30, consumeResources)
 			else
 				self.Produces = {
 					['power'] = 0,
 				}
+				timer.Simple(5, consumeResources)
 			end
-		end)
+		end
+		consumeResources()
 	end
 
 	function ENT:Think()

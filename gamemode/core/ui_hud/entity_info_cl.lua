@@ -7,10 +7,10 @@ vgui.Register('FWHUDEntityInfo', {
 	end,
 
 	SetEntity = function(self, entity)
-		self._entity = entity 
+		self._entity = entity
 
-		-- TODO: make entity health update 
-		if entity:getHealth() then 
+		-- TODO: make entity health update
+		if entity:getHealth() then
 			self:GetTop():Add(vgui.Create('FWUITableViewItem'):SetText('HEALTH: ' .. entity:getHealth() .. '/' .. entity:getMaxHealth()))
 		end
 
@@ -29,12 +29,12 @@ vgui.Register('FWHUDEntityInfo', {
 
 	PushPanel = function(self, panel)
 		table.insert(self.panelStack, panel)
-		return panel 
+		return panel
 	end,
 
 	EndPanel = function(self)
 		self.panelStack[#self.panelStack]:PerformLayout()
-		self.panelStack[#self.panelStack] = nil 
+		self.panelStack[#self.panelStack] = nil
 	end,
 
 	GetTop = function(self)
@@ -52,21 +52,21 @@ vgui.Register('FWHUDEntityInfo', {
 
 if IsValid(__FWHUD_ENTITYINFO) then
 	__FWHUD_ENTITYINFO:Remove()
-end 
+end
 
 fw.hook.Add('PreRender', 'fw.hud.entityInfo', function()
-	local ent = LocalPlayer():GetEyeTrace().Entity 
-	
+	local ent = LocalPlayer():GetEyeTrace().Entity
+
 	if IsValid(__FWHUD_ENTITYINFO) then
-		if __FWHUD_ENTITYINFO._entity ~= ent then 
+		if __FWHUD_ENTITYINFO._entity ~= ent then
 			__FWHUD_ENTITYINFO:Remove()
-		else 
-			return 
-		end 
+		else
+			return
+		end
 	end
 
 	if IsValid(ent) then
-		
+
 		__FWHUD_ENTITYINFO = vgui.Create('FWHUDEntityInfo')
 		__FWHUD_ENTITYINFO:SetEntity(ent)
 		__FWHUD_ENTITYINFO:PerformLayout()
@@ -74,8 +74,8 @@ fw.hook.Add('PreRender', 'fw.hud.entityInfo', function()
 	end
 
 	if not IsValid(ent) then
-		if IsValid(__FWHUD_ENTITYINFO) then 
-		end 
+		if IsValid(__FWHUD_ENTITYINFO) then
+		end
 	end
 
 end)

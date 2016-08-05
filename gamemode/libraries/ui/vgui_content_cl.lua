@@ -6,7 +6,7 @@ vgui.Register('FWUIPanel', {
 	isFWUIPanel = function() end,
 
 	Paint = function(self, w, h)
-		if not self._noBackground then 
+		if not self._noBackground then
 			surface.SetDrawColor(self._panelBg or panelBg)
 			surface.DrawRect(0, 0, w, h)
 		end
@@ -16,7 +16,7 @@ vgui.Register('FWUIPanel', {
 			surface.DrawRect(1, 1, w - 2, h - 2)
 		end
 
-		if not self._noOutline then 
+		if not self._noOutline then
 			surface.SetDrawColor(0, 0, 0, 50)
 			surface.DrawOutlinedRect(0, 0, w, h)
 			surface.SetDrawColor(255, 255, 255, 5)
@@ -43,8 +43,8 @@ vgui.Register('FWUIPanel', {
 
 		if count > 5 then count = 5 end
 		self._panelBg = Color(
-			panelBg.r + count * lightenRate, 
-			panelBg.g + count * lightenRate, 
+			panelBg.r + count * lightenRate,
+			panelBg.g + count * lightenRate,
 			panelBg.b + count * lightenRate
 		)
 	end,
@@ -58,14 +58,14 @@ vgui.Register('FWUIPanel', {
 	end,
 
 	SetBackgroundTint = function(self, tint, intensity)
-		if tint == nil then 
-			self._bgTint = nil 
-			return self 
+		if tint == nil then
+			self._bgTint = nil
+			return self
 		end
 
 		self._bgTint = Color(tint.r, tint.g, tint.b, intensity or 40)
 
-		return self 
+		return self
 	end,
 }, 'STYPanel')
 
@@ -83,11 +83,11 @@ vgui.Register('FWUIButton', {
 	end,
 
 	SetNoOutline = function(self, bOutline)
-		self._noOutline = bOutline 
+		self._noOutline = bOutline
 	end,
 
 	SetNoBackground = function(self, bBackground)
-		self._noBackground = bBackground 
+		self._noBackground = bBackground
 	end,
 
 	PerformLayout = function(self)
@@ -96,22 +96,22 @@ vgui.Register('FWUIButton', {
 
 	-- KEY = normal or hovered or pressed
 	SetBackgroundTint = function(self, key, tint, intensity)
-		if tint == nil then 
-			self._bgTint[key] = nil 
-			return self 
+		if tint == nil then
+			self._bgTint[key] = nil
+			return self
 		end
 
 		self._bgTint[key] = Color(
-			tint.r, 
-			tint.g, 
-			tint.b, 
+			tint.r,
+			tint.g,
+			tint.b,
 			intensity or 100)
 
-		return self 
+		return self
 	end,
 
 	PaintBackground= function(self, w, h)
-		if not self._noBackground then 
+		if not self._noBackground then
 			surface.SetDrawColor(panelBg)
 			surface.DrawRect(0, 0, w, h)
 		end
@@ -145,7 +145,7 @@ vgui.Register('FWUIButton', {
 	end,
 
 	PaintOver = function(self, w, h)
-		if not self._noOutline then 
+		if not self._noOutline then
 			surface.SetDrawColor(255, 255, 255, 5)
 			surface.DrawOutlinedRect(0, 0, w, h)
 			surface.SetDrawColor(255, 255, 255, 10)
@@ -177,7 +177,7 @@ vgui.Register('FWUIFrame', {
 					self:GetParent():SetPos(x - xoffset, y - yoffset)
 				else
 					self:SetBackgroundTint(color_black, 200)
-					self.Think = ra.util.noop 
+					self.Think = ra.util.noop
 				end
 			end
 		end
@@ -224,7 +224,7 @@ vgui.Register('FWUIFrame', {
 			:SetFont(
 				fw.fonts.default:fitToView(
 					self._titleBar,
-					sty.ScreenScale(1), 
+					sty.ScreenScale(1),
 					self._titleBar._titleLabel:GetText()))
 			:SizeToContents()
 			:SetX(sty.ScreenScale(5))
@@ -256,7 +256,7 @@ vgui.Register('FWUITextBox', {
 		self._label = Label('', self)
 		self:SetFont(fw.fonts.default)
 		self:SetInset(0)
-		self._align = fw.ui.LEFT 
+		self._align = fw.ui.LEFT
 	end,
 
 	SetAlign = function(self, align)
@@ -270,23 +270,23 @@ vgui.Register('FWUITextBox', {
 				align = fw.ui.CENTER
 			end
 		end
-		self._align = align 
+		self._align = align
 	end,
 
 	SetText = function(self, title)
 		self._label:SetText(title)
-	end, 
+	end,
 
 	SetColor = function(self, color)
 		self._label:SetColor(color)
 	end,
 
 	SetInset = function(self, nInset)
-		self._inset = nInset 
+		self._inset = nInset
 	end,
 
 	SetFont = function(self, font)
-		self._font = font 
+		self._font = font
 	end,
 
 	PerformLayout = function(self)
@@ -294,10 +294,10 @@ vgui.Register('FWUITextBox', {
 		self._label:SizeToContents()
 
 		if self._align == fw.ui.LEFT then
-			self._label:SetX(0)
+			self._label:SetX(self._inset)
 			self._label:CenterVertical()
 		elseif self._align == fw.ui.RIGHT then
-			self._label:SetX(self:GetWide() - self._label:GetWide())
+			self._label:SetX(self:GetWide() - self._label:GetWide() - self._inset)
 			self._label:CenterVertical()
 		elseif self._align == fw.ui.CENTER then
 			self._label:Center()

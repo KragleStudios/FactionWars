@@ -1,120 +1,170 @@
 local debugEntityPaintPosition = false -- toggles drawing sphere at the aim entity's paint position
 
+if IsValid(_FW_RESOURCE_PANEL) then
+	_FW_RESOURCE_PANEL:Remove()
+end
 
-local function paintEntityResources(entity, alpha)
+local function paintEntityResources(entity, info)
 	local types = fw.resource.types
+	if not entity.GetDisplayPosition then error("ENTITY MUST DEFINE ENTITY:GetDisplayPosition IF IT IS A RESOURCE ENTITY") end
 
-	if not entity._fw_lastSync or (CurTime() - entity._fw_lastSync) > fw.config.resourceSyncInterval then
-		fw.print("requesting a sync from the server")
-		fw.resource.fetchEntityStatsFromServer(entity)
-		entity._fw_lastSync = CurTime()
+	local panel = vgui.Create('STYLayoutVertical')
+	_FW_RESOURCE_PANEL = panel
+
+	panel.CalcLocation = function()
+		local pos, ang, scale = entity:GetDisplayPosition()
+		pos = entity:LocalToWorld(pos)
+		ang = entity:LocalToWorldAngles(ang)
+		return pos, ang, scale
 	end
 
-	if not IsValid(entity._fw_panel) then
-		local panel = vgui.Create('STYLayoutVertical')
-		entity._fw_panel = panel
-		panel.CalcLocation = function()
-			local pos, ang, scale = entity:GetDisplayPosition()
-			pos = entity:LocalToWorld(pos)
-			ang = entity:LocalToWorldAngles(ang)
-			return pos, ang, scale
+	panel:SetWide(200)
+	panel:SetPadding(2)
+
+	--
+	-- HELPERS
+	--
+	local function addHeader(titleText)
+		local textBox = vgui.Create('FWUITextBox', panel)
+		textBox:SetText(titleText)
+		textBox:SetTall(18)
+		textBox:SetAlign('center')
+		textBox.Paint = function(self, w, h)
+			surface.SetDrawColor(0, 0, 0, 220)
+			surface.DrawRect(0, 0, w, h)
+		end
+	end
+
+	local ROW_HEIGHT = 18
+
+	local function addResourceRow(resource, amount, usage, outof)
+		if type(resource) == 'string' then
+			resource = types[resource]
+			if not resource then return end
 		end
 
-		panel:SetWide(200)
-		panel:SetPadding(2)
+		local row = vgui.Create('STYPanel', panel)
+		row:SetTall(ROW_HEIGHT)
 
-		panel.Think = function()
-			if LocalPlayer():GetEyeTrace().Entity ~= entity then
-				panel:Remove()
-			end
+		local bar = vgui.Create('STYPanel', row)
+		bar:Dock(FILL)
+
+		local segmentWidth = 0
+		bar.PerformLayout = function()
+			local w = bar:GetWide()
+			segmentWidth = (w + 1) / math.max(outof, 5)
 		end
-
-		--
-		-- HELPERS
-		--
-		local function addHeader(titleText)
-			local textBox = vgui.Create('FWUITextBox', panel)
-			textBox:SetText('PRODUCTION')
-			textBox:SetTall(20)
-			textBox:SetAlign('center')
-			textBox.Paint = function(self, w, h)
-				surface.SetDrawColor(0, 0, 0, 220)
-				surface.DrawRect(0, 0, w, h)
-			end
-		end
-
-		local function addResourceRow(resource, amount, outof)
-			if type(resource) == 'string' then
-				resource = types[resource]
-				if not resource then return end
-			end
-
-			local row = vgui.Create('STYPanel', panel)
-			row:SetTall(15)
-			row:DockPadding(2, 2, 2, 2)
-			row.Paint = function(self, w, h)
-				surface.SetDrawColor(0, 0, 0, 220)
-				surface.DrawRect(0, 0, w, h)
-			end
-
-			local bar = vgui.Create('STYPanel', row)
-			bar:Dock(FILL)
-
-			local segmentWidth = 0
-			bar.PerformLayout = function()
-				local w = bar:GetWide()
-				segmentWidth = (w + 1) / outof
-			end
-			bar.Paint = function(self, w, h)
-				local x = 0
-				surface.SetDrawColor(0, 220, 0, 220)
-				for i = 1, outof do
-					if i == amount + 1 then
-						surface.SetDrawColor(0, 0, 0, 220)
-					end
-					surface.DrawRect(x, 0, segmentWidth - 1, h)
-					x = x + segmentWidth
+		bar.Paint = function(self, w, h)
+			local x = 0
+			surface.SetDrawColor(0, 220, 0, 220)
+			for i = 1, outof do
+				if i == usage + 1 then
+					surface.SetDrawColor(0, 100, 0, 220)
 				end
+				if i == amount + 1 then
+					surface.SetDrawColor(0, 0, 0, 220)
+				end
+				surface.DrawRect(x, 0, segmentWidth - 1, h)
+				x = x + segmentWidth
 			end
-			bar:DockMargin(3, 8, 0, 0)
-			bar:Dock(FILL)
-
-
-			local icon = vgui.Create('STYImage', row)
-			icon:SetMaterial(resource.material)
-			icon.PerformLayout = function()
-				icon:SetWide(icon:GetTall())
-			end
-			icon:Dock(LEFT)
 		end
+		bar:DockMargin(3, 5, 0, 5)
+		bar:Dock(FILL)
 
-		-- add production
-		if table.Count(entity.Produces) > 0 then
-			addHeader("PRODUCTION")
-			PrintTable(entity.Produces)
-
-			for type, production in SortedPairs(entity.Produces) do
-				addResourceRow(type, production, entity.MaxProduction[type] or production)
-			end
-
+		-- create the icon
+		local icon = vgui.Create('STYImage', row)
+		icon:SetMaterial(resource.material)
+		icon.PerformLayout = function()
+			icon:SetWide(icon:GetTall())
 		end
-
-		vgui.make3d(panel)
-
+		icon.Paint = function(self, w, h)
+			surface.SetDrawColor(0, 0, 0, 220)
+			surface.DrawRect(0, 0, w, h)
+			surface.SetDrawColor(255, 255, 255)
+			surface.SetMaterial(self._material)
+			surface.DrawTexturedRect(1, 1, w - 2, h - 2)
+		end
+		icon:Dock(LEFT)
 	end
+
+	local function addStorageRow(resource, amount, outof)
+		if type(resource) == 'string' then
+			resource = types[resource]
+			if not resource then return end
+		end
+
+		local row = vgui.Create('STYPanel', panel)
+		row:SetTall(ROW_HEIGHT)
+
+		local textbox = vgui.Create('FWUITextBox', row)
+		textbox:SetText(resource.PrintName .. ': ' .. tostring(amount) .. ' / ' .. outof)
+		textbox:Dock(FILL)
+		textbox:DockMargin(2, 0, 0, 0)
+		textbox:SetInset(2)
+		textbox.Paint = function(self, w, h)
+			surface.SetDrawColor(0, 0, 0, 220)
+			surface.DrawRect(0, 0, w, h)
+		end
+
+		-- create the icon
+		local icon = vgui.Create('STYImage', row)
+		icon:SetMaterial(resource.material)
+		icon.PerformLayout = function()
+			icon:SetWide(icon:GetTall())
+		end
+		icon.Paint = function(self, w, h)
+			surface.SetDrawColor(0, 0, 0, 220)
+			surface.DrawRect(0, 0, w, h)
+			surface.SetDrawColor(255, 255, 255)
+			surface.SetMaterial(self._material)
+			surface.DrawTexturedRect(1, 1, w - 2, h - 2)
+		end
+		icon:Dock(LEFT)
+	end
+
+	-- add production
+	if entity.MaxProduction and table.Count(entity.MaxProduction) > 0 and info.amProducing and info.productionBeingUsed then
+		addHeader("PRODUCTION")
+		for type, maxProduction in SortedPairs(entity.MaxProduction) do
+			addResourceRow(type, info.amProducing[type] or 0, info.productionBeingUsed[type] or 0, maxProduction)
+		end
+	end
+
+	if entity.MaxConsumption and table.Count(entity.MaxConsumption) > 0 and info.haveResources then
+		addHeader("CONSUMPTION")
+		for type, maxConsumption in SortedPairs(entity.MaxConsumption) do
+			addResourceRow(type, info.haveResources[type] or 0, info.haveResources[type] or 0, maxConsumption)
+		end
+	end
+
+	if entity.MaxStorage and table.Count(entity.MaxStorage) > 0 and info.amStoring then
+		addHeader("STORAGE")
+		for type, maxStorage in SortedPairs(entity.MaxStorage) do
+			addStorageRow(type, info.amStoring[type] or 0, maxStorage)
+		end
+	end
+	vgui.make3d(panel)
 
 end
 
+
+local lastHitEntity = nil
 fw.hook.Add('PostDrawTranslucentRenderables', function()
 	local hitent = LocalPlayer():GetEyeTrace().Entity
-	if IsValid(hitent) and hitent.Resources then
-		paintEntityResources(hitent, 1)
-	end
-end)
 
-fw.hook.Add('UpdatedEntityResourceData', function(ent)
-	if IsValid(ent._fw_panel) then
-		ent._fw_panel:Remove()
+	if lastHitEntity ~= hitent then
+		lastHitEntity = hitent
+		if IsValid(_FW_RESOURCE_PANEL) then
+			_FW_RESOURCE_PANEL:Remove()
+		end
+		if IsValid(hitent) and hitent:FWGetResourceInfo() then
+			paintEntityResources(hitent, hitent:FWGetResourceInfo())
+		end
+	end
+
+	if debugEntityPaintPosition and IsValid(hitent) then
+		local pos = hitent:GetDisplayPosition()
+		render.DrawWireframeSphere(hitent:LocalToWorld(pos), 5, 5, 5, Color(255, 0, 0))
 	end
 end)
 

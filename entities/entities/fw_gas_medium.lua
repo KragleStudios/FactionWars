@@ -29,11 +29,11 @@ if SERVER then
 			phys:Wake()
 		end
 
-		fw.resource.addEntity(self)
-
 		self.Storage = {
 			['gas'] = 100,
 		}
+
+		fw.resource.addEntity(self)
 	end
 
 	function ENT:OnRemove()
@@ -47,4 +47,11 @@ else
 	function ENT:Draw()
 		self:DrawModel()
 	end
+
+	function ENT:GetDisplayPosition()
+		local obbcenter = self:OBBCenter()
+		local obbmax = self:OBBMaxs()
+		return Vector(obbmax.x, obbcenter.y, obbcenter.z), Angle(0, 90, 90), 0.09
+	end
+
 end
