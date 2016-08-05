@@ -12,3 +12,7 @@ fw.config.defaultInvSlots = 10
 fw.config.factionBankPersist = true
 --should the physgun color be set as the faction's color?
 fw.config.physgunColorFactionColor = true
+--how many points does a faction need to capture a zone
+fw.config.zoneCaptureScore = 100
+--every <x> seconds score is added to the faction in control
+fw.config.zoneCaptureRate =  1

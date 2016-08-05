@@ -217,11 +217,11 @@ function zone_mt:setupRendering(color)
 		mesh.Color(color.r, color.g, color.b, color.a)
 		mesh.AdvanceVertex()
 
-		mesh.Position(Vector(inner[1], inner[2], 0))
+		mesh.Position(Vector(inner[1], inner[2], 1000))
 		mesh.Color(color.r, color.g, color.b, color.a)
 		mesh.AdvanceVertex()
 
-		mesh.Position(Vector(last_inner[1], last_inner[2], 0))
+		mesh.Position(Vector(last_inner[1], last_inner[2], 1000))
 		mesh.Color(color.r, color.g, color.b, color.a)
 		mesh.AdvanceVertex()
 
@@ -238,7 +238,6 @@ end
 
 function zone_mt:render(z_offset, color)
 	if not self._rendermesh then return end
-
 	-- apply the render color
 	if color and color ~= self._meshcolor then
 		self:setupRendering(color)
@@ -304,6 +303,10 @@ function fw.zone.loadZonesFromDisk()
 		local zone = fw.zone.new()
 		zone:readFromFile(f)
 		fw.zone.zoneList[zone.id] = zone
+
+		if (SERVER) then
+			fw.zone.initiate(zone)
+		end
 	end
 	f:Close()
 end
@@ -330,6 +333,77 @@ function fw.zone.playerGetZone(ply)
 	end
 
 	return nil
+end
+
+--returns the faction controlling a zone
+function fw.zone.getControllingFaction(zone)
+	return ndoc.table.zones[zone.id] and ndoc.table.zones[zone.id].controlling 
+end
+
+--returns the factiont trying to capture a zone
+function fw.zone.getContestingFaction(zone)
+	local contestingData = ndoc.table.zones[zone.id].contesting
+
+	if (not contestingData) then return end
+
+	local faction = fw.team.factions[contestingData.factionID]
+	
+	return faction	
+end
+
+--returns a tree structure like
+--[[
+	returnedTable = {
+		factionID = {
+			players = {}, which players of the faction are in the zone
+			score = int, what is the current score of this faction in the zone
+			contesting = bool, is this faction challenging the zone
+			conrolsZone = bool is this faction controlling the zone
+		}
+	}
+]]
+function fw.zone.getZoneData(zone)
+	local factionTree = {}
+
+	if (not ndoc.table.zones) then return end
+
+	for k,v in pairs(fw.team.factions) do
+		local data = ndoc.table.zones[zone.id].factions[k]
+
+		--put all the players in the tree
+		factionTree[k] = {}
+		factionTree[k].players = {}
+
+		for ply,v in ndoc.pairs(data.players) do
+			table.insert(factionTree[k].players, ply)
+		end
+
+		factionTree[k].score = data.score
+
+		local own = ndoc.table.zones[zone.id].controlling
+		factionTree[k].controlsZone = (own == k)
+
+		local cont = ndoc.table.zones[zone.id].contesting and ndoc.table.zones[zone.id].contesting.factionID
+		factionTree[k].contestingZone = (cont == k)
+	end
+
+	return factionTree
+end
+
+--returns a table of controlled zones by faction
+function fw.zone.getControlledZones(faction)
+	controlledZones = {}
+
+	for k,v in pairs(fw.zone.zoneList) do
+		local zID = v.id
+
+		local fID = ndoc.table.zones[zID].controlling
+		if (not fID) then continue end
+
+		controlledZones[zID] = v
+	end
+
+	return controlledZones
 end
 
 if file.Exists(fw.zone.getSaveFileName(), 'DATA') then

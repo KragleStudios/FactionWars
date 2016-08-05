@@ -9,15 +9,17 @@ require 'ra'
 
 -- require modules
 fw.dep(SHARED, 'data')
+fw.dep(SHARED, 'teams')
 
 -- define constants
 fw.zone.zoneDataDir = fw.config.dataDir .. (SERVER and '/zones_sv/' or '/zones_cl/')
 file.CreateDir(fw.zone.zoneDataDir)
 
 -- include files
+fw.include_sv 'zones_sv.lua'
+
 fw.include_sh 'zones_sh.lua'
 fw.include_cl 'zones_cl.lua'
-fw.include_sv 'zones_sv.lua'
 
 
 --

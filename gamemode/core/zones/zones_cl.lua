@@ -23,6 +23,96 @@ net.Receive('fw.zone.remove', function()
 	fw.zone.zoneList[net.ReadUInt(32)] = nil
 end)
 
+hook.Add("HUDPaint", "fw.zones.showZoneInfo", function()
+	local z = fw.zone.playerGetZone(LocalPlayer())
+
+	if (not z) then return end
+
+	local xOffset = ScrW()
+	local headFont = fw.fonts.default:atSize(20)
+
+	local maxX = 0
+	for k,v in pairs(fw.team.factions) do
+		surface.SetFont(headFont)
+		local x, y = surface.GetTextSize(v.name)
+
+		if (x > maxX) then
+			maxX = x
+		end
+	end
+
+	local zoneData = fw.zone.getZoneData(z)
+
+	if (not zoneData) then return end
+	
+	for fac,v in pairs(zoneData) do
+		local faction = fw.team.factions[fac]
+
+		local color = faction.color
+		local name = faction.name
+
+		local players = v.players
+		local score   = v.controlling and fw.config.zoneCaptureScore or v.score
+		local iscontesting = v.contestingZone
+		local iscontrolling = v.controlsZone
+
+		--if (#players == 0) then continue end
+
+		local yOffset = 0
+
+		surface.SetFont(headFont)
+		local x, y = surface.GetTextSize(name)
+		x = maxX
+
+		xOffset = xOffset - maxX - 10
+		yOffset = y + 5
+
+		draw.SimpleText(name, headFont, xOffset + (maxX / 2), 0, color, TEXT_ALIGN_CENTER)
+		draw.RoundedBox(0, xOffset, y, maxX, 4, Color(0, 0, 0))
+
+		local xBarWidth = (score / fw.config.zoneCaptureScore) * x
+		draw.RoundedBox(0, xOffset, y, xBarWidth, 4, color)
+
+		local name = "Members: "..#players
+		local nameFont = fw.fonts.default:fitToView(x, y, name)
+
+		surface.SetFont(nameFont)
+		local x, y = surface.GetTextSize(name)
+
+		local players = #players
+		draw.SimpleText(name, nameFont, xOffset + (maxX / 2), yOffset, Color(0, 0, 0), TEXT_ALIGN_CENTER)
+
+		yOffset = yOffset + y
+
+		if (iscontesting) then
+			draw.SimpleText("Contesting Zone!", nameFont,  xOffset + (maxX / 2), yOffset, Color(0, 0, 0), TEXT_ALIGN_CENTER)
+
+			yOffset = yOffset + y
+		end
+
+		if (iscontrolling) then
+			draw.SimpleText("Controlling Zone!", nameFont,  xOffset + (maxX / 2), yOffset, Color(0, 0, 0), TEXT_ALIGN_CENTER)
+
+			yOffset = yOffset + y
+		end
+
+		--[[for k,v in pairs(players) do
+			if (v:getFaction() != fac) then continue end
+
+			local nick = v:Nick()
+
+			local nameFont = fw.fonts.default:fitToView(x, y, nick)
+
+			surface.SetFont(nameFont)
+			local x, y = surface.GetTextSize(nick)
+
+			draw.SimpleText(nick, nameFont, xOffset, yOffset, team.GetColor(v:Team()))
+
+			yOffset = yOffset + y
+		end]]
+	end
+end)
+
 fw.hook.Add('PostDrawOpaqueRenderables', 'fw.zones.render', function()
 	local curZone = fw.zone.playerGetZone(LocalPlayer())
 

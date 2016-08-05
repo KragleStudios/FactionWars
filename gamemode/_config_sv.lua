@@ -28,4 +28,4 @@ fw.config.dropBlacklist = {
 -- this is a fairly processing intensive operation. Making it too fast may cause lag. Too slow may cause players to notice.
 fw.config.resourceNetworkUpdateInterval = 2.5 -- seconds
 
-fw.config.doorRespawnTime = 300 -- Amount of time for a dor to respawn, seconds
+fw.config.doorRespawnTime = 300 -- Amount of time for a door to respawn, seconds
