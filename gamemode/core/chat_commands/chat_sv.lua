@@ -63,47 +63,48 @@ function fw.chat.addCMD(cname, chelp, cfunc)
 	return obj
 end
 
---THIS WAS NOT MADE BY BE. ALL CREDIT GOES TO THE ORIGINAL AUTHOR.
-function fw.chat.parseQuotes(input)
-	local ret = {}
-	local len = string.len(input)
+-- thelastpenguin's quote parser gist
+local quotes = {
+	['\''] = true,
+	['\"'] = true
+}
+function fw.chat.parseString(line)
+	local function skipWhiteSpace(index)
+		return string.find(line, '%S', index)
+	end 
+
+	local function findNextSpace(index)
+		return string.find(line, '%s', index)
+	end
+
+	local function findClosingQuote(index, type)
+		return string.find(line, type, index)
+	end 
 	
-	local literal = false
-	local quote = false
-	local current = ""
-	
-	for i = 0, len do
-	
-		local c = input[i]
-		
-		if literal then
-			if c == '\"' then
-				quote = not quote
-			else
-				c = special[c] or c
-				current = current .. c
-			end
-			literal = false
+	local parts = {}
+
+	local index = 1
+	while index ~= nil do 
+		index = skipWhiteSpace(index)
+		if not index then break end 
+
+		local cur = string.sub(line, index, index)
+		if quotes[cur] then
+			local closer = findClosingQuote(index + 1, cur)
+			local quotedString = string.sub(line, index + 1, closer and closer - 1 or nil)
+			table.insert(parts, quotedString)
+			if not closer then break end 
+			index = closer
 		else
-			if c == '\"' then
-				quote = not quote
-			elseif c == '\\' then
-				literal = true
-			elseif c == ' ' and not quote then
-				table.insert(ret, current)
-				current = ""
-			else
-				current = current .. c
-			end
-		end
-		
+			local nextSpace = findNextSpace(index)
+			local word = string.sub(line, index, nextSpace and nextSpace - 1 or nil)
+			table.insert(parts, word)
+			if not nextSpace then break end 
+			index = nextSpace
+		end 
 	end
 	
-	if string.len(current) != 0 then
-		table.insert(ret, current)
-	end
-	
-	return ret
+	return parts 
 end
 
 fw.chat.paramTypes["player"] = function(data)
