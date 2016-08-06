@@ -163,7 +163,7 @@ else
 	end)
 
 	fw.hook.Add("KeyRelease", "DetectChargeEnd", function(ply, key)
-		if (ply:GetActiveWeapon() and ply:GetActiveWeapon():GetClass() == "fw_defib" and key == IN_ATTACK2 and ply._press_time) then
+		if (IsValid(ply) and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "fw_defib" and key == IN_ATTACK2 and ply._press_time) then
 			local timeCharged = CurTime() - ply._press_time
 			local wep = ply:GetActiveWeapon()
 

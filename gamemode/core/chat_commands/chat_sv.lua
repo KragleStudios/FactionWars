@@ -334,7 +334,7 @@ fw.chat.addCMD("define", "Defines a given string", function(ply, searc)
 			return;
 		end
 
-		fw.notif.chatPrint(player.GetAll(), Color(0, 0, 0), "[Bot] ", Color(255, 255, 255), "Definition of "..searc..": "..def["definition"].."\n".."Usage: "..def["example"])
+		fw.notif.chatPrint(player.GetAll(), Color(0, 0, 0), "[Bot] ", Color(255, 255, 255), "Definition of "..searc..": "..def["definition"])
 
 	end, function(errr)
 
