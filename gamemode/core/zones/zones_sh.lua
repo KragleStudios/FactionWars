@@ -363,6 +363,10 @@ function fw.zone.isCapturableZone(zone)
 	return ndoc.table.zones and not (ndoc.table.zones[zone.id].capturable == false)
 end
 
+function fw.zone.isFactionBase(zone)
+	return ndoc.table.zones and ndoc.table.zones[zone.id].faction_base
+end
+
 --returns a tree structure like
 --[[
 	returnedTable = {

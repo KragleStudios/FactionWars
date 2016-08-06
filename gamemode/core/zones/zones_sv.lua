@@ -68,12 +68,14 @@ concommand.Add('fw_zone_removeZone', function(pl)
 end)
 
 fw.zone.cap_cache = {}
+--saves zone protection and capture data
 local path = fw.zone.zoneDataDir..game.GetMap().."_cap.txt"
 function fw.zone.saveCapCache()
 	local pon = spon.encode(fw.zone.cap_cache)
 	file.Write(path, pon)
 end
 
+--loads zone protection & capture data
 function fw.zone.loadCapCache()
 	local f = file.Read(path, "DATA")
 	if (not f) then return end
@@ -82,6 +84,7 @@ function fw.zone.loadCapCache()
 	for k,v in pairs(fw.zone.cap_cache) do
 		ndoc.table.zones[k].capturable = v.capturable
 		ndoc.table.zones[k].protected  = v.protected
+		ndoc.table.zones[k].faction_base = v.faction_base
 	end
 end
 
@@ -125,6 +128,38 @@ fw.chat.addCMD({"setcapturable", "setcap"}, "Sets a zone to be capturable or not
 	fw.zone.saveCapCache()
 end):addParam("bool_capturable", "bool"):restrictTo("superadmin")
 
+fw.chat.addCMD({"setfactionbase", "setbase"}, "Sets the zone to be a default base for a faction", function(ply, sFactionID)
+	local pZone = fw.zone.playerGetZone(ply)
+
+	if (not pZone) then return end
+
+	local fac = fw.team.getFactionByStringID(sFactionID)
+	if (not fac) then return end
+
+	fw.zone.cap_cache[pZone.id] = fw.zone.cap_cache[pZone.id] or {}
+
+	fw.zone.cap_cache[pZone.id].faction_base = fac:getID()
+	ndoc.table.zones[pZone.id].faction_base = fac:getID()
+
+	fw.zone.saveCapCache()
+end):addParam("faction_string_id", "string"):restrictTo("superadmin")
+
+fw.chat.addCMD({"removefactionbase", "removebase"}, "Removes the base set to a zone you are in", function(ply)
+	local pZone = fw.zone.playerGetZone(ply)
+
+	if (not pZone) then return end
+
+	local fac = fw.zone.isFactionBase(pZone)
+	if (not fac) then return end
+
+	fw.zone.cap_cache[pZone.id] = fw.zone.cap_cache[pZone.id] or {}
+
+	fw.zone.cap_cache[pZone.id].faction_base = nil
+	ndoc.table.zones[pZone.id].faction_base = nil
+
+	fw.zone.saveCapCache()
+end):restrictTo("superadmin")
+
 concommand.Add('fw_zone_createBackup', function(pl)
 	if not pl:IsSuperAdmin() then
 		return pl:FWConPrint(Color(255, 0, 0), "you do not have permission to run this command")
@@ -134,6 +169,7 @@ concommand.Add('fw_zone_createBackup', function(pl)
 	pl:FWConPrint(Color(0, 255, 0), "Created a backup of the zones file.")
 end)
 
+--logic for contesting another faction's zone
 function fw.zone.contest(zone, faction)
 	--cooldown for adding score to teams!
 	local id = zone.id
@@ -163,10 +199,12 @@ function fw.zone.contest(zone, faction)
 	zone.nextRegisterScore = CurTime() + fw.config.zoneCaptureRate
 end
 
+--returns whether or not a zone can be captured
 function fw.zone.canBeCaptured(zone)
 	local canCapture = hook.Call("CanZoneBeCaptured", GAMEMODE, zone)
 
 	--make sure it's false, not just doesn't exist
+	if (fw.zone.cap_cache[zone.id] and fw.zone.cap_cache[zone.id].faction_base) then return false end
 	if (fw.zone.cap_cache[zone.id] and fw.zone.cap_cache[zone.id].capturable != nil and fw.zone.cap_cache[zone.id].capturable == false) then return false end
 	if (fw.zone.cap_cache[zone.id] and fw.zone.cap_cache[zone.id].protected != nil and fw.zone.cap_cache[zone.id].protected == true) then return false end
 	if (zone.nextRegisterScore and CurTime() - zone.nextRegisterScore < 0) then return false end

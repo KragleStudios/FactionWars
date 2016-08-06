@@ -57,6 +57,17 @@ hook.Add("HUDPaint", "fw.zones.showZoneInfo", function()
 		return
 	end
 
+	local isfactionBase = fw.zone.isFactionBase(z)
+	if (isfactionBase) then
+		local fac = isfactionBase
+		local facData = fw.team.factions[fac]
+
+		surface.SetFont(headFont)
+		local x, y = surface.GetTextSize("Base of "..facData.name)
+		draw.SimpleText("Base of "..facData.name, headFont, ScrW() - 5 - x, 0, facData.color)
+		return
+	end
+
 	local zoneData = fw.zone.getZoneData(z)
 
 	if (not zoneData) then return end
