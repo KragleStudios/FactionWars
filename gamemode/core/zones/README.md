@@ -7,6 +7,7 @@
  - fw.zone.getControlledZones(factionID) - returns a table of all zones controlled by this faction, with the key as the zone id and the value as the zone object
  - fw.zone.isCapturableZone(zone) - returns whether or not a zone can be captured by a faction
  - fw.zone.isProtectedZone(zone) - returns whether or not a zone is protected
+ - fw.zone.isFactionBase(zone) - returns whether or not a zone is a default zone for a faction, if it is, the returned value is the faction 
 
 # Serverside Hooks
  - FactionContestingZone (faction table, zone object) - passes the zone object and faction data with the factionID, playersInZone. NOTE: This is called every time the contest function is called, meaning this will be called A LOT
