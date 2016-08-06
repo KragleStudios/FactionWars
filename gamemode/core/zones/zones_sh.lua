@@ -66,6 +66,10 @@ function zone_mt:ctor(id, name, polygon)
 		self:setupRendering()
 	end
 
+	if (SERVER) then
+		fw.zone.initiate(self)
+	end
+
 	return self
 end
 
@@ -303,12 +307,12 @@ function fw.zone.loadZonesFromDisk()
 		local zone = fw.zone.new()
 		zone:readFromFile(f)
 		fw.zone.zoneList[zone.id] = zone
-
-		if (SERVER) then
-			fw.zone.initiate(zone)
-		end
 	end
 	f:Close()
+
+	if (SERVER) then
+		fw.zone.loadCapCache()
+	end
 end
 
 function fw.zone.getZoneFileCRC()
@@ -351,6 +355,14 @@ function fw.zone.getContestingFaction(zone)
 	return faction
 end
 
+function fw.zone.isProtectedZone(zone)
+	return ndoc.table.zones and ndoc.table.zones[zone.id].protected == true or false
+end
+
+function fw.zone.isCapturableZone(zone)
+	return ndoc.table.zones and not (ndoc.table.zones[zone.id].capturable == false)
+end
+
 --returns a tree structure like
 --[[
 	returnedTable = {
@@ -375,6 +387,8 @@ function fw.zone.getZoneData(zone)
 		factionTree[k].players = {}
 
 		for ply,v in ndoc.pairs(data.players) do
+			if (not IsValid(ply)) then continue end
+
 			table.insert(factionTree[k].players, ply)
 		end
 

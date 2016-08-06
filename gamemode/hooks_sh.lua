@@ -163,3 +163,11 @@ end
 function GM:CanPlayerBuyItem(...)
 	return fw.hook.Call('CanPlayerBuyItem', ...)
 end
+
+function GM:PlayerEnteredZone(...)
+	return fw.hook.Call('PlayerEnteredZone', ...)
+end
+
+function GM:PlayerLeftZone(...)
+	return fw.hook.Call('PlayerLeftZone', ...)
+end

@@ -41,6 +41,22 @@ hook.Add("HUDPaint", "fw.zones.showZoneInfo", function()
 		end
 	end
 
+	local protected = fw.zone.isProtectedZone(z)
+	if (protected) then
+		surface.SetFont(headFont)
+		local x, y = surface.GetTextSize("This zone is a protected zone!")
+		draw.SimpleText("This zone is a protected zone!", headFont, ScrW() - 5 - x, 0, Color(255, 255, 0))
+		return
+	end
+
+	local iscaptureable = fw.zone.isCapturableZone(z)
+	if (not iscaptureable) then
+		surface.SetFont(headFont)
+		local x, y = surface.GetTextSize("This zone is not captureable!")
+		draw.SimpleText("This zone is not capturable!", headFont, ScrW() - 5 - x, 0, Color(255, 255, 0))
+		return
+	end
+
 	local zoneData = fw.zone.getZoneData(z)
 
 	if (not zoneData) then return end
