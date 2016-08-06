@@ -37,11 +37,13 @@ local function paintEntityResources(entity, info)
 
 	local ROW_HEIGHT = 18
 
-	local function addResourceRow(resource, amount, usage, outof)
+	local function addResourceRow(resource, amountTable, usageTable, outof)
 		if type(resource) == 'string' then
 			resource = types[resource]
 			if not resource then return end
 		end
+
+		local resType = resource.type
 
 		local row = vgui.Create('STYPanel', panel)
 		row:SetTall(ROW_HEIGHT)
@@ -55,6 +57,9 @@ local function paintEntityResources(entity, info)
 			segmentWidth = (w + 1) / math.max(outof, 5)
 		end
 		bar.Paint = function(self, w, h)
+			local amount = amountTable[resType] or 0
+			local usage = usageTable[resType] or 0
+
 			local x = 0
 			surface.SetDrawColor(0, 220, 0, 220)
 			for i = 1, outof do
@@ -87,21 +92,27 @@ local function paintEntityResources(entity, info)
 		icon:Dock(LEFT)
 	end
 
-	local function addStorageRow(resource, amount, outof)
+	local function addStorageRow(resource, amountTable, outof)
 		if type(resource) == 'string' then
 			resource = types[resource]
 			if not resource then return end
 		end
 
+		local resType = resource.type
+
 		local row = vgui.Create('STYPanel', panel)
 		row:SetTall(ROW_HEIGHT)
 
 		local textbox = vgui.Create('FWUITextBox', row)
-		textbox:SetText(resource.PrintName .. ': ' .. tostring(amount) .. ' / ' .. outof)
 		textbox:Dock(FILL)
 		textbox:DockMargin(2, 0, 0, 0)
 		textbox:SetInset(2)
+		local lastAmount = {}
 		textbox.Paint = function(self, w, h)
+			if lastAmount ~= amountTable[resType] then
+				lastAmount = amountTable[resType]
+				textbox:SetText(resource.PrintName .. ': ' .. tostring(amountTable[resType] or 0) .. ' / ' .. outof)
+			end
 			surface.SetDrawColor(0, 0, 0, 220)
 			surface.DrawRect(0, 0, w, h)
 		end
@@ -126,21 +137,21 @@ local function paintEntityResources(entity, info)
 	if entity.MaxProduction and table.Count(entity.MaxProduction) > 0 and info.amProducing and info.productionBeingUsed then
 		addHeader("PRODUCTION")
 		for type, maxProduction in SortedPairs(entity.MaxProduction) do
-			addResourceRow(type, info.amProducing[type] or 0, info.productionBeingUsed[type] or 0, maxProduction)
+			addResourceRow(type, info.amProducing, info.productionBeingUsed, maxProduction)
 		end
 	end
 
 	if entity.MaxConsumption and table.Count(entity.MaxConsumption) > 0 and info.haveResources then
 		addHeader("CONSUMPTION")
 		for type, maxConsumption in SortedPairs(entity.MaxConsumption) do
-			addResourceRow(type, info.haveResources[type] or 0, info.haveResources[type] or 0, maxConsumption)
+			addResourceRow(type, info.haveResources, info.haveResources, maxConsumption)
 		end
 	end
 
 	if entity.MaxStorage and table.Count(entity.MaxStorage) > 0 and info.amStoring then
 		addHeader("STORAGE")
 		for type, maxStorage in SortedPairs(entity.MaxStorage) do
-			addStorageRow(type, info.amStoring[type] or 0, maxStorage)
+			addStorageRow(type, info.amStoring, maxStorage)
 		end
 	end
 	vgui.make3d(panel)

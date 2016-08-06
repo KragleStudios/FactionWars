@@ -30,11 +30,11 @@ function fw.team.doPlayerChange(ply, t, targ_team)
 	hook.Run('PlayerChangedTeam', prevTeam, ply:Team())
 end
 
-function fw.team.playerChangeTeam(ply, targ_team, forced)	
+function fw.team.playerChangeTeam(ply, targ_team, forced)
 	local t = fw.team.list[targ_team]
 	if not t then
 		ply:FWChatPrintError("no such team ", tostring(targ_team))
-		return false 
+		return false
 	end
 
 	if (t.election and not forced) then
@@ -43,11 +43,11 @@ function fw.team.playerChangeTeam(ply, targ_team, forced)
 		fw.vote.createNew("Job Vote", ply:Nick().." for "..t.name, players, function(decision)
 			if (decision) then
 				--make sure the player can join it!
-				if not forced then 
+				if not forced then
 					local canjoin, message = fw.team.canChangeTo(ply, targ_team, forced)
 					if (not canjoin) then
 						ply:FWChatPrintError(message or ("can't join team " .. t:getName()))
-						return false 
+						return false
 					end
 				end
 
@@ -60,11 +60,11 @@ function fw.team.playerChangeTeam(ply, targ_team, forced)
 		return
 	end
 
-	if not forced then 
+	if not forced then
 		local canjoin, message = fw.team.canChangeTo(ply, targ_team, forced)
 		if (not canjoin) then
 			ply:FWChatPrintError(message or ("can't join team " .. t:getName()))
-			return false 
+			return false
 		end
 	end
 
@@ -85,8 +85,8 @@ function fw.team.registerSpawn(team_textID, vector, angle, faction)
 	local points = fw.team.spawns[team_textID]
 
 	table.insert(points, {
-		pos = vector, 
-		angle = angle, 
+		pos = vector,
+		angle = angle,
 		faction = faction
 	})
 
@@ -99,7 +99,7 @@ end
 function fw.team.findBestSpawn(team_textID, faction)
 	if fw.team.spawns[team_textID] then
 		for k,v in ipairs(fw.team.spawns[team_textID]) do
-			if faction ~= nil and v.faction ~= faction then continue end 
+			if faction ~= nil and v.faction ~= faction then continue end
 
 			-- this is pretty expensive
 			local ents = ents.FindInSphere(v.pos, 40)
@@ -120,7 +120,7 @@ end
 -- @ret nothing
 function fw.team.demotePlayer(ply)
 	if (not IsValid(ply)) then return end
-	
+
 	fw.team.playerChangeTeam(ply, TEAM_CIVILIAN, true)
 end
 
@@ -140,14 +140,14 @@ end
 -- @ret nothing
 function fw.team.setPreferredModel(team_id, ply, model)
 	local team = fw.team.getByIndex(team_id)
-	if not team then 
+	if not team then
 		pl:FWConPrint("no such team \'" .. tostring(args[1]) .. "\'")
 		return
 	end
 
 	if not table.HasValue(team:getModels(), model) then
 		pl:FWConPrint("model " .. tostring(model) .. " not available for team " .. tostring(team_id))
-		return 
+		return
 	end
 
 	-- update the preferred model!
@@ -157,7 +157,7 @@ function fw.team.setPreferredModel(team_id, ply, model)
 	ply:GetFWData().preferred_models[team.stringID] = pref_model
 end
 
--- handles all spawning related functionality 
+-- handles all spawning related functionality
 fw.hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
 	local team = ply:Team()
 	local t = fw.team.list[team]
@@ -174,10 +174,10 @@ fw.hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
 	-- TODO: use PlayerSelectSpawn
 	if (not _REFRESH) then
 		local fac = nil
-		if (ply:inFaction()) then 
+		if (ply:inFaction()) then
 			fac = ply:getFaction()
 		end
-		
+
 		local sp = fw.team.findBestSpawn(t.stringID, fac)
 		if (sp) then
 			ply:SetPos(sp.pos)
@@ -221,7 +221,7 @@ end)
 fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 	if (not _REFRESH) then
 		ply:FWConPrint("setting your team to team citizen")
-		
+
 		ply:GetFWData().faction = FACTION_DEFAULT
 		hook.Run('PlayerJoinedFaction', ply, FACTION_DEFAULT)
 		fw.team.playerChangeTeam(ply, TEAM_CIVILIAN, true)
@@ -267,12 +267,12 @@ end)]]
 
 --
 -- CONSOLE COMMANDS
--- 
+--
 util.AddNetworkString('fw.team.preferredModel')
 net.Receive('fw.team.preferredModel', function(_, pl)
 	local team = net.ReadString()
 	local model = net.ReadString()
-	
+
 	local t = fw.team.getByStringID(team)
 	if not t then
 		pl:FWChatPrintError("no such team: " .. team:sub(1, 100))
@@ -291,17 +291,17 @@ fw.chat.addCMD("factionkick", "Vote to remove a user from a faction", function(p
 
 	if ply == target then
 		ply:FWChatPrintError("You can't remove yourself!")
-		return 
+		return
 	end
 
 	if not ply:inFaction() then
 		ply:FWChatPrintError("You aren't in a faction!")
-		return 
+		return
 	end
 
-	if (target:getFaction() ~= ply:getFaction()) then 
+	if (target:getFaction() ~= ply:getFaction()) then
 		ply:FWChatPrintError("This person isn't in the same faction as you!")
-		return 
+		return
 	end
 
 	if (target:getFaction() == FACTION_DEFAULT) then
@@ -315,11 +315,11 @@ fw.chat.addCMD("factionkick", "Vote to remove a user from a faction", function(p
 	if ply:isFactionBoss() then
 		fw.notif.chatPrint(players, ply, " forcefully removed ", target, " from the faction.")
 		fw.team.removePlayerFromFaction(target)
-		return 
+		return
 	end
 
-	fw.vote.createNew("Vote Remove User: Faction", "Remove ".. target:Nick().." from faction?", players, 
-		function(decision, vote, results) 
+	fw.vote.createNew("Vote Remove User: Faction", "Remove ".. target:Nick().." from faction?", players,
+		function(decision, vote, results)
 			if (not IsValid(target)) then return end
 
 			if (decision) then
@@ -336,10 +336,10 @@ end):addParam("target", "player")
 fw.chat.addCMD("factiondemote", "Vote to demote a user", function(ply, target)
 	local faction = ply:getFaction()
 	local players = player.GetAll()
-
-	if (target:getFaction() ~= ply:getFaction()) then 
+	print(ply, target)
+	if (target:getFaction() ~= ply:getFaction()) then
 		ply:FWChatPrintError("This person isn't in the same faction as you!")
-		return 
+		return
 	end
 
 	if (target:Team() == TEAM_CIVILIAN) then
@@ -351,7 +351,7 @@ fw.chat.addCMD("factiondemote", "Vote to demote a user", function(ply, target)
 		ply:FWChatPrintError("You can't demote yourself!")
 		return
 	end
-	
+
 	if (faction == target:getFaction()) then
 		players = fw.team.getFactionPlayers(faction)
 	end
@@ -362,8 +362,8 @@ fw.chat.addCMD("factiondemote", "Vote to demote a user", function(ply, target)
 		return
 	end
 
-	fw.vote.createNew("Vote Demote User", "Demote ".. target:Nick().."?", players, 
-		function(decision, vote, results) 
+	fw.vote.createNew("Vote Demote User", "Demote ".. target:Nick().."?", players,
+		function(decision, vote, results)
 			if (not IsValid(target)) then return end
 
 			if (decision) then

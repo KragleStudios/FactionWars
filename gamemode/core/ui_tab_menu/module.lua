@@ -131,10 +131,6 @@ function fw.tab_menu.showScoreboard()
 			__FW_TABMENU:AddView('ADMIN', fw.tab_menu.administration)
 		end
 
-		__FW_TABMENU:AddNavButton("HELP", function()
-            gui.OpenURL("https://github.com/GMFactionWars/kragle")
-        end)
-
 		vgui.Create('FWUIDropShadow')
 			:SetRadius(32)
 			:SetColor(Color(0, 0, 0, 50))
@@ -292,39 +288,41 @@ function fw.tab_menu.faction(pnl)
 	factionTools:SetPadding(sty.ScreenScale(2))
 
 	local currencyWrapper = vgui.Create("FWUIPanel", factionTools)
-	currencyWrapper:SetTall(sty.ScreenScale(60))
-	currencyWrapper:SetBackgroundTint(fw.team.factions[LocalPlayer():getFaction()].color or Color(255, 255, 255))
+	currencyWrapper:SetTall(sty.ScreenScale(30))
+	currencyWrapper:SetBackgroundTint(fw.team.factions[LocalPlayer():getFaction()].color or Color(255, 255, 255), 10)
 
 	local amount = ndoc.table.fwFactions[LocalPlayer():getFaction()].money
 	local amountText = vgui.Create("FWUITextBox", currencyWrapper)
-	amountText:SetInset(sty.ScreenScale(2))
-	amountText:SetText("$"..string.Comma(amount))
+	amountText:SetInset(sty.ScreenScale(5))
+	amountText:SetText("Balance: $"..string.Comma(amount))
 	amountText:Dock(FILL)
-	amountText:DockMargin((pnl:GetWide() / 2) - (amountText:GetWide() * 1.25), 0, 0, 15)
+	amountText:SetAlign('center')
 	amountText:SizeToContents()
 
 	ndoc.addHook("fwFactions.?.money", "set", function(index, money)
-		if (not IsValid(amountText) or index != LocalPlayer():getFaction()) then return end
+		if (not IsValid(amountText) or index ~= LocalPlayer():getFaction()) then return end
 
-		amountText:SetText("$"..string.Comma(money))
+		amountText:SetText("Balance: $"..string.Comma(money))
 		amountText:SizeToContents()
 	end)
 
-	local depositBtn = vgui.Create("FWUIButton", currencyWrapper)
-	depositBtn:SetText("Deposit")
-	depositBtn:SetTall(sty.ScreenScale(15))
-	depositBtn:SetWide(pnl:GetWide() / 2)
-	function depositBtn:DoClick()
-		Derma_StringRequest("Deposit", "How much?", "0000", function(amt) local amt = tonumber(amt) if (not amt) then return end LocalPlayer():ConCommand("fw_faction_deposit "..amt) end)
-	end
-	depositBtn:SetPos(0, currencyWrapper:GetTall() - depositBtn:GetTall())
+	local actionButtons = vgui.Create('FWUIPanel', factionTools)
+	actionButtons:SetTall(sty.ScreenScale(12))
 
-	local withdrawBtn = vgui.Create("FWUIButton", currencyWrapper)
+	local depositBtn = vgui.Create("FWUIButton", actionButtons)
+	depositBtn:SetText("Deposit")
+	depositBtn:Dock(LEFT)
+	depositBtn:SetWide(sty.ScreenScale(100))
+	function depositBtn:DoClick()
+		Derma_StringRequest("Deposit", "How much?", "", function(amt) local amt = tonumber(amt) if (not amt) then return end LocalPlayer():ConCommand("fw_faction_deposit "..amt) end)
+	end
+
+	local withdrawBtn = vgui.Create("FWUIButton", actionButtons)
 	withdrawBtn:SetText("Withdraw")
-	withdrawBtn:SetTall(sty.ScreenScale(15))
-	withdrawBtn:SetWide(pnl:GetWide() / 2 - 3)
+	withdrawBtn:Dock(RIGHT)
+	withdrawBtn:SetWide(sty.ScreenScale(100))
 	function withdrawBtn:DoClick()
-		Derma_StringRequest("Withdraw", "How much?", "0000", function(amt) local amt = tonumber(amt) if (not amt) then return end LocalPlayer():ConCommand("fw_faction_withdraw "..amt) end)
+		Derma_StringRequest("Withdraw", "How much?", "", function(amt) local amt = tonumber(amt) if (not amt) then return end LocalPlayer():ConCommand("fw_faction_withdraw "..amt) end)
 	end
 	withdrawBtn:SetPos(depositBtn:GetWide(), currencyWrapper:GetTall() - withdrawBtn:GetTall())
 
@@ -347,7 +345,7 @@ function fw.tab_menu.faction(pnl)
 				if (v:getFaction() != LocalPlayer():getFaction()) then continue end
 
 				local panel = vgui.Create('FWUIButton', factionJobs)
-				panel:SetTall(sty.ScreenScale(15))
+				panel:SetTall(sty.ScreenScale(12))
 				panel:SetText(v:Nick())
 				function panel:DoClick()
 					local menu = DermaMenu(self)

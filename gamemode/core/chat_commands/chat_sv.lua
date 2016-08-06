@@ -1,303 +1,249 @@
-fw.chat.cmds = fw.chat.cmds or {}
-fw.chat.cmdCache = {}
-fw.chat.paramTypes = fw.chat.paramTypes or {}
-fw.chat.restrictions = {}
-local cmdobj = {}
+fw.chat.cmds = {}
+fw.chat.help = {}
+fw.chat.argTypes = {}
+fw.chat.permissions = {
+	['admin'] = function(pl) return pl:IsAdmin() end,
+	['superadmin'] = function(pl) return pl:IsSuperAdmin() end,
+	['boss'] = function(pl) return pl:isFactionBoss() end,
+	['faction'] = function(pl) return pl:getFaction() ~= FACTION_DEFAULT end
+}
 
-fw.chat.restrictions["admin"] = function(ply) return ply:IsAdmin() end
-fw.chat.restrictions["superadmin"] = function(ply) return ply:IsSuperAdmin() end
-fw.chat.restrictions["boss"] = function(ply) return ply:isFactionBoss() end
-fw.chat.restrictions["faction"] = function(ply) return ply:inFaction() end
-fw.chat.restrictions["alive"] = function(ply) return ply:Alive() end
+local cmd_mt = {}
+cmd_mt.__index = cmd_mt
+function cmd_mt:ctor(aliases, helptext, callback)
+	if type(aliases) == 'string' then
+		aliases = {aliases}
+	end
 
+	self.aliases = aliases
+	self.helptext = helptext
+	self.params = {}
+	self.permCheck = function() return true end
+	self.callback = callback
 
-function cmdobj:addParam(name, type)
-	table.insert(self.parameters, {
-		name = name, 
+	concommand.Add('fw_' .. aliases[1], function(pl, cmd, args)
+		fw.chat.runCommand(self, args)
+	end)
+
+	for k, alias in ipairs(self.aliases) do
+		fw.chat.cmds[alias] = self
+	end
+
+	return self
+end
+
+function cmd_mt:addParam(name, type)
+	if not fw.chat.argTypes[type] then
+		error("invalid argument type " .. tostring(type))
+	end
+
+	table.insert(self.params, {
+		name = name,
 		type = type
 	})
-
 	return self
 end
 
-function cmdobj:restrictTo(perm)
-	if (not fw.chat.restrictions[perm]) then
-		fw.print('invalid permission type attempted to be registered!', perm)
+function cmd_mt:restrictTo(func)
+	if type(func) == 'string' then
+		func = fw.chat.permissions[func]
 	end
+	if not func then error("expected a valid permission id or a permission function") end
 
-	table.insert(self.permissions, perm)
-
+	local oldFunc = self.permCheck
+	self.permCheck = function(pl)
+		return func(pl) and oldFunc(pl)
+	end
 	return self
 end
 
-local count = 1
-function fw.chat.addCMD(cname, chelp, cfunc)
-	local obj = {}
 
-	setmetatable(obj, {__index = cmdobj})
-
-	cname = not istable(cname) and {cname} or cname
-
-	--lowercase all the cmds
-	for k,v in pairs(cname) do
-		cname[k] = string.lower(v)
-
-		concommand.Add("fw_" .. cname[k], function(ply, cmd, args, argStr)
-			fw.chat.parseString(ply, "!"..cmd:sub(4 --[[length of fw_ prefix + 1]]).." "..argStr)
-		end)
-		
-		--assign all the possible chat command alternatives to an id, to be referenced by later when it's ran, so we don't make huge ass duplicates of cmds
-		fw.chat.cmdCache[ cname[k] ] = count
+-- PARSE A PLAYER ARGUMENT
+fw.chat.argTypes['player'] = function(arguent, player)
+	if argument == '^' then
+		if IsValid(player) then
+			return player
+		end
+		return nil, "you cant reference yourself when running command from server"
 	end
 
-	obj.id = count
-	obj.help = chelp
-	obj.callback = cfunc
-	obj.parameters = {}
-	obj.permissions = {}
-
-	fw.chat.cmds[count] = obj
-
-	count = count + 1
-	--support for calling commands via the console
-	return obj
-end
-
---THIS WAS NOT MADE BY BE. ALL CREDIT GOES TO THE ORIGINAL AUTHOR.
-function fw.chat.parseQuotes(input)
-	local ret = {}
-	local len = string.len(input)
-	
-	local literal = false
-	local quote = false
-	local current = ""
-	
-	for i = 0, len do
-	
-		local c = input[i]
-		
-		if literal then
-			if c == '\"' then
-				quote = not quote
-			else
-				c = special[c] or c
-				current = current .. c
-			end
-			literal = false
-		else
-			if c == '\"' then
-				quote = not quote
-			elseif c == '\\' then
-				literal = true
-			elseif c == ' ' and not quote then
-				table.insert(ret, current)
-				current = ""
-			else
-				current = current .. c
+	if argument:find('STEAM_') then
+		for k,v in pairs(player.GetAll()) do
+			if v:SteamID() == argument then
+				return v
 			end
 		end
-		
 	end
-	
-	if string.len(current) != 0 then
-		table.insert(ret, current)
-	end
-	
-	return ret
-end
 
-fw.chat.paramTypes["player"] = function(data)
-	local isid = (string.sub(data, 1, 5) == "STEAM") -- is the data passed a steam id?
+	argument = argument:lower()
 
+	local found = nil
 	for k,v in pairs(player.GetAll()) do
-		if (isid and v:SteamID() == data) then
-			return v
-		end
-		if (string.find( string.lower(v:Nick()), string.lower(data))) then -- match the steamid, or match the nickname
-			return v
+		if v:Name() == argument then return v end
+		if v:Name():lower():find(argument) then
+			if found then return nil, 'two players matched substring, give a more exact name' end
+			found = v
 		end
 	end
-
-	return data
+	if found then return found end
+	return nil, 'no player found'
 end
-fw.chat.paramTypes['bool']   = function(data) return tobool(data) end
-fw.chat.paramTypes['number'] = function(data) return tonumber(data) end
-fw.chat.paramTypes['string'] = function(data) return tostring(data) end
 
-function fw.chat.parseString(ply, str)
-	--get cmd name
-	local string_parts = string.Explode(" ", str)
-	local cmdn = string_parts[1]
+-- PARSE A STRING ARGUENT
+fw.chat.argTypes['string'] = function(argument) return argument end
+fw.chat.argTypes['number'] = function(argument)
+	local num = tonumber(argument)
+	if num == nil then return nil, 'malformatted number' end
+	return num
+end
+fw.chat.argTypes['bool'] = function(argument)
+	if arguent[1] == 'y' or argument[1] == 't' then return true end
+	return false
+end
+fw.chat.argTypes['money'] = function(argument)
+	if string.sub(argument, 1, 1) == '$' then
+		return fw.chat.argTypes['money'](string.sub(argument, 2))
+	end
+	return fw.chat.argTypes['number'](argument)
+end
 
-	--make sure the player is trying to call a cmd
-	local first = string.sub(cmdn, 1, 1)
-	if (not first:match("^[!/$#@]")) then
-		return
+
+
+--
+-- ADD COMMAND
+--
+function fw.chat.addCMD(...)
+	return setmetatable({}, cmd_mt):ctor(...)
+end
+
+local quotes = {
+	['\''] = true,
+	['\"'] = true
+}
+function fw.chat.parseLine(line)
+	local function skipWhiteSpace(index)
+		return string.find(line, '%S', index)
 	end
 
-	--make sure the command oject exists
-	cmdn = string.sub(cmdn, 2, string.len(cmdn))
-	cmdn = string.lower(cmdn)
-
-	--grab the id associated with the command! :D
-	local cmdID = fw.chat.cmdCache[cmdn]
-	if (not cmdID) then fw.print('cmdid', cmdID, 'not found') return str end
-
-	--index the cmd based on the cmd id
-	local cmdObj = fw.chat.cmds[cmdID]
-	if (not cmdObj) then fw.print('cmdn', cmdn, 'not found') return str end
-
-	if (#cmdObj.permissions > 0) then
-		for k,v in pairs(cmdObj.permissions) do
-			local build = fw.chat.restrictions[v]
-
-			if (not build(ply)) then 
-				ply:FWChatPrintError("You don't meet the qualifications to run this command!")
-				return str
-			end
-		end
+	local function findNextSpace(index)
+		return string.find(line, '%s', index)
 	end
 
-	table.remove(string_parts, 1)
+	local function findClosingQuote(index, type)
+		return string.find(line, type, index)
+	end
 
-	--get the arguments, with quote sensitivity
-	local args = fw.chat.parseQuotes(table.concat(string_parts, ' '))
+	local parts = {}
 
-	--get ready for assigning arguments to parameters, as required by the command
-	local params = cmdObj.parameters
-	local parsedArguments = {}
+	local index = 1
+	while index ~= nil do
+		index = skipWhiteSpace(index)
+		if not index then break end
 
-	--assign a count for easier indexing of args
-	local count = 1
-
-	--here we will assign each parameter a value and return it to the function, in a very neat fashion
-	for k,v in pairs(params) do
-		local pName = v.name
-		local pType = v.type
-
-		local value = args[k] --where are we in the string the player sent?
-		if (not value) then
-			ply:FWChatPrintError(Color(255, 0, 0), ' Command requires ' .. #params .. ' arguments, failed to run.')
-			return str
-		end
-
-		--the player is targeting themself
-		if (pType == 'player' and value == '^') then
-			value = ply
-		elseif (pType == 'string' and (params[k + 1] == nil)) then
-			local func = fw.chat.paramTypes['string']
-			-- very efficient way of splicing the arguments table, dropping the first k-1 values, and then creating a new table and joining it with ' '
-			value = table.concat({select(k, unpack(args))}, ' ')
-			value = func(value)
-
-			if (not value) then 
-				return str
-			end
+		local cur = string.sub(line, index, index)
+		if quotes[cur] then
+			local closer = findClosingQuote(index + 1, cur)
+			local quotedString = string.sub(line, index + 1, closer and closer - 1 or nil)
+			table.insert(parts, quotedString)
+			if not closer then break end
+			index = closer
 		else
-			local func = fw.chat.paramTypes[pType] or fw.chat.paramTypes['string']
-			value = func(value)
-
-			if (not value) then
-				ply:FWChatPrintError('Failed to parse parameter #' .. k .. ' did not run command.')
-				return str
-			end
+			local nextSpace = findNextSpace(index)
+			local word = string.sub(line, index, nextSpace and nextSpace - 1 or nil)
+			table.insert(parts, word)
+			if not nextSpace then break end
+			index = nextSpace
 		end
-
-		table.insert(parsedArguments, value)
-		count = count + 1
 	end
 
-	cmdObj.callback(ply, unpack(parsedArguments))
-	
-	return ""
+	return parts
 end
 
-fw.hook.Add("PlayerSay", "ParseForCommands", function(ply, text, teamChat)
-	if (text[1] == '^') then 
-		if (ply.lastmsg) then 
-			text = ply.lastmsg
+
+fw.hook.Add('PlayerSay', function(pl, text)
+	local firstSpace = string.find(text, '%s')
+	local prefix = string.sub(text, 1, 1)
+	local command = string.sub(text, 2, firstSpace and firstSpace - 1 or nil)
+	if prefix == '!' or prefix == '/' and fw.chat.cmds[command] then
+		command = fw.chat.cmds[command]
+		local arguments
+		if firstSpace then
+			arguments = fw.chat.parseLine(string.sub(text, firstSpace))
+		else
+			arguments = {}
 		end
-	else 
-		ply.lastmsg = text
+		if #arguments < #command.params then
+			pl:FWChatPrintError("Sorry! This command takes " .. (#command.params) .. " arguments!")
+			return
+		end
+
+		-- make the last argument into one argument
+		if #arguments > #command.params then
+			local extra = {}
+			for i = #command.params, #arguments do
+				table.insert(extra, arguments[i])
+				arguments[i] = nil
+			end
+			arguments[#command.params] = table.concat(extra, ' ')
+		end
+
+		local allGood = true
+
+		local function processArguments(index, a, ...)
+			if not a then return end
+
+			local param = command.params[index]
+			local value, message = fw.chat.argTypes[param.type](a)
+			if value == nil and message ~= nil then
+				allGood = false
+				pl:FWChatPrintError("Error: " .. tostring(message))
+				return
+			end
+
+			return value, processArguments(index + 1, ...)
+		end
+
+		local function callIt(...)
+			if allGood then
+				command.callback(pl, ...)
+				return
+			end
+		end
+		callIt(processArguments(1, unpack(arguments)))
+
+		return ''
 	end
-
-	if (teamChat) then
-		ply:ConCommand("fw_group "..text)
-
-		return ""
-	end
-
-	--did the chat cmd ran, return a string? if so, then return the string is sent :D
-	local status = fw.chat.parseString(ply, text)
-	if (status) then 
-		return ""
-	end
-
-
-	local textCache = {}
-	if (not ply:Alive()) then
-		table.insert(textCache, Color(255, 0, 0))
-		table.insert(textCache, "*DEAD* ")
-	end
-
-	local user, color = fw.hook.Call("ChatTags", GAMEMODE, ply)
-
-	if (user and color) then
-		table.insert(textCache, color)
-		table.insert(textCache, user)
-	end
-
-	table.insert(textCache, team.GetColor(ply:Team()))
-	table.insert(textCache, ply:Nick() .. ": ")
-	table.insert(textCache, Color(255, 255, 255))
-
-	table.insert(textCache, text)
-
-	local players = {}
-	for k,v in pairs(player.findInSphere(ply:GetPos(), 260)) do
-		if (not v:IsPlayer()) then continue end
-		
-		table.insert(players, v)
-	end
-
-	fw.notif.chat(players, unpack(textCache))
-
-	return ""
+	return nil
 end)
 
---basic /me command
---[[ -- broken and not important enough to be worth fixing
-fw.chat.addCMD("me", "Sends a message spoofing yourself", function(ply, text)
-	ply:FWChatPrint(team.GetColor(ply:Team()), ply:Nick(), " ", text)
-end):addParam('message', 'string')
-]]
-
 --basic help command
-fw.chat.addCMD("help", "Prints a help log to your screen", function(ply)
-	ply:FWConPrint( "------------NOTE------------")
-	ply:FWConPrint("THE ORDER MATTERS WITH PARAMETERS. FOLLOW USAGE GUIDE.")
-
-	for k,v in pairs(fw.chat.cmds) do
-		ply:FWConPrint("----------------")
-		ply:FWConPrint("Command: " .. k)
-		ply:FWConPrint("Help: ".. v.help)
-
-		local usage = "/"..k.." "
-
-		for k,v in pairs(v.parameters) do
-			ply:FWConPrint("Param: ".. v.name.. ', accepts type ' ..v.type)
-			usage = usage .. v.name .. " <"..v.type..">"
-		end
-		ply:FWConPrint("Usage: "..usage)
+fw.chat.addCMD("help", "Prints a help log to your screen", function(pl)
+	local function formatParameters(param, ...)
+		if not param then return end
+		return '<' .. param.type .. ':' .. param.name .. '>', formatParameters(...)
 	end
-	ply:FWChatPrint(Color(255, 255, 255), 'A list of all available commands has printed to your console!')
+
+	pl:FWChatPrint("Please check your console for chat command help")
+
+	local alreadySeen = {}
+	for name, command in SortedPairs(fw.chat.cmds) do
+		if not alreadySeen[command] then
+			alreadySeen[command] = true
+			local color = command.permCheck(pl) and Color(0, 255, 0) or Color(255, 0, 0)
+			pl:FWConPrint(color, table.concat(command.aliases, ' or '), color_white, ' - ', command.helptext)
+			local paramHelp = table.concat({formatParameters(unpack(command.params))}, ' ')
+			if string.len(paramHelp) > 0 then
+				pl:FWConPrint(color_white, '\t', paramHelp)
+			end
+		end
+	end
 end)
 
 fw.chat.addCMD("vote", "Makes a vote available to everyone", function(ply, desc)
-	fw.vote.createNew(ply:Nick().."'s vote", desc, player.GetAll(), 
-		function(decision, vote, results) 
+	fw.vote.createNew(ply:Nick().."'s vote", desc, player.GetAll(),
+		function(decision, vote, results)
 
-			decision = decision and vote.yesText or vote.noText 
+			decision = decision and vote.yesText or vote.noText
 
 			fw.notif.chatPrint(player.GetAll(), color_black, "[Votes]: ", color_white, "'"..decision.. "' won in ", ply, "'s vote, with, ".. results.yesVotes .." Yes votes, and ".. results.noVotes .." No votes!")
 
@@ -310,7 +256,7 @@ fw.chat.addCMD("dropmoney", "Drops some money in front of you", function(ply, mo
 		local tr = util.TraceLine({
 			start = ply:EyePos(),
 			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 50,
-			filter = function( ent ) if ent != ply then return true end end
+			filter = function( ent ) if ent ~= ply then return true end end
 		})
 
 		ply:addMoney(-money)
@@ -433,4 +379,3 @@ hook.Add("PlayerSay", "QueryForURL", function(ply, text)
 		end
 	end
 end)]]
-
