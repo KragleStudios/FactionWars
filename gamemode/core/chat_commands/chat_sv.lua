@@ -68,7 +68,7 @@ local quotes = {
 	['\''] = true,
 	['\"'] = true
 }
-function fw.chat.parseString(line)
+function fw.chat.parseQuotes(line)
 	local function skipWhiteSpace(index)
 		return string.find(line, '%S', index)
 	end 
