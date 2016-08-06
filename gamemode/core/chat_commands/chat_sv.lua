@@ -142,11 +142,11 @@ function fw.chat.parseString(ply, str)
 
 	--grab the id associated with the command! :D
 	local cmdID = fw.chat.cmdCache[cmdn]
-	if (not cmdID) then fw.print('cmdid', cmdID, 'not found') return str end
+	if (not cmdID) then fw.print('cmdid', cmdID, 'not found') return "" end
 
 	--index the cmd based on the cmd id
 	local cmdObj = fw.chat.cmds[cmdID]
-	if (not cmdObj) then fw.print('cmdn', cmdn, 'not found') return str end
+	if (not cmdObj) then fw.print('cmdn', cmdn, 'not found') return "" end
 
 	if (#cmdObj.permissions > 0) then
 		for k,v in pairs(cmdObj.permissions) do
@@ -154,7 +154,7 @@ function fw.chat.parseString(ply, str)
 
 			if (not build(ply)) then 
 				ply:FWChatPrintError("You don't meet the qualifications to run this command!")
-				return str
+				return
 			end
 		end
 	end
@@ -163,7 +163,6 @@ function fw.chat.parseString(ply, str)
 
 	--get the arguments, with quote sensitivity
 	local args = fw.chat.parseQuotes(table.concat(string_parts, ' '))
-
 	--get ready for assigning arguments to parameters, as required by the command
 	local params = cmdObj.parameters
 	local parsedArguments = {}
@@ -179,7 +178,7 @@ function fw.chat.parseString(ply, str)
 		local value = args[k] --where are we in the string the player sent?
 		if (not value) then
 			ply:FWChatPrintError(Color(255, 0, 0), ' Command requires ' .. #params .. ' arguments, failed to run.')
-			return str
+			return
 		end
 
 		--the player is targeting themself
@@ -191,16 +190,17 @@ function fw.chat.parseString(ply, str)
 			value = table.concat({select(k, unpack(args))}, ' ')
 			value = func(value)
 
-			if (not value) then 
-				return str
+			if (value == nil) then 
+				ply:FWChatPrintError('Failed to parse parameter #' .. k .. ' did not run command.')
+				return ""
 			end
 		else
 			local func = fw.chat.paramTypes[pType] or fw.chat.paramTypes['string']
 			value = func(value)
 
-			if (not value) then
+			if (value == nil) then
 				ply:FWChatPrintError('Failed to parse parameter #' .. k .. ' did not run command.')
-				return str
+				return ""
 			end
 		end
 
