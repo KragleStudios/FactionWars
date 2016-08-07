@@ -98,7 +98,7 @@ fw.chat.argTypes['number'] = function(argument)
 	return num
 end
 fw.chat.argTypes['bool'] = function(argument)
-	if arguent[1] == 'y' or argument[1] == 't' then return true end
+	if argument[1] == 'y' or argument[1] == 't' then return true end
 	return false
 end
 fw.chat.argTypes['money'] = function(argument)
