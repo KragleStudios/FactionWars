@@ -75,7 +75,8 @@ function ENT:ProcessGun(ent)
 end
 
 function ENT:Touch(ent)
-	if ent:GetClass() == "fw_gun" then
+	if ent:GetClass() == "fw_gun" and not ent.Used then
+		ent.Used = true
 		self:ProcessGun(ent)
 	end
 end

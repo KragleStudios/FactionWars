@@ -11,6 +11,25 @@ fw.weapons.buffs = {
 			self.Primary.ClipSize = self.Primary.ClipSize * 1.2
 		end,
 		"20% increased ammo capacity",
+	},
+	rpm = {
+		function(self)
+			self.Primary.RPM = self.Primary.RPM * 1.15
+		end,
+		"15% increased rate of fire"
+	},
+	spread = {
+		function(self)
+			self.Primary.BaseSpread = self.Primary.BaseSpread * 0.9
+		end,
+		"10% decreased spread"
+	},
+	recoil = {
+		function(self)
+			self.Primary.BaseRecoil = self.Primary.BaseRecoil * 0.85
+			self.Primary.MaxRecoil = self.Primary.MaxRecoil * 0.9
+		end,
+		"15% decreased recoil"
 	}
 }
 

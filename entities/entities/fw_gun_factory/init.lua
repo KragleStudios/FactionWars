@@ -35,9 +35,6 @@ local outputs = {
 	}
 }
 
-ENT.Parts = 0
-ENT.Scrap = 0
-
 function ENT:Initialize()
 	self:SetModel("models/props_c17/TrapPropeller_Engine.mdl")
 	self:PhysicsInit(SOLID_VPHYSICS)
@@ -47,15 +44,20 @@ function ENT:Initialize()
 	self:PhysWake()
 
 	self:SetTrigger(true)
+
+	self:SetParts(0)
+	self:SetScrap(0)
 end
 
 function ENT:Touch(ent)
-	if ent:GetClass() == "fw_gun_parts" then
-		self.Parts = self.Parts + 1
+	if ent:GetClass() == "fw_gun_parts" and not ent.Used then
+		ent.Used = true
 		ent:Remove()
-	elseif ent:GetClass() == "fw_gun_scrap" then
-		self.Scrap = self.Scrap + 1
+		self:SetParts(self:GetParts() + 1)
+	elseif ent:GetClass() == "fw_gun_scrap" and not ent.Used then
+		ent.Used = true
 		ent:Remove()
+		self:SetScrap(self:GetScrap() + 1)
 	end
 end
 
@@ -63,19 +65,31 @@ function ENT:SpawnGun(type)
 	local ent = ents.Create("fw_gun")
 	local weapon = outputs[type][math.random(1, #outputs[type])]
 	ent:SetWeapon(weapon)
-	ent:SetBuff(table.Random(fw.weapons.buffs))
+	ent:SetBuff(table.Random(table.GetKeys(fw.weapons.buffs)))
 	ent:SetModel(weapons.Get(weapon).WorldModel)
+	ent:SetPos(self:GetPos())
 	ent:Spawn()
 end
 
 function ENT:Use(ply, trigger)
-	if self.Parts >= 3 and self.Scrap >= 3 then
+	local scrap = self:GetScrap()
+	local parts = self:GetParts()
+
+	if parts >= 3 and scrap >= 3 then
 		self:SpawnGun("rifle")
-	elseif self.Parts >= 3 and self.Scrap >= 2 then
+		self:SetParts(self:GetParts() - 3)
+		self:SetScrap(self:GetScrap() - 3)
+	elseif parts >= 3 and scrap >= 2 then
 		self:SpawnGun("twohanded")
-	elseif self.Parts >= 2 and self.Scrap >= 2 then
+		self:SetParts(self:GetParts() - 3)
+		self:SetScrap(self:GetScrap() - 2)
+	elseif parts >= 2 and scrap >= 2 then
 		self:SpawnGun("smg")
-	elseif self.Parts >= 1 and self.Scrap >= 1 then
+		self:SetParts(self:GetParts() - 2)
+		self:SetScrap(self:GetScrap() - 2)
+	elseif parts >= 1 and scrap >= 1 then
 		self:SpawnGun("pistol")
+		self:SetParts(self:GetParts() - 1)
+		self:SetScrap(self:GetScrap() - 1)
 	end
 end
