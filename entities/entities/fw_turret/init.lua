@@ -1,8 +1,3 @@
---[[
-	NOTE!!:: 
-	ent:SetOwner(ply) MUST BE SET ON THIS ENTITY'S CREATION OR THIS WILL ERROR!!
-]]
-
 AddCSLuaFile("shared.lua")
 AddCSLuaFile('3d2dvgui.lua')
 AddCSLuaFile("cl_init.lua")
@@ -106,8 +101,8 @@ end
 function ENT:ShouldTarget(target)
 	if (not target:IsPlayer()) then return false end
 	if (not target:inFaction()) then return false end
-	if (IsValid(self:GetOwner()) and IsValid(target) and target:getFaction() == self:GetOwner():getFaction()) then return false end
-	if (self:GetOwner() == target) then return false end
+	if (IsValid(self:GetNWEntity("owner")) and IsValid(target) and target:getFaction() == self:GetNWEntity("owner"):getFaction()) then return false end
+	if (self:GetNWEntity("owner") == target) then return false end
 
 	return true
 end
@@ -243,11 +238,16 @@ function ENT:Think()
 end
 
 --toggles the turret on or off
-net.Receive("fw.updateTurretStatus", function()
+net.Receive("fw.updateTurretStatus", function(l, caller)
 	local ent = net.ReadEntity()
 	local bool = net.ReadBool()
 
 	if (not IsValid(ent) or not ent:ShouldFire()) then return end
+
+	local dis = caller:GetPos():DistToSqr(ent:GetPos())
+	if (dis > 75 * 75) then 
+		return
+	end
 
 	ent:SetStatus(bool)
 end)
@@ -257,6 +257,11 @@ net.Receive("fw.upgradeTurret", function(l, caller)
 	local ent = net.ReadEntity()
 
 	if (not IsValid(ent)) then return end
+
+	local dis = caller:GetPos():DistToSqr(ent:GetPos())
+	if (dis > 75 * 75) then 
+		return
+	end
 	
 	local upgrade_status = ent:GetUpgradeStatus()
 	local target_upgrade = ent.upgrades[upgrade_status + 1]
@@ -273,10 +278,15 @@ net.Receive("fw.upgradeTurret", function(l, caller)
 end)
 
 --turns the menu off
-net.Receive("fw.toggleMenu", function()
+net.Receive("fw.toggleMenu", function(l, caller)
 	local ent = net.ReadEntity()
 
 	if (not IsValid(ent)) then return end
+
+	local dis = caller:GetPos():DistToSqr(ent:GetPos())
+	if (dis > 75 * 75) then 
+		return
+	end
 
 	ent:SetMenuOpen(not ent:GetMenuOpen())
 end)
@@ -286,6 +296,11 @@ net.Receive("fw.buyAmmo", function(l, caller)
 	local ent = net.ReadEntity()
 
 	if (not IsValid(ent)) then return end
+
+	local dis = caller:GetPos():DistToSqr(ent:GetPos())
+	if (dis > 75 * 75) then 
+		return
+	end
 
 	--only charge for the ammo needed
 	local ammo_cost = (ent:GetRemaining() / ent:GetMaxClip()) * ent:GetAmmoCost()
