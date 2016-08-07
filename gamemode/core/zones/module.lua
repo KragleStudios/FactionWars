@@ -3,7 +3,7 @@ if SERVER then
 end
 
 fw.zone = {}
- 
+
 -- external dependencies
 require 'ra'
 
@@ -16,16 +16,15 @@ fw.zone.zoneDataDir = fw.config.dataDir .. (SERVER and '/zones_sv/' or '/zones_c
 file.CreateDir(fw.zone.zoneDataDir)
 
 -- include files
+fw.include_sv 'zone_capture_sv.lua'
 fw.include_sv 'zones_sv.lua'
-
 fw.include_sh 'zones_sh.lua'
 fw.include_cl 'zones_cl.lua'
-
 
 --
 -- ZONE SYNC LOGIC
 --
-if SERVER then 
+if SERVER then
 	util.AddNetworkString('fw.zone.CRC')
 	util.AddNetworkString('fw.zone.fetch')
 	net.Receive('fw.zone.CRC', function(_ ,pl)
@@ -38,7 +37,7 @@ if SERVER then
 
 	local limiter = {}
 	net.Receive('fw.zone.fetch', function(_, pl)
-		if limiter[pl] then return end 
+		if limiter[pl] then return end
 		local data = file.Read(fw.zone.getSaveFileName(), 'DATA')
 		if not data then return end
 		fw.print('sending back zone data stream')
@@ -79,24 +78,4 @@ else
 		net.Start('fw.zone.CRC')
 		net.SendToServer()
 	end)
-end
-
---
--- PLAYER METHODS
---
-
-timer.Create('fw.zone.updatePlayerZones', 1, 0, function()
-	for k, pl in ipairs(player.GetAll()) do
-		pl._fwZone = fw.zone.playerGetZone(pl)
-	end
-end)
-
-local Player = FindMetaTable('Player')
-
-function Player:GetFWZone()
-	return self._fwZone 
-end
-
-function Player:IsInZone()
-	return self._fwZone ~= nil 
 end

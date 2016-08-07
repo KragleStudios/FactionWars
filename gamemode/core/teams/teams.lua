@@ -6,14 +6,19 @@ FACTION_DEFAULT = fw.team.registerFaction('Common Wealth', {
 	color = Color(255, 255, 255)
 })
 
+FACTION_POLICE = fw.team.registerFaction('Police State', {
+	stringID = 'f_police',
+	color = Color(25, 25, 255)
+})
+
 FACTION_GANGA = fw.team.registerFaction('Yakuza', {
 	stringID = 'f_yakuza',
 	color = Color(255, 25, 25)
 })
 
-FACTION_GANGB = fw.team.registerFaction('Aryan Brotherhook', {
+FACTION_GANGB = fw.team.registerFaction('Aryans', {
 	stringID = 'f_aryan',
-	color = Color(25, 25, 255)
+	color = Color(255, 155, 25)
 })
 
 --
@@ -62,12 +67,12 @@ TEAM_MAYOR = fw.team.register("Mayor", {
 TEAM_CIVILIAN = fw.team.register("Civilian", {
 	stringID = "t_civilian",
 	models = {
-			"models/player/Group02/male_02.mdl",
-			"models/player/Group02/male_04.mdl",
-			"models/player/Group02/male_06.mdl",
-
-			"models/player/Group01/female_06.mdl",
-			"models/player/Group01/female_01.mdl"},
+		"models/player/Group02/male_02.mdl",
+		"models/player/Group02/male_04.mdl",
+		"models/player/Group02/male_06.mdl",
+		"models/player/Group01/female_06.mdl",
+		"models/player/Group01/female_01.mdl"
+	},
 	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	salary = 30,
 	max = 0
@@ -113,10 +118,12 @@ TEAM_MEDIC = fw.team.register("Medic", {
 
 TEAM_SOLDIER = fw.team.register("Soldier", {
 	stringID = "soldier",
-	models = {"models/player/Group03/male_02.mdl",
+	models = {
+		"models/player/Group03/male_02.mdl",
 		"models/player/Group03/male_03.mdl",
 		"models/player/Group03/male_07.mdl",
-		"models/player/Group03/male_08.mdl"},
+		"models/player/Group03/male_08.mdl"
+	},
 	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	faction = {FACTION_GANGA, FACTION_GANGB},
 	salary = 45,
@@ -125,15 +132,15 @@ TEAM_SOLDIER = fw.team.register("Soldier", {
 
 if (SERVER) then
 	-- TODO: make this configured in a text file with a chatcommand
-	fw.team.registerSpawn("police_officer", Vector(384.719086, 712.536865, -29.674372), Angle(11.538577, 205.371857, 0.000000))
+	-- TODO: spawn registration needs to be on a per-map system in a text file
+	-- fw.team.registerSpawn("police_officer", Vector(384.719086, 712.536865, -29.674372), Angle(11.538577, 205.371857, 0.000000))
 end
-
 
 TEAM_POLICE = fw.team.register("Police Officer", {
 	stringID = "t_police_officer",
 	models = {"models/player/urban.mdl"},
 	weapons = {"weapon_357", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
-	faction = FACTION_DEFAULT,
+	faction = FACTION_POLICE,
 	salary = 50,
 	max = 8,
 })
@@ -142,7 +149,7 @@ TEAM_POLICE_CHIEF = fw.team.register("Police Chief", {
 	stringID = "t_police_officer_chief",
 	models = {"models/player/riot.mdl"},
 	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
-	faction = FACTION_DEFAULT,
+	faction = FACTION_POLICET,
 	salary = 55,
 	max = 1,
 	canJoin = function(pc_team, ply)

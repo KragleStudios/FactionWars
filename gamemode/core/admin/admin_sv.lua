@@ -7,8 +7,7 @@ fw.admin.gags = {}
 
 local function AddAdminCommand(obj, type)
 	obj = obj:restrictTo("admin")
-
-	fw.admin.cmds[type][obj.id] = obj
+	table.insert(fw.admin.cmds[type], obj)
 end
 
 local function PermissionCheck(ply, superadmin)

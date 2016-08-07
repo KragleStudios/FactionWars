@@ -25,7 +25,7 @@ vgui.Register('fwHudInfoCell', {
 		end,
 
 		PerformLayout = function(self)
-			local p = sty.ScreenScale(2.5)
+			local p = sty.ScreenScale(2)
 			self._p = p
 
 			self.highlight:SetSize(self:GetWide(), p)
@@ -98,7 +98,7 @@ vgui.Register('fwHudInfo', {
 				self.hp:SetUpdater(function()
 					return LocalPlayer():Health()
 				end, function()
-					return 'HEALTH: ' .. LocalPlayer():Health()
+					return 'Health: ' .. LocalPlayer():Health()
 				end)
 			end
 
@@ -109,7 +109,7 @@ vgui.Register('fwHudInfo', {
 
 				local function updateMoney()
 					if not IsValid(self.money) then return end
-					self.money:SetText('MONEY: ' .. fw.config.currencySymbol .. string.Comma(tostring(LocalPlayer():getMoney())))
+					self.money:SetText('Money: ' .. fw.config.currencySymbol .. string.Comma(tostring(LocalPlayer():getMoney())))
 				end
 				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'money'), 'set', updateMoney)
 				updateMoney()
@@ -140,7 +140,7 @@ vgui.Register('fwHudInfo', {
 					if LocalPlayer():inFaction() or (LocalPlayer():getFaction() == FACTION_DEFAULT) then
 						local factionMeta = fw.team.getFactionByID(LocalPlayer():getFaction())
 						if not factionMeta then return end
-						self.faction:SetText(factionMeta:getName())
+						self.faction:SetText('Faction: ' .. factionMeta:getName())
 					else
 						self.faction:SetText('NO FACTION')
 					end
@@ -165,7 +165,7 @@ vgui.Register('fwHudInfo', {
 							boss = "None"
 						end
 
-						self.boss:SetText('BOSS: ' .. boss)
+						self.boss:SetText('Boss: ' .. boss)
 						self.boss:SetVisible(true)
 					else
 						self.boss:SetVisible(false)
@@ -180,16 +180,50 @@ vgui.Register('fwHudInfo', {
 			-- display the zone
 			do
 				self.zone = vgui.Create('fwHudInfoCell', self.layout)
+				self.territory = vgui.Create('fwHudInfoCell', self.layout)
+
+				local function updateTerritory()
+					local zone = fw.zone.playerGetZone(LocalPlayer())
+					if not zone then
+						self.territory:SetVisible(false)
+						return
+					end
+					self.territory:SetVisible(true)
+
+					local zoneControl = ndoc.table.fwZoneControl[zone.id]
+					print(zoneControl)
+					local factionMax, controlMax = nil, 0
+					for k,v in ndoc.pairs(zoneControl) do
+						print(k, v)
+						if v > controlMax then
+							controlMax = v
+							factionMax = k
+						end
+					end
+
+					if factionMax then
+						self.territory:SetTint(fw.team.factions[factionMax].color or color_white)
+						self.territory:SetText(fw.team.factions[factionMax].name .. ' territory %' .. math.Round(controlMax/fw.config.zoneCaptureScore*100))
+					else
+						self.territory:SetText('Unclaimed Land')
+					end
+				end
+
+				ndoc.addHook('fwZoneControl.?.?', 'set', function(zoneId, factionId, amount)
+					if not IsValid(self.territory) then return end
+					updateTerritory() -- it might be alot of updates... but hopefully it's less than it could otherwise be!
+				end)
 
 				self.zone:SetUpdater(function()
 					local zone = fw.zone.playerGetZone(LocalPlayer())
 					return zone or -1
 				end, function()
 					local zone = fw.zone.playerGetZone(LocalPlayer())
+					updateTerritory()
 					if zone == nil then
-						return 'NO MANS LAND'
+						return 'Zone: the streets'
 					else
-						return zone.name or 'unknown zone'
+						return zone.name and ('Zone: ' .. zone.name) or 'unknown zone'
 					end
 				end)
 			end
@@ -223,15 +257,18 @@ vgui.Register('fwHudInfo', {
 		end,
 
 		PerformLayout = function(self)
-			self.layout:SetTall(sty.ScreenScale(17))
+			self.layout:SetTall(sty.ScreenScale(15))
 
 			-- do layout
-			self.money:SetWide(sty.ScreenScale(100))
-			self.job:SetWide(sty.ScreenScale(100))
-			self.faction:SetWide(sty.ScreenScale(100))
-			self.hp:SetWide(sty.ScreenScale(100))
-			self.boss:SetWide(sty.ScreenScale(100))
-			self.zone:SetWide(sty.ScreenScale(100))
+			local width = 80
+
+			self.money:SetWide(sty.ScreenScale(width))
+			self.job:SetWide(sty.ScreenScale(width))
+			self.faction:SetWide(sty.ScreenScale(width))
+			self.hp:SetWide(sty.ScreenScale(width))
+			self.boss:SetWide(sty.ScreenScale(width))
+			self.zone:SetWide(sty.ScreenScale(width))
+			self.territory:SetWide(sty.ScreenScale(width))
 
 			local p = sty.ScreenScale(3)
 			self.layout:SetPadding(p)

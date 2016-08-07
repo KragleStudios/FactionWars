@@ -49,8 +49,10 @@ function GM:InitPostEntity(...)
 	return fw.hook.Call('InitPostEntity', ...)
 end
 
-function GM:PlayerSay(...)
-	return fw.hook.Call('PlayerSay', ...)
+function GM:PlayerSay(pl, text, ...)
+	local res = fw.hook.Call('PlayerSay', pl, text, ...)
+	if res == nil then return text end
+	return ""
 end
 
 function GM:ScoreboardShow(...)
@@ -88,10 +90,10 @@ function GM:OnReloaded(...)
 
 	fw.hook.Call('Initialize')
 
-	for k, pl in ipairs(player.GetAll()) do 
+	for k, pl in ipairs(player.GetAll()) do
 		fw.hook.Call('PlayerInitialSpawn', pl)
 		fw.hook.Call('PlayerSpawn', pl)
-	end 
+	end
 
 	_REFRESH = nil
 
@@ -120,7 +122,7 @@ end
 
 function GM:PostDrawTranslucentRenderables(...)
 	return fw.hook.Call('PostDrawTranslucentRenderables', ...)
-end 
+end
 
 function GM:PlayerSwitchWeapon(...)
 	return fw.hook.Call("PlayerSwitchWeapon", ...)
@@ -166,8 +168,4 @@ end
 
 function GM:PlayerEnteredZone(...)
 	return fw.hook.Call('PlayerEnteredZone', ...)
-end
-
-function GM:PlayerLeftZone(...)
-	return fw.hook.Call('PlayerLeftZone', ...)
 end

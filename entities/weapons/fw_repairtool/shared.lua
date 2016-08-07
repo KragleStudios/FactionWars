@@ -36,7 +36,7 @@ function SWEP:PrimaryAttack()
 		filter = function(ent) return ent != self.Owner end
 	})
 
-	local buff = (ply:Team() == TEAM_ENGINEER and .1 or .2)
+	local buff = (self.Owner:Team() == TEAM_ENGINEER and .15 or .3)
 
 	self:SetNextPrimaryFire(CurTime() + buff)
 

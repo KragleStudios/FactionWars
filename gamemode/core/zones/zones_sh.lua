@@ -61,13 +61,16 @@ function zone_mt:ctor(id, name, polygon)
 	self.center[2] = self.center[2] / #self.polygon
 	self.radius = math.sqrt((self.maxX - self.minX) * (self.maxX - self.minX) + (self.maxY - self.minY) * (self.maxY - self.minY))
 
+	-- track the players in the zone
+	self.players = {}
+
 	-- setup rendering code
 	if CLIENT then
 		self:setupRendering()
 	end
 
 	if (SERVER) then
-		fw.zone.initiate(self)
+		fw.zone.setupCaptureNetworking(self)
 	end
 
 	return self
@@ -309,10 +312,6 @@ function fw.zone.loadZonesFromDisk()
 		fw.zone.zoneList[zone.id] = zone
 	end
 	f:Close()
-
-	if (SERVER) then
-		fw.zone.loadCapCache()
-	end
 end
 
 function fw.zone.getZoneFileCRC()
@@ -339,91 +338,37 @@ function fw.zone.playerGetZone(ply)
 	return nil
 end
 
---returns the faction controlling a zone
-function fw.zone.getControllingFaction(zone)
-	return ndoc.table.zones[zone.id] and ndoc.table.zones[zone.id].controlling
-end
+-- keep players in zones up to date
+timer.Create('fw.zone.updatePlayers', 1, 0, function()
+	for k, pl in pairs(player.GetAll()) do
+		local inZone = fw.zone.playerGetZone(pl)
+		if inZone ~= pl._fw_zone then
+			local oldZone = pl._fw_zone
 
---returns the factiont trying to capture a zone
-function fw.zone.getContestingFaction(zone)
-	local contestingData = ndoc.table.zones[zone.id].contesting
+			if oldZone then
+				table.RemoveByValue(oldZone, pl)
+			end
+			if inZone then
+				if not table.HasValue(inZone.players, pl) then
+					table.insert(inZone.players, pl)
+				end
+			end
 
-	if (not contestingData) then return end
-
-	local faction = fw.team.factions[contestingData.factionID]
-
-	return faction
-end
-
-function fw.zone.isProtectedZone(zone)
-	return ndoc.table.zones and ndoc.table.zones[zone.id].protected == true or false
-end
-
-function fw.zone.isCapturableZone(zone)
-	return ndoc.table.zones and not (ndoc.table.zones[zone.id].capturable == false)
-end
-
-function fw.zone.isFactionBase(zone)
-	return ndoc.table.zones and ndoc.table.zones[zone.id].faction_base
-end
-
---returns a tree structure like
---[[
-	returnedTable = {
-		factionID = {
-			players = {}, which players of the faction are in the zone
-			score = int, what is the current score of this faction in the zone
-			contesting = bool, is this faction challenging the zone
-			conrolsZone = bool is this faction controlling the zone
-		}
-	}
-]]
-function fw.zone.getZoneData(zone)
-	local factionTree = {}
-
-	if (not ndoc.table.zones) then return end
-
-	for k,v in pairs(fw.team.factions) do
-		local data = ndoc.table.zones[zone.id].factions[k]
-
-		--put all the players in the tree
-		factionTree[k] = {}
-		factionTree[k].players = {}
-
-		for ply,v in ndoc.pairs(data.players) do
-			if (not IsValid(ply)) then continue end
-
-			table.insert(factionTree[k].players, ply)
+			pl._fw_zone = inZone
+			fw.hook.Call('PlayerEnteredZone', inZone, oldZone)
 		end
-
-		factionTree[k].score = data.score
-
-		local own = ndoc.table.zones[zone.id].controlling
-		factionTree[k].controlsZone = (own == k)
-
-		local cont = ndoc.table.zones[zone.id].contesting and ndoc.table.zones[zone.id].contesting.factionID
-		factionTree[k].contestingZone = (cont == k)
 	end
+end)
 
-	return factionTree
+local Player = FindMetaTable('Player')
+function Player:getZoneInside()
+	return self._fw_zone
 end
 
---returns a table of controlled zones by faction
-function fw.zone.getControlledZones(faction)
-	controlledZones = {}
 
-	for k,v in pairs(fw.zone.zoneList) do
-		local zID = v.id
-
-		local fID = ndoc.table.zones[zID].controlling
-		if (not fID) then continue end
-
-		controlledZones[zID] = v
-	end
-
-	return controlledZones
-end
-
+--
+-- LAST THING WE DO IS LOAD ZONES FROM DISK
+--
 if file.Exists(fw.zone.getSaveFileName(), 'DATA') then
 	fw.zone.loadZonesFromDisk()
 end

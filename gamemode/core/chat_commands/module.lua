@@ -7,3 +7,4 @@ fw.dep(SHARED, 'utils')
 
 -- proper include system
 fw.include_sv 'chat_sv.lua'
+fw.include_sv 'command_definitions_sv.lua'

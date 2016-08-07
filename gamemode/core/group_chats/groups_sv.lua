@@ -152,7 +152,7 @@ fw.chat.addCMD({"yell", "y"}, "Sends a message to players in your direct vacinit
 	local players = {}
 	for k,v in pairs(player.findInSphere(ply:GetPos(), 560)) do
 		if (not v:IsPlayer()) then continue end
-		
+
 		table.insert(players, v)
 	end
 
@@ -161,7 +161,7 @@ end):addParam("message", "string")
 
 ---
 --- BEGIN GROUP CHATS AND VOICE COMMANDS
---- 
+---
 
 fw.chat.addCMD({"g", "group"}, "Sends a message to players in your registered chat groups", function(ply, msg)
 	local g_table = {}
@@ -203,7 +203,7 @@ end):addParam("message", "string")
 fw.chat.addCMD({"radio", "r"}, "Toggles the player's group chat radio", function(ply)
 	local inVoice = false
 	for k,v in pairs(fw.group.voice) do
-		if (v[ply:Team()]) then 
+		if (v[ply:Team()]) then
 			ply:SetNWBool("radio", not ply:GetNWBool("radio", false))
 			inVoice = true
 
@@ -211,7 +211,7 @@ fw.chat.addCMD({"radio", "r"}, "Toggles the player's group chat radio", function
 		end
 	end
 
-	if (not inVoice) then 
+	if (not inVoice) then
 		ply:FWChatPrintError("you aren't in a valid voice group!")
 		return
 	end
@@ -225,6 +225,8 @@ local police_teams = {
 	TEAM_POLICE, TEAM_POLICE_CHIEF
 }
 fw.chat.addCMD("911", "Sends a 911 prompt to all available police", function(ply, msg)
+	ply:FWChatPrint(team.GetColor(ply:Team()), ply:Nick(), color_white, " -> ", Color(0, 0, 255), "[911]", color_white, ": ", msg)
+
 	local players = {}
 	for k,v in pairs(player.GetAll()) do
 		if (table.HasValue(police_teams, v:Team())) then
@@ -242,11 +244,9 @@ fw.chat.addCMD("911", "Sends a 911 prompt to all available police", function(ply
 
 	table.insert(textCache, Color(0, 0, 255, 100))
 	table.insert(textCache, "[911] ")
-
 	table.insert(textCache, team.GetColor(ply:Team()))
 	table.insert(textCache, ply:Nick() .. ": ")
 	table.insert(textCache, Color(255, 255, 255))
-
 	table.insert(textCache, msg)
 
 	fw.notif.chat(players, unpack(textCache))
@@ -257,11 +257,11 @@ fw.hook.Add("PlayerCanHearPlayersVoice", "RadioPlayerVoice", function(listener, 
 		for k,v in pairs(fw.group.voice) do
 			if (v[talker:Team()] and v[listener:Team()]) then
 				return true
-				
+
 			end
 		end
 	end
-	
+
 	--distance based voice chat
 	if (listener:GetPos():DistToSqr(talker:GetPos()) <= 560 * 560) then return true end
 end)
