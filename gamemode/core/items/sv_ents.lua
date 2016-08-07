@@ -39,7 +39,7 @@ function fw.ents.buyItem(ply, item_index)
 		ship:Activate()
 		ship.itemData = item
 		ship.owner = ply
-		ent:SetNWEntity("owner", ply)
+		ship:SetNWEntity("owner", ply)
 	else
 		local ent = ents.Create(item.entity)
 		ent:SetPos(tr)

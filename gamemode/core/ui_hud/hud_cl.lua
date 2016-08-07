@@ -222,7 +222,7 @@ vgui.Register('fwHudInfo', {
 					local zone = fw.zone.playerGetZone(LocalPlayer())
 					updateTerritory()
 					if zone == nil then
-						return 'Zone: the streets'
+						return 'Zone: The Streets'
 					else
 						return zone.name and ('Zone: ' .. zone.name) or 'unknown zone'
 					end

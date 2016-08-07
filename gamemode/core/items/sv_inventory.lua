@@ -1,4 +1,4 @@
-fw.data.addPersistField('?.inventory')
+fw.data.addPersistField('?.inventory.slots')
 util.AddNetworkString("fw.dropItem")
 
 local invItemID = 1

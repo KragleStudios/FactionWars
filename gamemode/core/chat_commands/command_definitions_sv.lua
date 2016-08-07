@@ -27,7 +27,7 @@ fw.chat.addCMD("vote", "Makes a vote available to everyone", function(ply, desc)
 
 			decision = decision and vote.yesText or vote.noText
 
-			fw.notif.chatPrint(player.GetAll(), color_black, "[Votes]: ", color_white, "'"..decision.. "' won in ", ply, "'s vote, with, ".. results.yesVotes .." Yes votes, and ".. results.noVotes .." No votes!")
+			fw.notif.chatPrint(player.GetAll(), color_black, "[Votes]: ", color_white, "'"..decision.. "' won in ", ply:Nick(), "'s vote, with ".. results.yesVotes .." Yes votes, and ".. results.noVotes .." No votes!")
 
 		end, "Yes", "No", 15)
 end):addParam("description", "string")
