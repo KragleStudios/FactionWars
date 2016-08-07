@@ -24,6 +24,7 @@ end
 --
 local zone_mt = {}
 zone_mt.__index = zone_mt
+fw.zone._zone_mt = zone_mt
 
 function zone_mt:ctor(id, name, polygon)
 	self.maxX = -math.huge
@@ -63,11 +64,6 @@ function zone_mt:ctor(id, name, polygon)
 
 	-- track the players in the zone
 	self.players = {}
-
-	-- setup rendering code
-	if CLIENT then
-		self:setupRendering()
-	end
 
 	if (SERVER) then
 		fw.zone.setupCaptureNetworking(self)
@@ -193,43 +189,52 @@ end
 --
 -- RENDERING ALGORITHMS
 --
-function zone_mt:setupRendering(color)
-	if self._rendermesh then
-		self._rendermesh:Destroy()
-		self._rendermesh = nil
+function zone_mt:constructRenderer(color_outline, color_fill, border_thickness)
+	if self._rendermesh_outline then
+		self._rendermesh_outline:Destroy()
+		self._rendermesh_outline = nil
+	end
+	if self._rendermesh_fill then
+		self._rendermesh_fill:Destroy()
+		self._rendermesh_fill = nil
 	end
 
-	color = color or Color(255, 255, 255, 55)
+	if not color_outline then
+		color_outline = Color(255, 255, 255, 55)
+	end
+	if not color_fill then
+		color_fill = Color(0, 0, 0, 0)
+	end
 
 	-- compute inset polygon
-	self.polygon_inner = self:getPointsInsetByAmount(3)
+	self.polygon_inner = self:getPointsInsetByAmount(border_thickness or fw.config.zoneBorderThickness)
 
-	-- build the mesh
-	local m = Mesh()
+	-- build the outline mesh
+	local m_outline = Mesh()
 
 	local last_outer = self.polygon[#self.polygon]
 	local last_inner = self.polygon_inner[#self.polygon]
 
-	mesh.Begin(m, MATERIAL_QUADS, #self.polygon)
+	mesh.Begin(m_outline, MATERIAL_QUADS, #self.polygon)
 
 	for i = 1, #self.polygon do
 		local outer = self.polygon[i]
 		local inner = self.polygon_inner[i]
 
 		mesh.Position(Vector(last_outer[1], last_outer[2], 0))
-		mesh.Color(color.r, color.g, color.b, color.a)
+		mesh.Color(color_outline.r, color_outline.g, color_outline.b, color_outline.a)
 		mesh.AdvanceVertex()
 
 		mesh.Position(Vector(outer[1], outer[2], 0))
-		mesh.Color(color.r, color.g, color.b, color.a)
+		mesh.Color(color_outline.r, color_outline.g, color_outline.b, color_outline.a)
 		mesh.AdvanceVertex()
 
 		mesh.Position(Vector(inner[1], inner[2], 0))
-		mesh.Color(color.r, color.g, color.b, color.a)
+		mesh.Color(color_outline.r, color_outline.g, color_outline.b, color_outline.a)
 		mesh.AdvanceVertex()
 
 		mesh.Position(Vector(last_inner[1], last_inner[2], 0))
-		mesh.Color(color.r, color.g, color.b, color.a)
+		mesh.Color(color_outline.r, color_outline.g, color_outline.b, color_outline.a)
 		mesh.AdvanceVertex()
 
 		last_outer = outer
@@ -238,24 +243,48 @@ function zone_mt:setupRendering(color)
 
 	mesh.End()
 
-	self._meshcolor = color
-	self._rendermesh = m
+	self._meshcolor_outline = color_outline
+	self._rendermesh_outline = m
 
-end
+	-- build the fill mesh
+	local m_fill = Mesh()
+	mesh.Begin(m_fill, MATERIAL_TRIANGLES, #self.triangles)
 
-function zone_mt:render(z_offset, color)
-	if not self._rendermesh then return end
-	-- apply the render color
-	if color and color ~= self._meshcolor then
-		self:setupRendering(color)
+	for k, triangle in ipairs(self.triangles) do
+		mesh.Position(Vector(triangle.p3[1], triangle.p3[2], 0))
+		mesh.Color(color_fill.r, color_fill.g, color_fill.b, color_fill.a)
+		mesh.AdvanceVertex()
+
+		mesh.Position(Vector(triangle.p2[1], triangle.p2[2], 0))
+		mesh.Color(color_fill.r, color_fill.g, color_fill.b, color_fill.a)
+		mesh.AdvanceVertex()
+
+		mesh.Position(Vector(triangle.p1[1], triangle.p1[2], 0))
+		mesh.Color(color_fill.r, color_fill.g, color_fill.b, color_fill.a)
+		mesh.AdvanceVertex()
 	end
 
-	local matrix = Matrix()
-	matrix:SetTranslation(Vector(0, 0, z_offset or 0))
-	cam.PushModelMatrix(matrix)
-	render.SetColorMaterial()
-	self._rendermesh:Draw()
-	cam.PopModelMatrix()
+	mesh.End()
+
+	return {
+		draw = function()
+			render.SetColorMaterial()
+			render.CullMode(MATERIAL_CULLMODE_CW)
+			m_outline:Draw()
+			m_fill:Draw()
+			render.CullMode(MATERIAL_CULLMODE_CCW)
+			m_outline:Draw()
+			m_fill:Draw()
+		end,
+		fillColor = color_fill,
+		outlineColor = color_outline,
+		destroy = function(self)
+			self.destroy = ra.fn.noop
+			self.draw = ra.fn.noop
+			m_fill:Destroy()
+			m_outline:Destroy()
+		end
+	}
 end
 
 function fw.zone.new()
@@ -281,7 +310,7 @@ local zoneFileCRC32 = nil
 local filename = fw.zone.zoneDataDir .. game.GetMap() .. '.dat'
 
 function fw.zone.getSaveFileName()
-	return filename -- since it's binary
+	return filename
 end
 
 function fw.zone.createZonesBackup()
@@ -289,7 +318,7 @@ function fw.zone.createZonesBackup()
 	file.Write(backupName, file.Read(fw.zone.getSaveFileName(), 'DATA'))
 end
 
-function fw.zone.saveZonesToFile(filename)
+function fw.zone.saveZonesToFile()
 	local filename = fw.zone.getSaveFileName()
 	zoneFileCRC32 = nil
 
@@ -355,7 +384,8 @@ timer.Create('fw.zone.updatePlayers', 1, 0, function()
 			end
 
 			pl._fw_zone = inZone
-			fw.hook.Call('PlayerEnteredZone', inZone, oldZone)
+
+			fw.hook.Call('PlayerEnteredZone', inZone, oldZone, pl)
 		end
 	end
 end)
@@ -363,12 +393,4 @@ end)
 local Player = FindMetaTable('Player')
 function Player:getZoneInside()
 	return self._fw_zone
-end
-
-
---
--- LAST THING WE DO IS LOAD ZONES FROM DISK
---
-if file.Exists(fw.zone.getSaveFileName(), 'DATA') then
-	fw.zone.loadZonesFromDisk()
 end

@@ -39,8 +39,6 @@ timer.Create('fw.zone_capture.updateCaptureProgress', 1, 0, function()
 	end
 end)
 
-
-
 --[[
 function fw.zone.initiate(zone)
 	local id = zone.id

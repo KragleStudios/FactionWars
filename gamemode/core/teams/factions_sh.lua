@@ -2,7 +2,7 @@ fw.team.factions = {}
 local factionsList = fw.team.factions
 
 if SERVER then
-	if not ndoc.table.fwFactions then 
+	if not ndoc.table.fwFactions then
 		ndoc.table.fwFactions = {}
 	end
 	concommand.Add("fw_faction_leave", function(ply)
@@ -33,17 +33,19 @@ faction_mt.__index = faction_mt
 
 -- fw.team.registerFaction
 -- @param factionName:string
--- @param factionData:table 
+-- @param factionData:table
 -- @ret factionIndex:number
 function fw.team.registerFaction(factionName, tbl)
 	-- assert structure
 	assert(tbl.stringID, 'faction.stringID must be defined')
+	assert(tbl.color, 'faction.color must be defined')
 
 	setmetatable(tbl, faction_mt)
 
 	tbl.index = table.insert(fw.team.factions, tbl)
 	tbl.name = factionName
 	tbl.command = 'fw_joinfaction_' .. tbl.stringID
+	tbl.colorTransparent = Color(tbl.color.r, tbl.color.g, tbl.color.b, 20) -- used as the color for zones in the minimap
 
 	if SERVER then
 		concommand.Add(tbl.command, function(ply)
@@ -51,7 +53,7 @@ function fw.team.registerFaction(factionName, tbl)
 
 			if (not canjoin) then
 				if (not message) then message = "You can't join this faction!" end
-				
+
 				ply:FWChatPrint(message)
 				return
 			end
@@ -131,7 +133,7 @@ function Player:getFaction()
 end
 
 function Player:inFaction()
-	return self:GetFWData().faction ~= nil 
+	return self:GetFWData().faction ~= nil
 end
 
 function Player:isFactionBoss()

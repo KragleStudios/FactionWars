@@ -1,5 +1,5 @@
 fw.team.list = fw.team.list or {}
-local teamList = fw.team.list 
+local teamList = fw.team.list
 fw.team.factionAgendas = fw.team.factionAgendas or {}
 
 -- meta table for a team
@@ -14,13 +14,13 @@ local team_mt = {
 		return self.models
 	end,
 	getWeapons = function(self)
-		return self.weapons 
+		return self.weapons
 	end,
 	getID = function(self)
 		return self.index
 	end,
 	getPlayers = function(self)
-		return team.GetPlayers(self.index) 
+		return team.GetPlayers(self.index)
 	end,
 	addPlayer = function(self, ply, pref_mdoel, forced)
 		fw.team.playerChangeTeam(ply, self.index, pref_model, forced)
@@ -32,7 +32,7 @@ team_mt.__index = team_mt
 -- @param name:string - the name of the team, ie: "Civilian", "Police Officer"
 -- @param tbl:tbl - the table data of the new team
 -- @ret a meta object of the new team assigned to the variable in the configuration
-function fw.team.register(name, tbl) 
+function fw.team.register(name, tbl)
 	-- DO CHECKS FOR TEAM CORRECT - TODO: finish
 	assert(tbl.model or tbl.models, "must provide model or models")
 	assert(tbl.stringID, "must provide stringID")
@@ -56,7 +56,7 @@ function fw.team.register(name, tbl)
 	setmetatable(tbl, team_mt)
 	team.SetUp(tbl.index, name, tbl.color)
 
-	--reset team table with new data
+	-- reset team table with new data
 	fw.team.list[index] = tbl
 
 	if SERVER then
@@ -80,7 +80,7 @@ function fw.team.getByIndex(index)
 	return fw.team.list[index]
 end
 
--- canChangeTeam - tells you if a player can join targ_team 
+-- canChangeTeam - tells you if a player can join targ_team
 -- @param ply:player object - the player switching teams
 -- @param targ_team:int - the index of the team in the table
 -- @param optional forced:bool should we ignore canjoin conditions
@@ -90,7 +90,7 @@ function fw.team.canChangeTo(ply, targ_team, forced)
 
 	local canjoin, message = hook.Call("CanPlayerJoinTeam", GAMEMODE, ply, targ_team)
 
-	return canjoin ~= false, message 
+	return canjoin ~= false, message
 end
 
 -- fw.team.getByStringId - Gets a team's data by the string used, "civilian", "police_officer"
@@ -116,14 +116,14 @@ end
 
 --
 -- HOOKS
---  
+--
 -- handles the ability of whether or not a player can join a team
 fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 	local t = fw.team.list[targ_team]
-	if (not t) then 
-		return false 
+	if (not t) then
+		return false
 	end
-	
+
 	-- enforce t.max players
 	if t.max and t.max != 0 then
 		if (t.factionOnly and t.faction) then
@@ -139,18 +139,18 @@ fw.hook.Add("CanPlayerJoinTeam", "CanJoinTeam", function(ply, targ_team)
 			end
 		elseif (#t:getPlayers() >= t.max) then
 			return false
-		end 
+		end
 	end
 
 	-- can't join a team you're already on
-	if (ply:Team() == targ_team) then 
-		return false 
+	if (ply:Team() == targ_team) then
+		return false
 	end
 
 	-- SUPPORT FOR FACTION ONLY JOBS
-	if (t.faction and not ply:inFaction() and ply:getFaction() ~= FACTION_DEFAULT) then 
+	if (t.faction and not ply:inFaction() and ply:getFaction() ~= FACTION_DEFAULT) then
 		return false
-	end 
+	end
 	-- notify incorrect faction
 	if (t.faction) then
 		if istable(t.faction) and not table.HasValue(t.faction, ply:getFaction()) then

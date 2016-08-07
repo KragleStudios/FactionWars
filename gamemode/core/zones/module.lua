@@ -16,10 +16,12 @@ fw.zone.zoneDataDir = fw.config.dataDir .. (SERVER and '/zones_sv/' or '/zones_c
 file.CreateDir(fw.zone.zoneDataDir)
 
 -- include files
-fw.include_sv 'zone_capture_sv.lua'
 fw.include_sv 'zones_sv.lua'
 fw.include_sh 'zones_sh.lua'
 fw.include_cl 'zones_cl.lua'
+fw.include_sv 'zone_capture_sv.lua'
+fw.include_sh 'zone_capture_sh.lua'
+fw.include_cl 'minimap_cl.lua'
 
 --
 -- ZONE SYNC LOGIC
@@ -78,4 +80,13 @@ else
 		net.Start('fw.zone.CRC')
 		net.SendToServer()
 	end)
+end
+
+if SERVER then
+	--
+	-- LAST THING WE DO IS LOAD ZONES FROM DISK
+	--
+	if file.Exists(fw.zone.getSaveFileName(), 'DATA') then
+		fw.zone.loadZonesFromDisk()
+	end
 end

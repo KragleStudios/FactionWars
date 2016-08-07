@@ -23,6 +23,7 @@ net.Receive('fw.zone.remove', function()
 	fw.zone.zoneList[net.ReadUInt(32)] = nil
 end)
 
+--[[
 fw.hook.Add('PostDrawOpaqueRenderables', 'fw.zones.render', function()
 	local curZone = fw.zone.playerGetZone(LocalPlayer())
 
@@ -38,3 +39,4 @@ fw.hook.Add('PostDrawOpaqueRenderables', 'fw.zones.render', function()
 		end
 	end
 end)
+]]

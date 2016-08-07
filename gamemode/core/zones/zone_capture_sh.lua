@@ -1,3 +1,16 @@
+function fw.zone._zone_mt:getControllingFaction()
+	local control = ndoc.table.fwZoneControl[self.id]
+	if not control then return nil end
+	local maxFaction, maxValue = 0, 0
+	for k,v in ndoc.pairs(control) do
+		if v > maxValue then
+			maxFaction = k
+			maxValue = v
+		end
+	end
+	return fw.team.factions[maxFaction]
+end
+
 --[[
 --returns the faction controlling a zone
 function fw.zone.getControllingFaction(zone)
