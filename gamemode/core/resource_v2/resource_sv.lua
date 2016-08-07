@@ -27,9 +27,17 @@ function fw.resource.addEntity(ent)
 		productionBeingUsed = {}, -- how much of what it produces gets used
 	}
 
-	if SERVER then
-		fw.resource.updateNetworks()
-	end
+	-- fake temporary resource network until next update. it's not very clean but it works.
+	ent.fwNetwork = {
+		ents = {ent},
+		totalConsumption = 0,
+		totalProduction = 0,
+		totalStorage = 0,
+		producers = {},
+		consumers = {},
+		storage = {},
+		id = ent:EntIndex(),
+	}
 end
 
 function fw.resource.removeEntity(ent)
@@ -71,7 +79,7 @@ function fw.resource.updateNetworks()
 		for k, ent in pairs(resource_entities) do
 			if not IsValid(ent) then -- check that entity is valid. note that removing an entity requires this entire function to run again. it's slow. just call the right functions.
 				ErrorNoHalt("[FactionWars] had te remove invalid entity from resource_entities. This should be handled by ENT:OnRemove. Badly coded entity in use.")
-				table.remove(resource_entities, k)
+				fw.resource.removeEntity(ent)
 				fw.resource.updateNetworks()
 				return
 			end
@@ -198,7 +206,7 @@ function fw.resource.updateNetworks()
 				while currentProducer and amount > 0 do
 					if canProduce < amount then
 						amount = amount - canProduce
-						currentProducer.fwProductionUse[type] = curentProducer.Produces[type]
+						currentProducer.fwProductionUse[type] = currentProducer.Produces[type]
 						currentProducer, canProduce = next(producers, currentProducer)
 					else
 						canProduce = canProduce - amount

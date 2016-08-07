@@ -354,10 +354,10 @@ function fw.tab_menu.faction(pnl)
 					local kickButton = LocalPlayer():isFactionBoss() and "Force Kick" or "Vote Kick"
 
 					menu:AddOption(demoteButton, function()
-						LocalPlayer():ConCommand("fw_factiondemote "..v:SteamID())
+						LocalPlayer():ConCommand("fw_factiondemote \""..v:SteamID().."\"")
 					end)
 					menu:AddOption(kickButton, function()
-						LocalPlayer():ConCommand("fw_factionkick "..v:SteamID())
+						LocalPlayer():ConCommand("fw_factionkick \""..v:SteamID().."\"")
 					end)
 					menu:Open()
 				end

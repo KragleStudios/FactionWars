@@ -4,7 +4,7 @@ ENT.Type = "anim"
 ENT.Base = "base_entity"
 
 ENT.PrintName		= "Generator"
-ENT.Author			= "Spai"
+ENT.Author			= "thelastpenguin"
 ENT.Category        = "Faction Wars"
 
 ENT.NETWORK_SIZE = 500
@@ -74,6 +74,8 @@ else
 	end
 end
 
-function ENT:IsActive()
-	return (self.fwResourcesStatic['gas'] or 0) >= 1
+if SERVER then
+	function ENT:IsActive() -- optional server side property of an entity that returns if it is active
+		return (self.fwResourcesStatic['gas'] or 0) >= 1
+	end
 end

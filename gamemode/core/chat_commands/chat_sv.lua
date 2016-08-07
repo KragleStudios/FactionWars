@@ -22,7 +22,7 @@ function cmd_mt:ctor(aliases, helptext, callback)
 	self.callback = callback
 
 	concommand.Add('fw_' .. aliases[1], function(pl, cmd, args)
-		fw.chat.runCommand(self, pl, args)
+		fw.chat.runCommand(pl, self, args)
 	end)
 
 	for k, alias in ipairs(self.aliases) do

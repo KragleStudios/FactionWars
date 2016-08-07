@@ -29,7 +29,7 @@ end
 function GM:HUDShouldDraw(...)
 	if IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon().HUDShouldDraw then
 		local res = LocalPlayer():GetActiveWeapon():HUDShouldDraw(...)
-		if res != nil then
+		if res ~= nil then
 			return res
 		end
 	end

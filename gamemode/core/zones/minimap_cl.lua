@@ -21,11 +21,6 @@ fw.hook.Add('PostDrawOpaqueRenderables', function()
 	local m = Matrix()
 	m:SetScale(Vector(0.08, 0.08, 0.08))
 
-	LocalPlayer():EnableMatrix( "RenderMultiply", m)
-	LocalPlayer():DrawModel()
-
-	inside = false
-
 	local curZone = fw.zone.playerGetZone(LocalPlayer())
 	local tr = util.QuickTrace(LocalPlayer():GetPos(), Vector(0, 0,-10000), me)
 	local z = tr.HitPos.z + 0.1

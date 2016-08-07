@@ -40,6 +40,44 @@ function Entity:FWGetResourceInfo()
 	return ndoc.table.fwEntityResources[self:EntIndex()]
 end
 
+if SERVER then
+	function Entity:FWHaveResource(name)
+		return ent.fwResources[name] or ent.fwResourcesStatic[name] or 0
+	end
+
+	function Entity:FWStoringResource(name)
+		return ent.Storage and ent.Storage[name] or 0
+	end
+
+	function Entity:FWProducingResource(name)
+		return ent.Produces and ent.Produces[name] or 0
+	end
+else
+	function Entity:FWHaveResource(name) -- how much of the resource it has
+		local info = self:FWGetResourceInfo()
+		return info and info.haveResources and info.haveResources[name] or 0
+	end
+
+	function Entity:FWStoringResource(name) -- how much of the resource is stored
+		local info = self:FWGetResourceInfo()
+		return info and info.amStoring and info.amStoring[name] or 0
+	end
+
+	function Entity:FWProducingResource(name) -- how much of the resource is being produced
+		local info = self:FWGetResourceInfo()
+		return info and info.amProducing and info.amProducing[name] or 0
+	end
+end
+
+function Entity:FWHasAllResources(table)
+	for resource, amount in pairs(table) do
+		if self:FWHaveResource(resource) < amount then
+			return false
+		end
+	end
+	return true
+end
+
 -- code too big to reasonably put here
 ra.include_sv 'resource_sv.lua'
 ra.include_cl 'display_cl.lua'

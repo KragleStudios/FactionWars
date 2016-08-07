@@ -333,7 +333,7 @@ fw.chat.addCMD("factionkick", "Vote to remove a user from a faction", function(p
 end):addParam("target", "player")
 
 --vote to demote a player to civilian within a faction
-fw.chat.addCMD("factiondemote", "Vote to demote a user", function(ply, target)
+fw.chat.addCMD({"factiondemote", "demote"}, "Vote to demote a user", function(ply, target)
 	local faction = ply:getFaction()
 	local players = player.GetAll()
 	print(ply, target)

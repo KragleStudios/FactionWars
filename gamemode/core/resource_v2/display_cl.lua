@@ -4,6 +4,120 @@ if IsValid(_FW_RESOURCE_PANEL) then
 	_FW_RESOURCE_PANEL:Remove()
 end
 
+
+vgui.Register('fwResourceRow', {
+	-- basically a row panel with an icon for the resource and a layout manager that manages content to the right
+	Init = function(self)
+		local icon = vgui.Create('STYImage', self)
+		icon:SetMaterial(resource.material)
+		icon.PerformLayout = function()
+			icon:SetWide(icon:GetTall())
+		end
+		icon.Paint = function(self, w, h)
+			if not self._material then return end
+			surface.SetDrawColor(0, 0, 0, 220)
+			surface.DrawRect(0, 0, w, h)
+			surface.SetDrawColor(255, 255, 255)
+			surface.SetMaterial(self._material)
+			surface.DrawTexturedRect(1, 1, w - 2, h - 2)
+		end
+		self._icon = icon
+	end,
+
+	SetResource = function(self, resource)
+		self._resource = resource
+		self._icon:SetMaterial(resource.material)
+	end,
+
+	SetContentPanel = function(self, panel)
+		self._contents = panel
+		panel:SetParent(self)
+	end,
+
+	SetContentHeight = function(self, height)
+		self._contentHeight = height
+	end,
+
+	PerformLayout = function(self)
+		local w, h = self:GetSize()
+
+		self._icon:SetPos(0, 0)
+		self._icon:SetSize(h, h)
+
+		if self._contents then
+			self._contents:SetPos(self._icon:GetWide() + 1, 0)
+			self._contents:SetSize(w - self._icon:GetWide() - 1, self._contentHeight or h)
+			self._contents:CenterVertical()
+		end
+	end
+}, 'STYPanel')
+
+vgui.Register('fwResourceDisplayBar', {
+	Init = function()
+
+	end,
+	SetUpdater = function(self, max, func)
+		self._max = max
+		self._updater = func
+	end,
+
+	PerformLayout = function(self)
+		local w, h = self:GetSize()
+		self._stepsize = math.Round((w - 2) / math.max(self._max, 5))
+	end,
+
+	Think = function(self)
+		self._stop1, self._stop2 = self._updater()
+	end,
+	Paint = function(self, w, h)
+		surface.SetDrawColor(0, 255, 0, 220)
+		local x = 1
+		local stepsize = self._stepsize
+		surface.SetDrawColor(0, 0, 0, 220)
+		surface.DrawRect(0, 0, stepsize * self._max + 1, h)
+
+		surface.SetDrawColor(0, 255, 0, 220)
+		for i = 1, self._stop1 do
+			surface.DrawRect(x, 1, stepsize - 1, h - 2)
+			x = x + stepsize
+		end
+
+		surface.SetDrawColor(0, 155, 0, 220)
+		for i = self._stop1 + 1, self._stop2 do
+			surface.DrawRect(x, 1, stepsize - 1, h - 2)
+			x = x + stepsize
+		end
+
+		surface.SetDrawColor(255, 255, 255, 15)
+		for i = self._stop2 + 1, self._max do
+			surface.DrawRect(x, 1, stepsize - 1, h - 2)
+			x = x + stepsize
+		end
+	end
+}, 'STYPanel')
+
+vgui.Register('fwResourceDisplayText', {
+	SetUpdater = function(self, prefix, max, func)
+		self._prefix = prefix
+		self._updater = func
+		self._max = max
+	end,
+
+	Think = function(self)
+		local value = self._updater()
+		if value ~= self._lastvalue then
+			self._lastvalue = value
+			self:SetText(self._prefix .. ': ' .. tostring(value) .. '/' .. self._max)
+		end
+	end,
+
+	Paint = function(self, w, h)
+		surface.SetDrawColor(0, 0, 0, 220)
+		surface.DrawRect(0, 0, w, h)
+	end
+}, 'FWUITextBox')
+
+
 local function paintEntityResources(entity, info)
 	local types = fw.resource.types
 	if not entity.GetDisplayPosition then error("ENTITY MUST DEFINE ENTITY:GetDisplayPosition IF IT IS A RESOURCE ENTITY") end
@@ -24,18 +138,22 @@ local function paintEntityResources(entity, info)
 	--
 	-- HELPERS
 	--
-	local function addHeader(titleText)
+	local ROW_HEIGHT = 16
+	local HEADER_HEIGHT = 16
+
+	local function addHeader(titleText, size)
 		local textBox = vgui.Create('FWUITextBox', panel)
 		textBox:SetText(titleText)
-		textBox:SetTall(18)
-		textBox:SetAlign('center')
+		textBox:SetTall(size or HEADER_HEIGHT)
+		textBox:SetInset(1	)
+		textBox:SetAlign('left')
 		textBox.Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 220)
 			surface.DrawRect(0, 0, w, h)
 		end
+		return textBox
 	end
 
-	local ROW_HEIGHT = 18
 
 	local function addResourceRow(resource, amountTable, usageTable, outof)
 		if type(resource) == 'string' then
@@ -45,51 +163,18 @@ local function paintEntityResources(entity, info)
 
 		local resType = resource.type
 
-		local row = vgui.Create('STYPanel', panel)
+		local row = vgui.Create('fwResourceRow', panel)
+		row:SetResource(resource)
 		row:SetTall(ROW_HEIGHT)
+		local info = vgui.Create('fwResourceDisplayBar')
+		row:SetContentPanel(info)
+		row:SetContentHeight(math.Round(ROW_HEIGHT * 0.4))
 
-		local bar = vgui.Create('STYPanel', row)
-		bar:Dock(FILL)
+		info:SetUpdater(outof, function()
+			return usageTable[resType] or 0, amountTable[resType] or 0
+		end)
 
-		local segmentWidth = 0
-		bar.PerformLayout = function()
-			local w = bar:GetWide()
-			segmentWidth = (w + 1) / math.max(outof, 5)
-		end
-		bar.Paint = function(self, w, h)
-			local amount = amountTable[resType] or 0
-			local usage = usageTable[resType] or 0
-
-			local x = 0
-			surface.SetDrawColor(0, 220, 0, 220)
-			for i = 1, outof do
-				if i == usage + 1 then
-					surface.SetDrawColor(0, 100, 0, 220)
-				end
-				if i == amount + 1 then
-					surface.SetDrawColor(0, 0, 0, 220)
-				end
-				surface.DrawRect(x, 0, segmentWidth - 1, h)
-				x = x + segmentWidth
-			end
-		end
-		bar:DockMargin(3, 5, 0, 5)
-		bar:Dock(FILL)
-
-		-- create the icon
-		local icon = vgui.Create('STYImage', row)
-		icon:SetMaterial(resource.material)
-		icon.PerformLayout = function()
-			icon:SetWide(icon:GetTall())
-		end
-		icon.Paint = function(self, w, h)
-			surface.SetDrawColor(0, 0, 0, 220)
-			surface.DrawRect(0, 0, w, h)
-			surface.SetDrawColor(255, 255, 255)
-			surface.SetMaterial(self._material)
-			surface.DrawTexturedRect(1, 1, w - 2, h - 2)
-		end
-		icon:Dock(LEFT)
+		return row
 	end
 
 	local function addStorageRow(resource, amountTable, outof)
@@ -99,41 +184,23 @@ local function paintEntityResources(entity, info)
 		end
 
 		local resType = resource.type
+		local row = vgui.Create('fwResourceRow', panel)
 
-		local row = vgui.Create('STYPanel', panel)
+		row:SetResource(resource)
 		row:SetTall(ROW_HEIGHT)
+		local info = vgui.Create('fwResourceDisplayText')
+		row:SetContentPanel(info)
 
-		local textbox = vgui.Create('FWUITextBox', row)
-		textbox:Dock(FILL)
-		textbox:DockMargin(2, 0, 0, 0)
-		textbox:SetInset(2)
-		local lastAmount = {}
-		textbox.Paint = function(self, w, h)
-			if lastAmount ~= amountTable[resType] then
-				lastAmount = amountTable[resType]
-				textbox:SetText(resource.PrintName .. ': ' .. tostring(amountTable[resType] or 0) .. ' / ' .. outof)
-			end
-			surface.SetDrawColor(0, 0, 0, 220)
-			surface.DrawRect(0, 0, w, h)
-		end
+		info:SetUpdater(resource.PrintName or '', outof, function()
+			return amountTable[resType] or 0
+		end)
 
-		-- create the icon
-		local icon = vgui.Create('STYImage', row)
-		icon:SetMaterial(resource.material)
-		icon.PerformLayout = function()
-			icon:SetWide(icon:GetTall())
-		end
-		icon.Paint = function(self, w, h)
-			surface.SetDrawColor(0, 0, 0, 220)
-			surface.DrawRect(0, 0, w, h)
-			surface.SetDrawColor(255, 255, 255)
-			surface.SetMaterial(self._material)
-			surface.DrawTexturedRect(1, 1, w - 2, h - 2)
-		end
-		icon:Dock(LEFT)
+		return row
 	end
 
 	-- add production
+	addHeader(entity.PrintName):SetAlign('center')
+
 	if entity.MaxProduction and table.Count(entity.MaxProduction) > 0 and info.amProducing and info.productionBeingUsed then
 		addHeader("PRODUCTION")
 		for type, maxProduction in SortedPairs(entity.MaxProduction) do
@@ -166,7 +233,11 @@ fw.hook.Add('PostDrawTranslucentRenderables', function()
 	if lastHitEntity ~= hitent then
 		lastHitEntity = hitent
 		if IsValid(_FW_RESOURCE_PANEL) then
-			_FW_RESOURCE_PANEL:Remove()
+			local panel = _FW_RESOURCE_PANEL
+			panel:AlphaTo(0, 0.5, 0, function()
+				panel:Remove()
+			end)
+			_FW_RESOURCE_PANEL = nil
 		end
 		if IsValid(hitent) and hitent:FWGetResourceInfo() then
 			paintEntityResources(hitent, hitent:FWGetResourceInfo())
