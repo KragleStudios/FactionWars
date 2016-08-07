@@ -1,5 +1,5 @@
 function fw.zone._zone_mt:getControllingFaction()
-	local control = ndoc.table.fwZoneControl[self.id]
+	local control = ndoc.table.fwZoneControl[self.id].scores
 	if not control then return nil end
 	local maxFaction, maxValue = 0, 0
 	for k,v in ndoc.pairs(control) do
@@ -8,7 +8,31 @@ function fw.zone._zone_mt:getControllingFaction()
 			maxValue = v
 		end
 	end
-	return fw.team.factions[maxFaction]
+	return maxFaction
+end
+
+--if it returns a value, it's the faction id of the base!
+function fw.zone._zone_mt:getFactionBase()
+	return ndoc.table.fwZoneControl[self.id].isFactionBase
+end
+
+function fw.zone._zone_mt:isCapturable()
+	return not (ndoc.table.fwZoneControl[self.id].isNotCapturable == true)
+end
+
+function fw.zone._zone_mt:isProtected()
+	return ndoc.table.fwZoneControl[self.id].isProtected
+end
+
+--this is a helper function for returning mass data for a zone
+function fw.zone._zone_mt:getData()
+	local tbl = {}
+	tbl.protected = self:isProtected()
+	tbl.isCapturable = self:isCapturable()
+	tbl.factionBase = self:getFactionBase()
+	tbl.controllingFaction = self:getControllingFaction()
+
+	return tbl
 end
 
 --[[

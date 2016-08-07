@@ -190,9 +190,12 @@ vgui.Register('fwHudInfo', {
 					end
 					self.territory:SetVisible(true)
 
-					local zoneControl = ndoc.table.fwZoneControl[zone.id]
+					if (not ndoc.table.fwZoneControl or not ndoc.table.fwZoneControl[zone.id]) then return end
+
+					local zoneControl = ndoc.table.fwZoneControl[zone.id].scores
 					local factionMax, controlMax = nil, 0
 					for k,v in ndoc.pairs(zoneControl) do
+
 						if v > controlMax then
 							controlMax = v
 							factionMax = k

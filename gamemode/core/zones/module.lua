@@ -19,8 +19,8 @@ file.CreateDir(fw.zone.zoneDataDir)
 fw.include_sv 'zones_sv.lua'
 fw.include_sh 'zones_sh.lua'
 fw.include_cl 'zones_cl.lua'
-fw.include_sv 'zone_capture_sv.lua'
 fw.include_sh 'zone_capture_sh.lua'
+fw.include_sv 'zone_capture_sv.lua'
 fw.include_cl 'minimap_cl.lua'
 
 --

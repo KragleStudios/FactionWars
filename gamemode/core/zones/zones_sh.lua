@@ -385,7 +385,7 @@ timer.Create('fw.zone.updatePlayers', 1, 0, function()
 
 			pl._fw_zone = inZone
 
-			fw.hook.Call('PlayerEnteredZone', inZone, oldZone, pl)
+			hook.Call('PlayerEnteredZone', GAMEMODE, inZone, oldZone, pl)
 		end
 	end
 end)

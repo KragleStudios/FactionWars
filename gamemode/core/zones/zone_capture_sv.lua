@@ -1,17 +1,148 @@
 ndoc.table.fwZoneControl = {}
 
+local cache = {}
 function fw.zone.setupCaptureNetworking(zone)
 	ndoc.table.fwZoneControl[zone.id] = {}
+	ndoc.table.fwZoneControl[zone.id].scores = {}
+
+	if (cache[zone.id]) then
+		ndoc.table.fwZoneControl[zone.id].isProtected = cache[zone.id].prot
+		ndoc.table.fwZoneControl[zone.id].isNotCapturable = cache[zone.id].not_cap
+		ndoc.table.fwZoneControl[zone.id].isFactionBase = cache[zone.id].fac_base
+	end
+
+	/*for k,v in pairs(fw.team.factions) do
+		ndoc.table.fwZoneControl[zone.id].facData[k] = {}
+		ndoc.table.fwZoneContro
+	end*/
 end
 
+
+---
+--- LOADING AND SETTING OF ZONE CAPTURABILITY / PROTECTED ZONES AND BASES
+---
+local path = fw.zone.zoneDataDir..game.GetMap().."_cap.txt"
+function fw.zone.loadCaptureData()
+	local data = file.Read(path, "DATA")
+
+	if (not data) then return end
+	
+	for k,v in pairs(spon.decode(data)) do
+
+		cache[k] = v
+	end
+end
+
+fw.zone.loadCaptureData()
+
+function fw.zone.saveCaptureData()
+	local cache = {}
+
+	for zID, data in ndoc.pairs(ndoc.table.fwZoneControl) do
+		local isProt = data.isProtected
+		local isNotCap = data.isNotCapturable
+		local isBase = data.isFactionBase
+
+		--the zone is not protected, and it is capturable or a faction base, no point saving this data!
+		if (not isProt and not isNotCap and not isBase) then continue end
+
+		cache[zID] = {}
+
+		if (isProt) then
+			cache[zID].prot = true
+		end
+		if (isNotCap) then
+			cache[zID].not_cap = true
+		end
+		if (isBase) then
+			cache[zID].fac_base = isBase --isbase isn't a bool, it's a faction id!
+		end
+	end
+
+	cache = spon.encode(cache)
+	file.Write(path, cache)
+end
+
+---
+--- CHAT COMMANDS FOR SETTING FACTION BASES, CAPTURABILITY, AND PROTECTED ZONES
+---
+fw.chat.addCMD({"setprotected", "setprot"}, "Sets a zone to be protected(no damage taken while inside) or not", function(ply, boolProtected)
+	local pZone = fw.zone.playerGetZone(ply)
+
+	if (not pZone) then return end
+
+	ndoc.table.fwZoneControl[pZone.id].isProtected = boolProtected
+
+	fw.zone.saveCaptureData()
+end):addParam("bool_protect", "bool"):restrictTo("superadmin")
+
+fw.chat.addCMD({"setcapturable", "setcap"}, "Sets a zone to be capturable or not", function(ply, boolCaptureable)
+	local pZone = fw.zone.playerGetZone(ply)
+
+	if (not pZone) then return end
+
+	ndoc.table.fwZoneControl[pZone.id].isNotCapturable = not boolCaptureable
+	
+	fw.zone.saveCaptureData()
+end):addParam("bool_capturable", "bool"):restrictTo("superadmin")
+
+fw.chat.addCMD({"setfactionbase", "setbase"}, "Sets the zone to be a default base for a faction", function(ply, sFactionID)
+	local pZone = fw.zone.playerGetZone(ply)
+
+	if (not pZone) then return end
+
+	local fac = fw.team.getFactionByStringID(sFactionID)
+	if (not fac) then return end
+
+	ndoc.table.fwZoneControl[pZone.id].isFactionBase = fac:getID()
+
+	fw.zone.saveCaptureData()
+end):addParam("faction_string_id", "string"):restrictTo("superadmin")
+
+fw.chat.addCMD({"removefactionbase", "removebase"}, "Removes the base set to a zone you are in", function(ply)
+	local pZone = fw.zone.playerGetZone(ply)
+
+	if (not pZone) then return end
+
+	local fac = pZone:getFactionBase()
+	if (not fac) then return end
+
+	ndoc.table.fwZoneControl[pZone.id].isFactionBase = false
+
+	fw.zone.saveCaptureData()
+end):restrictTo("superadmin")
+
+concommand.Add('fw_zone_createBackup', function(pl)
+	if not pl:IsSuperAdmin() then
+		return pl:FWConPrint(Color(255, 0, 0), "you do not have permission to run this command")
+	end
+
+	fw.zone.createZonesBackup()
+	pl:FWConPrint(Color(0, 255, 0), "Created a backup of the zones file.")
+end)
+
 --
--- SIMPLE ALGORITHM THAT MANAGES ZONE CAPTURING
---
+-- SIMPLE ALGORITHMS THAT MANAGES ZONE CAPTURING
+--	
+function fw.zone._zone_mt:canBeCaptured()
+	local canCapture = hook.Call("CanZoneBeCaptured", GAMEMODE, self)
+	if (canCapture == false) then return false end
+
+	local zoneData = ndoc.table.fwZoneControl[self.id]
+	if (zoneData.isNotCapturable) then return false end
+	if (zoneData.isProtected) then return false end
+	if (zoneData.isFactionBase) then return false end
+	
+	return true
+end
+
 local MAX_CAPTURE_SCORE = fw.config.zoneCaptureScore
 local ZONE_CAPTURE_RATE = fw.config.zoneCaptureRate
 timer.Create('fw.zone_capture.updateCaptureProgress', 1, 0, function()
 	for k, zone in pairs(fw.zone.zoneList) do
-		local zoneControl = ndoc.table.fwZoneControl[zone.id]
+		if (not zone:canBeCaptured()) then continue end
+
+		local zoneControl = ndoc.table.fwZoneControl[zone.id].scores
 
 		local controllingInterests = {}
 		local mostInterest = nil
@@ -27,6 +158,7 @@ timer.Create('fw.zone_capture.updateCaptureProgress', 1, 0, function()
 		end
 
 		if mostInterest then
+
 			if (zoneControl[mostInterest] or 0) < MAX_CAPTURE_SCORE then
 				zoneControl[mostInterest] = math.min((zoneControl[mostInterest] or 0) + ZONE_CAPTURE_RATE, MAX_CAPTURE_SCORE)
 			end
@@ -38,6 +170,64 @@ timer.Create('fw.zone_capture.updateCaptureProgress', 1, 0, function()
 		end
 	end
 end)
+
+---
+--- HOOKS TO MAINTAIN CAPTURABILITY / BASE / PROTECTED ZONES
+---
+--stop players from taking damage in protected zones -from weapons
+hook.Add("EntityTakeDamage", "StopPlayerDamageInProtectedZones", function(ent, dmg)
+	if (ent:IsPlayer()) then
+		local zone = fw.zone.playerGetZone(ent)
+		if (zone) then
+
+			local isprotected = zone:isProtected()
+			if (isprotected) then dmg:SetDamage(0) end
+		end
+	end
+end)
+
+--don't let players pickup weapons in a protected zone
+hook.Add("PlayerCanPickupWeapon", "StopPickingUpGunsWhileInProtectedZone", function(ply, wep)
+	local zone = fw.zone.playerGetZone(ply)
+	if (zone) then
+
+		local isprotected = zone:isProtected()
+		if (isprotected and ply.weaponCache) then
+
+			return false
+
+		end
+	end
+end)
+
+--when a player enters a protected zone, strip their weapons
+fw.hook.Add("PlayerEnteredZone", "PlayerGetsWeaponsrestricted", function(enterZone, lastZone, ply)
+	if (not enterZone and lastZone) then
+		local isprotected = lastZone:isProtected()
+		if (isprotected and ply.weaponCache) then
+			for k,v in pairs(ply.weaponCache) do
+				ply:Give(k)
+			end
+
+			ply.weaponCache = nil
+		end
+	end
+
+	if (enterZone) then
+		local isprotected = enterZone:isProtected()
+		if (isprotected) then
+
+			ply.weaponCache = {}
+			for k,v in pairs(ply:GetWeapons()) do
+				ply.weaponCache[v:GetClass()] = true
+			end
+
+			ply:StripWeapons()
+
+		end
+	end
+end)
+
 
 --[[
 function fw.zone.initiate(zone)

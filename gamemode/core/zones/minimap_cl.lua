@@ -44,6 +44,7 @@ fw.hook.Add('PostDrawOpaqueRenderables', function()
 	cam.PushModelMatrix(m)
 	for k, zone in pairs(fw.zone.zoneList) do
 		local territoryOwner = zone:getControllingFaction()
+		local territoryOwner = fw.team.factions[territoryOwner]
 		getRendererForZone(zone, zone == curZone and color_inside or color_outside, territoryOwner and territoryOwner.colorTransparent or color_nofaction):draw()
 	end
 	cam.PopModelMatrix()
