@@ -37,6 +37,10 @@ function GM:HUDShouldDraw(...)
 	return fw.hook.Call('HUDShouldDraw', ...) ~= false
 end
 
+function GM:CalcView(...)
+	return fw.hook.Call("CalcView", ...)
+end
+
 function GM:OnEntityCreated(...)
 	return fw.hook.Call('OnEntityCreated', ...)
 end
@@ -53,6 +57,10 @@ function GM:PlayerSay(pl, text, ...)
 	local res = fw.hook.Call('PlayerSay', pl, text, ...)
 	if res == nil then return text end
 	return ""
+end
+
+function GM:OnPlayerChat(...)
+	return fw.hook.Call('OnPlayerChat', ...)
 end
 
 function GM:ScoreboardShow(...)
