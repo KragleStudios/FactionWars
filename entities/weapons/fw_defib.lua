@@ -26,6 +26,7 @@ SWEP.FireDistance = 100
 SWEP.Money = 50
 SWEP.FailRate = .33
 SWEP.fireOffset = 5
+SWEP.Damage = 25
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 1, "Charge")
@@ -98,30 +99,39 @@ function SWEP:PrimaryAttack()
 			local dis = self.Owner:GetPos():DistToSqr(tr.HitPos) <= self.FireDistance * self.FireDistance
 			local success = math.random(0, 100) / 100 >= fail
 
-			if (dis and success) then
-				if (tr.Entity.player) then
-					tr.Entity.player:Spawn()
-					tr.Entity.player:SetPos(tr.Entity.player.death_pos)
+			if (tr.Entity:GetClass() == "prop_ragdoll") then
+
+				if (dis and success) then
+					if (tr.Entity.player) then
+						tr.Entity.player:Spawn()
+						tr.Entity.player:SetPos(tr.Entity.player.death_pos)
+					end
+
+					tr.Entity:Remove()
+
+					self.Owner:addMoney(self.Money)
+					self.Owner:FWChatPrint("You have been paid $"..self.Money.." for reviving someone!")
+
+					self:SetCharge(0)
+					self:SetCharged(false)
+
+					self:EmitSound(Sound("ambient/energy/spark5.wav"))
+
+				elseif (not dis) then
+					self.Owner:FWChatPrintError("You are too far away!")
+				elseif (not success) then
+					self.Owner:FWChatPrintError("The revive failed, try again!")
 				end
 
-				tr.Entity:Remove()
+			elseif (tr.Entity:GetClass() == "player") then
 
-				self.Owner:addMoney(self.Money)
-				self.Owner:FWChatPrint("You have been paid $"..self.Money.." for reviving someone!")
+				if (dis and success) then
+					tr.Entity:TakeDamage(self.Damage, self.Owner, self)
+					self:EmitSound(Sound("ambient/energy/spark5.wav"))
+				end
 
-				self:SetCharge(0)
-				self:SetCharged(false)
-
-				self:EmitSound(Sound("ambient/energy/spark5.wav"))
-
-				return
-			elseif (not dis) then
-				self.Owner:FWChatPrintError("You are too far away!")
-			elseif (not success) then
-				self.Owner:FWChatPrintError("The revive failed, try again!")
 			end
 
-			self.nextFire = CurTime() + self.fireOffset
 			self:DoError()
 		end
 	end
