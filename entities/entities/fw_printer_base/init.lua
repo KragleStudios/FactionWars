@@ -25,22 +25,17 @@ function ENT:Initialize()
 	self.Sound = CreateSound(self, "ambient/levels/labs/equipment_printer_loop1.wav")
 	self.Sound:SetSoundLevel(57)
 
-	self:ConnectToNet()
+	fw.resource.addEntity(self)
 end
 
-function ENT:Use(activator, ply)
-	local money = self:GetMoney()
-	if money > 0 then
-		ply:addMoney(money)
-		self:SetMoney(0)
-		ply:FWChatPrint(Color(0, 0, 0), "[Faction Wars]: ", Color(255, 255, 255), "You collected $" .. money .. " from a money printer.")
-	end
+function ENT:GetPower()
+	return self.fwResources.power
 end
 
 function ENT:Think()
-	self.Power = self:IsPowered() -- Current power input to printer. Replace with function that gets power input when system is added.
+	self.Power = self:GetPower() -- Current power input to printer.
 
-	if self:GetNextPrintTime() < CurTime() and self.Power --[[and self:GetInk() + 1 > self.InkDrain]] and self:GetPaper() + 1 > self.PaperDrain and self:GetPrintStatus() then
+	if self:GetNextPrintTime() < CurTime() and self:GetPower() --[[and self:GetInk() + 1 > self.InkDrain]] and self:GetPaper() + 1 > self.PaperDrain and self:GetPrintStatus() then
 		-- self:SetMoney(self:GetMoney() + self.PrintAmount)
 		local money = ents.Create("fw_money")
 		money:SetPos(self:LocalToWorld(self:OBBMaxs() + Vector(4, -3.5, -3)))
@@ -50,7 +45,7 @@ function ENT:Think()
 		self:SetNextPrintTime(CurTime() + self.PrintSpeed)
 		self:SetPaper(self:GetPaper() - self.PaperDrain)
 		-- self:SetInk(self:GetInk() - self.InkDrain)
-	elseif not self.Power --[[or self:GetInk() + 1 <= self.InkDrain]] or self:GetPaper() + 1 <= self.PaperDrain then
+	elseif not self:GetPower() --[[or self:GetInk() + 1 <= self.InkDrain]] or self:GetPaper() + 1 <= self.PaperDrain then
 		self:SetPrintStatus(false)
 		self.Sound:Stop()
 	elseif not self:GetPrintStatus() then
@@ -74,4 +69,5 @@ end
 
 function ENT:OnRemove()
 	self.Sound:Stop()
+	fw.resource.removeEntity(self)
 end
