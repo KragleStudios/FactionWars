@@ -24,17 +24,6 @@ function fw.zone._zone_mt:isProtected()
 	return ndoc.table.fwZoneControl[self.id].isProtected
 end
 
---this is a helper function for returning mass data for a zone
-function fw.zone._zone_mt:getData()
-	local tbl = {}
-	tbl.protected = self:isProtected()
-	tbl.isCapturable = self:isCapturable()
-	tbl.factionBase = self:getFactionBase()
-	tbl.controllingFaction = self:getControllingFaction()
-
-	return tbl
-end
-
 --[[
 --returns the faction controlling a zone
 function fw.zone.getControllingFaction(zone)

@@ -210,7 +210,7 @@ vgui.Register('fwHudInfo', {
 					end
 				end
 
-				ndoc.addHook('fwZoneControl.?.?', 'set', function(zoneId, factionId, amount)
+				ndoc.addHook('fwZoneControl.?.scores.?', 'set', function(zoneId, factionId, amount)
 					if not IsValid(self.territory) then return end
 					updateTerritory() -- it might be alot of updates... but hopefully it's less than it could otherwise be!
 				end)
