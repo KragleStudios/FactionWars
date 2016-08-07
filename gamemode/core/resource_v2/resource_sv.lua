@@ -190,10 +190,10 @@ function fw.resource.updateNetworks()
 		for k, ent in ipairs(network.ents) do
 			ent.fwNetwork = network
 			for type, _ in pairs(ent.fwResources) do
-				ent.fwResources[type] = nil
+				ent.fwResources[type] = 0
 			end
 			for type, _ in pairs(ent.fwProductionUse) do
-				ent.fwProductionUse[type] = nil
+				ent.fwProductionUse[type] = 0
 			end
 		end
 

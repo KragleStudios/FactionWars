@@ -1,9 +1,32 @@
 local debugEntityPaintPosition = false -- toggles drawing sphere at the aim entity's paint position
 
+-- DEFINE GLOBALS
+fw.resource.INFO_ROW_HEIGHT = 16
+
+-- CLEANUP
 if IsValid(_FW_RESOURCE_PANEL) then
 	_FW_RESOURCE_PANEL:Remove()
 end
 
+--
+-- SETUP VGUI CLASSES
+--
+
+vgui.Register('fwEntityInfoPanel', {
+	Paint = function(self, w, h)
+		surface.SetDrawColor(0, 0, 0, 220)
+		surface.DrawRect(0, 0, w, h)
+	end,
+
+	SetRefresh = function(self, shouldRefresh, refresh)
+		local memory = {}
+		self.Think = function(self)
+			if shouldRefresh(memory) then
+				refresh()
+			end
+		end
+	end,
+}, 'STYPanel')
 
 vgui.Register('fwResourceRow', {
 	-- basically a row panel with an icon for the resource and a layout manager that manages content to the right
@@ -201,6 +224,10 @@ local function paintEntityResources(entity, info)
 	-- add production
 	addHeader(entity.PrintName):SetAlign('center')
 
+	if entity.CustomUI then
+		entity:CustomUI(panel)
+	end
+
 	if entity.MaxProduction and table.Count(entity.MaxProduction) > 0 and info.amProducing and info.productionBeingUsed then
 		addHeader("PRODUCTION")
 		for type, maxProduction in SortedPairs(entity.MaxProduction) do
@@ -221,6 +248,7 @@ local function paintEntityResources(entity, info)
 			addStorageRow(type, info.amStoring, maxStorage)
 		end
 	end
+
 	vgui.make3d(panel)
 
 end
