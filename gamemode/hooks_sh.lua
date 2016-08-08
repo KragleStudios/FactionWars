@@ -84,8 +84,17 @@ function GM:StartChat(...)
 end
 
 function GM:GravGunPunt(...)
-	return false
+	local ret = fw.hook.Call("GravGunPunt", ...)
+	if ret == nil then
+		return false
+	end
+	return ret
 end
+
+function GM:ShouldCollide(...)
+	return fw.hook.Call("ShouldCollide", ...)
+end
+
 
 function GM:Think(...)
 	return fw.hook.Call("Think", ...)
