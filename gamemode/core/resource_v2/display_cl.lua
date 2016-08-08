@@ -11,7 +11,6 @@ end
 --
 -- SETUP VGUI CLASSES
 --
-
 vgui.Register('fwEntityInfoPanel', {
 	Paint = function(self, w, h)
 		surface.SetDrawColor(0, 0, 0, 220)
@@ -71,6 +70,7 @@ vgui.Register('fwResourceRow', {
 			self._contents:SetPos(self._icon:GetWide() + 1, 0)
 			self._contents:SetSize(w - self._icon:GetWide() - 1, self._contentHeight or h)
 			self._contents:CenterVertical()
+			self._contents:InvalidateLayout(true)
 		end
 	end
 }, 'STYPanel')
@@ -92,6 +92,7 @@ vgui.Register('fwResourceDisplayBar', {
 	Think = function(self)
 		self._stop1, self._stop2 = self._updater()
 	end,
+
 	Paint = function(self, w, h)
 		surface.SetDrawColor(0, 255, 0, 220)
 		local x = 1
@@ -140,35 +141,47 @@ vgui.Register('fwResourceDisplayText', {
 	end
 }, 'FWUITextBox')
 
+local Entity = FindMetaTable('Entity')
+for k,v in ipairs(ents.GetAll()) do
+	if IsValid(v._fwInfoPanel) then v._fwInfoPanel:Remove() end
+end
 
-local function paintEntityResources(entity, info)
-	local types = fw.resource.types
-	if not entity.GetDisplayPosition then error("ENTITY MUST DEFINE ENTITY:GetDisplayPosition IF IT IS A RESOURCE ENTITY") end
+function Entity:FWDrawInfo()
+	local entity = self
 
-	local panel = vgui.Create('STYLayoutVertical')
-	_FW_RESOURCE_PANEL = panel
+	if self:GetPos():DistToSqr(LocalPlayer():GetPos()) > 1000 * 1000 then
+		if IsValid(self._fwInfoPanel) then self._fwInfoPanel:Remove() end
+		return
+	end
 
-	panel.CalcLocation = function()
+	if IsValid(self._fwInfoPanel) then
+		if not self.GetDisplayPosition then error("ENTITY:GetDisplayPosition must be defined to show FWInfoPanel") end
 		local pos, ang, scale = entity:GetDisplayPosition()
 		pos = entity:LocalToWorld(pos)
 		ang = entity:LocalToWorldAngles(ang)
-		return pos, ang, scale
+		self._fwInfoPanel:Draw3D(pos, ang, scale)
+		return
 	end
 
-	panel:SetWide(200)
-	panel:SetPadding(2)
+	--
+	-- SETUP VARIABLES
+	--
+	local types = fw.resource.types
+	local info = self:FWGetResourceInfo()
+
+	local panel, outer
 
 	--
-	-- HELPERS
+	-- UTILS
 	--
-	local ROW_HEIGHT = 16
-	local HEADER_HEIGHT = 16
+	local HEADER_HEIGHT = 18
+	local ROW_HEIGHT = fw.resource.INFO_ROW_HEIGHT
 
-	local function addHeader(titleText, size)
-		local textBox = vgui.Create('FWUITextBox', panel)
+	local function addHeader(titleText, parent)
+		local textBox = vgui.Create('FWUITextBox', parent or panel)
 		textBox:SetText(titleText)
 		textBox:SetTall(size or HEADER_HEIGHT)
-		textBox:SetInset(1	)
+		textBox:SetInset(1)
 		textBox:SetAlign('left')
 		textBox.Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 220)
@@ -176,7 +189,6 @@ local function paintEntityResources(entity, info)
 		end
 		return textBox
 	end
-
 
 	local function addResourceRow(resource, amountTable, usageTable, outof)
 		if type(resource) == 'string' then
@@ -221,9 +233,65 @@ local function paintEntityResources(entity, info)
 		return row
 	end
 
-	-- add production
-	addHeader(entity.PrintName):SetAlign('center')
+	--
+	-- BUILD OUT PANELS
+	--
+	outer = vgui.Create('STYLayoutVertical')
+	outer:SetWide(200)
+	outer:SetPadding(2)
+	self._fwInfoPanel = outer
+	addHeader(self.PrintName, outer):SetAlign('center'):SetTall(20)
 
+	local shouldAutosize = false
+	local wrapper = vgui.Create('STYPanel', outer)
+	wrapper.PerformLayout = function()
+		if shouldAutosize then
+			wrapper:SetSize(panel:GetSize())
+		end
+	end
+	wrapper:SetVisible(false)
+	wrapper:SetSize(outer:GetWide(), 0)
+
+	panel = vgui.Create('STYLayoutVertical', wrapper)
+	panel:SetPadding(2)
+	panel:SetWide(200)
+
+	local wasBeingLookedAt = false
+	outer.EndAnimate = function()
+		wrapper:SetVisible(wasBeingLookedAt)
+		if wasBeingLookedAt then
+			outer:SetSize(panel:GetWide(), panel:GetTall())
+		else
+			outer:SetSize(panel:GetWide(), 0)
+		end
+		shouldAutosize = wasBeingLookedAt
+	end
+	outer.BeginAnimate = function()
+		wrapper:SetVisible(true)
+		shouldAutosize = false
+		if wasBeingLookedAt then
+			wrapper:SetSize(panel:GetWide(), 0)
+			wrapper:AlphaTo(255, 0.1)
+			wrapper:SizeTo(panel:GetWide(), panel:GetTall(), 0.1, 0, -1, function()
+				outer:EndAnimate()
+			end)
+		else
+			wrapper:SetSize(panel:GetSize())
+			wrapper:AlphaTo(0, 0.1)
+			wrapper:SizeTo(panel:GetWide(), 0, 0.1, 0, -1, function()
+				outer:EndAnimate()
+			end)
+		end
+	end
+	outer.Think = function()
+		local amBeingLookedAt = LocalPlayer():GetEyeTrace().Entity == self
+		if amBeingLookedAt ~= wasBeingLookedAt then
+			wasBeingLookedAt = amBeingLookedAt
+			outer:BeginAnimate()
+		end
+	end
+
+	-- build out the ui
 	if entity.CustomUI then
 		entity:CustomUI(panel)
 	end
@@ -249,34 +317,6 @@ local function paintEntityResources(entity, info)
 		end
 	end
 end
-
-
-local lastHitEntity = nil
-fw.hook.Add('PostDrawTranslucentRenderables', function()
-	local hitent = LocalPlayer():GetEyeTrace().Entity
-
-	if lastHitEntity ~= hitent then
-		lastHitEntity = hitent
-		if IsValid(_FW_RESOURCE_PANEL) then
-			local panel = _FW_RESOURCE_PANEL
-			panel:Remove()
-			_FW_RESOURCE_PANEL = nil
-		end
-		if IsValid(hitent) and hitent:FWGetResourceInfo() then
-			paintEntityResources(hitent, hitent:FWGetResourceInfo())
-		end
-	end
-
-	if IsValid(_FW_RESOURCE_PANEL) then
-		local panel = _FW_RESOURCE_PANEL
-		panel:Draw3D(panel:CalcLocation())
-	end
-
-	if debugEntityPaintPosition and IsValid(hitent) then
-		local pos = hitent:GetDisplayPosition()
-		render.DrawWireframeSphere(hitent:LocalToWorld(pos), 5, 5, 5, Color(255, 0, 0))
-	end
-end)
 
 concommand.Add('fw_resource_toggleDebugPaintPosition', function()
 	debugEntityPaintPosition = not debugEntityPaintPosition

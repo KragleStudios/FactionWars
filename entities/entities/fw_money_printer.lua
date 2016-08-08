@@ -50,6 +50,7 @@ else
 
 	function ENT:Draw()
 		self:DrawModel()
+		self:FWDrawInfo()
 	end
 
 	function ENT:GetDisplayPosition()
@@ -57,34 +58,36 @@ else
 		local obbmax = self:OBBMaxs()
 		return Vector(obbcenter.x, obbcenter.y, obbmax.z), Angle(0, 90, 0), 0.15
 	end
-end
 
-function ENT:CustomUI(panel)
-	local row = vgui.Create('fwEntityInfoPanel', panel)
-	row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
-	local status = vgui.Create('FWUITextBox', row)
-	status:SetAlign('center')
-	status:Dock(FILL)
+	function ENT:CustomUI(panel)
+		local row = vgui.Create('fwEntityInfoPanel', panel)
+		row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
-	local btn = vgui.Create('DButton', panel)
-	btn:SetText("TOGGLE PRINTER")
-	btn.DoClick = function(self)
-		print("HELLO WORLD!")
+		local status = vgui.Create('FWUITextBox', row)
+		status:SetAlign('center')
+		status:Dock(FILL)
+
+		local btn = vgui.Create('DButton', panel)
+		btn:SetText("TOGGLE PRINTER")
+		btn.DoClick = function(self)
+			print("HELLO WORLD!")
+		end
+
+		row:SetRefresh(function(memory)
+			if memory.power ~= self:FWHaveResource('power') then
+				memory.power = self:FWHaveResource('power')
+				return true -- will trigger the next function... refresh to get called
+			end
+		end, function()
+			if self:FWHaveResource('power') >= 2 then
+				status:SetText('PRINTER RUNNING')
+				status:SetColor(Color(0, 255, 0))
+			else
+				status:SetText('NOT ENOUGH POWER')
+				status:SetColor(Color(255, 0, 0))
+			end
+		end)
 	end
 
-	row:SetRefresh(function(memory)
-		if memory.power ~= self:FWHaveResource('power') then
-			memory.power = self:FWHaveResource('power')
-			return true -- will trigger the next function... refresh to get called
-		end
-	end, function()
-		if self:FWHaveResource('power') >= 2 then
-			status:SetText('PRINTER RUNNING')
-			status:SetColor(Color(0, 255, 0))
-		else
-			status:SetText('NOT ENOUGH POWER')
-			status:SetColor(Color(255, 0, 0))
-		end
-	end)
 end

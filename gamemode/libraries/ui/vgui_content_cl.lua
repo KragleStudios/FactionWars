@@ -271,22 +271,27 @@ vgui.Register('FWUITextBox', {
 			end
 		end
 		self._align = align
+		return self
 	end,
 
 	SetText = function(self, title)
 		self._label:SetText(title)
+		return self
 	end,
 
 	SetColor = function(self, color)
 		self._label:SetColor(color)
+		return self
 	end,
 
 	SetInset = function(self, nInset)
 		self._inset = nInset
+		return self
 	end,
 
 	SetFont = function(self, font)
 		self._font = font
+		return self
 	end,
 
 	PerformLayout = function(self)

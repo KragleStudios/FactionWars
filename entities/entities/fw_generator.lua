@@ -65,6 +65,7 @@ else
 
 	function ENT:Draw()
 		self:DrawModel()
+		self:FWDrawInfo()
 	end
 
 	function ENT:GetDisplayPosition()

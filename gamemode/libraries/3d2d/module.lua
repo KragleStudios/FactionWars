@@ -77,8 +77,6 @@ function Panel:Draw3D(pos, ang, scale)
 
 		local cursor3d = util.IntersectRayWithPlane(eyePos, cursorNormal, pos, nUp)
 		if cursor3d then
-			render.DrawWireframeSphere(cursor3d, 1, 5, 5, Color(255, 0, 0))
-
 			local w = cursor3d-pos;
 		 	cursorX = w:DotProduct(nForward)/scale
 			cursorY = w:DotProduct(nRight)/scale
@@ -97,14 +95,11 @@ function Panel:Draw3D(pos, ang, scale)
 			end
 
 			if isUsePressed ~= self.__wasUsePressed then
-				print("mouse was either pressed or released")
 				if self.__wasUsePressed == false and isUsePressed == true and IsValid(hovered) then
-					print("SIMULATING OnMousePressed")
 					self.__pressedPanel = hovered
 					if hovered.OnMousePressed then hovered:OnMousePressed(MOUSE_LEFT) end
 				end
 				if IsValid(self.__pressedPanel) and isUsePressed == false then
-					print("SIMULATING OnMouseReleased")
 					if self.__pressedPanel.OnMouseReleased then self.__pressedPanel:OnMouseReleased(MOUSE_LEFT) end
 					self.__pressedPanel = nil
 				end
