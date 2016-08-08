@@ -105,7 +105,7 @@ vgui.Register('fwResourceDisplayBar', {
 			x = x + stepsize
 		end
 
-		surface.SetDrawColor(0, 155, 0, 220)
+		surface.SetDrawColor(0, 100, 0, 220)
 		for i = self._stop1 + 1, self._stop2 do
 			surface.DrawRect(x, 1, stepsize - 1, h - 2)
 			x = x + stepsize
@@ -248,9 +248,6 @@ local function paintEntityResources(entity, info)
 			addStorageRow(type, info.amStoring, maxStorage)
 		end
 	end
-
-	vgui.make3d(panel)
-
 end
 
 
@@ -262,14 +259,17 @@ fw.hook.Add('PostDrawTranslucentRenderables', function()
 		lastHitEntity = hitent
 		if IsValid(_FW_RESOURCE_PANEL) then
 			local panel = _FW_RESOURCE_PANEL
-			panel:AlphaTo(0, 0.5, 0, function()
-				panel:Remove()
-			end)
+			panel:Remove()
 			_FW_RESOURCE_PANEL = nil
 		end
 		if IsValid(hitent) and hitent:FWGetResourceInfo() then
 			paintEntityResources(hitent, hitent:FWGetResourceInfo())
 		end
+	end
+
+	if IsValid(_FW_RESOURCE_PANEL) then
+		local panel = _FW_RESOURCE_PANEL
+		panel:Draw3D(panel:CalcLocation())
 	end
 
 	if debugEntityPaintPosition and IsValid(hitent) then

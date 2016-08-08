@@ -67,6 +67,12 @@ function ENT:CustomUI(panel)
 	status:SetAlign('center')
 	status:Dock(FILL)
 
+	local btn = vgui.Create('DButton', panel)
+	btn:SetText("TOGGLE PRINTER")
+	btn.DoClick = function(self)
+		print("HELLO WORLD!")
+	end
+
 	row:SetRefresh(function(memory)
 		if memory.power ~= self:FWHaveResource('power') then
 			memory.power = self:FWHaveResource('power')
