@@ -219,9 +219,6 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 			table.insert(teamList[v:Team()], v)
 		end
 
-		print(fac:getName())
-		PrintTable(teamList)
-
 		for k, job in pairs(fw.team.list) do
 			local jobs = job:getName()
 			local jobPlayers = teamList[k]
