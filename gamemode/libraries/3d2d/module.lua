@@ -101,6 +101,7 @@ function Panel:Draw3D(pos, ang, scale)
 				end
 				if IsValid(self.__pressedPanel) and isUsePressed == false then
 					if self.__pressedPanel.OnMouseReleased then self.__pressedPanel:OnMouseReleased(MOUSE_LEFT) end
+					if self.__pressedPanel.DoClick and self.__pressedPanel == hovered then self.__pressedPanel:DoClick(MOUSE_LEFT) end
 					self.__pressedPanel = nil
 				end
 				self.__wasUsePressed = isUsePressed

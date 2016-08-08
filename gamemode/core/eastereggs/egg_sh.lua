@@ -1,17 +1,17 @@
 if SERVER then
-	util.AddNetworkString("BarrelRoll")
+	util.AddNetworkString("fw.BarrelRoll")
 
 	fw.hook.Add("PlayerSay", "EasterEggs", function(ply, msg)
-		if msg:lower() == "do a barrel roll" then
+		if msg:find("do a barrel roll") then
 			net.Start("BarrelRoll")
 			net.Send(ply)
 		end
 	end)
 else
-	net.Receive("BarrelRoll", function()
+	net.Receive("fw.BarrelRoll", function()
 		local rollstate = 0
 		fw.hook.Add("CalcView", "BarrelRoll", function(ply, pos, ang, fov)
-			rollstate = rollstate + 1
+			rollstate = rollstate + FrameTime() * 200
 			local view = {}
 
 			view.origin = pos

@@ -42,6 +42,11 @@ if SERVER then
 
 	end
 
+	function ENT:ScheduleNextPrint()
+		timer.Simple(self.PrintInterval, function()
+		end)
+	end
+
 	function ENT:OnRemove()
 		fw.resource.removeEntity(self)
 	end
@@ -67,12 +72,6 @@ else
 		local status = vgui.Create('FWUITextBox', row)
 		status:SetAlign('center')
 		status:Dock(FILL)
-
-		local btn = vgui.Create('DButton', panel)
-		btn:SetText("TOGGLE PRINTER")
-		btn.DoClick = function(self)
-			print("HELLO WORLD!")
-		end
 
 		row:SetRefresh(function(memory)
 			if memory.power ~= self:FWHaveResource('power') then

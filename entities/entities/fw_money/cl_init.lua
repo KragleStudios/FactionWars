@@ -1,12 +1,15 @@
 include("shared.lua")
 
+local aFont = fw.fonts.default:atSize(32)
+local bgColor = Color(0, 0, 0, 220)
+
 function ENT:Draw()
 	self:DrawModel()
 
 	local ang = self:GetAngles()
 	ang:RotateAroundAxis(ang:Up(), 180)
 
-	cam.Start3D2D(self:LocalToWorld(self:OBBMaxs()), ang, 0.1)
-		draw.SimpleText("$" .. self:GetValue(), fw.fonts.default:atSize(16), 40, -20, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	cam.Start3D2D(self:LocalToWorld(Vector(3.2, -0.9, 1)), ang, 0.05)
+		draw.WordBox(2, 0, 0, "$" .. self:GetValue(), aFont, bgColor, color_white)
 	cam.End3D2D()
 end
