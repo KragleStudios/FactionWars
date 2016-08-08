@@ -1,4 +1,4 @@
--- This is a base for the money printers and has some reall OP stats. Don't actually let people spawn this.
+-- This is a base for the money printers and has some real OP stats. Don't actually let people spawn this.
 
 ENT.Type = "anim"
 ENT.Base = "base_entity"
@@ -9,7 +9,7 @@ ENT.Category = "Faction Wars Printers"
 ENT.PrintSpeed = 5 -- How fast can the printer print (in seconds)?
 ENT.PrintAmount = 100 -- How much money does it print per cycle?
 
-ENT.PowerRequired = 100 -- How much power does the printer require (in AU/s)
+ENT.PowerRequired = 2 -- How much power does the printer require (in AU/s)
 ENT.PaperCap = 100 -- How many sheets of paper can this printer hold?
 ENT.InkCap = 100 -- How much ink (in ml) can this printer hold?
 
@@ -18,10 +18,11 @@ ENT.PaperDrain = 5 -- How many sheets of paper are consumed in each print?
 
 ENT.Color = Color(26, 188, 156, 100) -- Color of printer + UI elements
 
-ENT.NETWORK_SIZE = 600
+ENT.NETWORK_SIZE = 500
+ENT.Resources = true
 
-ENT.ConsumesResources = {
-    ["power"] = ENT.PowerRequired,
+ENT.MaxConsumption = {
+	["power"] = ENT.PowerRequired,
 }
 
 function ENT:SetupDataTables()

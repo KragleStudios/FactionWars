@@ -1,15 +1,15 @@
 include("shared.lua")
 
 function ENT:GetDisplayPosition()
-	local ang = self:GetAngles()
-	ang:RotateAroundAxis(ang:Up(), 90)
-
-	return self:LocalToWorld(self:OBBMaxs()), ang, 0.2
+	local obbcenter = self:OBBCenter()
+	local obbmax = self:OBBMaxs()
+	return Vector(obbcenter.x, obbcenter.y, obbmax.z), Angle(0, 90, 0), 0.15
 end
 
 function ENT:Draw()
 	self:DrawModel()
-
+	self:FWDrawInfo()
+	--[[
 	local ang = self:GetAngles()
 	ang:RotateAroundAxis(ang:Up(), 90)
 
@@ -31,5 +31,5 @@ function ENT:Draw()
 			draw.RoundedBox(0, -145, -85, 130, 24, Color(math.abs(math.sin(CurTime() * 1.5)) * 180, math.abs(math.sin(CurTime() * 1.5)) * 57, math.abs(math.sin(CurTime() * 1.5)) * 43))
 			draw.SimpleText("ERROR", fw.fonts.default:atSize(fw.fonts.default:fitToView(150, 150, "ERROR")), -80.5, -75, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		end
-	cam.End3D2D()
+	cam.End3D2D()]]
 end
