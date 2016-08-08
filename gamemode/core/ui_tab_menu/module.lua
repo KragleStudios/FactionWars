@@ -196,21 +196,6 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 	end)
 end
 
---organizes a group of players into teams
-local function sortPlayersByTeam(plys)
-	local masterList = {}
-
-	for k,v in pairs(plys) do
-		if (not masterList[v:Team()]) then
-			masterList[v:Team()] = {}
-		end
-
-		table.insert(masterList[v:Team()], v)
-	end
-
-	return masterList
-end
-
 function fw.tab_menu.tabDisplayPlayersList(panel)
 	local space = vgui.Create('DScrollPanel', panel)
 	space:SetSize(panel:GetSize())
@@ -228,7 +213,14 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 		factionPlayers:SetTitle(fac.name.." - "..#plys.." PLAYER(S) TOTAL")
 		factionPlayers:SetPadding(sty.ScreenScale(2))
 
-		local teamList = sortPlayersByTeam(plys)
+		local teamList = {}
+		for k,v in pairs(plys) do
+			teamList[v:Team()] = teamList[v:Team()] or {}
+			table.insert(teamList[v:Team()], v)
+		end
+
+		print(fac:getName())
+		PrintTable(teamList)
 
 		for k, job in pairs(fw.team.list) do
 			local jobs = job:getName()
@@ -241,7 +233,6 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 			factionJobs:SetPadding(sty.ScreenScale(2))
 
 			for k,ply in pairs(jobPlayers) do
-				print(fac)
 				if (ply:getFaction() != fac:getID()) then continue end
 
 				local panel = vgui.Create('FWUIPanel', factionJobs)
