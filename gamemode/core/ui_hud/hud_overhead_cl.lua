@@ -1,4 +1,4 @@
-hook.Add( "PostDrawOpaqueRenderables", "drawOverhead", function()
+fw.hook.Add("PostDrawOpaqueRenderables", "drawOverhead", function()
 	for k, v in pairs(player.GetAll()) do
 		local boneIndex = v:LookupBone("ValveBiped.Bip01_Head1")
 		local bonePos = v:GetBonePosition(boneIndex)
