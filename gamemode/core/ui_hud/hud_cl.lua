@@ -1,5 +1,5 @@
 fw.hook.Add('HUDShouldDraw', 'fw.hud', function(name)
-	if name == 'CHudHealth' then
+	if name == 'CHudHealth' or (LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera") then
 		return false
 	end
 end)
@@ -288,4 +288,14 @@ sty.WaitForLocalPlayer(function()
 		__FW_HUDINFO:Remove()
 	end
 	__FW_HUDINFO = vgui.Create('fwHudInfo')
+end)
+
+fw.hook.Add("Think", "HideOnCamera", function()
+	if IsValid(__FW_HUDINFO) and (LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera") then
+		__FW_HUDINFO:Remove()
+	end
+
+	if not IsValid(__FW_HUDINFO) then
+		__FW_HUDINFO = vgui.Create('fwHudInfo')
+	end
 end)
