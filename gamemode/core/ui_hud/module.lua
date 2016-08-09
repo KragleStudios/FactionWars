@@ -8,3 +8,4 @@ fw.dep(CLIENT, 'zones')
 
 fw.include_cl 'hud_cl.lua'
 fw.include_cl 'entity_info_cl.lua'
+fw.include_cl 'hud_overhead_cl.lua'
