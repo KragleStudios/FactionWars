@@ -94,7 +94,6 @@ hook.Add('PostDrawOpaqueRenderables', 'fw.toolgun.zonecreator', function()
 	end
 
 	if zone then
-		zone:render(LocalPlayer():GetPos().z)
 		for k, triangle in ipairs(zone.triangles) do
 			render.DrawLine(pointToVector(triangle.p1), pointToVector(triangle.p2), line_color)
 			render.DrawLine(pointToVector(triangle.p1), pointToVector(triangle.p3), line_color)
