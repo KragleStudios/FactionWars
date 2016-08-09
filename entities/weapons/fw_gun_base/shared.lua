@@ -71,8 +71,7 @@ function SWEP:Shoot()
 	end
 
 	if self:GetScoped() then
-		recoilMult = recoilMult / 2
-		sprayMult = sprayMult / 2
+		recoilMult = 0
 	end
 
 	self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
