@@ -65,7 +65,7 @@ fw.hook.Add('PreRender', 'fw.hud.entityInfo', function()
 		end
 	end
 
-	if IsValid(ent) and not (LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera") then
+	if IsValid(ent) and not (IsValid(LocalPlayer()) and LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera") then
 
 		__FWHUD_ENTITYINFO = vgui.Create('FWHUDEntityInfo')
 		__FWHUD_ENTITYINFO:SetEntity(ent)

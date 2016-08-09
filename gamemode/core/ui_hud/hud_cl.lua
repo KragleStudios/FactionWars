@@ -1,5 +1,5 @@
 fw.hook.Add('HUDShouldDraw', 'fw.hud', function(name)
-	if name == 'CHudHealth' or (LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera") then
+	if name == 'CHudHealth' or (IsValid(LocalPlayer()) and LocalPlayer():GetActiveWeapon() and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera") then
 		return false
 	end
 end)
