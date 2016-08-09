@@ -7,12 +7,11 @@ ENT.PrintName		= "Medium Gas Can"
 ENT.Author			= "thelastpenguin"
 ENT.Category        = "Faction Wars"
 
-ENT.NETWORK_SIZE = 500
+ENT.NETWORK_SIZE = 0
 ENT.Resources = true
 ENT.MaxStorage = {
 	['gas'] = 100
 }
-
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 
@@ -54,5 +53,4 @@ else
 		local obbmax = self:OBBMaxs()
 		return Vector(obbmax.x, obbcenter.y, obbcenter.z), Angle(0, 90, 90), 0.09
 	end
-
 end

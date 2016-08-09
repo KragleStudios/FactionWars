@@ -185,7 +185,7 @@ local function regWep(name, sID, col, mdl, ent, max, price, rmv, cat, ship, wep,
 			stringID = sID,
 			color = col,
 			model = mdl,
-			max = max, 
+			max = max,
 			entity = ent,
 			price = price,
 			removeOnDisc = rmv,
@@ -231,7 +231,7 @@ fw.ents.registerItem("Blowtorch Shipment", {
 	stringID = "blowtorchship",
 	color = Color(0, 0, 0),
 	model = "", --this is the model shown on the menu display, and doesn't have to mach the ent model
-	entity = "fw_cuttingtorch", --this MUST be the entity classname 
+	entity = "fw_cuttingtorch", --this MUST be the entity classname
 	max = 0,
 	price = 100,
 	storable = true,

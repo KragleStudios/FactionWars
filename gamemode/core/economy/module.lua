@@ -9,5 +9,7 @@ fw.dep(SERVER, 'data')
 -- load self
 local Player = FindMetaTable('Player')
 
+
+fw.economy = {}
 fw.include_sv 'economy_sv.lua'
 fw.include_sh 'economy_sh.lua'

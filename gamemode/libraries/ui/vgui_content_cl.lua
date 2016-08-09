@@ -276,6 +276,7 @@ vgui.Register('FWUITextBox', {
 
 	SetText = function(self, title)
 		self._label:SetText(title)
+		self:PerformLayout()
 		return self
 	end,
 

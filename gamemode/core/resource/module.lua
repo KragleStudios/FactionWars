@@ -42,15 +42,19 @@ end
 
 if SERVER then
 	function Entity:FWHaveResource(name)
-		return ent.fwResources[name] or ent.fwResourcesStatic[name] or 0
+		return self.fwResources[name] or self.fwResourcesStatic[name] or 0
 	end
 
 	function Entity:FWStoringResource(name)
-		return ent.Storage and ent.Storage[name] or 0
+		return self.Storage and self.Storage[name] or 0
 	end
 
 	function Entity:FWProducingResource(name)
-		return ent.Produces and ent.Produces[name] or 0
+		return self.Produces and self.Produces[name] or 0
+	end
+
+	function Entity:FWSetResource(name, amount)
+		self.fwResourcesStatic[name] = amount
 	end
 else
 	function Entity:FWHaveResource(name) -- how much of the resource it has

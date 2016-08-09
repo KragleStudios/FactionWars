@@ -55,18 +55,6 @@ function ENT:Think()
 	end
 end
 
-function ENT:Touch(ent)
-	if ent:GetClass() == "fw_printer_paper" and self:GetPaper() < self.PaperCap and not ent.Used then
-		ent.Used = true
-		ent:Remove()
-		self:SetPaper(math.Clamp(self:GetPaper() + 15, 0, self.PaperCap))
---[[elseif ent:GetClass() == "fw_printer_ink" and self:GetInk() < 100 and not ent.Used then
-		ent.Used = true
-		ent:Remove()
-		self:SetInk(self:GetInk() + 30)]]
-	end
-end
-
 function ENT:OnRemove()
 	self.Sound:Stop()
 	fw.resource.removeEntity(self)

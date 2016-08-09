@@ -18,3 +18,15 @@ end
 function Player:addMoney(amount)
 	return self:setMoney(self:getMoney() + amount)
 end
+
+
+-- fw.economy.createMoneyBag(amount:number, pos:Vector)
+-- @param amount:number - the amount to assign to the money bag
+-- @rat pos:Vector - the position to create the money bag at 
+function fw.economy.createMoneyBag(amount, pos)
+	local money = ents.Create("fw_money")
+	money:SetPos(pos)
+	money:SetValue(amount)
+	money:Spawn()
+	return money
+end

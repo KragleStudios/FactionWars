@@ -1,12 +1,12 @@
 if SERVER then AddCSLuaFile() end
 
--- load external dependencies 
+-- load external dependencies
 require 'sty'
 
--- load modular dependencies 
+-- load modular dependencies
 fw.dep(CLIENT, 'fonts')
 
--- client side constants 
+-- client side constants
 fw.ui = {}
 
 fw.ui.const_darkgrey = Color(50, 50, 50)
@@ -28,3 +28,8 @@ fw.ui.const_nesting_lighten_rate = 5
 fw.include_cl 'vgui_dropshadow_cl.lua'
 fw.include_cl 'vgui_content_cl.lua'
 fw.include_cl 'vgui_tableview_cl.lua'
+
+if SERVER then
+	resource.AddSingleFile('materials/kragle/drop-shadow-h.png')
+	resource.AddSingleFile('materials/kragle/drop-shadow-v.png')
+end

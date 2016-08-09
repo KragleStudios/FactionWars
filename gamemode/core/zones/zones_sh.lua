@@ -375,7 +375,12 @@ timer.Create('fw.zone.updatePlayers', 1, 0, function()
 			local oldZone = pl._fw_zone
 
 			if oldZone then
-				table.RemoveByValue(oldZone, pl)
+				for k,v in ipairs(oldZone.players) do
+					if v == pl then
+						table.remove(oldZone.players, k)
+						break
+					end
+				end
 			end
 			if inZone then
 				if not table.HasValue(inZone.players, pl) then

@@ -244,6 +244,13 @@ function fw.resource.updateNetworks()
 
 		syncupTables(ent.fwResources or noTbl, ntable.haveResources, true)
 		syncupTables(ent.fwResourcesStatic or noTbl, ntable.haveResources, true) -- no delete since it gets merged with the rest of 'have resources'
+
+		if ent.OnResourceUpdate then
+			local succ, err = pcall(ent.OnResourceUpdate, ent)
+			if not succ then 
+				ErrorNoHalt(err)
+			end
+		end
 	end
 
 end

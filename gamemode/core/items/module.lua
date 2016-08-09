@@ -15,7 +15,6 @@ fw.dep(SERVER, 'data')
 fw.include_sh 'sh_ents.lua'
 fw.include_sv 'sv_ents.lua'
 fw.include_sv 'sv_inventory.lua'
--- fw.include_cl 'cl_ents.lua'
 
 -- should really be placed somewhere else
 fw.include_sh 'items.lua'

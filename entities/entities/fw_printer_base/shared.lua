@@ -3,7 +3,7 @@
 ENT.Type = "anim"
 ENT.Base = "base_entity"
 
-ENT.Name = "Base Money Printer"
+ENT.PrintName = "Base Money Printer"
 ENT.Category = "Faction Wars Printers"
 
 ENT.PrintSpeed = 5 -- How fast can the printer print (in seconds)?
