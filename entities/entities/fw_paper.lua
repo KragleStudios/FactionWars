@@ -7,7 +7,7 @@ ENT.Category    = "Faction Wars"
 ENT.NETWORK_SIZE = 0
 ENT.Resources = true
 ENT.MaxStorage = {
-	['paper'] = 100
+	["paper"] = 100
 }
 
 if SERVER then
@@ -22,7 +22,7 @@ if SERVER then
 		self:PhysWake()
 
 		self.Storage = {
-			['paper'] = 100,
+			["paper"] = 100,
 		}
 
 		fw.resource.addEntity(self)

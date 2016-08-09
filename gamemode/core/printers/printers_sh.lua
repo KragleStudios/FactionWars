@@ -13,6 +13,11 @@ function fw.printers.createPrinter(name, config, entity)
 	config.PrintName = name
 	config.Spawnable = true
 	config.AdminOnly = true
+	config.MaxConsumption = {
+		["power"] = config.PowerRequired,
+		["paper"] = config.PaperDrain,
+	}
+
 	fw.printers.printers[entity] = config
 end
 

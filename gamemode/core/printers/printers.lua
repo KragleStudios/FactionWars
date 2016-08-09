@@ -1,7 +1,7 @@
 fw.printers.createPrinter("Tier 1 Money Printer", {
 	PrintSpeed = 300,
 	PrintAmount = 500,
-	PowerRequired = 100,
+	PowerRequired = 1,
 	PaperCap = 65,
 	PaperDrain = 5,
 	Color = Color(211, 84, 0, 100)
@@ -10,7 +10,7 @@ fw.printers.createPrinter("Tier 1 Money Printer", {
 fw.printers.createPrinter("Tier 2 Money Printer", {
 	PrintSpeed = 240,
 	PrintAmount = 750,
-	PowerRequired = 125,
+	PowerRequired = 1,
 	PaperCap = 75,
 	PaperDrain = 5,
 	Color = Color(243, 156, 18)
@@ -19,7 +19,7 @@ fw.printers.createPrinter("Tier 2 Money Printer", {
 fw.printers.createPrinter("Tier 3 Money Printer", {
 	PrintSpeed = 180,
 	PrintAmount = 1000,
-	PowerRequired = 150,
+	PowerRequired = 2,
 	PaperCap = 90,
 	PaperDrain = 4,
 	Color = Color(52, 73, 94)
@@ -28,7 +28,7 @@ fw.printers.createPrinter("Tier 3 Money Printer", {
 fw.printers.createPrinter("Tier 4 Money Printer", {
 	PrintSpeed = 120,
 	PrintAmount = 1500,
-	PowerRequired = 200,
+	PowerRequired = 2,
 	PaperCap = 115,
 	PaperDrain = 4,
 	Color = Color(142, 68, 173)
@@ -38,7 +38,7 @@ fw.printers.createPrinter("Tier 5 Money Printer", {
 	PrintSpeed = 90,
 	PrintAmount = 2000,
 	PowerRequired = 200,
-	PaperCap = 175,
+	PaperCap = 3,
 	PaperDrain = 3,
 	Color = Color(192, 57, 43)
 }, "fw_printer_tier5") -- 2000 * (15/1.5) = $20000 (cost: $25000, extra cost is for the paper usage)
@@ -46,7 +46,7 @@ fw.printers.createPrinter("Tier 5 Money Printer", {
 fw.printers.createPrinter("Titan", {
 	PrintSpeed = 60,
 	PrintAmount = 2250,
-	PowerRequired = 275,
+	PowerRequired = 3,
 	PaperCap = 350,
 	PaperDrain = 2,
 	Color = Color(44, 62, 80)
