@@ -467,7 +467,7 @@ function fw.tab_menu.itemManagement(parent)
 	for index, item in pairs(fw.ents.item_list) do
 		if (not fw.ents.canPlayerBuyItem(LocalPlayer(), item.index)) then continue end
 
-		createItemPanel(item.name, item.category or "General", function()
+		createItemPanel(item.name, item.category, function()
 			LocalPlayer():ConCommand(item.command)
 			fw.tab_menu.hideContent()
 		end)

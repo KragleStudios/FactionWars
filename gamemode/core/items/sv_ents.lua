@@ -5,13 +5,11 @@ ndoc.table.items = {}
 function fw.ents.buyItem(ply, item_index)
 	local canjoin, msg = fw.ents.canPlayerBuyItem(ply, item_index)
 
-	if (not canjoin) then
-		if (msg) then
-			ply:FWChatPrintError(msg)
-		end
+	if (msg) then
+		ply:FWChatPrintError(msg)
 		return
 	end
-
+		
 	local item = fw.ents.item_list[item_index]
 
 	ply.maxItems = ply.maxItems or {}
@@ -33,7 +31,7 @@ function fw.ents.buyItem(ply, item_index)
 		local ship = ents.Create("fw_shipment")
 		ship:SetPos(tr)
 		ship:setEntity(item.entity)
-		ship:setEntityModel(item.model)
+		ship:setEntityModel(item.model[1])
 		ship:setShipmentAmount(item.shipmentCount)
 		ship:Spawn()
 		ship:Activate()
