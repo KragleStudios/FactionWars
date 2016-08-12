@@ -12,12 +12,6 @@ function fw.ents.buyItem(ply, item_index)
 		
 	local item = fw.ents.item_list[item_index]
 
-	ply.maxItems = ply.maxItems or {}
-	if (ply.maxItems[item.entity] and item.max and item.max != 0 and ply.maxItems[item.entity] + 1 > item.max) then
-		ply:FWChatPrintError("You already have the max of this entity!")
-		return
-	end
-
 	ply.maxItems[item.entity] = ply.maxItems[item.entity] and ply.maxItems[item.entity] + 1 or 1
 
 	local trace = {}
@@ -31,7 +25,7 @@ function fw.ents.buyItem(ply, item_index)
 		local ship = ents.Create("fw_shipment")
 		ship:SetPos(tr)
 		ship:setEntity(item.entity)
-		ship:setEntityModel(item.model[1])
+		ship:setEntityModel(item.model)
 		ship:setShipmentAmount(item.shipmentCount)
 		ship:Spawn()
 		ship:Activate()

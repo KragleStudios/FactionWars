@@ -436,7 +436,7 @@ function fw.tab_menu.itemManagement(parent)
 	listLayout:SetWide(parent:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(2))
 
-	local function createItemPanel(item, category, doClickBuy)
+	local function createItemPanel(item, category, price, doClickBuy)
 		if (not parent.categories[category]) then
 			local itemSelection = vgui.Create("FWUITableViewSection", listLayout)
 			itemSelection:SetTitle(string.upper(category))
@@ -445,6 +445,8 @@ function fw.tab_menu.itemManagement(parent)
 			parent.categories[category] = itemSelection
 		end
 
+		price = string.Comma(price)
+
 		local panel = vgui.Create('FWUIPanel')
 		panel:SetTall(sty.ScreenScale(12))
 
@@ -452,7 +454,7 @@ function fw.tab_menu.itemManagement(parent)
 
 		local buyButton = vgui.Create('FWUIButton', panel)
 		buyButton:SetFont(fw.fonts.default)
-		buyButton:SetText('BUY ITEM')
+		buyButton:SetText('BUY ITEM $'..price)
 		buyButton.DoClick = doClickBuy
 		buyButton:SetWide(sty.ScreenScale(60))
 
@@ -461,13 +463,14 @@ function fw.tab_menu.itemManagement(parent)
 
 		title:Dock(FILL)
 		title:DockMargin(sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1))
+
 		buyButton:Dock(RIGHT)
 	end
 
 	for index, item in pairs(fw.ents.item_list) do
 		if (not fw.ents.canPlayerBuyItem(LocalPlayer(), item.index)) then continue end
 
-		createItemPanel(item.name, item.category, function()
+		createItemPanel(item.name, item.category, item.price, function()
 			LocalPlayer():ConCommand(item.command)
 			fw.tab_menu.hideContent()
 		end)

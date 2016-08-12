@@ -37,7 +37,6 @@ function fw.ents.registerShipment(name, tbl)
 	assert(tbl.price, "must provide price for: "..name)
 	assert(tbl.shipmentCount, "must provide count for how many are in the shipment :"..name)
 
-	tbl.model = not istable(tbl.model) and {tbl.model} or tbl.model
 	tbl.seperate = tbl.seperate or false
 	tbl.max = tbl.max or 0
 	tbl.command = tbl.command or "fw_item_"..tbl.stringID
@@ -120,12 +119,19 @@ function fw.ents.canPlayerBuyItem(ply, itemID)
 	local jobs = i.jobs
 	local price = i.price
 
+	ply.maxItems = ply.maxItems or {}
+
 	if (i.jobs and not istable(i.jobs)) then i.jobs = {i.jobs} end
 	if (i.faction and not istable(i.faction)) then i.faction = {i.faction} end
 
 	if (not ply:canAfford(price)) then return false, "you can't afford this!" end
 	if (faction and isstring(faction) and (ply:getFaction() != faction)) then return false, "you aren't the right faction for this!" end
 	if jobs and (not table.HasValue(jobs, ply:Team())) then return false, "you aren't the right job for this!" end
+	
+	if (ply.maxItems[i.entity] and maxItem and maxItem != 0 and ply.maxItems[i.entity] + 1 > maxItem) then
+		return false, 'you already have the max allowed of this item!'
+	end
+
 	if (i.canBuy) then 
 		return i.canBuy(i, ply)
 	end

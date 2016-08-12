@@ -61,7 +61,7 @@ net.Receive("fw.dropItem", function(_, ply)
 	ent:SetOwner(ply)
 	ent.stringID = item.stringID
 	if (item.shipment) then
-		ent:setEntityModel(item.model[1])
+		ent:setEntityModel(item.model)
 		ent:setEntity(item.entity)
 		ent:setShipmentAmount(ndoc.table.items[ply].inventory.slots[pos].remaining)
 		ent:setName(name)
