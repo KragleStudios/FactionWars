@@ -98,7 +98,6 @@ function fw.ents.registerShipment(name, tbl)
 		end)
 	end
 
-
 	fw.hook.Call("FWItemRegistered", fw.ents.item_list[ind])
 end
 
@@ -108,7 +107,7 @@ function fw.ents.canPlayerBuyItem(ply, itemID)
 		return false
 	end
 
-	local canbuy, msg = fw.hook.Call("CanPlayerBuyItem", GAMEMODE, ply, i)
+	local canbuy, msg = fw.hook.Call("CanPlayerBuyItem", ply, i)
 
 	if (not canbuy and msg) then
 		return false, msg
