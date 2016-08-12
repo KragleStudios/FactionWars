@@ -3,7 +3,7 @@ if SERVER then
 
 	fw.hook.Add("PlayerSay", "EasterEggs", function(ply, msg)
 		if msg:find("do a barrel roll") then
-			net.Start("BarrelRoll")
+			net.Start("fw.BarrelRoll")
 			net.Send(ply)
 		end
 	end)
