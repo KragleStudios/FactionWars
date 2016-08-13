@@ -72,6 +72,16 @@ function zone_mt:ctor(id, name, polygon)
 	return self
 end
 
+function zone_mt:hasRadar()
+	for k,v in pairs(ents.FindByClass("fw_radar")) do
+		if (self:isPointInZone(v:GetPos())) then
+			return true, v
+		end
+	end
+
+	return false
+end
+
 function zone_mt:send()
 	net.WriteUInt(self.id, 16)
 	net.WriteString(self.name)

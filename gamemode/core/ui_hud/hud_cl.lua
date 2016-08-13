@@ -201,12 +201,16 @@ vgui.Register('fwHudInfo', {
 							factionMax = k
 						end
 					end
+					
+					local prot, cap = zone:isProtected(), zone:isCapturable()
 
-					if factionMax then
+					if factionMax and cap and not prot then
 						self.territory:SetTint(fw.team.factions[factionMax].color or color_white)
 						self.territory:SetText(fw.team.factions[factionMax].name .. ' territory %' .. math.Round(controlMax/fw.config.zoneCaptureScore*100))
 					else
-						self.territory:SetText('Unclaimed Land')
+						local text = prot and "Protected Land" or not cap and "Non-Capturable Land" or "Unclaimed Land"
+
+						self.territory:SetText(text)
 					end
 				end
 
