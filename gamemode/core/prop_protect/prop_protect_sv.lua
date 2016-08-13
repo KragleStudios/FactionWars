@@ -38,14 +38,13 @@ end)
 
 fw.hook.Add("PlayerInitialSpawn", "SetupNDOCTables", function(ply)
 	ndoc.table.pp[ply] = {
-		whoCanPhysgun = 0,
-		whoCanTool    = 0,
+		whoCanPhysgun = 1,
+		whoCanTool    = 1,
 		whitelist = {}
 	}
 end)
 
 fw.hook.Add("PhysgunPickup", "PreventBaddies", function(ply, ent)
-	print(fw.pp.canPhysgunProp(ply, ent))
 	if (not fw.pp.canPhysgunProp(ply, ent)) then return false end
 
 	return true

@@ -1,5 +1,4 @@
 fw.hook.Add("AddToolMenuTabs", "AddPPPanels", function()
-	print("ADDING")
 	spawnmenu.AddToolTab("prop_protect", "Prop Protection", "icon16/shield.png")
 
 	spawnmenu.AddToolCategory("prop_protect", "general", "General")
@@ -24,7 +23,6 @@ fw.hook.Add("AddToolMenuTabs", "AddPPPanels", function()
 
 		function combo:OnSelect(ind, val)
 			local id = status[val]
-			print(id)
 
 			net.Start("fw.whoCanPhysgun")
 				net.WriteUInt(id, 8)

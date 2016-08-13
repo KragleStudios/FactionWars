@@ -4,7 +4,7 @@ function ENT:Draw()
 	self:DrawModel()
 	if (LocalPlayer():GetPos():DistToSqr(self:GetPos()) > 1000 * 1000) then return end
 
-	local own = self:GetNWEntity("owner")
+	local own = self:FWGetOwner()
 
 	local font = fw.fonts.default:atSize(30)
 	local text = (IsValid(own) and own:Nick() or "owner") .. "'s "

@@ -29,18 +29,12 @@ function fw.ents.buyItem(ply, item_index)
 		ship:setShipmentAmount(item.shipmentCount)
 		ship:Spawn()
 		ship:Activate()
-		ship.itemData = item
-		ship.owner = ply
-		ship:SetNWEntity("owner", ply)
 		ship:FWSetOwner(ply)
 	else
 		local ent = ents.Create(item.entity)
 		ent:SetPos(tr)
 		ent:Spawn()
 		ent:Activate()
-		ent.itemData = item
-		ent.owner = ply
-		ent:SetNWEntity("owner", ply)
 		ent:FWSetOwner(ply)
 
 		--respawn point compatability
