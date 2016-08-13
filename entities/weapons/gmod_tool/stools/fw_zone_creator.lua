@@ -58,7 +58,6 @@ function TOOL:RightClick( trace )
 					chat.AddText(Color(0, 255, 0), "Created a new zone")
 				end)
 			end, "NO", ra.fn.noop)
-
 	end
 
 	points = {}
