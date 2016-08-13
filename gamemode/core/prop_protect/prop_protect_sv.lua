@@ -52,17 +52,6 @@ fw.hook.Add("PhysgunPickup", "PreventBaddies", function(ply, ent)
 	return true
 end)
 
-fw.hook.Add("CanTool", "PreventBaddieTools", function(ply, tr)
-	if (tr.Entity and tr.Entity:GetClass() == "prop_physics") then
-		if (not fw.pp.canToolProp(ply, tr.Entity)) then 
-			return false
-		end
-	end
-	if (tr.Entity and tr.Entity:IsPlayer()) then return false end
-	
-	return true
-end)
-
 fw.hook.Add("PlayerSpawnedProp", "SetOwner", function(ply, _, ent)
 	ent:FWSetOwner(ply)
 end)
