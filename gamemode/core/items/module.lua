@@ -10,6 +10,7 @@ fw.inv = fw.inv or {}
 fw.dep(SHARED, 'notif')
 fw.dep(SHARED, 'hook')
 fw.dep(SERVER, 'data')
+fw.dep(SHARED, 'prop_protect')
 
 -- proper include system
 fw.include_sh 'sh_ents.lua'

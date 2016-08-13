@@ -186,3 +186,15 @@ end
 function GM:PlayerEnteredZone(...)
 	return fw.hook.Call('PlayerEnteredZone', ...)
 end
+
+function GM:AddToolMenuTabs(...)
+	return fw.hook.Call("AddToolMenuTabs", ...)
+end
+
+function GM:PhysgunPickup(...)
+	return fw.hook.Call("PhysgunPickup", ...)
+end
+
+function GM:CanTool(...)
+	return fw.hook.Call("CanTool", ...)
+end
