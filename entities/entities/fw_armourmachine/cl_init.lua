@@ -60,3 +60,9 @@ end
 function ENT:Initialize()
 	self:InitializeVGUI()
 end
+
+function ENT:OnRemove()
+	if IsValid(self._panel) then
+		self._panel:Remove()
+	end
+end
