@@ -8,10 +8,12 @@ ENT.Category 		= "Faction Wars"
 
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.Resources = true
 
-function ENT:SetupDataTables()
+ENT.MaxProduction = {
+	["armor"] = 5
+}
 
-	self:NetworkVar("Int", 0, "Charge")
-	self:NetworkVar("Int", 1, "MaxCharge")
-	
-end
+ENT.MaxConsumption = {
+	["power"] = 1
+}

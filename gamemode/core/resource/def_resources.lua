@@ -24,3 +24,8 @@ fw.resource.register('paper', {
 	PrintName = 'Paper',
 	material = CLIENT and Material('kragle/resources/x64-paper.png')
 })
+
+fw.resource.register('armor', {
+	PrintName = 'Armor',
+	material = CLIENT and Material('kragle/resources/x64-paper.png')
+})
