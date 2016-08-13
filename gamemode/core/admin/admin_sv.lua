@@ -79,13 +79,13 @@ AddAdminCommand(fw.chat.addCMD("ungag", "Remove a gag from a player", function(p
 end):addParam("target", "player"), "player")
 
 AddAdminCommand(fw.chat.addCMD("freeze", "Prevent a player from making any action", function(ply, target)
-    target:Freeze(true)
+	target:Freeze(true)
 	ply:FWChatPrint("You are frozen " .. target:Nick())
 	target:FWChatPrint("You have been frozen by an admin. You may not make any actions.")
 end):addParam("target", "player"), "player")
 
 AddAdminCommand(fw.chat.addCMD("unfreeze", "Unfreeze a frozen player", function(ply, target)
-    target:Freeze(false)
+    	target:Freeze(false)
 	ply:FWChatPrint("You are now unfrozen " .. target:Nick())
 	target:FWChatPrint("You have been unfrozen by an admin. You may now make action.")
 end):addParam("target", "player"), "player")
