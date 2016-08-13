@@ -4,6 +4,7 @@ function fw.pp.canPhysgunProp(target, ent)
 	if (not owner) then return false end
 
 	local data = ndoc.table.pp[owner]
+	if (not data) then return false end
 
 	local whoCanPhysgun = data.whoCanPhysgun
 	local whoCanTool    = data.whoCanTool
@@ -27,6 +28,7 @@ function fw.pp.canToolProp(target, ent)
 	if (not owner) then return false end
 
 	local data = ndoc.table.pp[owner]
+	if (not data) then return false end
 
 	local whoCanTool = data.whoCanTool
 
