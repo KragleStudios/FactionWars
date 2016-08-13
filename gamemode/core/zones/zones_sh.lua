@@ -74,7 +74,9 @@ end
 
 function zone_mt:hasRadar()
 	for k,v in pairs(ents.FindByClass("fw_radar")) do
-		if (self:isPointInZone(v:GetPos())) then
+		local pos = v:GetPos()
+
+		if (self:isPointInZone(pos.x, pos.y)) then
 			return true, v
 		end
 	end
