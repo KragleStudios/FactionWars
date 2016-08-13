@@ -45,7 +45,9 @@ fw.hook.Add("PlayerInitialSpawn", "SetupNDOCTables", function(ply)
 end)
 
 fw.hook.Add("PhysgunPickup", "PreventBaddies", function(ply, ent)
-	if (not fw.pp.canPhysgunProp(ply, ent)) then return false end
+	if (ent:GetClass() == "prop_physics") then
+		return fw.pp.canPhysgunProp(ply, ent)
+	end
 
 	return true
 end)
