@@ -17,7 +17,7 @@ function ENT:Draw()
 
 	local eye = LocalPlayer():EyeAngles()
 
-	cam.Start3D2D(self:GetPos() + self:GetUp() * 90, Angle(0, eye.y - 90, 90), .05)
+	cam.Start3D2D(self:GetPos() + self:GetUp() * 50, Angle(0, eye.y - 90, 90), .05)
 	    draw.SimpleTextOutlined(text, font, -(x / 2), 0, col, 0, 0, 0.5, Color(0, 0, 0, 255))
 	    draw.SimpleTextOutlined(text2, font, -(x2 / 2), y, col, 0, 0, 0.5, Color(0, 0, 0, 255))
 	cam.End3D2D()

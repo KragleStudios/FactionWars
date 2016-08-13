@@ -436,7 +436,11 @@ function fw.tab_menu.itemManagement(parent)
 	listLayout:SetWide(parent:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(2))
 
-	local function createItemPanel(item, category, price, doClickBuy)
+	local function createItemPanel(item, doClickBuy)
+		local price = string.Comma(item.price)
+		local category = item.category
+		local item = item.name
+
 		if (not parent.categories[category]) then
 			local itemSelection = vgui.Create("FWUITableViewSection", listLayout)
 			itemSelection:SetTitle(string.upper(category))
@@ -444,8 +448,6 @@ function fw.tab_menu.itemManagement(parent)
 
 			parent.categories[category] = itemSelection
 		end
-
-		price = string.Comma(price)
 
 		local panel = vgui.Create('FWUIPanel')
 		panel:SetTall(sty.ScreenScale(12))
@@ -460,7 +462,6 @@ function fw.tab_menu.itemManagement(parent)
 
 		local title = vgui.Create('FWUITextBox', panel)
 		title:SetText(item)
-
 		title:Dock(FILL)
 		title:DockMargin(sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1))
 
@@ -470,7 +471,7 @@ function fw.tab_menu.itemManagement(parent)
 	for index, item in pairs(fw.ents.item_list) do
 		if (not fw.ents.canPlayerBuyItem(LocalPlayer(), item.index)) then continue end
 
-		createItemPanel(item.name, item.category, item.price, function()
+		createItemPanel(item, function()
 			LocalPlayer():ConCommand(item.command)
 			fw.tab_menu.hideContent()
 		end)
