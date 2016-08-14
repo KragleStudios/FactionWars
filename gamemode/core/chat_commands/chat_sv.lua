@@ -222,12 +222,4 @@ fw.hook.Add('PlayerSay', function(pl, text)
 		fw.chat.runCommand(pl, command, arguments)
 		return ''
 	end
-	
-	local players = {}
-	for k,v in pairs(player.findInSphere(pl:GetPos(), 400)) do
-		table.insert(players, v)
-	end
-
-	fw.notif.chat(players, team.GetColor(pl:Team()), pl:Nick(), ": ", Color(255, 255, 255), text)
-	return ""
 end)

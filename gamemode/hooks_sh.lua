@@ -55,7 +55,14 @@ end
 
 function GM:PlayerSay(pl, text, ...)
 	local res = fw.hook.Call('PlayerSay', pl, text, ...)
-	if res == nil then return text end
+	if res == nil then 
+		local players = {}
+		for k,v in pairs(player.findInSphere(pl:GetPos(), 400)) do
+			table.insert(players, v)
+		end
+
+		fw.notif.chat(players, team.GetColor(pl:Team()), pl:Nick(), ": ", Color(255, 255, 255), text)
+	end
 	return ""
 end
 
