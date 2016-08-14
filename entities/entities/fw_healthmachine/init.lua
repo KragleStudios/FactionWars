@@ -13,12 +13,12 @@ function ENT:Initialize()
 
 	fw.resource.addEntity(self)
 
-	self.Consumption = {power = 1}
+	self.Consumes = {power = 1}
 	self:FWSetResource("healthpack", 6)
 
-	-- every 30 seconds add 1 healthpack
+	-- every minute add 1 healthpack
 	timer.Create("fw-healthmachine-refill-" .. self:EntIndex(), 60, 0, function()
-		if not IsValid(self) or self:FWHaveResource("power") < self.Consumption.power then return end
+		if not IsValid(self) or self:FWHaveResource("power") < self.Consumes.power then return end
 		local hp = self:FWHaveResource("healthpack") or 0
 		self:FWSetResource("healthpack", math.min(hp + 1, self.MaxProduction.healthpack))
 	end)
