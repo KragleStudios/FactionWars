@@ -5,8 +5,7 @@ if SERVER then
 	resource.AddSingleFile('materials/kragle/resources/x64-paper.png')
 	resource.AddSingleFile('materials/kragle/resources/x64-beer2.png')
 	resource.AddSingleFile('materials/kragle/resources/x64-vodka.png')
-
-
+	resource.AddSingleFile('materials/kragle/resources/x64-opioid.png')
 end
 
 fw.resource.register('power', {
@@ -57,4 +56,9 @@ fw.resource.register('alcohol', {
 fw.resource.register('vodka', {
 	PrintName = 'Vodka',
 	material = CLIENT and Material('kragle/resources/x64-vodka.png')
+})
+
+fw.resource.register('opioid', {
+	PrintName = 'Opioid',
+	material = CLIENT and Material('kragle/resources/x64-opioid.png')
 })
