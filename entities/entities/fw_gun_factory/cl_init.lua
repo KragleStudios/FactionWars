@@ -33,16 +33,40 @@ function ENT:CustomUI(panel)
 	local pistol = vgui.Create("FWUIButton", panel)
 	pistol:Dock(TOP)
 	pistol:SetText("Produce Pistol")
+	pistol.DoClick = function()
+		net.Start("Fac_ProduceGun")
+		net.WriteEntity(self)
+		net.WriteUInt(0, 4)
+		net.SendToServer()
+	end
 
 	local smg = vgui.Create("FWUIButton", panel)
 	smg:Dock(TOP)
 	smg:SetText("Produce SMG")
+	smg.DoClick = function()
+		net.Start("Fac_ProduceGun")
+		net.WriteEntity(self)
+		net.WriteUInt(1, 4)
+		net.SendToServer()
+	end
 
 	local twohanded = vgui.Create("FWUIButton", panel)
 	twohanded:Dock(TOP)
 	twohanded:SetText("Produce Two-Handed weapon")
+	twohanded.DoClick = function()
+		net.Start("Fac_ProduceGun")
+		net.WriteEntity(self)
+		net.WriteUInt(2, 4)
+		net.SendToServer()
+	end
 
 	local sniper = vgui.Create("FWUIButton", panel)
 	sniper:Dock(TOP)
 	sniper:SetText("Produce Sniper Rifle")
+	sniper.DoClick = function()
+		net.Start("Fac_ProduceGun")
+		net.WriteEntity(self)
+		net.WriteUInt(3, 4)
+		net.SendToServer()
+	end
 end

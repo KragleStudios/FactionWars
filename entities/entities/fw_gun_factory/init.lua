@@ -94,18 +94,34 @@ net.Receive("Fac_ProduceGun", function(len, ply)
 	local ent = net.ReadEntity()
 	local type = net.ReadUInt(4)
 
-	if ply:GetPos():Distance(ent:GetPos()) > 200 then return end
+	if ply:GetPos():Distance(ent:GetPos()) > 200 or not ply:Alive() then return end
 
-	local parts = self:FWHaveResource("parts")
-	local scrap = self:FWHaveResource("scrap")
+	local parts = ent:FWHaveResource("parts")
+	local scrap = ent:FWHaveResource("scrap")
 
 	if type == 0 then
-		
+		if parts >= 1 and scrap >= 1 then
+			ent:SpawnGun("pistol")
+		else
+			ply:FWChatPrint("The factory requires 1 part and 1 scrap to produce this gun.")
+		end
 	elseif type == 1 then
-		
+		if parts >= 2 and scrap >= 2 then
+			ent:SpawnGun("smg")
+		else
+			ply:FWChatPrint("The factory requires 2 parts and 2 scrap to produce this gun.")
+		end
 	elseif type == 2 then
-		
+		if parts >= 3 and scrap >= 2 then
+			ent:SpawnGun("twohanded")
+		else
+			ply:FWChatPrint("The factory requires 3 parts and 2 scrap to produce this gun.")
+		end
 	elseif type == 3 then
-		
+		if parts >= 1 and scrap >= 1 then
+			ent:SpawnGun("rifle")
+		else
+			ply:FWChatPrint("The factory requires 3 parts and 3 scrap to produce this gun.")
+		end
 	end
 end)
