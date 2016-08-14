@@ -28,6 +28,7 @@ end
 
 function ENT:Draw()
 	self:DrawModel()
+	if (LocalPlayer():GetPos():DistToSqr(self:GetPos()) > 1000 * 1000) then return end
 
 	if not IsValid(self._panel) then return end
 
