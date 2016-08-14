@@ -3,23 +3,38 @@ ENT.Base = "base_entity"
 
 ENT.PrintName		= "Vodka"
 ENT.Category 		= "Faction Wars"
-ENT.Author			= "sanny"
+ENT.Author			= "crazyscouter, sanny"
 
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+
+ENT.NETWORK_SIZE = 0
+ENT.Resources = true
+ENT.MaxStorage = {
+	["vodka"] = 5,
+	["alcohol"] = 10
+}
 
 if (SERVER) then
 	AddCSLuaFile()
 
 	function ENT:Initialize()
-		self:SetModel("models/props_junk/glassbottle01a.mdl")
+		self:SetModel("models/props_junk/GlassBottle01a.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
-
 		self:PhysWake()
 
 		self:SetUseType(SIMPLE_USE)
+
+		self.Storage = {
+			['vodka'] = 5,
+		}
+		self.Storage = {
+			['alcohol'] = 10,
+		}
+
+		fw.resource.addEntity(self)
 	end
 
 	function ENT:Use(event, ply)
@@ -29,23 +44,30 @@ if (SERVER) then
 		end
 	end
 
-	fw.hook.Add("EntityTakeDamage", "VodkaEffects", function(entity, dmgInfo)
-		-- awesome
-		if (entity:IsPlayer() and entity:GetFWData().vodkaTime and CurTime() <= entity:GetFWData().vodkaTime) then
-			dmgInfo:ScaleDamage(0.9)
-		end
-	end)
 
+	function ENT:OnRemove()
+		fw.resource.removeEntity(self)
+	end
+
+	function ENT:Think()
+		if self.Storage.gas == 0 then self:Remove() end
+	end
 else
 	function ENT:Draw()
 		self:DrawModel()
 	end
 
-	fw.hook.Add("RenderScreenspaceEffects", "VodkaEffects", function()
+	fw.hook.Add("RenderScreenspaceEffects", "BeerEffects", function()
 		if (IsValid(LocalPlayer())) then
 			if (LocalPlayer():GetFWData().vodkaTime and CurTime() <= LocalPlayer():GetFWData().vodkaTime) then
 				DrawSobel(0.5)
 			end
 		end
 	end)
+
+	function ENT:GetDisplayPosition()
+		local obbcenter = self:OBBCenter()
+		local obbmax = self:OBBMaxs()
+		return Vector(obbmax.x, obbcenter.y, obbcenter.z), Angle(0, 0, 0), 0.1
+	end
 end

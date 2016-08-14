@@ -7,14 +7,17 @@ ENT.PrintName   = "Fermentation Tank"
 ENT.Author      = "crazyscouter, thelastpenguin"
 ENT.Category    = "Faction Wars"
 
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
+
 ENT.Color = color_white
-ENT.BrewInterval = 30
+ENT.BrewInterval = 20
 ENT.MaxConsumption = {
-	["power"] = 1.5,
+	["power"] = 1,
 	["water"] = 4,
 }
 ENT.MaxStorage = {
-	['alcohol'] = 1,
+	['alcohol'] = 30,
 }
 ENT.NETWORK_SIZE = 500
 
@@ -106,7 +109,9 @@ if SERVER then
 			if self:CanBrew() and self:GetOn() then
 
 				self:FWSetResource('water', 0)
-				self.Storage['alcohol'] = self.Storage['alcohol'] + 1
+
+				local int = self.Storage.alcohol + 4 < self.MaxStorage.alcohol and 4 or self.MaxStorage.alcohol - self.Storage.alcohol
+				self.Storage['alcohol'] = self.Storage['alcohol'] + int
 			end
 			self:SetNextBrewTime(self.BrewInterval)
 		end)
@@ -144,9 +149,9 @@ if SERVER then
 	function ENT:DoEffect()
 		local data = EffectData()
 		local hasDist = self:HasDistillery()
-		local pos = hasDist and Vector(0, 0, 100) or Vector(0, 0, 20)
+		local pos = hasDist and self.distillery:GetPos() + Vector(0, 0, 60) or self:GetPos() + Vector(0, 0, 20)
 
-		data:SetOrigin(self:GetPos() + pos)
+		data:SetOrigin(pos)
 
 		for i=1, 8 do
 			util.Effect("WheelDust", data)
@@ -171,7 +176,7 @@ if SERVER then
 	end
 
 	function ENT:Touch(toucher)
-		if (toucher:GetClass() == "fw_distillery") then
+		if (toucher:GetClass() == "fw_distillery" and not self.distillery) then
 			
 			toucher:SetAngles(self:GetAngles() + Angle(0, 0, 180))
 

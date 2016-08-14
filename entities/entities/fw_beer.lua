@@ -3,10 +3,16 @@ ENT.Base = "base_entity"
 
 ENT.PrintName		= "Beer"
 ENT.Category 		= "Faction Wars"
-ENT.Author			= "sanny"
+ENT.Author			= "crazyscouter, sanny"
 
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+
+ENT.NETWORK_SIZE = 0
+ENT.Resources = true
+ENT.MaxStorage = {
+	["alcohol"] = 1,
+}
 
 if (SERVER) then
 	AddCSLuaFile()
@@ -19,6 +25,12 @@ if (SERVER) then
 		self:PhysWake()
 
 		self:SetUseType(SIMPLE_USE)
+
+		self.Storage = {
+			['alcohol'] = 1,
+		}
+
+		fw.resource.addEntity(self)
 	end
 
 	function ENT:Use(event, ply)
@@ -26,6 +38,15 @@ if (SERVER) then
 			ply:GetFWData().beerTime = (ply:GetFWData().beerTime or CurTime()) + 60
 			self:Remove()
 		end
+	end
+
+
+	function ENT:OnRemove()
+		fw.resource.removeEntity(self)
+	end
+
+	function ENT:Think()
+		if self.Storage.gas == 0 then self:Remove() end
 	end
 else
 	function ENT:Draw()
@@ -39,4 +60,10 @@ else
 			end
 		end
 	end)
+
+	function ENT:GetDisplayPosition()
+		local obbcenter = self:OBBCenter()
+		local obbmax = self:OBBMaxs()
+		return Vector(obbmax.x, obbcenter.y, obbcenter.z), Angle(0, 0, 0), 0.1
+	end
 end
