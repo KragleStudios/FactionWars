@@ -9,6 +9,7 @@ ENT.Category 		= "Faction Wars"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.Resources = true
+ENT.NETWORK_SIZE = 500
 
 ENT.MaxProduction = {
 	["armor"] = 5

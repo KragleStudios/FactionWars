@@ -17,8 +17,8 @@ function ENT:Initialize()
 	self:FWSetResource("armor", 5)
 
 	-- every 30 seconds add 1 armor
-	timer.Create("fw-armourmachine-refill-" .. self:EntIndex(), 30, 0, function()
-		if !IsValid(self) then return end
+	timer.Create("fw-armourmachine-refill-" .. self:EntIndex(), 60, 0, function()
+		if not IsValid(self) or self:FWHaveResource("power") < self.Consumption.power then return end
 		local armor = self:FWHaveResource("armor") or 0
 		self:FWSetResource("armor", math.min(armor + 1, self.MaxProduction.armor))
 	end)
@@ -32,7 +32,7 @@ function ENT:Use(ply)
 			self:EmitSound("hl1/fvox/boop.wav", 150, 100, 1, CHAN_AUTO)
 			self:FWSetResource("armor", armor - 1)
 		else
-			--TODO: play another sound
+			self:EmitSound("hl1/fvox/buzz.wav", 150, 100, 1, CHAN_AUTO)
 		end
 	end
 end

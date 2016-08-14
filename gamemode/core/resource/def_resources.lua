@@ -32,6 +32,11 @@ fw.resource.register('armor', {
 	material = CLIENT and Material('kragle/resources/x64-paper.png')
 })
 
+fw.resource.register('healthpack', {
+	PrintName = 'Health Pack',
+	material = CLIENT and Material('kragle/resources/x64-paper.png')
+})
+
 fw.resource.register('alcohol', {
 	PrintName = 'Alcohol',
 	material = CLIENT and Material('kragle/resources/x64-beer2.png')
