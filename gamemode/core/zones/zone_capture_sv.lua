@@ -10,11 +10,6 @@ function fw.zone.setupCaptureNetworking(zone)
 		ndoc.table.fwZoneControl[zone.id].isNotCapturable = cache[zone.id].not_cap
 		ndoc.table.fwZoneControl[zone.id].isFactionBase = cache[zone.id].fac_base
 	end
-
-	/*for k,v in pairs(fw.team.factions) do
-		ndoc.table.fwZoneControl[zone.id].facData[k] = {}
-		ndoc.table.fwZoneContro
-	end*/
 end
 
 

@@ -19,6 +19,7 @@ function ENT:CustomUI(panel)
 	status:SetAlign('center')
 	status:Dock(FILL)
 	status.Think = function()
+		if not IsValid(self) then return end
 		if self:GetPrintStatus() then
 			status:SetText(math.floor(self:GetNextPrintTime() - CurTime()) .. 's to next print')
 			status:SetColor(Color(0, 255, 0))

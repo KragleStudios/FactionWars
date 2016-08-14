@@ -101,8 +101,8 @@ end
 function ENT:ShouldTarget(target)
 	if (not target:IsPlayer()) then return false end
 	if (not target:inFaction()) then return false end
-	if (IsValid(self:GetNWEntity("owner")) and IsValid(target) and target:getFaction() == self:GetNWEntity("owner"):getFaction()) then return false end
-	if (self:GetNWEntity("owner") == target) then return false end
+	if (IsValid(self:FWGetOwner()) and IsValid(target) and target:getFaction() == self:FWGetOwner():getFaction()) then return false end
+	if (self:FWGetOwner() == target) then return false end
 
 	return true
 end

@@ -14,7 +14,7 @@ vgui.Register('FWHUDEntityInfo', {
 			self:GetTop():Add(vgui.Create('FWUITableViewItem'):SetText('HEALTH: ' .. entity:getHealth() .. '/' .. entity:getMaxHealth()))
 		end
 
-		if entity.GetBuff and entity:GetBuff() != "" then
+		if entity.GetBuff and entity:GetBuff() ~= "" then
 			self:GetTop():Add(vgui.Create('FWUITableViewItem'):SetText(fw.weapons.buffs[entity:GetBuff()][2]))
 		end
 

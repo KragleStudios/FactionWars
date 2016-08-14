@@ -1,8 +1,23 @@
-
 include("shared.lua")
-surface.CreateFont("TimeTitle", {font="OpenSans", size=38, weight=500})
-surface.CreateFont("TimeTitle2", {font="OpenSans", size=42, weight=500})
-surface.CreateFont("Countdown", {font="OpenSans", size=72, weight=800})
+
+local font = fw.fonts.default_compact:atSize(45)
+local font2 = fw.fonts.default_compact:atSize(100)
+
+-- Thanks gmod wiki & crazyscouter
+local function drawCircle(x, y, radius, seg)
+	local cir = {}
+
+	table.insert( cir, { x = x, y = y, u = 0.5, v = 0.5 } )
+	for i = 0, seg do
+		local a = math.rad( ( i / seg ) * -360 )
+		table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
+	end
+
+	local a = math.rad( 0 ) -- This is need for non absolute segment counts
+	table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
+
+	surface.DrawPoly( cir )
+end
 
 function ENT:Initialize()
 	self.LastRun = 0
@@ -17,23 +32,20 @@ function ENT:Draw()
 
 	cam.Start3D2D(self:GetPos() + self:GetUp() * 31.6 - self:GetRight() * 6 + self:GetForward() * 7.5, ang, .1)
 		surface.SetDrawColor(32,32,32,230)
-			surface.DrawRect(0,0,120,150)
-		surface.SetDrawColor(16,16,16)
-			surface.DrawOutlinedRect(0,0,120,150)
-		surface.SetTextColor(240,240,240)
-			if self:GetEnable() then
-				surface.SetFont("Countdown")
-				surface.SetTextPos(60 - surface.GetTextSize(math.floor(self:GetDetonateTime() - CurTime())) * .5,24)
-					surface.DrawText(math.floor(self:GetDetonateTime() - CurTime()))
-				surface.SetFont("TimeTitle")
-				surface.SetTextPos(4,100)
-					surface.DrawText("Seconds")
-			else
-				surface.SetFont("TimeTitle2")
-				surface.SetTextPos(3,52)
-					surface.DrawText("Press E")
-			end
+		draw.NoTexture()
+		drawCircle(60, 75, 80, 80)
 
+		surface.SetTextColor(240,240,240)
+
+		if self:GetEnable() then
+			surface.SetFont(font2)
+			surface.SetTextPos(60 - surface.GetTextSize(math.floor(self:GetDetonateTime() - CurTime())) * .5,24)
+			surface.DrawText(math.floor(self:GetDetonateTime() - CurTime()))
+		else
+			surface.SetFont(font)
+			surface.SetTextPos(3,52)
+			surface.DrawText("Press E")
+		end
 	cam.End3D2D()
 end
 

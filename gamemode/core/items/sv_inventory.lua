@@ -3,9 +3,34 @@ util.AddNetworkString("fw.dropItem")
 
 local invItemID = 1
 
+function fw.inv.canRemoveItem(ply, item)
+	if (item.jobs and not table.HasValue(item.jobs, ply:Team())) then return false, 'wrong team' end
+	if (item.factions and not table.HasValue(item.factions, ply:getFaction())) then return false, 'wrong faction' end
+	
+	return true
+end
+
+function fw.inv.getItemByInvID(ply, id)
+	local slots = ndoc.table.items[ply].inventory.slots
+	local item, position
+
+	id = tonumber(id)
+
+	for k,v in ndoc.pairs(slots) do
+		if (tonumber(v.invID) == id) then 
+			position = k
+			item = v 
+
+			break 
+		end
+	end
+
+	return item, position
+end
+
 net.Receive("fw.dropItem", function(_, ply)
 	local itemIndex = net.ReadInt(32)
-	local invID      = net.ReadInt(32)
+	local invID     = net.ReadInt(32)
 
 	local inv = ndoc.table.items[ply].inventory
 	local item = fw.ents.item_list[itemIndex]
@@ -172,4 +197,44 @@ fw.hook.Add("PlayerDisconnected", "RemoveSpareItems", function(ply)
 			end
 		end
 	end)
+end)
+
+fw.hook.Add("FWItemRegistered", "AddCMDS", function(tbl)
+	if (tbl.weapon) then
+		concommand.Add(tbl.command.."_equip", function(ply, cmd, args)
+			if (not tbl.shipment) then				
+				local invItemID = args[1]
+				local item, position = fw.inv.getItemByInvID(ply, invItemID)
+
+				local canRemove, msg = fw.inv.canRemoveItem(ply, item)
+
+				if (msg) then 
+					ply:FWChatPrint(Color(0, 0, 0), "[Inventory]: ", Color(255, 255, 255), msg or "You can't do this!")
+					return
+				end
+
+				fw.inv.removeItem(ply, position)
+				ply:Give(tbl.entity)
+			end
+		end)
+	end
+
+	if (tbl.useable) then
+		concommand.Add(tbl.command.."_use", function(ply, cmd, args)
+			if (not tbl.shipment) then				
+				local invItemID = args[1]
+				local item, position = fw.inv.getItemByInvID(ply, invItemID)
+
+				local canRemove, msg = fw.inv.canRemoveItem(ply, item)
+
+				if (msg) then 
+					ply:FWChatPrint(Color(0, 0, 0), "[Inventory]: ", Color(255, 255, 255), msg or "You can't do this!")
+					return
+				end
+
+				fw.inv.removeItem(ply, position)
+				ply:Give(tbl.entity)
+			end
+		end)
+	end
 end)

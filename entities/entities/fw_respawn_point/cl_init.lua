@@ -1,29 +1,35 @@
 include("shared.lua")
 
+function ENT:GetDisplayPosition()
+  	local obbcenter = self:OBBCenter()
+  	local obbmax = self:OBBMaxs()
+  	return Vector(obbcenter.x, obbmax.y - 19.5, obbcenter.z + 41), Angle(0, LocalPlayer():EyeAngles().y - 90, 90), 0.2
+end 
+  
 function ENT:Draw()
-	self:DrawModel()
-	if (LocalPlayer():GetPos():DistToSqr(self:GetPos()) > 1000 * 1000) then return end
-
-	local own = self:GetNWEntity("owner")
-
-	local font = fw.fonts.default:atSize(30)
-	local text = (IsValid(own) and own:Nick() or "owner") .. "'s "
-	local text2 = "Spawn Point"
-	local col = own:IsPlayer() and fw.team.factions[own:getFaction()].color or Color(255, 255, 255)
-
-	surface.SetFont(font)
-	local x = surface.GetTextSize(text)
-	local x2, y = surface.GetTextSize(text2)
-
-	local rotation = CurTime() * 11
-
-	cam.Start3D2D(self:GetPos() + self:GetUp() * 90, Angle(0, rotation, 90), .25)
-		draw.DrawText(text, font, -(x / 2), 0, col)
-		draw.DrawText(text2, font, -(x2 / 2), y, col)
-	cam.End3D2D()
-
-	cam.Start3D2D(self:GetPos() + self:GetUp() * 90, Angle(0, rotation + 180, 90), .25)
-		draw.DrawText(text, font, -(x / 2), 0, col)
-		draw.DrawText(text2, font, -(x2 / 2), y, col)
-	cam.End3D2D()
+  	self:DrawModel()
+  	self:FWDrawInfo()
 end
+
+function ENT:CustomUI(panel)
+	local header = vgui.Create("FWUITextBox", panel)
+	header:SetText("OWNER")
+	header:SetTall(18)
+	header:SetInset(1)
+	header:SetAlign("left")
+	header.Paint = function(self, w, h)
+		surface.SetDrawColor(0, 0, 0, 220)
+		surface.DrawRect(0, 0, w, h)
+	end
+
+	local owner = self:FWGetOwner()
+	local ownerName = vgui.Create("FWUITextBox", panel)
+	ownerName:SetText(IsValid(owner) and owner:Nick() or "Unknown")
+	ownerName:SetTall(18)
+	ownerName:SetInset(1)
+	ownerName:SetAlign("left")
+	ownerName.Paint = function(self, w, h)
+		surface.SetDrawColor(0, 0, 0, 220)
+		surface.DrawRect(0, 0, w, h)
+	end
+end 

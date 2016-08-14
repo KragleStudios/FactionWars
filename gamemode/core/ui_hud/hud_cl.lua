@@ -1,5 +1,5 @@
 fw.hook.Add('HUDShouldDraw', 'fw.hud', function(name)
-	if name == 'CHudHealth' or (IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera") then
+	if name == 'CHudHealth' then
 		return false
 	end
 end)
@@ -78,7 +78,7 @@ vgui.Register('fwHudInfoCell', {
 
 			surface.SetDrawColor(255, 255, 255, 15)
 			surface.SetTexture(gradient)
-	        surface.DrawTexturedRect(0, 0, w, h)
+			surface.DrawTexturedRect(0, 0, w, h)
 
 			surface.SetDrawColor(self.color)
 			surface.DrawRect(0, 0, w, self._p)
@@ -201,12 +201,16 @@ vgui.Register('fwHudInfo', {
 							factionMax = k
 						end
 					end
+					
+					local prot, cap = zone:isProtected(), zone:isCapturable()
 
-					if factionMax then
+					if factionMax and cap and not prot then
 						self.territory:SetTint(fw.team.factions[factionMax].color or color_white)
 						self.territory:SetText(fw.team.factions[factionMax].name .. ' territory %' .. math.Round(controlMax/fw.config.zoneCaptureScore*100))
 					else
-						self.territory:SetText('Unclaimed Land')
+						local text = prot and "Protected Land" or not cap and "Non-Capturable Land" or "Unclaimed Land"
+
+						self.territory:SetText(text)
 					end
 				end
 
@@ -290,12 +294,10 @@ sty.WaitForLocalPlayer(function()
 	__FW_HUDINFO = vgui.Create('fwHudInfo')
 end)
 
-fw.hook.Add("Think", "HideOnCamera", function()
-	if not IsValid(__FW_HUDINFO) and not (IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera") then
-		__FW_HUDINFO = vgui.Create('fwHudInfo')
-	end
-
-	if IsValid(__FW_HUDINFO) and (IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera") then
-		__FW_HUDINFO:Remove()
+fw.hook.Add('PlayerSwitchWeapon', function(pl, oldwep, newwep)
+	if pl == LocalPlayer() and newwep:GetClass() == 'gmod_camera' then
+		__FW_HUDINFO:SetVisible(false)
+	else
+		__FW_HUDINFO:SetVisible(true)
 	end
 end)

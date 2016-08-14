@@ -3,7 +3,7 @@ AddCSLuaFile("cl_init.lua")
 include("shared.lua")
 
 function ENT:Initialize()
-	self:SetModel("models/player/skeleton.mdl")
+	self:SetModel("models/props_c17/gravestone002a.mdl")
 
 	self:PhysicsInit(SOLID_OBB)
 	self:SetMoveType(MOVETYPE_NONE)
@@ -25,6 +25,20 @@ local func = ENT.SetNWEntity
 
 function ENT:Think()
 	self:SetAngles(Angle(0, 0, 0))
+end
+
+function ENT:OnTakeDamage(dmg)
+	local damage = dmg:GetDamage()
+	if (self:GetHealt() - damage < 0) then
+		local effect = EffectData()
+		effect:SetOrigin(self:GetPos())
+		util.Effect("Explosion", effect)
+
+		self:Remove()
+		return
+	end
+
+	self:SetHealt(self:GetHealt() - damage)
 end
 
 fw.hook.Add("PlayerSpawn", "SpawnAtSpawnPoint", function(ply)

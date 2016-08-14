@@ -5,20 +5,12 @@ ndoc.table.items = {}
 function fw.ents.buyItem(ply, item_index)
 	local canjoin, msg = fw.ents.canPlayerBuyItem(ply, item_index)
 
-	if (not canjoin) then
-		if (msg) then
-			ply:FWChatPrintError(msg)
-		end
+	if (msg) then
+		ply:FWChatPrintError(msg)
 		return
 	end
-
+		
 	local item = fw.ents.item_list[item_index]
-
-	ply.maxItems = ply.maxItems or {}
-	if (ply.maxItems[item.entity] and item.max and item.max != 0 and ply.maxItems[item.entity] + 1 > item.max) then
-		ply:FWChatPrintError("You already have the max of this entity!")
-		return
-	end
 
 	ply.maxItems[item.entity] = ply.maxItems[item.entity] and ply.maxItems[item.entity] + 1 or 1
 
@@ -37,17 +29,13 @@ function fw.ents.buyItem(ply, item_index)
 		ship:setShipmentAmount(item.shipmentCount)
 		ship:Spawn()
 		ship:Activate()
-		ship.itemData = item
-		ship.owner = ply
-		ship:SetNWEntity("owner", ply)
+		ship:FWSetOwner(ply)
 	else
 		local ent = ents.Create(item.entity)
 		ent:SetPos(tr)
 		ent:Spawn()
 		ent:Activate()
-		ent.itemData = item
-		ent.owner = ply
-		ent:SetNWEntity("owner", ply)
+		ent:FWSetOwner(ply)
 
 		--respawn point compatability
 		if (item.entity == "fw_respawn_point") then
@@ -59,10 +47,10 @@ function fw.ents.buyItem(ply, item_index)
 end
 
 fw.hook.Add("EntityRemoved", "AdjustItemCount", function(ent)
-	local own = ent:GetNWEntity("owner")
+	local own = ent:FWGetOwner()
 	local class = ent:GetClass()
 
-	if (IsValid(own) and own.maxItems[class]) then
+	if (IsValid(own) and class != "prop_physics" and own and own.maxItems[class]) then
 		own.maxItems[class] = own.maxItems[class] and own.maxItems[class] - 1 or nil
 	end
 end)

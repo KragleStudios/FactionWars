@@ -387,6 +387,8 @@ function fw.tab_menu.administration(pnl)
 			menu:AddOption("Unmute", function() RunConsoleCommand("fw_unmute", ply:Nick()) end)
 			menu:AddOption("Gag", function() RunConsoleCommand("fw_gag", ply:Nick()) end)
 			menu:AddOption("Ungag", function() RunConsoleCommand("fw_ungag", ply:Nick()) end)
+			menu:AddOption("Freeze", function() RunConsoleCommand("fw_freeze", ply:Nick()) end)
+			menu:AddOption("Unfreeze", function() RunConsoleCommand("fw_unfreeze", ply:Nick()) end)
 			menu:AddOption("Set job", function()
 				Derma_StringRequest("Set job", "Enter job StringID...", "t_citizen", function(job) RunConsoleCommand("fw_setjob", ply:Nick(), job) end)
 			end)
@@ -436,7 +438,11 @@ function fw.tab_menu.itemManagement(parent)
 	listLayout:SetWide(parent:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(2))
 
-	local function createItemPanel(item, category, doClickBuy)
+	local function createItemPanel(item, doClickBuy)
+		local price = string.Comma(item.price)
+		local category = item.category
+		local item = item.name
+
 		if (not parent.categories[category]) then
 			local itemSelection = vgui.Create("FWUITableViewSection", listLayout)
 			itemSelection:SetTitle(string.upper(category))
@@ -452,22 +458,22 @@ function fw.tab_menu.itemManagement(parent)
 
 		local buyButton = vgui.Create('FWUIButton', panel)
 		buyButton:SetFont(fw.fonts.default)
-		buyButton:SetText('BUY ITEM')
+		buyButton:SetText('BUY ITEM $'..price)
 		buyButton.DoClick = doClickBuy
 		buyButton:SetWide(sty.ScreenScale(60))
 
 		local title = vgui.Create('FWUITextBox', panel)
 		title:SetText(item)
-
 		title:Dock(FILL)
 		title:DockMargin(sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1))
+
 		buyButton:Dock(RIGHT)
 	end
 
 	for index, item in pairs(fw.ents.item_list) do
 		if (not fw.ents.canPlayerBuyItem(LocalPlayer(), item.index)) then continue end
 
-		createItemPanel(item.name, item.category or "General", function()
+		createItemPanel(item, function()
 			LocalPlayer():ConCommand(item.command)
 			fw.tab_menu.hideContent()
 		end)

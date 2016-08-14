@@ -206,7 +206,6 @@ function fw.chat.runCommand(pl, command, arguments)
 	callIt(processArguments(1, unpack(arguments)))
 end
 
-
 fw.hook.Add('PlayerSay', function(pl, text)
 	local firstSpace = string.find(text, '%s')
 	local prefix = string.sub(text, 1, 1)
@@ -223,5 +222,12 @@ fw.hook.Add('PlayerSay', function(pl, text)
 		fw.chat.runCommand(pl, command, arguments)
 		return ''
 	end
-	return nil
+	
+	local players = {}
+	for k,v in pairs(player.findInSphere(pl:GetPos(), 400)) do
+		table.insert(players, v)
+	end
+
+	fw.notif.chat(players, team.GetColor(pl:Team()), pl:Nick(), ": ", Color(255, 255, 255), text)
+	return ""
 end)

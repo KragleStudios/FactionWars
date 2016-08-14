@@ -89,11 +89,14 @@ local quotelist = {
 		"Guys I just realized I've been using the women's restroom the entire time I've been at this restaraunt",
 		"It's the kragle that keeps us together"
 	},
-	['meharryp'] ={
+	['meharryp'] = {
 		"memes",
 		"yeah go fuck a moose and drink your maple syrup"
 	},
-	['aStonedPenguin'] ={
+	['Google'] = {
+		"single quotes are bad because they are alone and they will be bullied"
+	},
+	['aStonedPenguin'] = {
 		"guys i make all my commits from the github website",
 		"i just wanted ot be here"
 	}
