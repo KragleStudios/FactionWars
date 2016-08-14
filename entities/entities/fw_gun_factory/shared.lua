@@ -1,8 +1,15 @@
-ENT.PrintName = "Weapon Parts"
+ENT.PrintName = "Weapon Factory"
 ENT.Base = "base_entity"
 ENT.Type = "anim"
 
-function ENT:SetupDataTables()
-	self:NetworkVar("Int", 0, "Parts")
-	self:NetworkVar("Int", 1, "Scrap")
-end
+ENT.Spawnable = true
+ENT.AdminOnly = true
+
+ENT.MaxConsumption = {
+	["parts"] = 3,
+	["scrap"] = 3,
+	["power"] = 1,
+}
+
+ENT.Resources = true
+ENT.NETWORK_SIZE = 500

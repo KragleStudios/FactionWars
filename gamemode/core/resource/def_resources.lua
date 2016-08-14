@@ -24,3 +24,13 @@ fw.resource.register('paper', {
 	PrintName = 'Paper',
 	material = CLIENT and Material('kragle/resources/x64-paper.png')
 })
+
+fw.resource.register('scrap', {
+	PrintName = 'Scrap',
+	material = CLIENT and Material('kragle/resources/x64-paper.png')
+})
+
+fw.resource.register('parts', {
+	PrintName = 'Parts',
+	material = CLIENT and Material('kragle/resources/x64-paper.png')
+})

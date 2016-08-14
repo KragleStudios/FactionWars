@@ -1,6 +1,6 @@
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
-include("cl_init.lua")
+include("shared.lua")
 
 local outputs = {
 	pistol = {
@@ -51,6 +51,16 @@ function ENT:Initialize()
 	self:PhysWake()
 
 	self:SetTrigger(true)
+
+	self.Consumes = {
+		power = 1,
+	}
+
+	self.Storage = {
+		parts = 0,
+	}
+
+	fw.resource.addEntity(self)
 end
 
 function ENT:ProcessGun(ent)
@@ -58,25 +68,30 @@ function ENT:ProcessGun(ent)
 		for t,g in pairs(v) do
 			if g == ent:GetWeapon() then
 				local amount = amounts[k]
-				for i = 1, amount do
-					local part = ents.Create("fw_gun_parts")
-					part:SetPos(ent:GetPos())
-					part:Spawn()
-
-					if IsValid(part:GetPhysicsObject()) then
-						part:GetPhysicsObject():Wake()
-						part:GetPhysicsObject():ApplyForceCenter(Vector(math.random(1, 10), math.random(1, 10), math.random(1, 10)))
-					end
-				end
 				ent:Remove()
+				local curParts = self.Storage.parts
+				self.Storage = {
+					parts = math.Clamp(curParts + amount, 0, self.MaxStorage.parts)
+				}
 			end
 		end
 	end
 end
 
+function ENT:OnResourceUpdate()
+	local res = self:FWHaveResource("power")
+	if res < self.MaxConsumption.power then
+		self:ConsumeResource("power", self.MaxConsumption.power)
+	end
+end
+
 function ENT:Touch(ent)
-	if ent:GetClass() == "fw_gun" and not ent.Used then
+	if ent:GetClass() == "fw_gun" and not ent.Used and self:FWHaveResource("power") >= self.MaxConsumption.power then
 		ent.Used = true
 		self:ProcessGun(ent)
 	end
+end
+
+function ENT:OnRemove()
+	fw.resource.removeEntity(self)
 end
