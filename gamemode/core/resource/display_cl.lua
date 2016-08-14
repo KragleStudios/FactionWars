@@ -1,4 +1,5 @@
 local debugEntityPaintPosition = false -- toggles drawing sphere at the aim entity's paint position
+local baseScale = 0.25
 
 -- DEFINE GLOBALS
 fw.resource.INFO_ROW_HEIGHT = 16
@@ -67,8 +68,8 @@ vgui.Register('fwResourceRow', {
 		self._icon:SetSize(h, h)
 
 		if self._contents then
-			self._contents:SetPos(self._icon:GetWide() + 1, 0)
-			self._contents:SetSize(w - self._icon:GetWide() - 1, self._contentHeight or h)
+			self._contents:SetPos(self._icon:GetWide() + 1 / baseScale, 0)
+			self._contents:SetSize(w - self._icon:GetWide() - 1 / baseScale, self._contentHeight or h)
 			self._contents:CenterVertical()
 			self._contents:InvalidateLayout(true)
 		end
@@ -157,6 +158,7 @@ function Entity:FWDrawInfo()
 	if IsValid(self._fwInfoPanel) then
 		if not self.GetDisplayPosition then error("ENTITY:GetDisplayPosition must be defined to show FWInfoPanel") end
 		local pos, ang, scale = entity:GetDisplayPosition()
+		scale = scale * baseScale
 		pos = entity:LocalToWorld(pos)
 		ang = entity:LocalToWorldAngles(ang)
 		self._fwInfoPanel:Draw3D(pos, ang, scale)
@@ -203,7 +205,7 @@ function Entity:FWDrawInfo()
 		row:SetTall(ROW_HEIGHT)
 		local info = vgui.Create('fwResourceDisplayBar')
 		row:SetContentPanel(info)
-		row:SetContentHeight(math.Round(ROW_HEIGHT * 0.4))
+		row:SetContentHeight(math.Round(ROW_HEIGHT * 0.4 / baseScale))
 
 		info:SetUpdater(outof, function()
 			return usageTable[resType] or 0, amountTable[resType] or 0
@@ -237,10 +239,10 @@ function Entity:FWDrawInfo()
 	-- BUILD OUT PANELS
 	--
 	outer = vgui.Create('STYLayoutVertical')
-	outer:SetWide(200)
-	outer:SetPadding(2)
+	outer:SetWide(200 / baseScale)
+	outer:SetPadding(2 / baseScale)
 	self._fwInfoPanel = outer
-	addHeader(self.PrintName, outer):SetAlign('center'):SetTall(20)
+	addHeader(self.PrintName, outer):SetAlign('center'):SetTall(20 / baseScale)
 
 	local shouldAutosize = false
 	local wrapper = vgui.Create('STYPanel', outer)
@@ -253,8 +255,27 @@ function Entity:FWDrawInfo()
 	wrapper:SetSize(outer:GetWide(), 0)
 
 	panel = vgui.Create('STYLayoutVertical', wrapper)
-	panel:SetPadding(2)
+	panel:SetPadding(2 / baseScale)
 	panel:SetWide(200)
+	
+	-- TODO: test with different custom uis
+	local oldPerformLayout, scaled = panel.PerformLayout, false
+	local function scalePanel(panel)
+		local w, h = panel:GetSize()
+		panel:SetSize(w / baseScale, h / baseScale)
+		for k, v in pairs(panel:GetChildren()) do
+			if IsValid(v) then
+				scalePanel(v)
+			end
+		end
+	end
+	panel.PerformLayout = function(panel, ...)
+		if not scaled then
+			scalePanel(panel)
+			scaled = true
+		end
+		return oldPerformLayout(panel, ...)
+	end
 
 	local wasBeingLookedAt = false
 	outer.EndAnimate = function()
