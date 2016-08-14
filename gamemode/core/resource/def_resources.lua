@@ -3,6 +3,8 @@ if SERVER then
 	resource.AddSingleFile('materials/kragle/resources/x64-oil.png')
 	resource.AddSingleFile('materials/kragle/resources/x64-watertap.png')
 	resource.AddSingleFile('materials/kragle/resources/x64-paper.png')
+	resource.AddSingleFile('materials/kragle/resources/x64-beer2.png')
+
 end
 
 fw.resource.register('power', {
@@ -28,4 +30,9 @@ fw.resource.register('paper', {
 fw.resource.register('armor', {
 	PrintName = 'Armor',
 	material = CLIENT and Material('kragle/resources/x64-paper.png')
+})
+
+fw.resource.register('alcohol', {
+	PrintName = 'Alcohol',
+	material = CLIENT and Material('kragle/resources/x64-beer2.png')
 })
