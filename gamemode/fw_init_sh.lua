@@ -13,7 +13,7 @@ fw = {
 -- gamemode variables
 (GM or GAMEMODE).Name = "Faction Wars"
 (GM or GAMEMODE).CondensedName = "FW"
-(GM or GAMEMODE).Author = "thelastpenguin, Mikey Howell, Spai, crazyscouter, meharryp, sanny, krekeris, Google, KingOfBeast"
+(GM or GAMEMODE).Author = "thelastpenguin, Mikey Howell, Spai, crazyscouter, meharryp, sanny, krekeris, Google"
 (GM or GAMEMODE).Email = ""
 (GM or GAMEMODE).Website = "https://github.com/GMFactionWars"
 (GM or GAMEMODE).Version = "0.1.0 Alpha"
