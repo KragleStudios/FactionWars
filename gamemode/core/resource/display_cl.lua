@@ -16,7 +16,7 @@ end
 --
 -- SETUP VGUI CLASSES
 --
-vgui.Register('fwEntityInfoPanel', {
+vgui.Register("fwEntityInfoPanel", {
 	Paint = function(self, w, h)
 		surface.SetDrawColor(0, 0, 0, 220)
 		surface.DrawRect(0, 0, w, h)
@@ -30,12 +30,12 @@ vgui.Register('fwEntityInfoPanel', {
 			end
 		end
 	end,
-}, 'STYPanel')
+}, "STYPanel")
 
-vgui.Register('fwResourceRow', {
+vgui.Register("fwResourceRow", {
 	-- basically a row panel with an icon for the resource and a layout manager that manages content to the right
 	Init = function(self)
-		local icon = vgui.Create('STYImage', self)
+		local icon = vgui.Create("STYImage", self)
 		icon:SetMaterial(resource.material)
 		icon.PerformLayout = function()
 			icon:SetWide(icon:GetTall())
@@ -78,9 +78,9 @@ vgui.Register('fwResourceRow', {
 			self._contents:InvalidateLayout(true)
 		end
 	end
-}, 'STYPanel')
+}, "STYPanel")
 
-vgui.Register('fwResourceDisplayBar', {
+vgui.Register("fwResourceDisplayBar", {
 	Init = function()
 
 	end,
@@ -123,9 +123,9 @@ vgui.Register('fwResourceDisplayBar', {
 			x = x + stepsize
 		end
 	end
-}, 'STYPanel')
+}, "STYPanel")
 
-vgui.Register('fwResourceDisplayText', {
+vgui.Register("fwResourceDisplayText", {
 	SetUpdater = function(self, prefix, max, func)
 		self._prefix = prefix
 		self._updater = func
@@ -136,7 +136,7 @@ vgui.Register('fwResourceDisplayText', {
 		local value = self._updater()
 		if value ~= self._lastvalue then
 			self._lastvalue = value
-			self:SetText(self._prefix .. ': ' .. tostring(value) .. '/' .. self._max)
+			self:SetText(self._prefix .. ": " .. tostring(value) .. "/" .. self._max)
 		end
 	end,
 
@@ -144,9 +144,9 @@ vgui.Register('fwResourceDisplayText', {
 		surface.SetDrawColor(0, 0, 0, 220)
 		surface.DrawRect(0, 0, w, h)
 	end
-}, 'FWUITextBox')
+}, "FWUITextBox")
 
-local Entity = FindMetaTable('Entity')
+local Entity = FindMetaTable("Entity")
 for k,v in ipairs(ents.GetAll()) do
 	if IsValid(v._fwInfoPanel) then v._fwInfoPanel:Remove() end
 end
@@ -175,7 +175,7 @@ function Entity:FWDrawInfo()
 	local types = fw.resource.types
 	local info = self:FWGetResourceInfo()
 	if info then
-		ndoc.observe(info, 'fw.infopanel', function()
+		ndoc.observe(info, "fw.infopanel", function()
 			if IsValid(self._fwInfoPanel) then
 				self._fwInfoPanel:Remove()
 				self._fwInfoPanel = nil
@@ -194,11 +194,11 @@ function Entity:FWDrawInfo()
 	local ROW_HEIGHT = fw.resource.INFO_ROW_HEIGHT
 
 	local function addHeader(titleText, parent)
-		local textBox = vgui.Create('FWUITextBox', parent or panel)
+		local textBox = vgui.Create("FWUITextBox", parent or panel)
 		textBox:SetText(titleText)
 		textBox:SetTall(size or HEADER_HEIGHT)
 		textBox:SetInset(1)
-		textBox:SetAlign('left')
+		textBox:SetAlign("left")
 		textBox.Paint = function(self, w, h)
 			surface.SetDrawColor(0, 0, 0, 220)
 			surface.DrawRect(0, 0, w, h)
@@ -207,17 +207,17 @@ function Entity:FWDrawInfo()
 	end
 
 	local function addResourceRow(resource, amountTable, usageTable, outof)
-		if type(resource) == 'string' then
+		if type(resource) == "string" then
 			resource = types[resource]
 			if not resource then return end
 		end
 
 		local resType = resource.type
 
-		local row = vgui.Create('fwResourceRow', panel)
+		local row = vgui.Create("fwResourceRow", panel)
 		row:SetResource(resource)
 		row:SetTall(ROW_HEIGHT)
-		local info = vgui.Create('fwResourceDisplayBar')
+		local info = vgui.Create("fwResourceDisplayBar")
 		row:SetContentPanel(info)
 		row:SetContentHeight(math.Round(ROW_HEIGHT * 0.4))
 
@@ -229,20 +229,20 @@ function Entity:FWDrawInfo()
 	end
 
 	local function addStorageRow(resource, amountTable, outof)
-		if type(resource) == 'string' then
+		if type(resource) == "string" then
 			resource = types[resource]
 			if not resource then return end
 		end
 
 		local resType = resource.type
-		local row = vgui.Create('fwResourceRow', panel)
+		local row = vgui.Create("fwResourceRow", panel)
 
 		row:SetResource(resource)
 		row:SetTall(ROW_HEIGHT)
-		local info = vgui.Create('fwResourceDisplayText')
+		local info = vgui.Create("fwResourceDisplayText")
 		row:SetContentPanel(info)
 
-		info:SetUpdater(resource.PrintName or '', outof, function()
+		info:SetUpdater(resource.PrintName or "", outof, function()
 			return amountTable[resType] or 0
 		end)
 
@@ -252,14 +252,14 @@ function Entity:FWDrawInfo()
 	--
 	-- BUILD OUT PANELS
 	--
-	outer = vgui.Create('STYLayoutVertical')
+	outer = vgui.Create("STYLayoutVertical")
 	outer:SetWide(fw.resource.PANEL_WIDTH)
 	outer:SetPadding(2 / baseScale)
 	self._fwInfoPanel = outer
-	addHeader(self.PrintName, outer):SetAlign('center'):SetTall(math.Round(ROW_HEIGHT * 1.2))
+	addHeader(self.PrintName, outer):SetAlign("center"):SetTall(math.Round(ROW_HEIGHT * 1.2))
 
 	local shouldAutosize = false
-	local wrapper = vgui.Create('STYPanel', outer)
+	local wrapper = vgui.Create("STYPanel", outer)
 	wrapper.PerformLayout = function()
 		if shouldAutosize then
 			wrapper:SetSize(panel:GetSize())
@@ -268,7 +268,7 @@ function Entity:FWDrawInfo()
 	wrapper:SetVisible(false)
 	wrapper:SetSize(outer:GetWide(), 0)
 
-	panel = vgui.Create('STYLayoutVertical', wrapper)
+	panel = vgui.Create("STYLayoutVertical", wrapper)
 	panel:SetPadding(2 / baseScale)
 	panel:SetWide(fw.resource.PANEL_WIDTH)
 
@@ -336,7 +336,7 @@ function Entity:FWDrawInfo()
 	end
 end
 
-concommand.Add('fw_resource_toggleDebugPaintPosition', function()
+concommand.Add("fw_resource_toggleDebugPaintPosition", function()
 	debugEntityPaintPosition = not debugEntityPaintPosition
 	print("debug entity paint: " .. tostring(debugEntityPaintPosition))
 end)

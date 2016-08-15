@@ -6,14 +6,14 @@ end
 fw.faction = fw.faction or {}
 
 -- load internal dependencies
-fw.dep(SHARED, 'notif')
-fw.dep(SHARED, 'hook')
-fw.dep(SERVER, 'data')
-fw.dep(SHARED, 'teams')
+fw.dep(SHARED, "notif")
+fw.dep(SHARED, "hook")
+fw.dep(SERVER, "data")
+fw.dep(SHARED, "teams")
 fw.dep(SERVER, "chat_commands")
 
 -- TEMPORARILY DISABLED
 
 -- proper include system
-fw.include_sv 'bank_sv.lua'
--- fw.include_cl 'cl_ents.lua'
+fw.include_sv "bank_sv.lua"
+-- fw.include_cl "cl_ents.lua"

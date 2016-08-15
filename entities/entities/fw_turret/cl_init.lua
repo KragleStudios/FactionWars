@@ -42,7 +42,7 @@ local function createMenu(ent)
 		draw.RoundedBox(0, 150, h - 127.5, cooldown_width, 37.5, Color(255, 0, 0, 255))
 	end
 
-	local hidefont = fw.fonts.default:fitToView(0, 0, 'a')
+	local hidefont = fw.fonts.default:fitToView(0, 0, "a")
 
 	form.toggle = vgui.Create("DButton", form)
 	form.toggle:SetSize(140, 60)

@@ -86,7 +86,7 @@ fw.chat.addCMD({"pm", "msg"}, "Sends a message to a player", function(ply, targe
 
 end):addParam("receiver", "player"):addParam("message", "string")
 
-fw.chat.addCMD({'reply'}, "Send a pm back to your latest PM conversation", function(ply, msg)
+fw.chat.addCMD({"reply"}, "Send a pm back to your latest PM conversation", function(ply, msg)
 	if (not IsValid(ply.reply_to)) then return end
 
 	local textCache = {}
@@ -217,7 +217,7 @@ fw.chat.addCMD({"radio", "r"}, "Toggles the player's group chat radio", function
 	end
 
 	local status = ply:GetNWBool("radio") and "on" or "off"
-	fw.notif.chat(ply, 'voice radio toggled to '..status)
+	fw.notif.chat(ply, "voice radio toggled to "..status)
 end)
 
 --TODO: MOVE THIS TO CONFIG

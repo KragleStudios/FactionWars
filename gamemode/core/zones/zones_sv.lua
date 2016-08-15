@@ -1,7 +1,7 @@
-util.AddNetworkString('fw.zone.new')
-util.AddNetworkString('fw.zone.remove')
+util.AddNetworkString("fw.zone.new")
+util.AddNetworkString("fw.zone.remove")
 
-net.Receive('fw.zone.new', function(_, pl)
+net.Receive("fw.zone.new", function(_, pl)
 	if not pl:IsSuperAdmin() then
 		pl:FWChatPrintError("You must be a super admin to create zones")
 		return
@@ -9,7 +9,7 @@ net.Receive('fw.zone.new', function(_, pl)
 	local zone = fw.zone.new():receive()
 	fw.zone.zoneList[zone.id] = zone
 
-	net.Start('fw.zone.new')
+	net.Start("fw.zone.new")
 		zone:send()
 	net.Send(player.GetAll())
 end)
@@ -21,7 +21,7 @@ function fw.zone.createNewZone(zoneId, name, polygon)
 	return zone
 end
 
-concommand.Add('fw_zone_saveAllZones', function(pl)
+concommand.Add("fw_zone_saveAllZones", function(pl)
 	if not pl:IsSuperAdmin() then
 		return pl:FWConPrint(Color(255, 0, 0), "you do not have permission to run this command")
 	end
@@ -30,7 +30,7 @@ concommand.Add('fw_zone_saveAllZones', function(pl)
 	pl:FWConPrint("Saved all zones.")
 end)
 
-concommand.Add('fw_zone_removeZone', function(pl)
+concommand.Add("fw_zone_removeZone", function(pl)
 	if not pl:IsSuperAdmin() then
 		return pl:FWConPrint(Color(255, 0, 0), "you do not have permission to run this command")
 	end
@@ -43,9 +43,9 @@ concommand.Add('fw_zone_removeZone', function(pl)
 	fw.zone.zoneList[zone.id] = nil -- remove the zone
 
 	pl:FWConPrint("Removed the zone with id " .. tostring(zone.id) .. ":" .. tostring(zone.name))
-	net.Start('fw.zone.remove')
+	net.Start("fw.zone.remove")
 		net.WriteUInt(zone.id, 32)
 	net.Send(player.GetAll())
 
-	pl:ConCommand('fw_zone_saveAllZones\n')
+	pl:ConCommand("fw_zone_saveAllZones\n")
 end)

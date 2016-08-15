@@ -1,18 +1,18 @@
 local engine = {}
 
-file.CreateDir(fw.config.dataDir .. '/PlayerData')
+file.CreateDir(fw.config.dataDir .. "/PlayerData")
 
-local dataDirPlayers = fw.config.dataDir .. '/PlayerData'
+local dataDirPlayers = fw.config.dataDir .. "/PlayerData"
 
 engine._getPlayerDataFile = function(steamid64)
-	return dataDirPlayers .. '/p' .. (steamid64 or 0) .. '.dat'
+	return dataDirPlayers .. "/p" .. (steamid64 or 0) .. ".dat"
 end
 
 engine.loadPlayerData = function(steamid64, callback)
 	local fname = engine._getPlayerDataFile(steamid64)
 
-	if file.Exists(fname, 'DATA') then
-		return callback(spon.decode(util.Decompress(file.Read(fname, 'DATA'))))
+	if file.Exists(fname, "DATA") then
+		return callback(spon.decode(util.Decompress(file.Read(fname, "DATA"))))
 	end
 	return callback({})
 end

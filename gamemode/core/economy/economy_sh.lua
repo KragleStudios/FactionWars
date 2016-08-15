@@ -1,4 +1,4 @@
-local Player = FindMetaTable('Player')
+local Player = FindMetaTable("Player")
 
 -- Player:canAfford(amount:number)
 -- @ret canAfford:bool - can the player afford the amount requested

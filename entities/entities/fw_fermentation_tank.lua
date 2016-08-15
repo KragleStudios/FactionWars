@@ -14,7 +14,7 @@ ENT.MaxConsumption = {
 	["water"] = 4,
 }
 ENT.MaxStorage = {
-	['alcohol'] = 25,
+	["alcohol"] = 25,
 }
 ENT.NETWORK_SIZE = 500
 
@@ -35,30 +35,30 @@ if SERVER then
 		end
 
 		self.Consumes = {
-			['power'] = 1,
+			["power"] = 1,
 		}
 		self.Storage = {
-			['alcohol'] = 0,
+			["alcohol"] = 0,
 		}
 		fw.resource.addEntity(self)
 
-		self._timerName = 'fermentation-tank-' .. self:EntIndex()
+		self._timerName = "fermentation-tank-" .. self:EntIndex()
 		self:SetNextBrewTime(self.BrewInterval * 1.5)
 	end
 
 	function ENT:FillupWaterCache()
-		local haveWater = self:FWHaveResource('water')
+		local haveWater = self:FWHaveResource("water")
 		if haveWater < self.MaxConsumption.water then
-			self:ConsumeResource('water', self.MaxConsumption.water)
+			self:ConsumeResource("water", self.MaxConsumption.water)
 		end
 	end
 
 	function ENT:SetNextBrewTime(timeInSeconds)
 		timer.Create(self._timerName, timeInSeconds, 1, function()
-			if self:FWHaveResource('water') >= self.MaxConsumption.water and self.Storage.alcohol < self.MaxStorage.alcohol then
+			if self:FWHaveResource("water") >= self.MaxConsumption.water and self.Storage.alcohol < self.MaxStorage.alcohol then
 				-- TODO: notify the player that their printer produced a money bag
-				self:FWSetResource('water', 0)
-				self.Storage['alcohol'] = self.Storage['alcohol'] + 1
+				self:FWSetResource("water", 0)
+				self.Storage["alcohol"] = self.Storage["alcohol"] + 1
 			end
 			self:SetNextBrewTime(self.BrewInterval)
 		end)
@@ -66,7 +66,7 @@ if SERVER then
 
 	function ENT:OnResourceUpdate()
 		self:FillupWaterCache()
-		if self:FWHaveResource("power") < self.Consumes['power'] then
+		if self:FWHaveResource("power") < self.Consumes["power"] then
 			timer.Pause(self._timerName)
 		else
 			timer.UnPause(self._timerName)
@@ -91,31 +91,31 @@ else
 	end
 
 	function ENT:CustomUI(panel)
-		local row = vgui.Create('fwEntityInfoPanel', panel)
+		local row = vgui.Create("fwEntityInfoPanel", panel)
 		row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
-		local status = vgui.Create('FWUITextBox', row)
-		status:SetAlign('center')
+		local status = vgui.Create("FWUITextBox", row)
+		status:SetAlign("center")
 		status:Dock(FILL)
 
 		row:SetRefresh(function(memory)
-			if memory.power ~= self:FWHaveResource('power') then
-				memory.power = self:FWHaveResource('power')
+			if memory.power ~= self:FWHaveResource("power") then
+				memory.power = self:FWHaveResource("power")
 				return true -- will trigger the next function... refresh to get called
 			end
-			if memory.water ~= self:FWHaveResource('water') then
-				memory.water = self:FWHaveResource('water')
+			if memory.water ~= self:FWHaveResource("water") then
+				memory.water = self:FWHaveResource("water")
 				return true
 			end
 		end, function()
-			if self:FWHaveResource('power') < self.MaxConsumption.power then
-				status:SetText('NOT ENOUGH POWER')
+			if self:FWHaveResource("power") < self.MaxConsumption.power then
+				status:SetText("NOT ENOUGH POWER")
 				status:SetColor(Color(255, 0, 0))
-			elseif self:FWHaveResource('water') < self.MaxConsumption.water then
-				status:SetText('NOT ENOUGH WATER')
+			elseif self:FWHaveResource("water") < self.MaxConsumption.water then
+				status:SetText("NOT ENOUGH WATER")
 				status:SetColor(Color(255, 0, 0))
 			else
-				status:SetText('FERMENTING')
+				status:SetText("FERMENTING")
 				status:SetColor(Color(0, 255, 0))
 			end
 		end)

@@ -1,7 +1,7 @@
-local matH = Material 'kragle/drop-shadow-h.png'
-local matV = Material 'kragle/drop-shadow-v.png'
+local matH = Material "kragle/drop-shadow-h.png"
+local matV = Material "kragle/drop-shadow-v.png"
 
-vgui.Register('FWUIDropShadow', {
+vgui.Register("FWUIDropShadow", {
 	Init = function(self)
 		self:SetRadius(32)
 		self:SetColor(color_black)
@@ -68,15 +68,15 @@ vgui.Register('FWUIDropShadow', {
 		
 	end,
 
-}, 'STYPanel')
+}, "STYPanel")
 
 
-concommand.Add('fw_ui_dropShadowTest', function()
-	local frame = vgui.Create('DFrame')
+concommand.Add("fw_ui_dropShadowTest", function()
+	local frame = vgui.Create("DFrame")
 	frame:SetSize(300, 300)
 	frame:Center()
 	frame:MakePopup()
 
-	local shadow = vgui.Create('FWUIDropShadow', frame)
+	local shadow = vgui.Create("FWUIDropShadow", frame)
 	shadow:ParentTo(frame)
 end)

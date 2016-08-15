@@ -3,8 +3,8 @@ if SERVER then
 end
 
 -- load internal dependencies
-fw.dep(SHARED, 'hook')
-fw.dep(SERVER, 'data')
+fw.dep(SHARED, "hook")
+fw.dep(SERVER, "data")
 
 -- proper include system
-fw.include_sh 'phealth_sh.lua'
+fw.include_sh "phealth_sh.lua"

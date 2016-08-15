@@ -26,7 +26,7 @@ local function removeVotePanel(pnl, index)
 end
 
 -- play nice with lua refresh this does not.
-ndoc.observe(ndoc.table, 'fw.votes', function(vIndex, tbl)
+ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 	if tbl == nil then
 		if IsValid(votePanels[vIndex]) then
 			votePanels[vIndex]:Remove()
@@ -51,7 +51,7 @@ ndoc.observe(ndoc.table, 'fw.votes', function(vIndex, tbl)
 		local desc   = vote.desc
 
 		LocalPlayer():EmitSound("Friends/friend_join.wav", 100, 100)
-		pnl = vgui.Create('FWUIFrame')
+		pnl = vgui.Create("FWUIFrame")
 		pnl:SetSize(200, 150)
 		pnl:SetTitle(title)
 		pnl:Center()
@@ -100,13 +100,13 @@ ndoc.observe(ndoc.table, 'fw.votes', function(vIndex, tbl)
 
 		local w,h = pnl:GetSize()
 
-		local no = vgui.Create('FWUIButton', pnl)
+		local no = vgui.Create("FWUIButton", pnl)
        		no:SetSize((w / 2) - 7.5, 25)
         	no:Dock(BOTTOM)
         	no:SetText(noText .." ".. ndoc.table.fwVotes[vIndex].no)
         	no:SetFont(fw.fonts.default)
 
-        	local yes = vgui.Create('FWUIButton', pnl)
+        	local yes = vgui.Create("FWUIButton", pnl)
         	yes:SetSize((w / 2) - 7.5, 25)
         	yes:Dock(BOTTOM)
         	yes:SetText(yesText .." ".. ndoc.table.fwVotes[vIndex].yes)
@@ -134,4 +134,4 @@ ndoc.observe(ndoc.table, 'fw.votes', function(vIndex, tbl)
 			pnl:Remove()
 		end
 	end)
-end, ndoc.compilePath('fwVotes.?'))
+end, ndoc.compilePath("fwVotes.?"))

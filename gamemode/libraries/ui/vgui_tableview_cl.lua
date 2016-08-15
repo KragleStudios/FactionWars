@@ -1,8 +1,8 @@
-vgui.Register('FWUITableViewSection', {
+vgui.Register("FWUITableViewSection", {
 	Init = function(self)
-		self.header = vgui.Create('FWUIButton', self)
-		self.contentWrapper = vgui.Create('STYPanel', self)
-		self.content = vgui.Create('STYLayoutVertical', self.contentWrapper)
+		self.header = vgui.Create("FWUIButton", self)
+		self.contentWrapper = vgui.Create("STYPanel", self)
+		self.content = vgui.Create("STYLayoutVertical", self.contentWrapper)
 		self.expanded = true
 		self:SetPadding(0)
 
@@ -24,7 +24,7 @@ vgui.Register('FWUITableViewSection', {
 			end
 		end
 
-		sty.Detour(self.contentWrapper, 'PerformLayout', function()
+		sty.Detour(self.contentWrapper, "PerformLayout", function()
 			self:PerformLayout()
 		end)
 	end,
@@ -45,9 +45,9 @@ vgui.Register('FWUITableViewSection', {
 	end,
 
 	SetTitleTint = function(self, tint, intensity)
-		self.header:SetBackgroundTint('normal', tint, 10)
-		self.header:SetBackgroundTint('hovered', tint, 25)
-		self.header:SetBackgroundTint('pressed', tint, 50)
+		self.header:SetBackgroundTint("normal", tint, 10)
+		self.header:SetBackgroundTint("hovered", tint, 25)
+		self.header:SetBackgroundTint("pressed", tint, 50)
 		
 		return self 
 	end,
@@ -93,16 +93,16 @@ vgui.Register('FWUITableViewSection', {
 		self._animating = nil
 		self:PerformLayout()
 	end,
-}, 'FWUIPanel')
+}, "FWUIPanel")
 
-vgui.Register('FWUITableViewItem', {
+vgui.Register("FWUITableViewItem", {
 	SetText = function(self, text)
 		if self._text then
 			self._text:SetText(text)
 			return self 
 		end
 
-		self._text = vgui.Create('FWUITextBox', self)
+		self._text = vgui.Create("FWUITextBox", self)
 		self._text:DockMargin(sty.ScreenScale(2), sty.ScreenScale(1), sty.ScreenScale(1), 0)
 		self._text:Dock(FILL)
 		self._text:SetFont(fw.fonts.default)
@@ -112,7 +112,7 @@ vgui.Register('FWUITableViewItem', {
 	end,
 
 	AddButton = function(self, title, doClick)
-		local button = vgui.Create('FWUIButton', self)
+		local button = vgui.Create("FWUIButton", self)
 		button:SetFont(fw.fonts.default)
 		button:SetText(title)
 		button:Dock(RIGHT)
@@ -121,4 +121,4 @@ vgui.Register('FWUITableViewItem', {
 
 		return button 
 	end,
-}, 'FWUIPanel')
+}, "FWUIPanel")

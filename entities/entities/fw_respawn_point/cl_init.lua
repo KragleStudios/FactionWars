@@ -15,7 +15,7 @@ function ENT:CustomUI(panel)
 	local owner = self:FWGetOwner()
 
 	local header = vgui.Create("FWUITextBox", panel)
-	header:SetText("OWNER: " .. (IsValid(owner) and owner:Nick() or 'unknown'))
+	header:SetText("OWNER: " .. (IsValid(owner) and owner:Nick() or "unknown"))
 	header:SetTall(fw.resource.INFO_ROW_HEIGHT)
 	header:SetInset(1)
 	header:SetAlign("left")

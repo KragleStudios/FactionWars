@@ -1,23 +1,23 @@
 --
 -- FACTIONS
 --
-FACTION_DEFAULT = fw.team.registerFaction('Common Wealth', {
-	stringID = 'f_default',
+FACTION_DEFAULT = fw.team.registerFaction("Common Wealth", {
+	stringID = "f_default",
 	color = Color(255, 255, 255)
 })
 
-FACTION_POLICE = fw.team.registerFaction('Police State', {
-	stringID = 'f_police',
+FACTION_POLICE = fw.team.registerFaction("Police State", {
+	stringID = "f_police",
 	color = Color(25, 25, 255)
 })
 
-FACTION_GANGA = fw.team.registerFaction('Yakuza', {
-	stringID = 'f_yakuza',
+FACTION_GANGA = fw.team.registerFaction("Yakuza", {
+	stringID = "f_yakuza",
 	color = Color(255, 25, 25)
 })
 
-FACTION_GANGB = fw.team.registerFaction('Aryans', {
-	stringID = 'f_aryan',
+FACTION_GANGB = fw.team.registerFaction("Aryans", {
+	stringID = "f_aryan",
 	color = Color(255, 155, 25)
 })
 
@@ -45,7 +45,7 @@ TEAM_BMD = fw.team.register("Black Market Dealer", {
 })
 
 TEAM_ENGINEER = fw.team.register("Engineer", {
-	stringID = 't_eng',
+	stringID = "t_eng",
 	models = {"models/player/barney.mdl"},
 	faction = {FACTION_DEFAULT, FACTION_GANGA, FACTION_GANGB},
 	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},

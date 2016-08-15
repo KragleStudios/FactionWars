@@ -1,6 +1,6 @@
 if SERVER then AddCSLuaFile() return end
 
-require 'ra'
+require "ra"
 
 --[[
 RECOMMENDED VERSION
@@ -49,10 +49,10 @@ local function hoveredPanel(panel, mx, my)
 	return panel
 end
 
-local Panel = FindMetaTable('Panel')
+local Panel = FindMetaTable("Panel")
 
 function Panel:Draw3D(pos, ang, scale)
-	assert(type(pos) == 'Vector' and type(ang) == 'Angle' and type(scale) == 'number', 'bad parameters')
+	assert(type(pos) == "Vector" and type(ang) == "Angle" and type(scale) == "number", "bad parameters")
 	local w, h = self:GetSize()
 
 	pos = pos - ang:Forward() * (w * 0.5 * scale) - ang:Right() * (h * 0.5 * scale)

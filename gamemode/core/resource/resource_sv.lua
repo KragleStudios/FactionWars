@@ -255,7 +255,7 @@ function fw.resource.updateNetworks()
 
 end
 
-local Entity = FindMetaTable('Entity')
+local Entity = FindMetaTable("Entity")
 --
 -- Pass it the typeid of the resource and the amount to use
 --
@@ -309,6 +309,6 @@ end
 --
 -- CONSTRUCT TIMERS
 --
-timer.Create('fw.resourceNetwork.update', fw.config.resourceNetworkUpdateInterval, 0, function()
+timer.Create("fw.resourceNetwork.update", fw.config.resourceNetworkUpdateInterval, 0, function()
 	fw.resource.updateNetworks()
 end)

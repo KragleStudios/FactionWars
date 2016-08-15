@@ -1,21 +1,21 @@
 
-util.AddNetworkString('fw.notif.conprint')
-util.AddNetworkString('fw.notif.chatprint')
-util.AddNetworkString('fw.notif.banner')
+util.AddNetworkString("fw.notif.conprint")
+util.AddNetworkString("fw.notif.chatprint")
+util.AddNetworkString("fw.notif.banner")
 util.AddNetworkString("fw.notif.chat")
 
-local Player = FindMetaTable('Player')
+local Player = FindMetaTable("Player")
 
 local net = net 
 
 local function sendHelper(a, ...)
 	if a == nil then return net.WriteUInt(0, 2) end
-	if type(a) == 'table' then 
+	if type(a) == "table" then 
 		net.WriteUInt(1, 2)
 		net.WriteUInt(a.r, 8)
 		net.WriteUInt(a.g, 8)
 		net.WriteUInt(a.b, 8)
-	elseif type(a) == 'string' then
+	elseif type(a) == "string" then
 		net.WriteUInt(2, 2)
 		net.WriteString(tostring(a))
 	end
@@ -23,19 +23,19 @@ local function sendHelper(a, ...)
 end
 
 local function fwConPrint(players, ...)
-	net.Start('fw.notif.conprint')
+	net.Start("fw.notif.conprint")
 		sendHelper(...)
 	net.Send(players)
 end
 
 local function fwChatPrint(players, ...)
-	net.Start('fw.notif.chatprint')
+	net.Start("fw.notif.chatprint")
 		sendHelper(...)
 	net.Send(players)
 end
 
 local function fwChatComm(players, ...)
-	net.Start('fw.notif.chat')
+	net.Start("fw.notif.chat")
 		sendHelper(...)
 	net.Send(players)
 end
@@ -54,5 +54,5 @@ function Player:FWChatPrint(...)
 end
 
 function Player:FWChatPrintError(...)
-	fwChatPrint(self, color_black, '[Error] ', Color(255, 0, 0), ...)
+	fwChatPrint(self, color_black, "[Error] ", Color(255, 0, 0), ...)
 end

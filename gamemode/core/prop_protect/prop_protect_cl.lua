@@ -11,9 +11,9 @@ fw.hook.Add("AddToolMenuTabs", "AddPPPanels", function()
 		pnl:AddControl("Header", {Description = "Set who can physgun your props"})
 
 		local status = {
-			['Everyone'] = 0,
-			['Me only'] = 1,
-			['Faction only'] = 2
+			["Everyone"] = 0,
+			["Me only"] = 1,
+			["Faction only"] = 2
 		}
 
 		local combo = pnl:ComboBox("Set Physgun To", "update")
@@ -80,7 +80,7 @@ fw.hook.Add("AddToolMenuTabs", "AddPPPanels", function()
 			net.SendToServer()
 		end
 
-		ndoc.addHook('pp.?.whitelist.?', 'set', function(ply)
+		ndoc.addHook("pp.?.whitelist.?", "set", function(ply)
 			if (ply != LocalPlayer()) then return end
 
 			box:Clear()

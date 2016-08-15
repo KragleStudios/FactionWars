@@ -1,5 +1,5 @@
-fw.hook.Add('HUDShouldDraw', 'fw.hud', function(name)
-	if name == 'CHudHealth' then
+fw.hook.Add("HUDShouldDraw", "fw.hud", function(name)
+	if name == "CHudHealth" then
 		return false
 	end
 end)
@@ -8,15 +8,15 @@ local gradient = surface.GetTextureID("gui/gradient_down.vtf")
 
 local BASE_ALPHA = 240
 
-vgui.Register('fwHudInfoCell', {
+vgui.Register("fwHudInfoCell", {
 		Init = function(self)
-			self.label = Label('', self)
+			self.label = Label("", self)
 			self.label:SetTextColor(color_white)
 			self:SetAlpha(BASE_ALPHA)
 			self.color = Color(255, 255, 255)
 			self.color_full = Color(255, 255, 255)
 
-			self.highlight = vgui.Create('DPanel', self)
+			self.highlight = vgui.Create("DPanel", self)
 			self.highlight.Paint = function(_, w, h)
 				surface.SetDrawColor(self.color_full)
 				surface.DrawRect(0, 0, w, h)
@@ -83,74 +83,74 @@ vgui.Register('fwHudInfoCell', {
 			surface.SetDrawColor(self.color)
 			surface.DrawRect(0, 0, w, self._p)
 		end,
-	}, 'STYPanel')
+	}, "STYPanel")
 
-vgui.Register('fwHudInfo', {
+vgui.Register("fwHudInfo", {
 		Init = function(self)
-			self.layout = vgui.Create('STYLayoutHorizontal', self)
+			self.layout = vgui.Create("STYLayoutHorizontal", self)
 			self.layout:SetPadding(5)
 
 			-- display hp
 			do
-				self.hp = vgui.Create('fwHudInfoCell', self.layout)
+				self.hp = vgui.Create("fwHudInfoCell", self.layout)
 				self.hp:SetTint(Color(255, 0, 0))
 
 				self.hp:SetUpdater(function()
 					return LocalPlayer():Health()
 				end, function()
-					return 'Health: ' .. LocalPlayer():Health()
+					return "Health: " .. LocalPlayer():Health()
 				end)
 			end
 
 			-- display money
 			do
-				self.money = vgui.Create('fwHudInfoCell', self.layout)
+				self.money = vgui.Create("fwHudInfoCell", self.layout)
 				self.money:SetTint(Color(0, 255, 0))
 
 				local function updateMoney()
 					if not IsValid(self.money) then return end
-					self.money:SetText('Money: ' .. fw.config.currencySymbol .. string.Comma(tostring(LocalPlayer():getMoney())))
+					self.money:SetText("Money: " .. fw.config.currencySymbol .. string.Comma(tostring(LocalPlayer():getMoney())))
 				end
 				updateMoney()
-				ndoc.observe(ndoc.table,'fw.hud.money', updateMoney, 'fwPlayers', LocalPlayer(), 'money')
+				ndoc.observe(ndoc.table,"fw.hud.money", updateMoney, "fwPlayers", LocalPlayer(), "money")
 			end
 
 			-- display job
 			do
-				self.job = vgui.Create('fwHudInfoCell', self.layout)
+				self.job = vgui.Create("fwHudInfoCell", self.layout)
 				self.job:SetUpdater(function()
 					return LocalPlayer():Team()
 				end, function()
 					local t = fw.team.getByIndex(LocalPlayer():Team())
 					if not t then
-						return 'unknown team'
+						return "unknown team"
 					end
-					return t.name .. ' $' .. (t.salary or 0)
+					return t.name .. " $" .. (t.salary or 0)
 				end)
 
 			end
 
 			-- display faction
 			do
-				self.faction = vgui.Create('fwHudInfoCell', self.layout)
+				self.faction = vgui.Create("fwHudInfoCell", self.layout)
 				local function updateFaction()
 					if not IsValid(self.faction) then return end
 
 					if LocalPlayer():inFaction() or (LocalPlayer():getFaction() == FACTION_DEFAULT) then
 						local factionMeta = fw.team.getFactionByID(LocalPlayer():getFaction())
 						if not factionMeta then return end
-						self.faction:SetText('Faction: ' .. factionMeta:getName())
+						self.faction:SetText("Faction: " .. factionMeta:getName())
 					else
-						self.faction:SetText('NO FACTION')
+						self.faction:SetText("NO FACTION")
 					end
 				end
-				ndoc.observe(ndoc.table, 'fw.hud.updateFaction', updateFaction, 'fwPlayers', LocalPlayer(), 'money')
+				ndoc.observe(ndoc.table, "fw.hud.updateFaction", updateFaction, "fwPlayers", LocalPlayer(), "money")
 				updateFaction()
 			end
 
 			-- display the boss
 			do
-				self.boss = vgui.Create('fwHudInfoCell', self.layout)
+				self.boss = vgui.Create("fwHudInfoCell", self.layout)
 
 				local function updateBoss()
 					if not IsValid(self.boss) then return end
@@ -163,22 +163,22 @@ vgui.Register('fwHudInfo', {
 							boss = "None"
 						end
 
-						self.boss:SetText('Boss: ' .. boss)
+						self.boss:SetText("Boss: " .. boss)
 						self.boss:SetVisible(true)
 					else
 						self.boss:SetVisible(false)
 						self.layout:PerformLayout() --refresh bars
 					end
 				end
-				ndoc.observe(ndoc.table, 'fw.hud.updateBoss.1', updateBoss, 'fwPlayers', LocalPlayer(), 'faction')
-				ndoc.observe(ndoc.table, 'fw.hud.updateBoss.2', updateBoss, ndoc.compilePath('fwFactions.?.boss'))
+				ndoc.observe(ndoc.table, "fw.hud.updateBoss.1", updateBoss, "fwPlayers", LocalPlayer(), "faction")
+				ndoc.observe(ndoc.table, "fw.hud.updateBoss.2", updateBoss, ndoc.compilePath("fwFactions.?.boss"))
 				updateBoss()
 			end
 
 			-- display the zone
 			do
-				self.zone = vgui.Create('fwHudInfoCell', self.layout)
-				self.territory = vgui.Create('fwHudInfoCell', self.layout)
+				self.zone = vgui.Create("fwHudInfoCell", self.layout)
+				self.territory = vgui.Create("fwHudInfoCell", self.layout)
 
 				local function updateTerritory()
 					local zone = fw.zone.playerGetZone(LocalPlayer())
@@ -204,7 +204,7 @@ vgui.Register('fwHudInfo', {
 
 					if factionMax and cap and not prot then
 						self.territory:SetTint(fw.team.factions[factionMax].color or color_white)
-						self.territory:SetText(fw.team.factions[factionMax].name .. ' territory %' .. math.Round(controlMax/fw.config.zoneCaptureScore*100))
+						self.territory:SetText(fw.team.factions[factionMax].name .. " territory %" .. math.Round(controlMax/fw.config.zoneCaptureScore*100))
 					else
 						local text = prot and "Protected Land" or not cap and "Non-Capturable Land" or "Unclaimed Land"
 
@@ -212,10 +212,10 @@ vgui.Register('fwHudInfo', {
 					end
 				end
 
-				ndoc.observe(ndoc.table, 'fw.hud.zoneControlScores', function(zoneId, factionId, amount)
+				ndoc.observe(ndoc.table, "fw.hud.zoneControlScores", function(zoneId, factionId, amount)
 					if not IsValid(self.territory) then return end
 					updateTerritory() -- it might be alot of updates... but hopefully it's less than it could otherwise be!
-				end, ndoc.compilePath('fwZoneControl.?.scores.?'))
+				end, ndoc.compilePath("fwZoneControl.?.scores.?"))
 
 				self.zone:SetUpdater(function()
 					local zone = fw.zone.playerGetZone(LocalPlayer())
@@ -224,9 +224,9 @@ vgui.Register('fwHudInfo', {
 					local zone = fw.zone.playerGetZone(LocalPlayer())
 					updateTerritory()
 					if zone == nil then
-						return 'Zone: The Streets'
+						return "Zone: The Streets"
 					else
-						return zone.name and ('Zone: ' .. zone.name) or 'unknown zone'
+						return zone.name and ("Zone: " .. zone.name) or "unknown zone"
 					end
 				end)
 			end
@@ -234,7 +234,7 @@ vgui.Register('fwHudInfo', {
 			--[[
 			--TODO move this to it's own panel does not belong here
 			do
-				self.agenda = vgui.Create('fwHudInfoCell', self.layout)
+				self.agenda = vgui.Create("fwHudInfoCell", self.layout)
 
 				local function updateAgenda()
 					if not IsValid(self.agenda) then return end
@@ -251,8 +251,8 @@ vgui.Register('fwHudInfo', {
 
 					self.agenda:PerformLayout()
 				end
-				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateAgenda)
-				ndoc.addHook('fwFactions.?.agenda', 'set', updateAgenda)
+				ndoc.addHook(ndoc.path("fwPlayers", LocalPlayer(), "faction"), "set", updateAgenda)
+				ndoc.addHook("fwFactions.?.agenda", "set", updateAgenda)
 				updateAgenda()
 
 			end
@@ -289,11 +289,11 @@ sty.WaitForLocalPlayer(function()
 	if IsValid(__FW_HUDINFO) then
 		__FW_HUDINFO:Remove()
 	end
-	__FW_HUDINFO = vgui.Create('fwHudInfo')
+	__FW_HUDINFO = vgui.Create("fwHudInfo")
 end)
 
-fw.hook.Add('PlayerSwitchWeapon', function(pl, oldwep, newwep)
-	if pl == LocalPlayer() and newwep:GetClass() == 'gmod_camera' then
+fw.hook.Add("PlayerSwitchWeapon", function(pl, oldwep, newwep)
+	if pl == LocalPlayer() and newwep:GetClass() == "gmod_camera" then
 		__FW_HUDINFO:SetVisible(false)
 	else
 		__FW_HUDINFO:SetVisible(true)

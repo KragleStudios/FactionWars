@@ -2,7 +2,7 @@ if SERVER then
 	AddCSLuaFile()
 end
 
-require 'ra'
+require "ra"
 
 TOOL.Category = "Faction Wars"
 TOOL.Name = "#faction wars zone creator"
@@ -26,7 +26,7 @@ function TOOL:LeftClick( trace, attach )
 	if #points >= 3 then
 		local oldZone = zone
 		zone = fw.zone.new()
-		local succ = pcall(zone.ctor, zone, 0, 'a name', points)
+		local succ = pcall(zone.ctor, zone, 0, "a name", points)
 		if not succ then
 			zone = oldZone
 		end
@@ -53,7 +53,7 @@ function TOOL:RightClick( trace )
 				Derma_StringRequest("Zone Creator", "Enter the zone name", "a zone", function(zoneName)
 					fw.zone.createNewZone(zoneName, points)
 
-					LocalPlayer():ConCommand('fw_zone_saveAllZones')
+					LocalPlayer():ConCommand("fw_zone_saveAllZones")
 
 					chat.AddText(Color(0, 255, 0), "Created a new zone")
 				end)
@@ -72,7 +72,7 @@ end
 
 
 
-hook.Add('PostDrawOpaqueRenderables', 'fw.toolgun.zonecreator', function()
+hook.Add("PostDrawOpaqueRenderables", "fw.toolgun.zonecreator", function()
 	render.SetColorMaterial()
 
 	local mypos = LocalPlayer():GetPos()

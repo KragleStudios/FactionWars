@@ -2,16 +2,16 @@ fw.chat.cmds = {}
 fw.chat.help = {}
 fw.chat.argTypes = {}
 fw.chat.permissions = {
-	['admin'] = function(pl) return pl:IsAdmin() end,
-	['superadmin'] = function(pl) return pl:IsSuperAdmin() end,
-	['boss'] = function(pl) return pl:isFactionBoss() end,
-	['faction'] = function(pl) return pl:getFaction() ~= FACTION_DEFAULT end
+	["admin"] = function(pl) return pl:IsAdmin() end,
+	["superadmin"] = function(pl) return pl:IsSuperAdmin() end,
+	["boss"] = function(pl) return pl:isFactionBoss() end,
+	["faction"] = function(pl) return pl:getFaction() ~= FACTION_DEFAULT end
 }
 
 local cmd_mt = {}
 cmd_mt.__index = cmd_mt
 function cmd_mt:ctor(aliases, helptext, callback)
-	if type(aliases) == 'string' then
+	if type(aliases) == "string" then
 		aliases = {aliases}
 	end
 
@@ -21,7 +21,7 @@ function cmd_mt:ctor(aliases, helptext, callback)
 	self.permCheck = function() return true end
 	self.callback = callback
 
-	concommand.Add('fw_' .. aliases[1], function(pl, cmd, args)
+	concommand.Add("fw_" .. aliases[1], function(pl, cmd, args)
 		fw.chat.runCommand(pl, self, args)
 	end)
 
@@ -45,7 +45,7 @@ function cmd_mt:addParam(name, type)
 end
 
 function cmd_mt:restrictTo(func)
-	if type(func) == 'string' then
+	if type(func) == "string" then
 		func = fw.chat.permissions[func]
 	end
 
@@ -60,15 +60,15 @@ end
 
 
 -- PARSE A PLAYER ARGUMENT
-fw.chat.argTypes['player'] = function(argument, pl)
-	if argument == '^' then
+fw.chat.argTypes["player"] = function(argument, pl)
+	if argument == "^" then
 		if IsValid(pl) then
 			return pl
 		end
 		return nil, "you cant reference yourself when running command from server"
 	end
 
-	if argument:find('STEAM_') then
+	if argument:find("STEAM_") then
 		for k,v in pairs(player.GetAll()) do
 			if v:SteamID() == argument then
 				return v
@@ -82,30 +82,30 @@ fw.chat.argTypes['player'] = function(argument, pl)
 	for k,v in pairs(player.GetAll()) do
 		if v:Name() == argument then return v end
 		if v:Name():lower():find(argument) then
-			if found then return nil, 'two players matched substring, give a more exact name' end
+			if found then return nil, "two players matched substring, give a more exact name" end
 			found = v
 		end
 	end
 	if found then return found end
-	return nil, 'no player found'
+	return nil, "no player found"
 end
 
 -- PARSE A STRING ARGUENT
-fw.chat.argTypes['string'] = function(argument) return argument end
-fw.chat.argTypes['number'] = function(argument)
+fw.chat.argTypes["string"] = function(argument) return argument end
+fw.chat.argTypes["number"] = function(argument)
 	local num = tonumber(argument)
-	if num == nil then return nil, 'malformatted number' end
+	if num == nil then return nil, "malformatted number" end
 	return num
 end
-fw.chat.argTypes['bool'] = function(argument)
-	if argument[1] == 'y' or argument[1] == 't' then return true end
+fw.chat.argTypes["bool"] = function(argument)
+	if argument[1] == "y" or argument[1] == "t" then return true end
 	return false
 end
-fw.chat.argTypes['money'] = function(argument)
-	if string.sub(argument, 1, 1) == '$' then
-		return fw.chat.argTypes['money'](string.sub(argument, 2))
+fw.chat.argTypes["money"] = function(argument)
+	if string.sub(argument, 1, 1) == "$" then
+		return fw.chat.argTypes["money"](string.sub(argument, 2))
 	end
-	return fw.chat.argTypes['number'](argument)
+	return fw.chat.argTypes["number"](argument)
 end
 
 
@@ -118,16 +118,16 @@ function fw.chat.addCMD(...)
 end
 
 local quotes = {
-	['\''] = true,
-	['\"'] = true
+	["\'"] = true,
+	["\""] = true
 }
 function fw.chat.parseLine(line)
 	local function skipWhiteSpace(index)
-		return string.find(line, '%S', index)
+		return string.find(line, "%S", index)
 	end
 
 	local function findNextSpace(index)
-		return string.find(line, '%s', index)
+		return string.find(line, "%s", index)
 	end
 
 	local function findClosingQuote(index, type)
@@ -178,7 +178,7 @@ function fw.chat.runCommand(pl, command, arguments)
 			table.insert(extra, arguments[i])
 			arguments[i] = nil
 		end
-		arguments[#command.params] = table.concat(extra, ' ')
+		arguments[#command.params] = table.concat(extra, " ")
 	end
 
 	local allGood = true
@@ -206,11 +206,11 @@ function fw.chat.runCommand(pl, command, arguments)
 	callIt(processArguments(1, unpack(arguments)))
 end
 
-fw.hook.Add('PlayerSay', function(pl, text)
-	local firstSpace = string.find(text, '%s')
+fw.hook.Add("PlayerSay", function(pl, text)
+	local firstSpace = string.find(text, "%s")
 	local prefix = string.sub(text, 1, 1)
 	local command = string.sub(text, 2, firstSpace and firstSpace - 1 or nil)
-	if prefix == '!' or prefix == '/' and fw.chat.cmds[command] then
+	if prefix == "!" or prefix == "/" and fw.chat.cmds[command] then
 		command = fw.chat.cmds[command]
 		local arguments
 		if firstSpace then
@@ -220,6 +220,6 @@ fw.hook.Add('PlayerSay', function(pl, text)
 		end
 
 		fw.chat.runCommand(pl, command, arguments)
-		return ''
+		return ""
 	end
 end)

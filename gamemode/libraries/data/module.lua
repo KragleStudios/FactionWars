@@ -1,12 +1,12 @@
 if SERVER then AddCSLuaFile() end
 
-fw.dep(SHARED, 'notif')
-fw.dep(SERVER, 'hook')
+fw.dep(SHARED, "notif")
+fw.dep(SERVER, "hook")
 
 file.CreateDir(fw.config.dataDir)
 
-local Player = FindMetaTable('Player')
-local Entity = FindMetaTable('Entity')
+local Player = FindMetaTable("Player")
+local Entity = FindMetaTable("Entity")
 
 -- Player:GetFWData()
 -- @param amount:number - the amount of money to add
@@ -28,7 +28,7 @@ if SERVER then
 		return data
 	end
 
-	fw.hook.Add('EntityRemoved', function(ent)
+	fw.hook.Add("EntityRemoved", function(ent)
 		if ndoc.table.fwEntities[ent:EntIndex()] then
 			ndoc.table.fwEntities[ent:EntIndex()] = nil
 		end
@@ -45,4 +45,4 @@ else
 	end
 end
 
-fw.include_sv 'data_sv.lua'
+fw.include_sv "data_sv.lua"

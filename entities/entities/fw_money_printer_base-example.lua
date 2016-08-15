@@ -34,27 +34,27 @@ if SERVER then
 		end
 
 		self.Consumes = {
-			['power'] = self.PowerRequired,
+			["power"] = self.PowerRequired,
 		}
 		fw.resource.addEntity(self)
 
-		self._timerName = 'money-printer-' .. self:EntIndex()
+		self._timerName = "money-printer-" .. self:EntIndex()
 		self:SetNextPrintTime(self.PrintInterval * 1.5)
 	end
 
 	function ENT:FillupPaperCache()
-		local havePaper = self:FWHaveResource('paper')
+		local havePaper = self:FWHaveResource("paper")
 		if havePaper < self.MaxConsumption.paper then
-			local succ = self:ConsumeResource('paper', self.MaxConsumption.paper)
+			local succ = self:ConsumeResource("paper", self.MaxConsumption.paper)
 		end
 	end
 
 	function ENT:SetNextPrintTime(timeInSeconds)
 		timer.Create(self._timerName, timeInSeconds, 1, function()
-			if self:FWHaveResource('paper') >= self.MaxConsumption.paper then
+			if self:FWHaveResource("paper") >= self.MaxConsumption.paper then
 				-- TODO: notify the player that their printer produced a money bag
-				self:FWSetResource('paper', 0)
-				self:FWSetResource('alcohol', self:FWGetResource('alcohol') + 1)
+				self:FWSetResource("paper", 0)
+				self:FWSetResource("alcohol", self:FWGetResource("alcohol") + 1)
 			end
 			self:SetNextPrintTime(self.PrintInterval)
 		end)
@@ -62,7 +62,7 @@ if SERVER then
 
 	function ENT:OnResourceUpdate()
 		self:FillupPaperCache()
-		if self:FWHaveResource("power") < self.Consumes['power'] then
+		if self:FWHaveResource("power") < self.Consumes["power"] then
 			timer.Pause(self._timerName)
 		else
 			timer.UnPause(self._timerName)
@@ -87,31 +87,31 @@ else
 	end
 
 	function ENT:CustomUI(panel)
-		local row = vgui.Create('fwEntityInfoPanel', panel)
+		local row = vgui.Create("fwEntityInfoPanel", panel)
 		row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
-		local status = vgui.Create('FWUITextBox', row)
-		status:SetAlign('center')
+		local status = vgui.Create("FWUITextBox", row)
+		status:SetAlign("center")
 		status:Dock(FILL)
 
 		row:SetRefresh(function(memory)
-			if memory.power ~= self:FWHaveResource('power') then
-				memory.power = self:FWHaveResource('power')
+			if memory.power ~= self:FWHaveResource("power") then
+				memory.power = self:FWHaveResource("power")
 				return true -- will trigger the next function... refresh to get called
 			end
-			if memory.paper ~= self:FWHaveResource('paper') then
-				memory.paper = self:FWHaveResource('paper')
+			if memory.paper ~= self:FWHaveResource("paper") then
+				memory.paper = self:FWHaveResource("paper")
 				return true
 			end
 		end, function()
-			if self:FWHaveResource('power') < self.MaxConsumption.power then
-				status:SetText('NOT ENOUGH POWER')
+			if self:FWHaveResource("power") < self.MaxConsumption.power then
+				status:SetText("NOT ENOUGH POWER")
 				status:SetColor(Color(255, 0, 0))
-			elseif self:FWHaveResource('paper') < self.MaxConsumption.paper then
-				status:SetText('NOT ENOUGH PAPER')
+			elseif self:FWHaveResource("paper") < self.MaxConsumption.paper then
+				status:SetText("NOT ENOUGH PAPER")
 				status:SetColor(Color(255, 0, 0))
 			else
-				status:SetText('PRINTER RUNNING')
+				status:SetText("PRINTER RUNNING")
 				status:SetColor(Color(0, 255, 0))
 			end
 		end)

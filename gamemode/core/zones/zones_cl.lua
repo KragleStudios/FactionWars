@@ -7,24 +7,24 @@ function fw.zone.createNewZone(name, polygon)
 	local newZone = fw.zone.new():ctor(zoneId, name, polygon)
 
 	-- there is a permission check done serverside
-	net.Start('fw.zone.new')
+	net.Start("fw.zone.new")
 	newZone:send()
 	net.SendToServer()
 
 	return zoneId
 end
 
-net.Receive('fw.zone.new', function()
+net.Receive("fw.zone.new", function()
 	local zone = fw.zone.new():receive()
 	fw.zone.zoneList[zone.id] = zone
 end)
 
-net.Receive('fw.zone.remove', function()
+net.Receive("fw.zone.remove", function()
 	fw.zone.zoneList[net.ReadUInt(32)] = nil
 end)
 
 --[[
-fw.hook.Add('PostDrawOpaqueRenderables', 'fw.zones.render', function()
+fw.hook.Add("PostDrawOpaqueRenderables", "fw.zones.render", function()
 	local curZone = fw.zone.playerGetZone(LocalPlayer())
 
 	local tr = util.QuickTrace(LocalPlayer():GetPos(), Vector(0, 0,-10000), me)
