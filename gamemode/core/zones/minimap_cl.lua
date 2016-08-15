@@ -41,7 +41,6 @@ local function popClippingCircle(edges)
 	end
 end
 
-
 fw.hook.Add('PostDrawOpaqueRenderables', function()
 	if not input.IsKeyDown(KEY_LALT) and not input.IsKeyDown(KEY_RALT) then return end
 
@@ -94,6 +93,7 @@ fw.hook.Add('PostDrawOpaqueRenderables', function()
 	end
 	cam.PopModelMatrix()
 	popClippingCircle(6)
+	render.PopCustomClipPlane()
 
 
 

@@ -1,8 +1,12 @@
 local debugEntityPaintPosition = false -- toggles drawing sphere at the aim entity's paint position
 local baseScale = 0.25
 
+-- LOCALIZE VARIABLES
+local surface = surface
+
 -- DEFINE GLOBALS
-fw.resource.INFO_ROW_HEIGHT = 16
+fw.resource.INFO_ROW_HEIGHT = 16 / baseScale
+fw.resource.PANEL_WIDTH = 200 / baseScale
 
 -- CLEANUP
 if IsValid(_FW_RESOURCE_PANEL) then
@@ -42,7 +46,7 @@ vgui.Register('fwResourceRow', {
 			surface.DrawRect(0, 0, w, h)
 			surface.SetDrawColor(255, 255, 255)
 			surface.SetMaterial(self._material)
-			surface.DrawTexturedRect(1, 1, w - 2, h - 2)
+			surface.DrawTexturedRect(1 / baseScale, 1 / baseScale, w - 2 / baseScale, h - 2 / baseScale)
 		end
 		self._icon = icon
 	end,
@@ -170,13 +174,14 @@ function Entity:FWDrawInfo()
 	--
 	local types = fw.resource.types
 	local info = self:FWGetResourceInfo()
+	if not info or not info.amProducing or not info.amStoring or not info.haveResources or not info.productionBeingUsed then return end
 
 	local panel, outer
 
 	--
 	-- UTILS
 	--
-	local HEADER_HEIGHT = 18
+	local HEADER_HEIGHT = fw.resource.INFO_ROW_HEIGHT
 	local ROW_HEIGHT = fw.resource.INFO_ROW_HEIGHT
 
 	local function addHeader(titleText, parent)
@@ -193,6 +198,7 @@ function Entity:FWDrawInfo()
 	end
 
 	local function addResourceRow(resource, amountTable, usageTable, outof)
+		print("addResourceRow("..tostring(resource)..", "..tostring(amountTable)..", " .. tostring(usageTable)..", "..tostring(outof)..")")
 		if type(resource) == 'string' then
 			resource = types[resource]
 			if not resource then return end
@@ -205,7 +211,7 @@ function Entity:FWDrawInfo()
 		row:SetTall(ROW_HEIGHT)
 		local info = vgui.Create('fwResourceDisplayBar')
 		row:SetContentPanel(info)
-		row:SetContentHeight(math.Round(ROW_HEIGHT * 0.4 / baseScale))
+		row:SetContentHeight(math.Round(ROW_HEIGHT * 0.4))
 
 		info:SetUpdater(outof, function()
 			return usageTable[resType] or 0, amountTable[resType] or 0
@@ -239,10 +245,10 @@ function Entity:FWDrawInfo()
 	-- BUILD OUT PANELS
 	--
 	outer = vgui.Create('STYLayoutVertical')
-	outer:SetWide(200 / baseScale)
+	outer:SetWide(fw.resource.PANEL_WIDTH)
 	outer:SetPadding(2 / baseScale)
 	self._fwInfoPanel = outer
-	addHeader(self.PrintName, outer):SetAlign('center'):SetTall(20 / baseScale)
+	addHeader(self.PrintName, outer):SetAlign('center'):SetTall(math.Round(ROW_HEIGHT * 1.2))
 
 	local shouldAutosize = false
 	local wrapper = vgui.Create('STYPanel', outer)
@@ -256,26 +262,7 @@ function Entity:FWDrawInfo()
 
 	panel = vgui.Create('STYLayoutVertical', wrapper)
 	panel:SetPadding(2 / baseScale)
-	panel:SetWide(200)
-	
-	-- TODO: test with different custom uis
-	local oldPerformLayout, scaled = panel.PerformLayout, false
-	local function scalePanel(panel)
-		local w, h = panel:GetSize()
-		panel:SetSize(w / baseScale, h / baseScale)
-		for k, v in pairs(panel:GetChildren()) do
-			if IsValid(v) then
-				scalePanel(v)
-			end
-		end
-	end
-	panel.PerformLayout = function(panel, ...)
-		if not scaled then
-			scalePanel(panel)
-			scaled = true
-		end
-		return oldPerformLayout(panel, ...)
-	end
+	panel:SetWide(fw.resource.PANEL_WIDTH)
 
 	local wasBeingLookedAt = false
 	outer.EndAnimate = function()
@@ -312,7 +299,9 @@ function Entity:FWDrawInfo()
 		end
 	end
 
+	--
 	-- build out the ui
+	--
 	if entity.CustomUI then
 		entity:CustomUI(panel)
 	end
