@@ -1,5 +1,4 @@
 include("shared.lua")
-include("3d2dvgui.lua")
 
 function ENT:GetDisplayPosition()
 	local obbcenter = self:OBBCenter()
