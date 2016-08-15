@@ -9,7 +9,6 @@ ENT.Resources = true
 ENT.MaxConsumption = {
 	["power"] = 1,
 }
-
 ENT.MaxStorage = {
 	["parts"] = 10
 }

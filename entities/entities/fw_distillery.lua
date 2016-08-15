@@ -29,7 +29,6 @@ if SERVER then
 	util.AddNetworkString("fw.turnDistOn")
 	util.AddNetworkString("fw.spawnVodka")
 
-
 	net.Receive("fw.turnDistOn", function(l, ply)
 		local dist = net.ReadEntity()
 		local tr = ply:GetEyeTrace()
@@ -168,7 +167,7 @@ else
 				memory.status = ent:GetOn()
 				return true
 			end
-		end, function()		
+		end, function()
 			if ent:FWHaveResource('power') < ent.MaxConsumption.power then
 				status:SetText('NOT ENOUGH POWER')
 				status:SetColor(Color(255, 0, 0))
@@ -217,4 +216,3 @@ else
 	end
 
 end
-

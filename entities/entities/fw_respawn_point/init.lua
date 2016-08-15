@@ -21,8 +21,6 @@ function ENT:Initialize()
 	self:SetHealt(self.Healt)
 end
 
-local func = ENT.SetNWEntity
-
 function ENT:Think()
 	self:SetAngles(Angle(0, 0, 0))
 end

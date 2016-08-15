@@ -79,10 +79,7 @@ function ENT:ProcessGun(ent)
 end
 
 function ENT:OnResourceUpdate()
-	local res = self:FWHaveResource("power")
-	if res < self.MaxConsumption.power then
-		self:ConsumeResource("power", self.MaxConsumption.power)
-	end
+	self.enabled = self:FWHaveResource("power") >= self.MaxConsumption.power
 end
 
 function ENT:Touch(ent)

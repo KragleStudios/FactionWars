@@ -198,7 +198,6 @@ function Entity:FWDrawInfo()
 	end
 
 	local function addResourceRow(resource, amountTable, usageTable, outof)
-		print("addResourceRow("..tostring(resource)..", "..tostring(amountTable)..", " .. tostring(usageTable)..", "..tostring(outof)..")")
 		if type(resource) == 'string' then
 			resource = types[resource]
 			if not resource then return end

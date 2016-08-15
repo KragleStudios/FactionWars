@@ -48,8 +48,8 @@ if SERVER then
 
 	function ENT:FillupWaterCache()
 		local haveWater = self:FWHaveResource('water')
-		if havePaper < self.MaxConsumption.water then
-			local succ = self:ConsumeResource('water', self.MaxConsumption.water)
+		if haveWater < self.MaxConsumption.water then
+			self:ConsumeResource('water', self.MaxConsumption.water)
 		end
 	end
 

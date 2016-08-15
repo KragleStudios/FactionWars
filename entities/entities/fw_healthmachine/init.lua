@@ -4,7 +4,7 @@ include("shared.lua")
 
 function ENT:Initialize()
 	self:SetModel("models/props_lab/reciever_cart.mdl")
-	self:PhysicsInit(SOLID_VPHYSICS)  
+	self:PhysicsInit(SOLID_VPHYSICS)
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetSolid(SOLID_VPHYSICS)
 	self:SetUseType(SIMPLE_USE)
@@ -17,7 +17,8 @@ function ENT:Initialize()
 	self:FWSetResource("healthpack", 6)
 
 	-- every minute add 1 healthpack
-	timer.Create("fw-healthmachine-refill-" .. self:EntIndex(), 60, 0, function()
+	self.timerName = "fw-healthmachine-refill-" .. self:EntIndex()
+	timer.Create(self.timerName, 60, 0, function()
 		if not IsValid(self) or self:FWHaveResource("power") < self.Consumes.power then return end
 		local hp = self:FWHaveResource("healthpack") or 0
 		self:FWSetResource("healthpack", math.min(hp + 1, self.MaxProduction.healthpack))
@@ -50,5 +51,6 @@ function ENT:SpawnFunction(ply, tr, ClassName)
 end
 
 function ENT:OnRemove()
+	timer.Destroy(self.timerName) 
 	fw.resource.removeEntity(self)
 end
