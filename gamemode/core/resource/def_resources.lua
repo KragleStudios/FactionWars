@@ -8,6 +8,8 @@ if SERVER then
 	resource.AddSingleFile("materials/kragle/resources/x64-opioid.png")
 	resource.AddSingleFile("materials/kragle/resources/x64-parts.png")
 	resource.AddSingleFile("materials/kragle/resources/x64-medicalkit.png")
+	resource.AddSingleFile("materials/kragle/resources/x64-raw_resources.png")
+
 end
 
 fw.resource.register("power", {
@@ -61,6 +63,11 @@ fw.resource.register("vodka", {
 })
 
 fw.resource.register("opioid", {
-	PrintName = "Opioid",
+	PrintName = "Opioids",
 	material = CLIENT and Material("kragle/resources/x64-opioid.png")
+})
+
+fw.resource.register("raw_resources", {
+	PrintName = "Raw Resources",
+	material = CLIENT and Material("kragle/resources/x64-raw_resources.png")
 })
