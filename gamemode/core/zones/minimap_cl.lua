@@ -41,6 +41,8 @@ local function popClippingCircle(edges)
 	end
 end
 
+local zoneLabelFont = fw.fonts.default_shadow:atSize(32)
+
 fw.hook.Add('PostDrawOpaqueRenderables', function()
 	if not input.IsKeyDown(KEY_LALT) and not input.IsKeyDown(KEY_RALT) then return end
 
@@ -67,6 +69,7 @@ fw.hook.Add('PostDrawOpaqueRenderables', function()
 	local myPos = LocalPlayer():GetPos()
 	local stepSize = (2 * math.pi / 6)
 
+	-- draw the hexagon using clipping circles
 	pushClippingCircle(myPos, MINIMAP_RADIUS + 0.3, 6)
 	cam.Start3D2D(myPos, Angle(0, 0, 0), 0.2)
 		surface.SetDrawColor(255, 255, 255, 100)
@@ -74,7 +77,6 @@ fw.hook.Add('PostDrawOpaqueRenderables', function()
 
 		surface.DrawRect(-300, -1, 600, 1)
 		surface.DrawRect(-1, -300, 1, 600)
-
 	cam.End3D2D()
 	popClippingCircle(6)
 
@@ -84,18 +86,48 @@ fw.hook.Add('PostDrawOpaqueRenderables', function()
 		surface.DrawRect(-150, -150, 300, 300)
 	cam.End3D2D()
 
-
 	cam.PushModelMatrix(m)
+
+	-- compute offsets to use in drawing the name label supports
+	local eyeAnglesRotated = LocalPlayer():EyeAngles() + Angle(0, 180, 0)
+	local eyeAnglesRotated2 = -LocalPlayer():EyeAngles()
+	eyeAnglesRotated.p = 0
+	local lblbeam_stop1 = Vector(0, 0, 500) -- the vertical offset for the name labels
+	local lblbeam_stop2 = Vector(0, 0, 550) + eyeAnglesRotated:Right() * 50
+	local lblbeam_stop3 = Vector(0, 0, 800) + eyeAnglesRotated:Right() * 50
+
 	for k, zone in pairs(fw.zone.zoneList) do
-		local territoryOwner = zone:getControllingFaction()
-		local territoryOwner = fw.team.factions[territoryOwner]
+		local territoryOwner = fw.team.factions[zone:getControllingFaction()]
 		getRendererForZone(zone, zone == curZone and color_inside or color_outside, territoryOwner and territoryOwner.colorTransparent or color_nofaction):draw()
+
+		local center = Vector(zone.center[1], zone.center[2], 0)
+		local s1 = center + lblbeam_stop1
+		local s2 = center + lblbeam_stop2
+		local s3 = center + lblbeam_stop3
+		zone.label_pos = s3
+		render.DrawLine(center, s1, color_white)
+		render.DrawLine(s1, s2, color_white)
+		render.DrawLine(s2, s3, color_white)
 	end
 	cam.PopModelMatrix()
+
+	-- finish displaying the zone labels
+	local camAngle = LocalPlayer():EyeAngles()
+	camAngle:RotateAroundAxis(camAngle:Right(), 90)
+	camAngle:RotateAroundAxis(camAngle:Up(), -90)
+	for k, zone in pairs(fw.zone.zoneList) do
+		local territoryOwner = fw.team.factions[zone:getControllingFaction()]
+		local zonePosActual = m * zone.label_pos
+		cam.Start3D2D(zonePosActual, camAngle, 0.05)
+		draw.SimpleText(zone.name, zoneLabelFont, 0, 0, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		if territoryOwner then
+			draw.SimpleText(territoryOwner.name, zoneLabelFont, 0, 32, territoryOwner.color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		end
+		cam.End3D2D()
+	end
+
 	popClippingCircle(6)
 	render.PopCustomClipPlane()
-
-
 
 	cam.IgnoreZ(false)
 

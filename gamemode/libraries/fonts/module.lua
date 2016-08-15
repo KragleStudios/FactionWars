@@ -2,9 +2,9 @@
 -- DEFINES FONTS TO BE USED THROUGHOUT THE GAMEMODE
 --
 
-if SERVER then 
+if SERVER then
 	AddCSLuaFile()
-	return 
+	return
 end
 
 require 'sty'

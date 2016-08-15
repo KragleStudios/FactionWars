@@ -10,6 +10,7 @@ require 'ra'
 -- require modules
 fw.dep(SHARED, 'data')
 fw.dep(SHARED, 'teams')
+fw.dep(CLIENT, 'fonts')
 
 -- define constants
 fw.zone.zoneDataDir = fw.config.dataDir .. (SERVER and '/zones_sv/' or '/zones_cl/')
