@@ -174,7 +174,16 @@ function Entity:FWDrawInfo()
 	--
 	local types = fw.resource.types
 	local info = self:FWGetResourceInfo()
-	if not info or not info.amProducing or not info.amStoring or not info.haveResources or not info.productionBeingUsed then return end
+	if info then
+		ndoc.observe(info, 'fw.infopanel', function()
+			if IsValid(self._fwInfoPanel) then
+				self._fwInfoPanel:Remove()
+				self._fwInfoPanel = nil
+			end
+		end, ndoc.kWILDCARD)
+	else
+		info = {}
+	end
 
 	local panel, outer
 
