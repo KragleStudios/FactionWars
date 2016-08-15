@@ -119,6 +119,8 @@ else
 		status:Dock(FILL)
 
 		row:SetRefresh(function(memory)
+			if (not IsValid(self)) then return false end
+
 			if memory.power ~= self:FWHaveResource("power") then
 				memory.power = self:FWHaveResource("power")
 				return true -- will trigger the next function... refresh to get called
