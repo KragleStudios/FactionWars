@@ -26,7 +26,7 @@ local function removeVotePanel(pnl, index)
 end
 
 -- play nice with lua refresh this does not.
-ndoc.addHook('fwVotes.?', 'set', function(vIndex, tbl)
+ndoc.observe(ndoc.table, 'fw.votes', function(vIndex, tbl)
 	if tbl == nil then
 		if IsValid(votePanels[vIndex]) then
 			votePanels[vIndex]:Remove()
@@ -134,4 +134,4 @@ ndoc.addHook('fwVotes.?', 'set', function(vIndex, tbl)
 			pnl:Remove()
 		end
 	end)
-end)
+end, ndoc.compilePath('fwVotes.?'))

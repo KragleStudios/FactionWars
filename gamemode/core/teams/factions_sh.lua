@@ -64,7 +64,6 @@ function fw.team.registerFaction(factionName, tbl)
 		ndoc.table.fwFactions[tbl.index] = {
 			money = 10000,
 			boss = nil,
-			inventory = {},
 			agenda = nil,
 			stringID = tbl.stringID
 			-- inventory = {}, -- TODO: determine if inventory sholud exist at faction level

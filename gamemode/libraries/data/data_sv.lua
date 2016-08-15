@@ -24,7 +24,7 @@ end
 
 --
 -- CREATE PLAYER DATA TABLE
--- 
+--
 
 -- fields to persist
 data.persistFields = {}
@@ -32,7 +32,7 @@ data.persistFields = {}
 local function updateStorage(tbl, val, a, b, ...)
 	if b == nil then
 		tbl[a] = val
-		return 
+		return
 	end
 	if not tbl[a] then
 		tbl[a] = {}
@@ -40,37 +40,11 @@ local function updateStorage(tbl, val, a, b, ...)
 	updateStorage(tbl[a], val, b, ...)
 end
 
-function data.addPersistField(path)
-	local function addPersistHelper(...)
-		if not table.HasValue(data.persistFields, name) then
-			table.insert(data.persistFields, name)
-
-			-- work around to get the last key since it's not available
-			-- through tbl.__path BUT it might be provided by the wildcards so we must be careful
-			local lastKey = select(select('#', ...), ...)
-			if lastKey == ndoc.kWILDCARD then lastKey = nil end 
-
-			ndoc.addHook(ndoc.path('fwPlayers', ndoc.kWILDCARD, ...), 'set', function(pl, ...)
-				if not data.player[pl] then return end -- for some reason their data is not loaded yet. It can not be modified.
-				local value, tbl = select(select('#', ...) - 1, ...)
-				updateStorage(data.player[pl], value, select(3, tbl.__path(lastKey)))
-			end)
-		end
-	end
-
-	local compiledPath = ndoc.compilePath(path)
-
-	if select('#', compiledPath()) == 1 then
-		-- if its the simple case then we can do it very efficiently
-		ndoc.addHook(ndoc.path('fwPlayers', ndoc.kWILDCARD, compiledPath()), 'set', function(pl, value)
-			if not data.player[pl] then return end 
-			data.player[pl][path] = value
-		end)
-	else 
-		-- the general case for a path that may contain wildcards is far more complicated
-		addPersistHelper(compiledPath())
-	end
-
+function data.addPersistField(field)
+	ndoc.observe(ndoc.table, 'fw.persistField', function(pl, value)
+		if not data.player[pl] then return end
+		data.player[pl][field] = value
+	end, 'fwPlayers', ndoc.kWILDCARD, field)
 end
 
 
@@ -81,7 +55,7 @@ ndoc.table.fwPlayers = {}
 function data.loadPlayer(player)
 	fw.print("loading data for " .. tostring(player).. ".")
 
-	if not ndoc.table.fwPlayers[player] then 
+	if not ndoc.table.fwPlayers[player] then
 		ndoc.table.fwPlayers[player] = {}
 	end
 	engine.loadPlayerData(player:SteamID64() or '0', function(_data)
@@ -102,7 +76,7 @@ function data.updateStore(player)
 	fw.print("update store for " .. tostring(player))
 	if not data.player[player] then
 		player:FWChatPrint(Color(255, 0, 0), '[FACTION WARS] [ERROR] your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.')
-		return 
+		return
 	end
 
 	engine.updatePlayerData(player:SteamID64() or '0', data.player[player], ra.fn.noop) -- no callback
@@ -153,7 +127,7 @@ end)
 --
 if file.Exists(data._cacheFile, 'DATA') then
 	local succ, sessionCache = pcall(spon.decode, file.Read(data._cacheFile, 'DATA'))
-	if not succ then 
+	if not succ then
 		fw.print("failed to recover player data session cache!")
 		fw.print(sessionCache)
 	else
@@ -182,7 +156,7 @@ for k,v in ipairs(player.GetAll()) do
 end
 --
 -- CONSOLE COMMANDS
--- 
+--
 concommand.Add('fw_data_updateStore', function(pl, cmd, args)
 	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
 

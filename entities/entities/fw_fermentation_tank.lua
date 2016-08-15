@@ -3,17 +3,18 @@ if SERVER then AddCSLuaFile() end
 ENT.Type = "anim"
 ENT.Base = "base_entity"
 
-ENT.PrintName   = "Money Printer Base"
+ENT.PrintName   = "Fermentation Tank"
 ENT.Author      = "thelastpenguin"
 ENT.Category    = "Faction Wars"
 
 ENT.Color = color_white
-ENT.PowerRequired = 2
-ENT.PrintAmount = 200
-ENT.PrintInterval = 10
+ENT.BrewInterval = 60
 ENT.MaxConsumption = {
 	["power"] = 2,
-	["paper"] = 2,
+	["water"] = 4,
+}
+ENT.MaxStorage = {
+	['alcohol'] = 25,
 }
 ENT.NETWORK_SIZE = 500
 
@@ -34,34 +35,37 @@ if SERVER then
 		end
 
 		self.Consumes = {
-			['power'] = self.PowerRequired,
+			['power'] = 1,
+		}
+		self.Storage = {
+			['alcohol'] = 0,
 		}
 		fw.resource.addEntity(self)
 
-		self._timerName = 'money-printer-' .. self:EntIndex()
-		self:SetNextPrintTime(self.PrintInterval * 1.5)
+		self._timerName = 'fermentation-tank-' .. self:EntIndex()
+		self:SetNextBrewTime(self.BrewInterval * 1.5)
 	end
 
-	function ENT:FillupPaperCache()
-		local havePaper = self:FWHaveResource('paper')
-		if havePaper < self.MaxConsumption.paper then
-			local succ = self:ConsumeResource('paper', self.MaxConsumption.paper)
+	function ENT:FillupWaterCache()
+		local haveWater = self:FWHaveResource('water')
+		if havePaper < self.MaxConsumption.water then
+			local succ = self:ConsumeResource('water', self.MaxConsumption.water)
 		end
 	end
 
-	function ENT:SetNextPrintTime(timeInSeconds)
+	function ENT:SetNextBrewTime(timeInSeconds)
 		timer.Create(self._timerName, timeInSeconds, 1, function()
-			if self:FWHaveResource('paper') >= self.MaxConsumption.paper then
+			if self:FWHaveResource('water') >= self.MaxConsumption.water and self.Storage.alcohol < self.MaxStorage.alcohol then
 				-- TODO: notify the player that their printer produced a money bag
-				self:FWSetResource('paper', 0)
-				self:FWSetResource('alcohol', self:FWGetResource('alcohol') + 1)
+				self:FWSetResource('water', 0)
+				self.Storage['alcohol'] = self.Storage['alcohol'] + 1
 			end
-			self:SetNextPrintTime(self.PrintInterval)
+			self:SetNextBrewTime(self.BrewInterval)
 		end)
 	end
 
 	function ENT:OnResourceUpdate()
-		self:FillupPaperCache()
+		self:FillupWaterCache()
 		if self:FWHaveResource("power") < self.Consumes['power'] then
 			timer.Pause(self._timerName)
 		else
@@ -99,19 +103,19 @@ else
 				memory.power = self:FWHaveResource('power')
 				return true -- will trigger the next function... refresh to get called
 			end
-			if memory.paper ~= self:FWHaveResource('paper') then
-				memory.paper = self:FWHaveResource('paper')
+			if memory.water ~= self:FWHaveResource('water') then
+				memory.water = self:FWHaveResource('water')
 				return true
 			end
 		end, function()
 			if self:FWHaveResource('power') < self.MaxConsumption.power then
 				status:SetText('NOT ENOUGH POWER')
 				status:SetColor(Color(255, 0, 0))
-			elseif self:FWHaveResource('paper') < self.MaxConsumption.paper then
-				status:SetText('NOT ENOUGH PAPER')
+			elseif self:FWHaveResource('water') < self.MaxConsumption.water then
+				status:SetText('NOT ENOUGH WATER')
 				status:SetColor(Color(255, 0, 0))
 			else
-				status:SetText('PRINTER RUNNING')
+				status:SetText('FERMENTING')
 				status:SetColor(Color(0, 255, 0))
 			end
 		end)

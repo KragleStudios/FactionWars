@@ -233,9 +233,9 @@ fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 end)
 
 -- retain faction after lua refresh
-ndoc.addHook('fwPlayers.?.faction', 'set', function(ply, value)
-	ply._faction = value--
-end)
+ndoc.observe(ndoc.table, 'ply._faction', function(ply, value)
+	ply._faction = value
+end, ndoc.compilePath('fwPlayers.?.faction'))
 
 -- handles all death related functionality
 fw.hook.Add("PlayerDeath", "TeamSpawn", function(ply)

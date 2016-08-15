@@ -111,9 +111,8 @@ vgui.Register('fwHudInfo', {
 					if not IsValid(self.money) then return end
 					self.money:SetText('Money: ' .. fw.config.currencySymbol .. string.Comma(tostring(LocalPlayer():getMoney())))
 				end
-				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'money'), 'set', updateMoney)
 				updateMoney()
-
+				ndoc.observe(ndoc.table,'fw.hud.money', updateMoney, 'fwPlayers', LocalPlayer(), 'money')
 			end
 
 			-- display job
@@ -145,9 +144,8 @@ vgui.Register('fwHudInfo', {
 						self.faction:SetText('NO FACTION')
 					end
 				end
-				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateFaction)
+				ndoc.observe(ndoc.table, 'fw.hud.updateFaction', updateFaction, 'fwPlayers', LocalPlayer(), 'money')
 				updateFaction()
-
 			end
 
 			-- display the boss
@@ -172,8 +170,8 @@ vgui.Register('fwHudInfo', {
 						self.layout:PerformLayout() --refresh bars
 					end
 				end
-				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateBoss)
-				ndoc.addHook('fwFactions.?.boss', 'set', updateBoss)
+				ndoc.observe(ndoc.table, 'fw.hud.updateBoss.1', updateBoss, 'fwPlayers', LocalPlayer(), 'faction')
+				ndoc.observe(ndoc.table, 'fw.hud.updateBoss.2', updateBoss, ndoc.compilePath('fwFactions.?.boss'))
 				updateBoss()
 			end
 
@@ -210,10 +208,10 @@ vgui.Register('fwHudInfo', {
 					end
 				end
 
-				ndoc.addHook('fwZoneControl.?.scores.?', 'set', function(zoneId, factionId, amount)
+				ndoc.observe(ndoc.table, 'fw.hud.zoneControlScores', function(zoneId, factionId, amount)
 					if not IsValid(self.territory) then return end
 					updateTerritory() -- it might be alot of updates... but hopefully it's less than it could otherwise be!
-				end)
+				end, ndoc.compilePath('fwZoneControl.?.scores.?'))
 
 				self.zone:SetUpdater(function()
 					local zone = fw.zone.playerGetZone(LocalPlayer())
