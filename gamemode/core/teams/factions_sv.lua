@@ -3,12 +3,7 @@ function fw.team.addPlayerToFaction(ply, factionId)
 	local f = fw.team.factions[factionId]
 	if not f then return end
 
-	-- if no team or the new faction doesn't have access to the team
-	--[[if not t or (ply:Team() ~= TEAM_CIVILIAN and t.factions ~= nil and not table.HasValue(t.factions, factionId)) then
-		ply:FWChatPrint("You have been set to citizen since your new faction doesn't have access to your old job!")
-		fw.team.demotePlayer(ply)
-	end]]
-
+	--for player counts!
 	fw.team.demotePlayer(ply)
 	ply:FWChatPrint("You have been set to Civilian!")
 	

@@ -20,7 +20,7 @@ local faction_mt = {
 		end)
 	end,
 	getColor = function(self)
-		return self
+		return self.color
 	end,
 	getNWData = function(self)
 		return ndoc.table.fwFactions[self.index] or {}

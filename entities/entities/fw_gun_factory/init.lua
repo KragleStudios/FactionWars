@@ -1,3 +1,5 @@
+util.AddNetworkString("Fac_ProduceGun")
+
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("cl_init.lua")
 include("cl_init.lua")
@@ -45,51 +47,81 @@ function ENT:Initialize()
 
 	self:SetTrigger(true)
 
-	self:SetParts(0)
-	self:SetScrap(0)
+	self.Consumes = {
+		power = 1,
+	}
+
+	fw.resource.addEntity(self)
 end
 
 function ENT:Touch(ent)
-	if ent:GetClass() == "fw_gun_parts" and not ent.Used then
+	if ent:GetClass() == "fw_gun_scrap" and not ent.Used then
 		ent.Used = true
 		ent:Remove()
-		self:SetParts(self:GetParts() + 1)
-	elseif ent:GetClass() == "fw_gun_scrap" and not ent.Used then
-		ent.Used = true
-		ent:Remove()
-		self:SetScrap(self:GetScrap() + 1)
+		self:FWSetResource("scrap", self:FWHaveResource("scrap") + 1)
 	end
 end
 
 function ENT:SpawnGun(type)
-	local ent = ents.Create("fw_gun")
-	local weapon = outputs[type][math.random(1, #outputs[type])]
-	ent:SetWeapon(weapon)
-	ent:SetBuff(table.Random(table.GetKeys(fw.weapons.buffs)))
-	ent:SetModel(weapons.Get(weapon).WorldModel)
-	ent:SetPos(self:GetPos())
-	ent:Spawn()
+	timer.Simple(5, function()
+		local ent = ents.Create("fw_gun")
+		local weapon = outputs[type][math.random(1, #outputs[type])]
+		ent:SetWeapon(weapon)
+		ent:SetBuff(table.Random(table.GetKeys(fw.weapons.buffs)))
+		ent:SetModel(weapons.Get(weapon).WorldModel)
+		ent:SetPos(self:GetPos())
+		ent:Spawn()
+	end)
+
+	local effect = EffectData()
+	effect:SetOrigin(self:GetPos())
+	effect:SetNormal(self:GetPos():Up())
+	util.Effect("ManhackSparks", effect)
 end
 
-function ENT:Use(ply, trigger)
-	local scrap = self:GetScrap()
-	local parts = self:GetParts()
-
-	if parts >= 3 and scrap >= 3 then
-		self:SpawnGun("rifle")
-		self:SetParts(self:GetParts() - 3)
-		self:SetScrap(self:GetScrap() - 3)
-	elseif parts >= 3 and scrap >= 2 then
-		self:SpawnGun("twohanded")
-		self:SetParts(self:GetParts() - 3)
-		self:SetScrap(self:GetScrap() - 2)
-	elseif parts >= 2 and scrap >= 2 then
-		self:SpawnGun("smg")
-		self:SetParts(self:GetParts() - 2)
-		self:SetScrap(self:GetScrap() - 2)
-	elseif parts >= 1 and scrap >= 1 then
-		self:SpawnGun("pistol")
-		self:SetParts(self:GetParts() - 1)
-		self:SetScrap(self:GetScrap() - 1)
+function ENT:OnResourceUpdate()
+	local res = self:FWHaveResource("parts")
+	if res < self.MaxConsumption.parts then
+		self:ConsumeResource("parts", self.MaxConsumption.parts)
 	end
 end
+
+function ENT:OnRemove()
+	fw.resource.removeEntity(self)
+end
+
+net.Receive("Fac_ProduceGun", function(len, ply)
+	local ent = net.ReadEntity()
+	local type = net.ReadUInt(4)
+
+	if ply:GetPos():Distance(ent:GetPos()) > 200 or not ply:Alive() then return end
+
+	local parts = ent:FWHaveResource("parts")
+	local scrap = ent:FWHaveResource("scrap")
+
+	if type == 0 then
+		if parts >= 1 and scrap >= 1 then
+			ent:SpawnGun("pistol")
+		else
+			ply:FWChatPrint("The factory requires 1 part and 1 scrap to produce this gun.")
+		end
+	elseif type == 1 then
+		if parts >= 2 and scrap >= 2 then
+			ent:SpawnGun("smg")
+		else
+			ply:FWChatPrint("The factory requires 2 parts and 2 scrap to produce this gun.")
+		end
+	elseif type == 2 then
+		if parts >= 3 and scrap >= 2 then
+			ent:SpawnGun("twohanded")
+		else
+			ply:FWChatPrint("The factory requires 3 parts and 2 scrap to produce this gun.")
+		end
+	elseif type == 3 then
+		if parts >= 1 and scrap >= 1 then
+			ent:SpawnGun("rifle")
+		else
+			ply:FWChatPrint("The factory requires 3 parts and 3 scrap to produce this gun.")
+		end
+	end
+end)

@@ -16,3 +16,7 @@ function ENT:Initialize()
 
 	self:SetUseType(SIMPLE_USE)
 end
+
+function ENT:Think()
+	self:SetAngles(Angle(0, 0, 0))
+end

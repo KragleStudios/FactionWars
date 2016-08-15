@@ -18,7 +18,8 @@ vgui.Register('FWHUDEntityInfo', {
 			self:GetTop():Add(vgui.Create('FWUITableViewItem'):SetText(fw.weapons.buffs[entity:GetBuff()][2]))
 		end
 
-		self:GetTop():Add(vgui.Create('FWUITableViewItem'):SetText('OWNER: ' .. 'unknown'))
+		local owner = entity:FWGetOwner()
+		self:GetTop():Add(vgui.Create('FWUITableViewItem'):SetText('OWNER: ' .. (IsValid(owner) and owner:Nick() or 'unknown')))
 
 		self:GetTop():Add(self:PushPanel(vgui.Create('FWUITableViewSection'):SetTitle("RESOURCES")))
 

@@ -37,7 +37,7 @@ fw.printers.createPrinter("Tier 4 Money Printer", {
 fw.printers.createPrinter("Tier 5 Money Printer", {
 	PrintSpeed = 90,
 	PrintAmount = 2000,
-	PowerRequired = 200,
+	PowerRequired = 3,
 	PaperCap = 3,
 	PaperDrain = 3,
 	Color = Color(192, 57, 43)
