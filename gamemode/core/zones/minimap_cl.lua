@@ -42,6 +42,7 @@ local function popClippingCircle(edges)
 end
 
 local zoneLabelFont = fw.fonts.default_shadow:atSize(32)
+local zoneLabelFontSmall = fw.fonts.default_shadow:atSize(26)
 
 fw.hook.Add('PostDrawOpaqueRenderables', function()
 	if not input.IsKeyDown(KEY_LALT) and not input.IsKeyDown(KEY_RALT) then return end
@@ -97,9 +98,11 @@ fw.hook.Add('PostDrawOpaqueRenderables', function()
 	local lblbeam_stop3 = Vector(0, 0, 800) + eyeAnglesRotated:Right() * 50
 
 	for k, zone in pairs(fw.zone.zoneList) do
+		-- render the zone
 		local territoryOwner = fw.team.factions[zone:getControllingFaction()]
 		getRendererForZone(zone, zone == curZone and color_inside or color_outside, territoryOwner and territoryOwner.colorTransparent or color_nofaction):draw()
 
+		-- render the label bar
 		local center = Vector(zone.center[1], zone.center[2], 0)
 		local s1 = center + lblbeam_stop1
 		local s2 = center + lblbeam_stop2
@@ -115,23 +118,28 @@ fw.hook.Add('PostDrawOpaqueRenderables', function()
 	local camAngle = LocalPlayer():EyeAngles()
 	camAngle:RotateAroundAxis(camAngle:Right(), 90)
 	camAngle:RotateAroundAxis(camAngle:Up(), -90)
+
 	for k, zone in pairs(fw.zone.zoneList) do
 		local territoryOwner = fw.team.factions[zone:getControllingFaction()]
 		local zonePosActual = m * zone.label_pos
 		cam.Start3D2D(zonePosActual, camAngle, 0.05)
 		draw.SimpleText(zone.name, zoneLabelFont, 0, 0, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		if territoryOwner then
-			draw.SimpleText(territoryOwner.name, zoneLabelFont, 0, 32, territoryOwner.color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			local scores = ndoc.table.fwZoneControl[zone.id].scores
+			draw.SimpleText(territoryOwner.name .. ' %'.. scores[territoryOwner.index], zoneLabelFontSmall, 0, 26, territoryOwner.color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		end
 		cam.End3D2D()
 	end
 
+
 	popClippingCircle(6)
-	render.PopCustomClipPlane()
 
 	cam.IgnoreZ(false)
 
 end)
+for i = 1, 10000 do
+	render.PopCustomClipPlane()
+end
 
 hook.Add('ShouldDrawLocalPlayer', 'do stuff', function()
 	if inside then return true end

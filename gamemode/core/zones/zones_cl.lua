@@ -22,21 +22,3 @@ end)
 net.Receive('fw.zone.remove', function()
 	fw.zone.zoneList[net.ReadUInt(32)] = nil
 end)
-
---[[
-fw.hook.Add('PostDrawOpaqueRenderables', 'fw.zones.render', function()
-	local curZone = fw.zone.playerGetZone(LocalPlayer())
-
-	local tr = util.QuickTrace(LocalPlayer():GetPos(), Vector(0, 0,-10000), me)
-	local z = tr.HitPos.z + 0.1
-
-	for k, zone in pairs(fw.zone.zoneList) do
-		-- render all the zones
-		if zone == curZone then
-			zone:render(z, Color(0, 255, 0, 55))
-		else
-			zone:render(z, Color(255, 255, 255, 55))
-		end
-	end
-end)
-]]

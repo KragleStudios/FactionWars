@@ -110,7 +110,9 @@ function Panel:Draw3D(pos, ang, scale)
 			vgui.GetHoveredPanel = function()
 				return hovered
 			end
-
+			gui.MouseX = function() return cursorX end
+			gui.MouseY = function() return cursorY end
+			gui.MousePos = function() return cursorX, cursorY end
 		end
 	end
 

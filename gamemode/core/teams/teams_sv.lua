@@ -233,7 +233,8 @@ fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 end)
 
 -- retain faction after lua refresh
-ndoc.observe(ndoc.table, 'ply._faction', function(ply, value)
+ndoc.observe(ndoc.table, 'ply._faction', function(plyEntIndex, value)
+	local ply = Entity(plyEntIndex)
 	ply._faction = value
 end, ndoc.compilePath('fwPlayers.?.faction'))
 

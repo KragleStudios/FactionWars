@@ -2,6 +2,10 @@ function GM:Initialize(...)
 	return fw.hook.Call('Initialize', ...)
 end
 
+function GM:ShutDown(...)
+	return fw.hook.Call('ShutDown', ...)
+end
+
 function GM:PlayerSpawn(...)
 	return fw.hook.Call('PlayerSpawn', ...)
 end
@@ -55,7 +59,7 @@ end
 
 function GM:PlayerSay(pl, text, ...)
 	local res = fw.hook.Call('PlayerSay', pl, text, ...)
-	if res == nil then 
+	if res == nil then
 		local players = {}
 		for k,v in pairs(player.findInSphere(pl:GetPos(), 400)) do
 			table.insert(players, v)

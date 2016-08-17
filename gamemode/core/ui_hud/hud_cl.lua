@@ -112,7 +112,7 @@ vgui.Register('fwHudInfo', {
 					self.money:SetText('Money: ' .. fw.config.currencySymbol .. string.Comma(tostring(LocalPlayer():getMoney())))
 				end
 				updateMoney()
-				ndoc.observe(ndoc.table,'fw.hud.money', updateMoney, 'fwPlayers', LocalPlayer(), 'money')
+				ndoc.observe(ndoc.table,'fw.hud.money', updateMoney, 'fwPlayers', LocalPlayer():EntIndex(), 'money')
 			end
 
 			-- display job
@@ -144,7 +144,7 @@ vgui.Register('fwHudInfo', {
 						self.faction:SetText('NO FACTION')
 					end
 				end
-				ndoc.observe(ndoc.table, 'fw.hud.updateFaction', updateFaction, 'fwPlayers', LocalPlayer(), 'money')
+				ndoc.observe(ndoc.table, 'fw.hud.updateFaction', updateFaction, 'fwPlayers', LocalPlayer():EntIndex(), 'money')
 				updateFaction()
 			end
 
@@ -170,7 +170,7 @@ vgui.Register('fwHudInfo', {
 						self.layout:PerformLayout() --refresh bars
 					end
 				end
-				ndoc.observe(ndoc.table, 'fw.hud.updateBoss.1', updateBoss, 'fwPlayers', LocalPlayer(), 'faction')
+				ndoc.observe(ndoc.table, 'fw.hud.updateBoss.1', updateBoss, 'fwPlayers', LocalPlayer():EntIndex(), 'faction')
 				ndoc.observe(ndoc.table, 'fw.hud.updateBoss.2', updateBoss, ndoc.compilePath('fwFactions.?.boss'))
 				updateBoss()
 			end
@@ -199,7 +199,7 @@ vgui.Register('fwHudInfo', {
 							factionMax = k
 						end
 					end
-					
+
 					local prot, cap = zone:isProtected(), zone:isCapturable()
 
 					if factionMax and cap and not prot then
@@ -230,33 +230,6 @@ vgui.Register('fwHudInfo', {
 					end
 				end)
 			end
-
-			--[[
-			--TODO move this to it's own panel does not belong here
-			do
-				self.agenda = vgui.Create('fwHudInfoCell', self.layout)
-
-				local function updateAgenda()
-					if not IsValid(self.agenda) then return end
-					print("UPDATING AGENDA")
-
-					if LocalPlayer():inFaction() then
-						local agenda =  ndoc.table.fwFactions[LocalPlayer():getFaction()].agenda or "No agenda currently set!"
-
-						self.agenda:SetText(agenda)
-						self.agenda:SetVisible(true)
-					else
-						self.agenda:SetVisible(false)
-					end
-
-					self.agenda:PerformLayout()
-				end
-				ndoc.addHook(ndoc.path('fwPlayers', LocalPlayer(), 'faction'), 'set', updateAgenda)
-				ndoc.addHook('fwFactions.?.agenda', 'set', updateAgenda)
-				updateAgenda()
-
-			end
-			]]
 		end,
 
 		PerformLayout = function(self)
