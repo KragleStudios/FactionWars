@@ -1,10 +1,12 @@
 ENT.Type = "anim"
 ENT.Base = "base_entity"
 
-ENT.Name = "Turret"
+ENT.PrintName = "Turret"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.Category = "Faction Wars"
+
+ENT.Resources = true
 
 ENT.radius = 300
 ENT.clip = 100

@@ -1,12 +1,11 @@
 if SERVER then AddCSLuaFile() end
 
-fw.dep(SHARED, 'notif')
-fw.dep(SERVER, 'hook')
+fw.dep(SHARED, "notif")
+fw.dep(SERVER, "hook")
 
 file.CreateDir(fw.config.dataDir)
 
-local Player = FindMetaTable('Player')
-
+local Player = FindMetaTable("Player")
 -- Player:GetFWData()
 -- @param amount:number - the amount of money to add
 -- @ret amount:number player's current balance
@@ -18,7 +17,6 @@ if SERVER then
 	function Player:GetFWData()
 		return playerData[self:EntIndex()]
 	end
-
 else
 	local playerData = {}
 	ndoc.observe(ndoc.table, 'wait for fwPlayers', function()
@@ -33,4 +31,4 @@ else
 
 end
 
-fw.include_sv 'data_sv.lua'
+fw.include_sv "data_sv.lua"

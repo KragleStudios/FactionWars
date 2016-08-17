@@ -28,10 +28,10 @@ if (SERVER) then
 		self:SetUseType(SIMPLE_USE)
 
 		self.Storage = {
-			['vodka'] = 5,
+			["vodka"] = 5,
 		}
 		self.Storage = {
-			['alcohol'] = 10,
+			["alcohol"] = 10,
 		}
 
 		fw.resource.addEntity(self)

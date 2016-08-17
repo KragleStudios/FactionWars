@@ -33,7 +33,7 @@ function zone_mt:ctor(id, name, polygon)
 	self.minY = math.huge
 
 	self.id = id
-	self.name = name or 'unnamed'
+	self.name = name or "unnamed"
 
 	-- convert it to points in the red black tree for nice snapping to grid :)
 	self.polygon = {}
@@ -319,22 +319,22 @@ end
 --
 
 local zoneFileCRC32 = nil
-local filename = fw.zone.zoneDataDir .. game.GetMap() .. '.dat'
+local filename = fw.zone.zoneDataDir .. game.GetMap() .. ".dat"
 
 function fw.zone.getSaveFileName()
 	return filename
 end
 
 function fw.zone.createZonesBackup()
-	local backupName = fw.zone.zoneDataDir .. game.GetMap() .. ' - ' .. os.date( "%d-%m-%Y - %H-%M-%S - ", os.time()) .. '.dat'
-	file.Write(backupName, file.Read(fw.zone.getSaveFileName(), 'DATA'))
+	local backupName = fw.zone.zoneDataDir .. game.GetMap() .. " - " .. os.date( "%d-%m-%Y - %H-%M-%S - ", os.time()) .. ".dat"
+	file.Write(backupName, file.Read(fw.zone.getSaveFileName(), "DATA"))
 end
 
 function fw.zone.saveZonesToFile()
 	local filename = fw.zone.getSaveFileName()
 	zoneFileCRC32 = nil
 
-	local f = file.Open(filename, 'wb', 'DATA')
+	local f = file.Open(filename, "wb", "DATA")
 	f:WriteShort(table.Count(fw.zone.zoneList))
 	for k,v in pairs(fw.zone.zoneList) do
 		v:writeToFile(f)
@@ -346,7 +346,7 @@ function fw.zone.loadZonesFromDisk()
 	local filename = fw.zone.getSaveFileName()
 	zoneFileCRC32 = nil
 
-	local f = file.Open(filename, 'rb', 'DATA')
+	local f = file.Open(filename, "rb", "DATA")
 	for i = 1, f:ReadShort() do
 		local zone = fw.zone.new()
 		zone:readFromFile(f)
@@ -360,8 +360,8 @@ function fw.zone.getZoneFileCRC()
 		return zoneFileCRC32
 	end
 	local fname = fw.zone.getSaveFileName()
-	if not file.Exists(fname, 'DATA') then return 0 end
-	zoneFileCRC32 = util.CRC(file.Read(fname, 'DATA') or '')
+	if not file.Exists(fname, "DATA") then return 0 end
+	zoneFileCRC32 = util.CRC(file.Read(fname, "DATA") or "")
 	return zoneFileCRC32
 end
 
@@ -380,7 +380,7 @@ function fw.zone.playerGetZone(ply)
 end
 
 -- keep players in zones up to date
-timer.Create('fw.zone.updatePlayers', 1, 0, function()
+timer.Create("fw.zone.updatePlayers", 1, 0, function()
 	for k, pl in pairs(player.GetAll()) do
 		local inZone = fw.zone.playerGetZone(pl)
 		if inZone ~= pl._fw_zone then
@@ -402,12 +402,12 @@ timer.Create('fw.zone.updatePlayers', 1, 0, function()
 
 			pl._fw_zone = inZone
 
-			hook.Call('PlayerEnteredZone', GAMEMODE, inZone, oldZone, pl)
+			hook.Call("PlayerEnteredZone", GAMEMODE, inZone, oldZone, pl)
 		end
 	end
 end)
 
-local Player = FindMetaTable('Player')
+local Player = FindMetaTable("Player")
 function Player:getZoneInside()
 	return self._fw_zone
 end

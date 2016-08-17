@@ -1,5 +1,5 @@
 AddCSLuaFile("shared.lua")
-AddCSLuaFile('3d2dvgui.lua')
+AddCSLuaFile("3d2dvgui.lua")
 AddCSLuaFile("cl_init.lua")
 include("shared.lua")
 
@@ -245,7 +245,7 @@ net.Receive("fw.updateTurretStatus", function(l, caller)
 	if (not IsValid(ent) or not ent:ShouldFire()) then return end
 
 	local dis = caller:GetPos():DistToSqr(ent:GetPos())
-	if (dis > 75 * 75) then 
+	if (dis > 140 * 140) then 
 		return
 	end
 
@@ -259,7 +259,7 @@ net.Receive("fw.upgradeTurret", function(l, caller)
 	if (not IsValid(ent)) then return end
 
 	local dis = caller:GetPos():DistToSqr(ent:GetPos())
-	if (dis > 75 * 75) then 
+	if (dis > 140 * 140) then 
 		return
 	end
 	
@@ -284,7 +284,7 @@ net.Receive("fw.toggleMenu", function(l, caller)
 	if (not IsValid(ent)) then return end
 
 	local dis = caller:GetPos():DistToSqr(ent:GetPos())
-	if (dis > 75 * 75) then 
+	if (dis > 140 * 140) then 
 		return
 	end
 
@@ -298,7 +298,7 @@ net.Receive("fw.buyAmmo", function(l, caller)
 	if (not IsValid(ent)) then return end
 
 	local dis = caller:GetPos():DistToSqr(ent:GetPos())
-	if (dis > 75 * 75) then 
+	if (dis > 140 * 140) then 
 		return
 	end
 

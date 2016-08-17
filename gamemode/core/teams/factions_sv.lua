@@ -9,7 +9,7 @@ function fw.team.addPlayerToFaction(ply, factionId)
 	
 	hook.Run("PlayerLeftFaction", ply, ply:getFaction())
 	ply:GetFWData().faction = factionId
-	hook.Run('PlayerJoinedFaction', ply, factionId)
+	hook.Run("PlayerJoinedFaction", ply, factionId)
 end
 
 function fw.team.removePlayerFromFaction(ply)

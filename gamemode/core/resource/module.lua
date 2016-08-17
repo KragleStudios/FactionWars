@@ -3,13 +3,14 @@ if SERVER then
 end
 
 -- require external libraries
-require 'ra'
+require "ra"
 
 -- require internal libraries
 fw.dep(SHARED, 'hook')
 fw.dep(CLIENT, '3d2d')
 fw.dep(CLIENT, 'ui')
 fw.dep(CLIENT, 'entity_kit')
+
 
 -- core shared function definitions
 
@@ -35,7 +36,7 @@ end
 --
 -- META METHODS
 --
-local Entity = FindMetaTable('Entity')
+local Entity = FindMetaTable("Entity")
 function Entity:FWGetResourceInfo()
 	if not ndoc.table.fwEntityResources then return end
 	return ndoc.table.fwEntityResources[self:EntIndex()]
@@ -84,6 +85,6 @@ function Entity:FWHasAllResources(table)
 end
 
 -- code too big to reasonably put here
-ra.include_sv 'resource_sv.lua'
-ra.include_cl 'display_cl.lua'
-ra.include_sh 'def_resources.lua'
+ra.include_sv "resource_sv.lua"
+ra.include_cl "display_cl.lua"
+ra.include_sh "def_resources.lua"

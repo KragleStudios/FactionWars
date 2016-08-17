@@ -128,7 +128,7 @@ function fw.ents.canPlayerBuyItem(ply, itemID)
 	if jobs and (not table.HasValue(jobs, ply:Team())) then return false, "you aren't the right job for this!" end
 	
 	if (ply.maxItems[i.entity] and maxItem and maxItem != 0 and ply.maxItems[i.entity] + 1 > maxItem) then
-		return false, 'you already have the max allowed of this item!'
+		return false, "you already have the max allowed of this item!"
 	end
 
 	if (i.canBuy) then 

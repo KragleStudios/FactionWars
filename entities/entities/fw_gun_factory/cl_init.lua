@@ -12,20 +12,20 @@ function ENT:GetDisplayPosition()
 end
 
 function ENT:CustomUI(panel)
-	local row = vgui.Create('fwEntityInfoPanel', panel)
+	local row = vgui.Create("fwEntityInfoPanel", panel)
 	row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
 	row:SetRefresh(function(memory)
-		if memory.power ~= self:FWHaveResource('power') then
-			memory.power = self:FWHaveResource('power')
+		if memory.power ~= self:FWHaveResource("power") then
+			memory.power = self:FWHaveResource("power")
 			return true -- will trigger the next function... refresh to get called
 		end
-		if memory.parts ~= self:FWHaveResource('parts') then
-			memory.paper = self:FWHaveResource('parts')
+		if memory.parts ~= self:FWHaveResource("parts") then
+			memory.paper = self:FWHaveResource("parts")
 			return true
 		end
-		if memory.scrap ~= self:FWHaveResource('scrap') then
-			memory.scrap = self:FWHaveResource('scrap')
+		if memory.scrap ~= self:FWHaveResource("scrap") then
+			memory.scrap = self:FWHaveResource("scrap")
 			return true
 		end
 	end, function() end)

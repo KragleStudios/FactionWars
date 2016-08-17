@@ -2,7 +2,7 @@
 fw.chat.addCMD("help", "Prints a help log to your screen", function(pl)
 	local function formatParameters(param, ...)
 		if not param then return end
-		return '<' .. param.type .. ':' .. param.name .. '>', formatParameters(...)
+		return "<" .. param.type .. ":" .. param.name .. ">", formatParameters(...)
 	end
 
 	pl:FWChatPrint("Please check your console for chat command help")
@@ -12,10 +12,10 @@ fw.chat.addCMD("help", "Prints a help log to your screen", function(pl)
 		if not alreadySeen[command] then
 			alreadySeen[command] = true
 			local color = command.permCheck(pl) and Color(0, 255, 0) or Color(255, 0, 0)
-			pl:FWConPrint(color, table.concat(command.aliases, ' or '), color_white, ' - ', command.helptext)
-			local paramHelp = table.concat({formatParameters(unpack(command.params))}, ' ')
+			pl:FWConPrint(color, table.concat(command.aliases, " or "), color_white, " - ", command.helptext)
+			local paramHelp = table.concat({formatParameters(unpack(command.params))}, " ")
 			if string.len(paramHelp) > 0 then
-				pl:FWConPrint(color_white, '\t', paramHelp)
+				pl:FWConPrint(color_white, "\t", paramHelp)
 			end
 		end
 	end
@@ -69,34 +69,34 @@ fw.chat.addCMD("drop", "Drop your weapon", function(ply)
 end)
 
 local quotelist = {
-	['thelastpenguin'] = {
+	["thelastpenguin"] = {
 		"takes forever to download, especially when you have downloads off",
 		"ask him if he's had an anol probe done recently, cuz dem errors, are coming out of his a**",
 		"im confused as to why that's confusing...",
 		"but rly mikey get lastest version of faction wars",
 		"he is the definition of a human fart. If only he'd just stink off and evaporate ",
 	},
-	['Spai'] = {
+	["Spai"] = {
 		"Editing DarkRP, anyone can do it, but it is all about how you edit it, that is what not everyone can do correctly. - Commander Grox",
 	},
-	['Mikey Howell'] = {
+	["Mikey Howell"] = {
 		"do you realise you're saying lastest",
 		"omg I make all my commits on the website too!",
 		"i just made french toast. call me daddy",
 	},
-	['crazyscouter'] = {
+	["crazyscouter"] = {
 		"Use effects.halo.Add()",
 		"Guys I just realized I've been using the women's restroom the entire time I've been at this restaraunt",
 		"It's the kragle that keeps us together"
 	},
-	['meharryp'] = {
+	["meharryp"] = {
 		"memes",
 		"yeah go fuck a moose and drink your maple syrup"
 	},
-	['Google'] = {
+	["Google"] = {
 		"single quotes are bad because they are alone and they will be bullied"
 	},
-	['aStonedPenguin'] = {
+	["aStonedPenguin"] = {
 		"guys i make all my commits from the github website",
 		"i just wanted ot be here"
 	}
@@ -105,7 +105,7 @@ fw.chat.addCMD("quote", "", function(ply)
 	local rAuthor, name = table.Random(quotelist)
 	local rQuote = table.Random(rAuthor)
 
-	fw.notif.chatPrint(player.GetAll(), name, ': ', rQuote)
+	fw.notif.chatPrint(player.GetAll(), name, ": ", rQuote)
 end)
 
 fw.chat.addCMD("define", "Defines a given string", function(ply, searc)

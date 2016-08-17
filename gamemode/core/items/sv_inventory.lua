@@ -1,11 +1,11 @@
-fw.data.addPersistField('?.inventory.slots')
+fw.data.addPersistField("?.inventory.slots")
 util.AddNetworkString("fw.dropItem")
 
 local invItemID = 1
 
 function fw.inv.canRemoveItem(ply, item)
-	if (item.jobs and not table.HasValue(item.jobs, ply:Team())) then return false, 'wrong team' end
-	if (item.factions and not table.HasValue(item.factions, ply:getFaction())) then return false, 'wrong faction' end
+	if (item.jobs and not table.HasValue(item.jobs, ply:Team())) then return false, "wrong team" end
+	if (item.factions and not table.HasValue(item.factions, ply:getFaction())) then return false, "wrong faction" end
 	
 	return true
 end

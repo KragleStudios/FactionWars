@@ -37,14 +37,14 @@ faction_mt.__index = faction_mt
 -- @ret factionIndex:number
 function fw.team.registerFaction(factionName, tbl)
 	-- assert structure
-	assert(tbl.stringID, 'faction.stringID must be defined')
-	assert(tbl.color, 'faction.color must be defined')
+	assert(tbl.stringID, "faction.stringID must be defined")
+	assert(tbl.color, "faction.color must be defined")
 
 	setmetatable(tbl, faction_mt)
 
 	tbl.index = table.insert(fw.team.factions, tbl)
 	tbl.name = factionName
-	tbl.command = 'fw_joinfaction_' .. tbl.stringID
+	tbl.command = "fw_joinfaction_" .. tbl.stringID
 	tbl.colorTransparent = Color(tbl.color.r, tbl.color.g, tbl.color.b, 20) -- used as the color for zones in the minimap
 
 	if SERVER then
@@ -124,7 +124,7 @@ function fw.team.getFactionPlayers(factionId)
 	return factionsList[factionId]:getPlayers()
 end
 
-local Player = FindMetaTable 'Player'
+local Player = FindMetaTable "Player"
 
 -- gets the player's faction
 function Player:getFaction()

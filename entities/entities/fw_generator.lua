@@ -36,15 +36,15 @@ if SERVER then
 
 		local function consumeResources()
 			if not IsValid(self) then return end
-			local succ = self:ConsumeResource('gas', 1)
+			local succ = self:ConsumeResource("gas", 1)
 			if succ then
 				self.Produces = {
-					['power'] = 5,
+					["power"] = 5,
 				}
 				timer.Simple(30, consumeResources)
 			else
 				self.Produces = {
-					['power'] = 0,
+					["power"] = 0,
 				}
 				timer.Simple(5, consumeResources)
 			end
@@ -58,7 +58,7 @@ if SERVER then
 
 	function ENT:OnRemove()
 		fw.resource.removeEntity(self)
-		timer.Destroy('generator-' .. self:EntIndex())
+		timer.Destroy("generator-" .. self:EntIndex())
 	end
 
 else
@@ -77,6 +77,6 @@ end
 
 if SERVER then
 	function ENT:IsActive() -- optional server side property of an entity that returns if it is active
-		return (self.fwResourcesStatic['gas'] or 0) >= 1
+		return (self.fwResourcesStatic["gas"] or 0) >= 1
 	end
 end

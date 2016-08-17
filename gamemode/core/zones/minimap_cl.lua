@@ -44,7 +44,7 @@ end
 local zoneLabelFont = fw.fonts.default_shadow:atSize(32)
 local zoneLabelFontSmall = fw.fonts.default_shadow:atSize(26)
 
-fw.hook.Add('PostDrawOpaqueRenderables', function()
+fw.hook.Add("PostDrawOpaqueRenderables", function()
 	if not input.IsKeyDown(KEY_LALT) and not input.IsKeyDown(KEY_RALT) then return end
 
 	local curZone = fw.zone.playerGetZone(LocalPlayer())
@@ -141,7 +141,7 @@ for i = 1, 10000 do
 	render.PopCustomClipPlane()
 end
 
-hook.Add('ShouldDrawLocalPlayer', 'do stuff', function()
+hook.Add("ShouldDrawLocalPlayer", "do stuff", function()
 	if inside then return true end
 	return false
 end)

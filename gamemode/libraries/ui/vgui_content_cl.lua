@@ -2,7 +2,7 @@ local panelBg = fw.ui.const_panel_background
 local frameBg = fw.ui.const_frame_background
 local lightenRate = fw.ui.const_nesting_lighten_rate
 
-vgui.Register('FWUIPanel', {
+vgui.Register("FWUIPanel", {
 	isFWUIPanel = function() end,
 
 	Paint = function(self, w, h)
@@ -67,9 +67,9 @@ vgui.Register('FWUIPanel', {
 
 		return self
 	end,
-}, 'STYPanel')
+}, "STYPanel")
 
-vgui.Register('FWUIButton', {
+vgui.Register("FWUIButton", {
 
 	Init = function(self)
 		self.BaseClass.Init(self)
@@ -77,9 +77,9 @@ vgui.Register('FWUIButton', {
 		self._bgTint = {}
 
 		self:SetNoOutline(false)
-		self:SetBackgroundTint('normal', nil)
-		self:SetBackgroundTint('hovered', Color(255, 255, 255, 50), 10)
-		self:SetBackgroundTint('pressed', Color(255, 255, 255, 100), 30)
+		self:SetBackgroundTint("normal", nil)
+		self:SetBackgroundTint("hovered", Color(255, 255, 255, 50), 10)
+		self:SetBackgroundTint("pressed", Color(255, 255, 255, 100), 30)
 	end,
 
 	SetNoOutline = function(self, bOutline)
@@ -120,8 +120,8 @@ vgui.Register('FWUIButton', {
 	PaintNormal = function(self, w, h)
 		self:PaintBackground(w, h)
 
-		if self._bgTint['normal'] then
-			surface.SetDrawColor(self._bgTint['normal'])
+		if self._bgTint["normal"] then
+			surface.SetDrawColor(self._bgTint["normal"])
 			surface.DrawRect(1, 1, w - 2, h - 2)
 		end
 	end,
@@ -129,8 +129,8 @@ vgui.Register('FWUIButton', {
 	PaintHovered = function(self, w, h)
 		self:PaintBackground(w, h)
 
-		if self._bgTint['hovered'] then
-			surface.SetDrawColor(self._bgTint['hovered'])
+		if self._bgTint["hovered"] then
+			surface.SetDrawColor(self._bgTint["hovered"])
 			surface.DrawRect(1, 1, w - 2, h - 2)
 		end
 	end,
@@ -138,8 +138,8 @@ vgui.Register('FWUIButton', {
 	PaintPressed = function(self, w, h)
 		self:PaintBackground(w, h)
 
-		if self._bgTint['pressed'] then
-			surface.SetDrawColor(self._bgTint['pressed'])
+		if self._bgTint["pressed"] then
+			surface.SetDrawColor(self._bgTint["pressed"])
 			surface.DrawRect(1, 1, w - 2, h - 2)
 		end
 	end,
@@ -153,18 +153,18 @@ vgui.Register('FWUIButton', {
 		end
 	end,
 
-}, 'STYButton')
+}, "STYButton")
 
-vgui.Register('FWUIFrame', {
+vgui.Register("FWUIFrame", {
 	Init = function(self)
-		self._shaddow = vgui.Create('FWUIDropShadow')
+		self._shaddow = vgui.Create("FWUIDropShadow")
 			:SetColor(Color(0, 0, 0, 150))
 			:SetRadius(32)
 			:SetNoBackground(true)
 			:ParentTo(self)
 
-		self._titleBar = vgui.Create('FWUIPanel', self)
-		self._titleBar._titleLabel = Label('Unnamed Frame', self._titleBar)
+		self._titleBar = vgui.Create("FWUIPanel", self)
+		self._titleBar._titleLabel = Label("Unnamed Frame", self._titleBar)
 		self._titleBar:SetBackgroundTint(color_black, 230)
 
 		self._titleBar.OnMousePressed = function(self)
@@ -183,9 +183,9 @@ vgui.Register('FWUIFrame', {
 		end
 		self:SetMouseInputEnabled(true)
 
-		self._titleBar._closeButton = sty.With(vgui.Create('FWUIButton', self._titleBar))
+		self._titleBar._closeButton = sty.With(vgui.Create("FWUIButton", self._titleBar))
 			:SetFont(fw.fonts.default)
-			:SetText('X')
+			:SetText("X")
 			:Dock(RIGHT)
 			:SetNoBackground(true)
 			:SetNoOutline(true) ()
@@ -249,24 +249,24 @@ vgui.Register('FWUIFrame', {
 		surface.SetDrawColor(frameBg)
 		surface.DrawRect(0, 0, w, h)
 	end,
-}, 'EditablePanel')
+}, "EditablePanel")
 
-vgui.Register('FWUITextBox', {
+vgui.Register("FWUITextBox", {
 	Init = function(self)
-		self._label = Label('', self)
+		self._label = Label("", self)
 		self:SetFont(fw.fonts.default)
 		self:SetInset(0)
 		self._align = fw.ui.LEFT
 	end,
 
 	SetAlign = function(self, align)
-		if type(align) == 'string' then
+		if type(align) == "string" then
 			align = align:lower()
-			if align == 'left' then
+			if align == "left" then
 				align = fw.ui.LEFT
-			elseif align == 'right' then
+			elseif align == "right" then
 				align = fw.ui.RIGHT
-			elseif align == 'center' then
+			elseif align == "center" then
 				align = fw.ui.CENTER
 			end
 		end
@@ -315,11 +315,11 @@ vgui.Register('FWUITextBox', {
 
 
 
-concommand.Add('fw_ui_testFrame', function()
+concommand.Add("fw_ui_testFrame", function()
 	if IsValid(__FWUI_TESTFRAME) then
 		__FWUI_TESTFRAME:Remove()
 	end
-	__FWUI_TESTFRAME = vgui.Create('FWUIFrame')
+	__FWUI_TESTFRAME = vgui.Create("FWUIFrame")
 	sty.With(__FWUI_TESTFRAME)
 		:SetSize(400, 400)
 		:Center()

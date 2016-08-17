@@ -16,10 +16,10 @@ local function decodeHelper()
 	end
 end
 
-net.Receive('fw.notif.conprint', function()
+net.Receive("fw.notif.conprint", function()
 	local function printColorized(col, a, ...)
 		if not a then return print() end
-		if type(a) == 'table' then
+		if type(a) == "table" then
 			printColorized(a, ...)
 		else
 			MsgC(col, a)
@@ -27,21 +27,21 @@ net.Receive('fw.notif.conprint', function()
 		end
 	end
 
-	printColorized(color_white, '![fw] ', Color(200, 200, 200), decodeHelper())
+	printColorized(color_white, "![fw] ", Color(200, 200, 200), decodeHelper())
 end)
 
 net.Receive("fw.notif.chat", function()
 	chat.AddText(color_white, decodeHelper())
 end)
 
-net.Receive('fw.notif.chatprint', function()
-	chat.AddText(Color(55,55,55), '[' .. GAMEMODE.CondensedName .. '] ', color_white, decodeHelper())
+net.Receive("fw.notif.chatprint", function()
+	chat.AddText(Color(55,55,55), "[" .. GAMEMODE.CondensedName .. "] ", color_white, decodeHelper())
 end)
 
 
 local nextNotification = 0
 
-net.Receive('fw.notif.screenCenter', function()
+net.Receive("fw.notif.screenCenter", function()
 	local color = net.ReadColor()
 	local time = net.ReadFloat()
 	local title = net.ReadString()
@@ -50,7 +50,7 @@ net.Receive('fw.notif.screenCenter', function()
 	local function display()
 		local p = sty.ScreenScale(5)
 
-		local notificationWrapper = vgui.Create('DPanel')
+		local notificationWrapper = vgui.Create("DPanel")
 
 		timer.Simple(time, function()
 			if IsValid(notificationWrapper) then
@@ -71,7 +71,7 @@ net.Receive('fw.notif.screenCenter', function()
 
 		notificationWrapper.Think = function() self:MoveToFront() end
 
-		local notification = vgui.Create('fwNotification', notificationWrapper)
+		local notification = vgui.Create("fwNotification", notificationWrapper)
 		notification:SetPos(0, p)
 		notification:SetSize(notificationWrapper:GetWide(), notificationWrapper:GetTall() - 2 * p)
 
@@ -91,11 +91,11 @@ net.Receive('fw.notif.screenCenter', function()
 
 end)
 
-vgui.Register('fwNotification', {
+vgui.Register("fwNotification", {
 		Init = function(self)
-			self.titleLabel = sty.With(Label('', self))
+			self.titleLabel = sty.With(Label("", self))
 				:SetTextColor(Color(20, 20, 20)) ()
-			self.messageLabel = sty.With(Label('', self))
+			self.messageLabel = sty.With(Label("", self))
 				:SetTextColor(Color(20, 20, 20)) ()
 		end,
 
@@ -149,5 +149,5 @@ vgui.Register('fwNotification', {
 			surface.DrawRect(0, 0, w, h)
 		end,
 
-	}, 'STYPanel')
+	}, "STYPanel")
 

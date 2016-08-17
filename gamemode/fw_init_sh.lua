@@ -1,5 +1,5 @@
-require 'ra'
-require 'spon'
+require "ra"
+require "spon"
 
 DeriveGamemode("sandbox")
 
@@ -13,7 +13,7 @@ fw = {
 -- gamemode variables
 (GM or GAMEMODE).Name = "Faction Wars"
 (GM or GAMEMODE).CondensedName = "FW"
-(GM or GAMEMODE).Author = "thelastpenguin, Mikey Howell, Spai, crazyscouter, meharryp, sanny"
+(GM or GAMEMODE).Author = "thelastpenguin, Mikey Howell, Spai, crazyscouter, meharryp, sanny, krekeris, Google"
 (GM or GAMEMODE).Email = ""
 (GM or GAMEMODE).Website = "https://github.com/GMFactionWars"
 (GM or GAMEMODE).Version = "0.1.0 Alpha"
@@ -21,11 +21,11 @@ fw = {
 -- utils
 local resolvePath = function(fn)
 	local function resolvePathHelper(stackdepth, path)
-		if file.Exists(path, 'LUA') then return path end
+		if file.Exists(path, "LUA") then return path end
 		local info = debug.getinfo(stackdepth, "S").short_src
-		info = info:sub(info:find('/') + 1) -- strip off the first /
-		info = ra.path.normalize(ra.path.getFolder(info) .. '/' .. path)
-		if file.Exists(info, 'LUA') then return info end
+		info = info:sub(info:find("/") + 1) -- strip off the first /
+		info = ra.path.normalize(ra.path.getFolder(info) .. "/" .. path)
+		if file.Exists(info, "LUA") then return info end
 		return path
 	end
 	return function(...)
@@ -47,10 +47,10 @@ print "--------------------------"
 fw.module_srcs = {}
 fw.loaded_modules = {}
 fw.module_search_paths = {
-	(GM or GAMEMODE).FolderName .. '/gamemode/libraries',
-	(GM or GAMEMODE).FolderName .. '/gamemode/core',
-	(GM or GAMEMODE).FolderName .. '/gamemode/plugins',
-	'fw_plugins',
+	(GM or GAMEMODE).FolderName .. "/gamemode/libraries",
+	(GM or GAMEMODE).FolderName .. "/gamemode/core",
+	(GM or GAMEMODE).FolderName .. "/gamemode/plugins",
+	"fw_plugins",
 }
 
 -- fw.dep with printing
@@ -66,14 +66,14 @@ function fw.dep(cond, name)
 	if not fw.module_srcs[name] then error("no such module \'" .. name .. "\'") end
 
 	Msg(" - [module] " .. name)
-	Msg(" " .. string.rep('.', 30 - name:len()) .. " ")
+	Msg(" " .. string.rep(".", 30 - name:len()) .. " ")
 	MsgC(Color(255, 155, 0), "loading\n")
 
 	local ret = include(fw.module_srcs[name])
 	if ret then fw[name] = ret end
 
 	Msg(" - [module] " .. name)
-	Msg(" " .. string.rep('.', 30 - name:len()) .. " ")
+	Msg(" " .. string.rep(".", 30 - name:len()) .. " ")
 	MsgC(Color(0, 255, 0), "OK\n")
 
 	fw.loaded_modules[name] = true
@@ -90,14 +90,14 @@ end
 
 print "Modules: "
 
-fw.include_sv '_config_sv.lua'
-fw.include_sh '_config_sh.lua'
-fw.include_cl '_config_cl.lua'
+fw.include_sv "_config_sv.lua"
+fw.include_sh "_config_sh.lua"
+fw.include_cl "_config_cl.lua"
 
 for _, searchPath in ipairs(fw.module_search_paths) do
-	local _, directories = file.Find(searchPath.. '/*', 'LUA')
+	local _, directories = file.Find(searchPath.. "/*", "LUA")
 	for k, dir in ipairs(directories) do
-		fw.module_srcs[dir] = searchPath .. '/' .. dir .. '/module.lua'
+		fw.module_srcs[dir] = searchPath .. "/" .. dir .. "/module.lua"
 	end
 end
 
@@ -124,21 +124,21 @@ if fw.debug then
 	print " factionwars todo list    "
 	print "--------------------------"
 	local function todoFinder(directory)
-		local files, directories = file.Find(directory .. '/*', 'LUA')
+		local files, directories = file.Find(directory .. "/*", "LUA")
 		for k,v in ipairs(files) do
-			local data = file.Read(directory .. '/' .. v, 'LUA')
+			local data = file.Read(directory .. "/" .. v, "LUA")
 			if (not data) then continue end
-			for k, line in ipairs(string.Explode('\n', data)) do
-				if line and line:find('--') and line:find('TODO') then
-					MsgC(color_white, directory .. '/' .. v .. ':' .. k)
-					local start = string.find(line, 'TODO') + 4
+			for k, line in ipairs(string.Explode("\n", data)) do
+				if line and line:find("--") and line:find("TODO") then
+					MsgC(color_white, directory .. "/" .. v .. ":" .. k)
+					local start = string.find(line, "TODO") + 4
 					MsgN(string.sub(line, start))
 				end
 			end
 		end
 
 		for k,v in ipairs(directories) do
-			todoFinder(directory .. '/' .. v)
+			todoFinder(directory .. "/" .. v)
 		end
 	end
 
@@ -156,26 +156,26 @@ end load() -- local function load()
 
 
 -- load default hooks for base gamemode compatability
-fw.include_sh 'hooks_sh.lua'
+fw.include_sh "hooks_sh.lua"
 
 
 
 
 -- allow for reloading
-concommand.Add('fw_reload', function(pl)
-	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
+concommand.Add("fw_reload", function(pl)
+	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint("insufficient privliages") return end
 	load()
 
-	fw.hook.Call('Initialize')
+	fw.hook.Call("Initialize")
 	for k, pl in ipairs(player.GetAll()) do
-		fw.hook.Call('PlayerInitialSpawn', pl)
-		fw.hook.Call('PlayerSpawn', pl)
+		fw.hook.Call("PlayerInitialSpawn", pl)
+		fw.hook.Call("PlayerSpawn", pl)
 	end
 
 end)
 
 concommand.Add("fw_reloadmap", function(pl)
-	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
+	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint("insufficient privliages") return end
 	fw.print("Reloading map...")
 	RunConsoleCommand("changelevel", game.GetMap())
 end )

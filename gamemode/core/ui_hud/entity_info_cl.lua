@@ -1,6 +1,6 @@
-vgui.Register('FWHUDEntityInfo', {
+vgui.Register("FWHUDEntityInfo", {
 	Init = function(self)
-		self.content = vgui.Create('STYLayoutVertical', self)
+		self.content = vgui.Create("STYLayoutVertical", self)
 		self.content:SetPadding(sty.ScreenScale(1))
 
 		self.panelStack = {self.content}
@@ -11,17 +11,17 @@ vgui.Register('FWHUDEntityInfo', {
 
 		-- TODO: make entity health update
 		if entity:getHealth() then
-			self:GetTop():Add(vgui.Create('FWUITableViewItem'):SetText('HEALTH: ' .. entity:getHealth() .. '/' .. entity:getMaxHealth()))
+			self:GetTop():Add(vgui.Create("FWUITableViewItem"):SetText("HEALTH: " .. entity:getHealth() .. "/" .. entity:getMaxHealth()))
 		end
 
 		if entity.GetBuff and entity:GetBuff() ~= "" then
-			self:GetTop():Add(vgui.Create('FWUITableViewItem'):SetText(fw.weapons.buffs[entity:GetBuff()][2]))
+			self:GetTop():Add(vgui.Create("FWUITableViewItem"):SetText(fw.weapons.buffs[entity:GetBuff()][2]))
 		end
 
 		local owner = entity:FWGetOwner()
-		self:GetTop():Add(vgui.Create('FWUITableViewItem'):SetText('OWNER: ' .. (IsValid(owner) and owner:Nick() or 'unknown')))
+		self:GetTop():Add(vgui.Create("FWUITableViewItem"):SetText("OWNER: " .. (IsValid(owner) and owner:Nick() or "unknown")))
 
-		self:GetTop():Add(self:PushPanel(vgui.Create('FWUITableViewSection'):SetTitle("RESOURCES")))
+		self:GetTop():Add(self:PushPanel(vgui.Create("FWUITableViewSection"):SetTitle("RESOURCES")))
 
 		-- add panels to self:GetTop() here for resource information
 
@@ -49,13 +49,13 @@ vgui.Register('FWHUDEntityInfo', {
 		self.content:PerformLayout()
 	end,
 
-}, 'STYPanel')
+}, "STYPanel")
 
 if IsValid(__FWHUD_ENTITYINFO) then
 	__FWHUD_ENTITYINFO:Remove()
 end
 
-fw.hook.Add('PreRender', 'fw.hud.entityInfo', function()
+fw.hook.Add("PreRender", "fw.hud.entityInfo", function()
 	local ent = LocalPlayer():GetEyeTrace().Entity
 
 	if IsValid(__FWHUD_ENTITYINFO) then
@@ -68,7 +68,7 @@ fw.hook.Add('PreRender', 'fw.hud.entityInfo', function()
 
 	if IsValid(ent) and not (IsValid(LocalPlayer()) and IsValid(LocalPlayer():GetActiveWeapon()) and LocalPlayer():GetActiveWeapon():GetClass() == "gmod_camera") then
 
-		__FWHUD_ENTITYINFO = vgui.Create('FWHUDEntityInfo')
+		__FWHUD_ENTITYINFO = vgui.Create("FWHUDEntityInfo")
 		__FWHUD_ENTITYINFO:SetEntity(ent)
 		__FWHUD_ENTITYINFO:PerformLayout()
 

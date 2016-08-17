@@ -2,23 +2,23 @@ fw.data = fw.data or {}
 local data = fw.data
 
 -- load external dependencies
-require 'spon' spon.noCompat = true
+require "spon" spon.noCompat = true
 
 -- load internal dependencies
-fw.dep(SERVER, 'hook')
+fw.dep(SERVER, "hook")
 
 
 -- create directories
 data._rootdir = fw.config.dataDir
-data._cacheFile = data._rootdir .. '/sessionCache.txt'
+data._cacheFile = data._rootdir .. "/sessionCache.txt"
 file.CreateDir(data._rootdir)
 
-local engine = fw.include_sv 'engine_text_sv.lua'
+local engine = fw.include_sv "engine_text_sv.lua"
 
-if (fw.config.dataStore == 'text') then
-	engine = include 'engine_text_sv.lua'
-elseif (fw.config.dataStore == 'sql') then
-	engine = include 'engine_sql_sv.lua'
+if (fw.config.dataStore == "text") then
+	engine = include "engine_text_sv.lua"
+elseif (fw.config.dataStore == "sql") then
+	engine = include "engine_sql_sv.lua"
 	engine.database:connect()
 end
 
@@ -41,10 +41,10 @@ local function updateStorage(tbl, val, a, b, ...)
 end
 
 function data.addPersistField(field)
-	ndoc.observe(ndoc.table, 'fw.persistField', function(pl, value)
+	ndoc.observe(ndoc.table, "fw.persistField", function(pl, value)
 		if not data.player[pl] then return end
 		data.player[pl][field] = value
-	end, 'fwPlayers', ndoc.kWILDCARD, field)
+	end, "fwPlayers", ndoc.kWILDCARD, field)
 end
 
 
@@ -57,7 +57,7 @@ function data.loadPlayer(player)
 	if not ndoc.table.fwPlayers[player:EntIndex()] then
 		ndoc.table.fwPlayers[player:EntIndex()] = {}
 	end
-	engine.loadPlayerData(player:SteamID64() or '0', function(_data)
+	engine.loadPlayerData(player:SteamID64() or "0", function(_data)
 		-- copy the data to data.player
 		data.player[player] = _data
 
@@ -67,35 +67,35 @@ function data.loadPlayer(player)
 			pdataTable[k] = v
 		end
 
-		hook.Call('FWLoadedPlayerData', player)
+		hook.Call("FWLoadedPlayerData", player)
 	end)
 end
 
 function data.updateStore(player)
 	fw.print("update store for " .. tostring(player))
 	if not data.player[player] then
-		player:FWChatPrint(Color(255, 0, 0), '[FACTION WARS] [ERROR] your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.')
+		player:FWChatPrint(Color(255, 0, 0), "[FACTION WARS] [ERROR] your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.")
 		return
 	end
 
-	engine.updatePlayerData(player:SteamID64() or '0', data.player[player], ra.fn.noop) -- no callback
+	engine.updatePlayerData(player:SteamID64() or "0", data.player[player], ra.fn.noop) -- no callback
 end
 
 --
 -- HOOKS TO LOAD AND STORE PLAYER SESSION DATA
 --
-fw.hook.Add('PlayerInitialSpawn', function(pl)
+fw.hook.Add("PlayerInitialSpawn", function(pl)
 	data.loadPlayer(pl)
 end)
 
-fw.hook.Add('PlayerDisconnected', function(pl)
+fw.hook.Add("PlayerDisconnected", function(pl)
 	data.updateStore(pl)
 
 	data.player[pl] = nil
 	ndoc.table.fwPlayers[pl] = nil
 end)
 
-fw.hook.Add('ShutDown', function()
+fw.hook.Add("ShutDown", function()
 	data.updateGlobalCache()
 end)
 
@@ -105,17 +105,17 @@ end)
 function data.updateGlobalCache()
 	local persist = {}
 	for player, data in pairs(data.player) do
-		persist[player:SteamID64() or '0'] = data
+		persist[player:SteamID64() or "0"] = data
 	end
 
 	file.Write(data._cacheFile, spon.encode(persist))
 end
 
-timer.Create('fwUpdateCache', fw.config.data_cacheUpdateInterval, 0, function()
+timer.Create("fwUpdateCache", fw.config.data_cacheUpdateInterval, 0, function()
 	data.updateGlobalCache()
 end)
 
-timer.Create('fwUpdateStore', fw.config.data_storeUpdateInterval, 0, function()
+timer.Create("fwUpdateStore", fw.config.data_storeUpdateInterval, 0, function()
 	for k, player in ipairs(player.GetAll()) do
 		data.updateStore(player)
 	end
@@ -124,8 +124,8 @@ end)
 --
 -- restore sessions from the cache to the perminant data store
 --
-if file.Exists(data._cacheFile, 'DATA') then
-	local succ, sessionCache = pcall(spon.decode, file.Read(data._cacheFile, 'DATA'))
+if file.Exists(data._cacheFile, "DATA") then
+	local succ, sessionCache = pcall(spon.decode, file.Read(data._cacheFile, "DATA"))
 	if not succ then
 		fw.print("failed to recover player data session cache!")
 		fw.print(sessionCache)
@@ -156,8 +156,8 @@ end
 --
 -- CONSOLE COMMANDS
 --
-concommand.Add('fw_data_updateStore', function(pl, cmd, args)
-	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
+concommand.Add("fw_data_updateStore", function(pl, cmd, args)
+	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint("insufficient privliages") return end
 
 	if IsValid(pl) then
 		pl:FWConPrint("updated data store for all players")
@@ -172,8 +172,8 @@ end, function()
 	return {"commits all changes to player data to the long term storage"}
 end)
 
-concommand.Add('fw_data_updateCache', function(pl, cmd, args)
-	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint('insufficient privliages') return end
+concommand.Add("fw_data_updateCache", function(pl, cmd, args)
+	if IsValid(pl) and not pl:IsSuperAdmin() then pl:ChatPrint("insufficient privliages") return end
 
 	if IsValid(pl) then
 		pl:FWConPrint("updated global cache")

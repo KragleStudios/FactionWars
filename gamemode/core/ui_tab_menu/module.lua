@@ -1,10 +1,10 @@
-require 'sty'
-fw.dep(CLIENT, 'hook')
-fw.dep(CLIENT, 'fonts')
-fw.dep(CLIENT, 'ui')
-fw.dep(CLIENT, 'teams')
-fw.dep(CLIENT, 'items')
-fw.dep(CLIENT, 'faction_banks')
+require "sty"
+fw.dep(CLIENT, "hook")
+fw.dep(CLIENT, "fonts")
+fw.dep(CLIENT, "ui")
+fw.dep(CLIENT, "teams")
+fw.dep(CLIENT, "items")
+fw.dep(CLIENT, "faction_banks")
 
 if SERVER then
 	AddCSLuaFile()
@@ -13,7 +13,7 @@ end
 
 fw.tab_menu = {}
 
-vgui.Register('fwTabMenuTabButton', {
+vgui.Register("fwTabMenuTabButton", {
 	Init = function(self)
 		self.BaseClass.Init(self)
 	end,
@@ -39,20 +39,20 @@ vgui.Register('fwTabMenuTabButton', {
 		surface.DrawRect(0, 0, w, h)
 
 	end,
-}, 'STYButton')
+}, "STYButton")
 
-vgui.Register('fwTabMenu', {
+vgui.Register("fwTabMenu", {
 		Init = function(self)
 			local p = sty.ScreenScale(2)
 
-			self.navView = vgui.Create('STYLayoutVertical', self)
+			self.navView = vgui.Create("STYLayoutVertical", self)
 			self.navView.Paint = function(self, w, h)
 			end
 			self.navView:SetPadding(5)
 		end,
 
 		AddNavButton = function(self, title, doClick)
-			local p = vgui.Create('fwTabMenuTabButton', self.navView)
+			local p = vgui.Create("fwTabMenuTabButton", self.navView)
 			p:SetText(title)
 			p:SetFont(fw.fonts.default)
 			p:SetTall(sty.ScreenScale(20))
@@ -83,7 +83,7 @@ vgui.Register('fwTabMenu', {
 		end,
 
 		Show = function(self, onFinish)
-			sty.RestoreCursor('fw.tabmenu')
+			sty.RestoreCursor("fw.tabmenu")
 
 			-- animate into view
 			self:PerformLayout()
@@ -94,19 +94,19 @@ vgui.Register('fwTabMenu', {
 		end,
 
 		Hide = function(self, onFinish)
-			sty.SaveCursor('fw.tabmenu')
+			sty.SaveCursor("fw.tabmenu")
 
 			self:MoveTo(-self:GetWide(), self:GetY(), fw.config.uiAnimTimeQuick, 0, -1, onFinish)
 		end,
 
-	}, 'STYPanel')
+	}, "STYPanel")
 
 
-fw.hook.Add('ScoreboardShow', function()
+fw.hook.Add("ScoreboardShow", function()
 	fw.tab_menu.showScoreboard()
 end)
 
-fw.hook.Add('ScoreboardHide', function()
+fw.hook.Add("ScoreboardHide", function()
 	fw.tab_menu.hideScoreboard()
 end)
 
@@ -116,22 +116,22 @@ function fw.tab_menu.showScoreboard()
 
 	fw.tab_menu.hideContent(function()
 
-		__FW_TABMENU = vgui.Create('fwTabMenu')
+		__FW_TABMENU = vgui.Create("fwTabMenu")
 		__FW_TABMENU:Show()
 
-		__FW_TABMENU:AddView('PLAYERS', fw.tab_menu.tabDisplayPlayersList)
-		__FW_TABMENU:AddView('JOBS', fw.tab_menu.tabDisplayJobsList)
-		__FW_TABMENU:AddView('ITEMS', fw.tab_menu.itemManagement)
-		__FW_TABMENU:AddView('INVENTORY', fw.tab_menu.playerInventory)
+		__FW_TABMENU:AddView("PLAYERS", fw.tab_menu.tabDisplayPlayersList)
+		__FW_TABMENU:AddView("JOBS", fw.tab_menu.tabDisplayJobsList)
+		__FW_TABMENU:AddView("ITEMS", fw.tab_menu.itemManagement)
+		__FW_TABMENU:AddView("INVENTORY", fw.tab_menu.playerInventory)
 
 		if (LocalPlayer():inFaction() and LocalPlayer():getFaction() ~= FACTION_DEFAULT) then
-			__FW_TABMENU:AddView('FACTION', fw.tab_menu.faction)
+			__FW_TABMENU:AddView("FACTION", fw.tab_menu.faction)
 		end
 		if (LocalPlayer():IsAdmin()) then
-			__FW_TABMENU:AddView('ADMIN', fw.tab_menu.administration)
+			__FW_TABMENU:AddView("ADMIN", fw.tab_menu.administration)
 		end
 
-		vgui.Create('FWUIDropShadow')
+		vgui.Create("FWUIDropShadow")
 			:SetRadius(32)
 			:SetColor(Color(0, 0, 0, 50))
 			:ParentTo(__FW_TABMENU)
@@ -165,12 +165,12 @@ end
 function fw.tab_menu.displayContent(title, constructor, callback)
 	fw.tab_menu.hideContent(function()
 
-		__FW_TABMENU_CONTENT = vgui.Create('FWUIFrame')
+		__FW_TABMENU_CONTENT = vgui.Create("FWUIFrame")
 		local content = __FW_TABMENU_CONTENT
 
 		content:SetSize(sty.ScrH * 0.7, sty.ScrH * 0.7)
 		content:MakePopup()
-		content:SetTitle(title or 'Unknown Content Panel')
+		content:SetTitle(title or "Unknown Content Panel")
 		content:CenterHorizontal()
 		content.DoClose = function()
 			fw.tab_menu.hideContent()
@@ -184,7 +184,7 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 			callback or ra.fn.noop)
 		content:PerformLayout()
 
-		local wrapper = vgui.Create('STYPanel', content)
+		local wrapper = vgui.Create("STYPanel", content)
 		wrapper:SetPos(sty.CalcInsetPos(sty.ScreenScale(2), 0, content:GetHeaderYOffset()))
 		wrapper:SetSize(
 			sty.CalcInsetSize(
@@ -197,10 +197,10 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 end
 
 function fw.tab_menu.tabDisplayPlayersList(panel)
-	local space = vgui.Create('DScrollPanel', panel)
+	local space = vgui.Create("DScrollPanel", panel)
 	space:SetSize(panel:GetSize())
 
-	local listLayout = vgui.Create('STYLayoutVertical', space)
+	local listLayout = vgui.Create("STYLayoutVertical", space)
 	listLayout:SetWide(panel:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(5))
 
@@ -209,7 +209,7 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 
 		if (#plys == 0) then continue end
 
-		local factionPlayers = vgui.Create('FWUITableViewSection', listLayout)
+		local factionPlayers = vgui.Create("FWUITableViewSection", listLayout)
 		factionPlayers:SetTitle(fac.name.." - "..#plys.." PLAYER(S) TOTAL")
 		factionPlayers:SetPadding(sty.ScreenScale(2))
 
@@ -224,7 +224,7 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 			local jobPlayers = teamList[k]
 			if not jobPlayers or #jobPlayers == 0 then continue end
 
-			local factionJobs = vgui.Create('FWUITableViewSection', factionPlayers)
+			local factionJobs = vgui.Create("FWUITableViewSection", factionPlayers)
 			factionJobs:SetTitle(jobs)
 			factionJobs:SetTitleTint(team.GetColor(job:getID()))
 			factionJobs:SetPadding(sty.ScreenScale(2))
@@ -232,27 +232,27 @@ function fw.tab_menu.tabDisplayPlayersList(panel)
 			for k,ply in pairs(jobPlayers) do
 				if (ply:getFaction() != fac:getID()) then continue end
 
-				local panel = vgui.Create('FWUIPanel', factionJobs)
+				local panel = vgui.Create("FWUIPanel", factionJobs)
 				panel:SetTall(sty.ScreenScale(15))
 				panel:SetBackgroundTint(team.GetColor(ply:Team()), 5)
 
-				local title = vgui.Create('FWUITextBox', panel)
+				local title = vgui.Create("FWUITextBox", panel)
 				title:SetInset(sty.ScreenScale(2))
 				title:SetText(ply:Nick())
 				title:DockMargin(sty.ScreenScale(4), 0, 0, 0)
 				title:Dock(FILL)
 
-				local ping = vgui.Create('FWUITextBox', panel)
+				local ping = vgui.Create("FWUITextBox", panel)
 				ping:SetInset(sty.ScreenScale(2))
 				ping:SetText("Ping: "..ply:Ping())
 				ping:Dock(RIGHT)
 
-				local deaths = vgui.Create('FWUITextBox', panel)
+				local deaths = vgui.Create("FWUITextBox", panel)
 				deaths:SetInset(sty.ScreenScale(2))
 				deaths:SetText("Deaths: "..ply:Deaths())
 				deaths:Dock(RIGHT)
 
-				local kills = vgui.Create('FWUITextBox', panel)
+				local kills = vgui.Create("FWUITextBox", panel)
 				kills:SetInset(sty.ScreenScale(2))
 				kills:SetText("Kills: "..ply:Frags())
 				kills:Dock(RIGHT)
@@ -264,14 +264,14 @@ end
 
 --TODO: Faction Administration Panel
 function fw.tab_menu.faction(pnl)
-	local space = vgui.Create('DScrollPanel', pnl)
+	local space = vgui.Create("DScrollPanel", pnl)
 	space:SetSize(pnl:GetSize())
 
-	local listLayout = vgui.Create('STYLayoutVertical', space)
+	local listLayout = vgui.Create("STYLayoutVertical", space)
 	listLayout:SetWide(space:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(5))
 
-	local factionTools = vgui.Create('FWUITableViewSection', listLayout)
+	local factionTools = vgui.Create("FWUITableViewSection", listLayout)
 	factionTools:SetTitle("Currency")
 	factionTools:SetPadding(sty.ScreenScale(2))
 
@@ -284,7 +284,7 @@ function fw.tab_menu.faction(pnl)
 	amountText:SetInset(sty.ScreenScale(5))
 	amountText:SetText("Balance: $"..string.Comma(amount))
 	amountText:Dock(FILL)
-	amountText:SetAlign('center')
+	amountText:SetAlign("center")
 	amountText:SizeToContents()
 
 	ndoc.addHook("fwFactions.?.money", "set", function(index, money)
@@ -294,7 +294,7 @@ function fw.tab_menu.faction(pnl)
 		amountText:SizeToContents()
 	end)
 
-	local actionButtons = vgui.Create('FWUIPanel', factionTools)
+	local actionButtons = vgui.Create("FWUIPanel", factionTools)
 	actionButtons:SetTall(sty.ScreenScale(12))
 
 	local depositBtn = vgui.Create("FWUIButton", actionButtons)
@@ -324,7 +324,7 @@ function fw.tab_menu.faction(pnl)
 			local jobPlayers = v:getPlayers()
 			if #jobPlayers == 0 then continue end
 
-			local factionJobs = vgui.Create('FWUITableViewSection', pList)
+			local factionJobs = vgui.Create("FWUITableViewSection", pList)
 			factionJobs:SetTitle(jobs)
 			factionJobs:SetTitleTint(team.GetColor(v:getID()))
 			factionJobs:SetPadding(sty.ScreenScale(2))
@@ -332,7 +332,7 @@ function fw.tab_menu.faction(pnl)
 			for k,v in pairs(jobPlayers) do
 				if (v:getFaction() != LocalPlayer():getFaction()) then continue end
 
-				local panel = vgui.Create('FWUIButton', factionJobs)
+				local panel = vgui.Create("FWUIButton", factionJobs)
 				panel:SetTall(sty.ScreenScale(12))
 				panel:SetText(v:Nick())
 				function panel:DoClick()
@@ -355,19 +355,19 @@ function fw.tab_menu.faction(pnl)
 end
 
 function fw.tab_menu.administration(pnl)
-	local space = vgui.Create('DScrollPanel', pnl)
+	local space = vgui.Create("DScrollPanel", pnl)
 	space:SetSize(pnl:GetSize())
 
-	local listLayout = vgui.Create('STYLayoutVertical', space)
+	local listLayout = vgui.Create("STYLayoutVertical", space)
 	listLayout:SetWide(space:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(5))
 
-	local playerList = vgui.Create('FWUITableViewSection', listLayout)
+	local playerList = vgui.Create("FWUITableViewSection", listLayout)
 	playerList:SetTitle("Players")
 	playerList:SetPadding(sty.ScreenScale(2))
 
 	for k,v in pairs(player.GetAll()) do
-		local plyButton = vgui.Create('FWUIButton', playerList)
+		local plyButton = vgui.Create("FWUIButton", playerList)
 		plyButton:SetText(v:Nick())
 		plyButton:SetTall(sty.ScreenScale(15))
 		plyButton.ply = v
@@ -404,15 +404,15 @@ function fw.tab_menu.administration(pnl)
 	"sbox_noclip"}
 
 	if LocalPlayer():IsSuperAdmin() then
-		local settings = vgui.Create('FWUITableViewSection', listLayout)
+		local settings = vgui.Create("FWUITableViewSection", listLayout)
 		settings:SetTitle("Server settings")
 		settings:SetPadding(sty.ScreenScale(2))
 
 		for k,v in pairs(aCvars) do
-			local panel = vgui.Create('FWUIPanel', settings)
+			local panel = vgui.Create("FWUIPanel", settings)
 			panel:SetTall(sty.ScreenScale(15))
 
-			local title = vgui.Create('FWUITextBox', panel)
+			local title = vgui.Create("FWUITextBox", panel)
 			title:SetInset(sty.ScreenScale(2))
 			title:SetText(v)
 			title:DockMargin(sty.ScreenScale(4), 0, 0, 0)
@@ -431,10 +431,10 @@ end
 
 function fw.tab_menu.itemManagement(parent)
 	parent.categories = {}
-	local space = vgui.Create('DScrollPanel', parent)
+	local space = vgui.Create("DScrollPanel", parent)
 	space:SetSize(parent:GetSize())
 
-	local listLayout = vgui.Create('STYLayoutVertical', space)
+	local listLayout = vgui.Create("STYLayoutVertical", space)
 	listLayout:SetWide(parent:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(2))
 
@@ -451,18 +451,18 @@ function fw.tab_menu.itemManagement(parent)
 			parent.categories[category] = itemSelection
 		end
 
-		local panel = vgui.Create('FWUIPanel')
+		local panel = vgui.Create("FWUIPanel")
 		panel:SetTall(sty.ScreenScale(12))
 
 		parent.categories[category]:Add(panel)
 
-		local buyButton = vgui.Create('FWUIButton', panel)
+		local buyButton = vgui.Create("FWUIButton", panel)
 		buyButton:SetFont(fw.fonts.default)
-		buyButton:SetText('BUY ITEM $'..price)
+		buyButton:SetText("BUY ITEM $"..price)
 		buyButton.DoClick = doClickBuy
 		buyButton:SetWide(sty.ScreenScale(60))
 
-		local title = vgui.Create('FWUITextBox', panel)
+		local title = vgui.Create("FWUITextBox", panel)
 		title:SetText(item)
 		title:Dock(FILL)
 		title:DockMargin(sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1))
@@ -482,7 +482,7 @@ end
 
 --TODO: Player inventory panel
 function fw.tab_menu.playerInventory(pnl)
-	local space = vgui.Create('DScrollPanel', pnl)
+	local space = vgui.Create("DScrollPanel", pnl)
 	space:SetSize(pnl:GetSize())
 
 	local icons = vgui.Create("DIconLayout", space)
@@ -544,29 +544,29 @@ end
 
 --job menu display! :D
 function fw.tab_menu.tabDisplayJobsList(panel)
-	local space = vgui.Create('DScrollPanel', panel)
+	local space = vgui.Create("DScrollPanel", panel)
 	space:SetSize(panel:GetSize())
 
-	local listLayout = vgui.Create('STYLayoutVertical', space)
+	local listLayout = vgui.Create("STYLayoutVertical", space)
 	listLayout:SetWide(panel:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(2))
 
-	local factionsListSection = vgui.Create('FWUITableViewSection', listLayout)
-	factionsListSection:SetTitle('FACTIONS')
+	local factionsListSection = vgui.Create("FWUITableViewSection", listLayout)
+	factionsListSection:SetTitle("FACTIONS")
 	factionsListSection:SetPadding(sty.ScreenScale(2))
 
 	local function createFactionButton(fname, players, doClickJoin)
-		local panel = vgui.Create('FWUIPanel')
+		local panel = vgui.Create("FWUIPanel")
 		panel:SetTall(sty.ScreenScale(12))
 		factionsListSection:Add(panel)
 
-		local joinButton = vgui.Create('FWUIButton', panel)
+		local joinButton = vgui.Create("FWUIButton", panel)
 		joinButton:SetFont(fw.fonts.default)
-		joinButton:SetText('JOIN FACTION')
+		joinButton:SetText("JOIN FACTION")
 		joinButton.DoClick = doClickJoin
 		joinButton:SetWide(sty.ScreenScale(60))
 
-		local title = vgui.Create('FWUITextBox', panel)
+		local title = vgui.Create("FWUITextBox", panel)
 		title:SetText(fname)
 
 		joinButton:Dock(RIGHT)
@@ -584,22 +584,22 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 
 	-- leave faction
 	if LocalPlayer():inFaction() and LocalPlayer():getFaction() ~= FACTION_DEFAULT then
-		local panel = vgui.Create('FWUIPanel')
+		local panel = vgui.Create("FWUIPanel")
 		panel:SetTall(sty.ScreenScale(12))
 		factionsListSection:Add(panel)
 
-		local joinButton = vgui.Create('FWUIButton', panel)
-		joinButton:SetText('LEAVE')
+		local joinButton = vgui.Create("FWUIButton", panel)
+		joinButton:SetText("LEAVE")
 		joinButton:SetFont(fw.fonts.default)
 		joinButton.DoClick = function()
 			fw.tab_menu .hideContent()
-			LocalPlayer():ConCommand('fw_faction_leave \n')
+			LocalPlayer():ConCommand("fw_faction_leave \n")
 		end
 
 		joinButton:SetWide(sty.ScreenScale(60))
 
-		local title = vgui.Create('FWUITextBox', panel)
-		title:SetText('Leave ' .. fw.team.getFactionByID(LocalPlayer():getFaction()):getName())
+		local title = vgui.Create("FWUITextBox", panel)
+		title:SetText("Leave " .. fw.team.getFactionByID(LocalPlayer():getFaction()):getName())
 
 		joinButton:Dock(RIGHT)
 		title:Dock(FILL)
@@ -620,7 +620,7 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 		pnl:SetTall(sty.ScreenScale(12))
 		jobListSection:Add(pnl)
 
-		local title = vgui.Create('FWUITextBox', pnl)
+		local title = vgui.Create("FWUITextBox", pnl)
 		title:SetText(job:getName())
 		title:Dock(FILL)
 
@@ -635,21 +635,21 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 		end
 
 		if #job.models > 1 then
-			local pickModel = vgui.Create('FWUIButton', pnl)
+			local pickModel = vgui.Create("FWUIButton", pnl)
 			pickModel:SetText("SET MODEL")
 			pickModel:SetFont(fw.fonts.default)
 			pickModel:SetWide(sty.ScreenScale(40))
 			pickModel:Dock(RIGHT)
 
 			-- model panels
-			local mdlPanel = vgui.Create('FWUIPanel', self)
+			local mdlPanel = vgui.Create("FWUIPanel", self)
 			mdlPanel:SetVisible(false)
 			jobListSection:Add(mdlPanel)
 
 			mdlPanel:SetTall(sty.ScreenScale(40))
 
 			for k,v in ipairs(job.models) do
-				local mdl = vgui.Create('SpawnIcon', mdlPanel)
+				local mdl = vgui.Create("SpawnIcon", mdlPanel)
 				mdl:SetSize(mdlPanel:GetTall(), mdlPanel:GetTall())
 				mdl:PerformLayout()
 				mdl:SetModel(v)

@@ -17,7 +17,7 @@ ENT.MaxConsumption = {
 	["alcohol"] = 1,
 }
 ENT.MaxStorage = {
-	['vodka'] = 25,
+	["vodka"] = 25,
 }
 ENT.NETWORK_SIZE = 500
 
@@ -64,34 +64,34 @@ if SERVER then
 		end
 
 		self.Consumes = {
-			['power'] = self.MaxConsumption.power,
+			["power"] = self.MaxConsumption.power,
 		}
 		self.Storage = {
-			['vodka'] = 0,
+			["vodka"] = 0,
 		}
 		fw.resource.addEntity(self)
 
-		self._timerName = 'distillery-tank-' .. self:EntIndex()
+		self._timerName = "distillery-tank-" .. self:EntIndex()
 		self:SetNextBrewTime(self.BrewInterval * 1.5)
 	end
 
 	function ENT:FillupAlcoholCache()
-		local haveAlcohol = self:FWHaveResource('alcohol')
+		local haveAlcohol = self:FWHaveResource("alcohol")
 		if haveAlcohol < self.MaxConsumption.alcohol then
-			local succ = self:ConsumeResource('alcohol', self.MaxConsumption.alcohol)
+			local succ = self:ConsumeResource("alcohol", self.MaxConsumption.alcohol)
 		end
 	end
 
 	function ENT:CanBrew()
-		return self:FWHaveResource('alcohol') >= self.MaxConsumption.alcohol and self.Storage.vodka < self.MaxStorage.vodka
+		return self:FWHaveResource("alcohol") >= self.MaxConsumption.alcohol and self.Storage.vodka < self.MaxStorage.vodka
 	end
 
 	function ENT:SetNextBrewTime(timeInSeconds)
 		timer.Create(self._timerName, timeInSeconds, 1, function()
 			if self:CanBrew() and self:GetOn() then
 
-				self:FWSetResource('alcohol', 0)
-				self.Storage['vodka'] = self.Storage['vodka'] + 1
+				self:FWSetResource("alcohol", 0)
+				self.Storage["vodka"] = self.Storage["vodka"] + 1
 			end
 			self:SetNextBrewTime(self.BrewInterval)
 		end)
@@ -99,7 +99,7 @@ if SERVER then
 
 	function ENT:OnResourceUpdate()
 		self:FillupAlcoholCache()
-		if self:FWHaveResource("power") < self.Consumes['power'] then
+		if self:FWHaveResource("power") < self.Consumes["power"] then
 			timer.Pause(self._timerName)
 		else
 			timer.UnPause(self._timerName)
@@ -145,18 +145,18 @@ else
 
 	function ENT:CustomUI(panel)
 		local ent = self
-		local row = vgui.Create('fwEntityInfoPanel', panel)
+		local row = vgui.Create("fwEntityInfoPanel", panel)
 		row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
-		local status = vgui.Create('FWUITextBox', row)
-		status:SetAlign('center')
+		local status = vgui.Create("FWUITextBox", row)
+		status:SetAlign("center")
 		status:Dock(FILL)
 
 		row:SetRefresh(function(memory)
 			if (not IsValid(ent)) then return end
 
-			if memory.power ~= ent:FWHaveResource('power') then
-				memory.power = ent:FWHaveResource('power')
+			if memory.power ~= ent:FWHaveResource("power") then
+				memory.power = ent:FWHaveResource("power")
 				return true -- will trigger the next function... refresh to get called
 			end
 			if memory.vodka == ent.MaxStorage.vodka then
@@ -168,17 +168,17 @@ else
 				return true
 			end
 		end, function()
-			if ent:FWHaveResource('power') < ent.MaxConsumption.power then
-				status:SetText('NOT ENOUGH POWER')
+			if ent:FWHaveResource("power") < ent.MaxConsumption.power then
+				status:SetText("NOT ENOUGH POWER")
 				status:SetColor(Color(255, 0, 0))
 			elseif ent:FWGetResourceInfo().amStoring.vodka == ent.MaxStorage.vodka then
-				status:SetText('MAX STORAGE REACHED')
+				status:SetText("MAX STORAGE REACHED")
 				status:SetColor(Color(255, 0, 0))
 			elseif (not ent:GetOn()) then
-				status:SetText('DiSTILLER IS OFF')
+				status:SetText("DiSTILLER IS OFF")
 				status:SetColor(Color(255, 0, 0))
 			else
-				status:SetText('DISTILLING')
+				status:SetText("DISTILLING")
 				status:SetColor(Color(0, 255, 0))
 			end
 		end)

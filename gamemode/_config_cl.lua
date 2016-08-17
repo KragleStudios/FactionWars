@@ -1,8 +1,8 @@
 fw.config = fw.config or {}
 -- where should data get stored
-fw.config.dataDir = 'factionwars_cl'
+fw.config.dataDir = "factionwars_cl"
 
-fw.config.currencySymbol = '$'
+fw.config.currencySymbol = "$"
 
 fw.config.uiAnimTimeQuick = 0.1
 fw.config.uiAnimTimeSlower = 0.25

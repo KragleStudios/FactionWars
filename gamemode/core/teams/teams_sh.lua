@@ -50,7 +50,7 @@ function fw.team.register(name, tbl)
 	tbl.election = tbl.election or false
 	if tbl.faction and not istable(tbl.faction) then tbl.faction = {tbl.faction} end
 
-	tbl.command = 'fw_job_' .. tbl.stringID
+	tbl.command = "fw_job_" .. tbl.stringID
 
 	-- set meta table and create the team
 	setmetatable(tbl, team_mt)

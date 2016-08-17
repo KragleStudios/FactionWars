@@ -107,7 +107,7 @@ fw.chat.addCMD({"removefactionbase", "removebase"}, "Removes the base set to a z
 	fw.zone.saveCaptureData()
 end):restrictTo("superadmin")
 
-concommand.Add('fw_zone_createBackup', function(pl)
+concommand.Add("fw_zone_createBackup", function(pl)
 	if not pl:IsSuperAdmin() then
 		return pl:FWConPrint(Color(255, 0, 0), "you do not have permission to run this command")
 	end
@@ -133,7 +133,7 @@ end
 
 local MAX_CAPTURE_SCORE = fw.config.zoneCaptureScore
 local ZONE_CAPTURE_RATE = fw.config.zoneCaptureRate
-timer.Create('fw.zone_capture.updateCaptureProgress', 1, 0, function()
+timer.Create("fw.zone_capture.updateCaptureProgress", 1, 0, function()
 	for k, zone in pairs(fw.zone.zoneList) do
 		if (not zone:canBeCaptured()) then continue end
 
@@ -333,7 +333,7 @@ fw.chat.addCMD({"removefactionbase", "removebase"}, "Removes the base set to a z
 	fw.zone.saveCapCache()
 end):restrictTo("superadmin")
 
-concommand.Add('fw_zone_createBackup', function(pl)
+concommand.Add("fw_zone_createBackup", function(pl)
 	if not pl:IsSuperAdmin() then
 		return pl:FWConPrint(Color(255, 0, 0), "you do not have permission to run this command")
 	end

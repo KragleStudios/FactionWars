@@ -8,7 +8,7 @@ ENT.Category        = "Faction Wars"
 ENT.NETWORK_SIZE = 0
 ENT.Resources = true
 ENT.MaxStorage = {
-	['water'] = 100
+	["water"] = 100
 }
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
@@ -29,7 +29,7 @@ if SERVER then
 		end
 
 		self.Storage = {
-			['water'] = 100,
+			["water"] = 100,
 		}
 
 		fw.resource.addEntity(self)

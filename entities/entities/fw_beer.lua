@@ -27,7 +27,7 @@ if (SERVER) then
 		self:SetUseType(SIMPLE_USE)
 
 		self.Storage = {
-			['alcohol'] = 1,
+			["alcohol"] = 1,
 		}
 
 		fw.resource.addEntity(self)
