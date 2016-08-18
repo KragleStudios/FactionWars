@@ -74,7 +74,7 @@ end
 function data.updateStore(player)
 	fw.print("update store for " .. tostring(player))
 	if not data.player[player] then
-		player:FWChatPrint(Color(255, 0, 0), "[FACTION WARS] [ERROR] your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.")
+		fw.hud.pushNotification(ply, "Faction Wars Error",  "Your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.", Color(255, 0, 0))
 		return
 	end
 

@@ -5,7 +5,7 @@ function fw.team.addPlayerToFaction(ply, factionId)
 
 	--for player counts!
 	fw.team.demotePlayer(ply)
-	ply:FWChatPrint("You have been set to Civilian!")
+	fw.hud.pushNotification(ply, "Teams", "You have been set to Civilian!")
 	
 	hook.Run("PlayerLeftFaction", ply, ply:getFaction())
 	ply:GetFWData().faction = factionId

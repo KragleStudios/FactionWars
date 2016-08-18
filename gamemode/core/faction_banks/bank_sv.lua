@@ -52,7 +52,7 @@ function fw.team.factionWithdraw(ply, amt)
 					v:FWChatPrint(str)
 				end	
 			else
-				ply:FWChatPrint("The boss has rejected your withdrawl proposal!")
+				fw.hud.pushNotification(ply, "Faction Bank", "The boss has rejected your withdrawl proposal!")
 			end
 
 		end, "Yes", "No", 15)
@@ -115,7 +115,7 @@ function fw.team.factionPayroll(faction)
 		v:addMoney(salary)
 
 		local text = "Payroll has been issued! Your salary: $"..salary
-		v:FWChatPrint(Color(0, 0, 0), "[Faction]: ", Color(255, 255, 255), text)
+		fw.hud.pushNotification(v, "Faction", text)
 	end
 end
 
@@ -147,6 +147,6 @@ timer.Create("fw.teams.pay", payroll, 0, function()
 
 		local text = "Payroll has been issued! You've been paid $"..salary
 
-		v:FWChatPrint(Color(0, 0, 0), "[Faction Wars][Faction]: ", Color(255, 255, 255), text)
+		fw.hud.pushNotification(v, "Faction Bank", text)
 	end
 end)
