@@ -119,6 +119,7 @@ else
 				local button = vgui.Create("FWUIButton", panel)
 				button:SetTall(fw.resource.INFO_ROW_HEIGHT)
 				button:SetText(k)
+				button:SetFont(fw.fonts.default)
 
 				button.DoClick = function()
 					panel:createReq(k, v.resources)
@@ -170,6 +171,7 @@ else
 			local Craft = vgui.Create("FWUIButton", panel)
 			Craft:SetTall(fw.resource.INFO_ROW_HEIGHT)
 			Craft:SetText("Craft")
+			Craft:SetFont(fw.fonts.default)
 
 			Craft.DoClick = function()
 				net.Start("fw.createOpioid")
@@ -181,6 +183,7 @@ else
 			local Back = vgui.Create("FWUIButton", panel)
 			Back:SetTall(fw.resource.INFO_ROW_HEIGHT)
 			Back:SetText("Back")
+			Back:SetFont(fw.fonts.default)
 
 			Back.DoClick = function()
 

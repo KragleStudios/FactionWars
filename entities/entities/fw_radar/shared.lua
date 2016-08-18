@@ -1,7 +1,7 @@
 ENT.Type = "anim"
 ENT.Base = "base_entity"
 
-ENT.Name = "Radar"
+ENT.PrintName = "Radar"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.Category = "Faction Wars"

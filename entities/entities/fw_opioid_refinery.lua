@@ -214,6 +214,7 @@ else
 
 		local button = vgui.Create("FWUIButton", panel)
 		button:SetTall(fw.resource.INFO_ROW_HEIGHT)
+		button:SetFont(fw.fonts.default)
 		button.Think = function(pnl)
 			if (not IsValid(self)) then return end
 

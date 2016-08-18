@@ -163,6 +163,7 @@ else
 
 		local button = vgui.Create("FWUIButton", panel)
 		button:SetTall(fw.resource.INFO_ROW_HEIGHT)
+		button:SetFont(fw.fonts.default)
 		button.Think = function(pnl)
 			if (not IsValid(self)) then return end
 
@@ -183,6 +184,7 @@ else
 
 		local alc = vgui.Create("FWUIButton", panel)
 		alc:SetTall(fw.resource.INFO_ROW_HEIGHT)
+		alc:SetFont(fw.fonts.default)
 		alc:SetText("Package Ore")
 		alc:SetEnabled(false)
 
