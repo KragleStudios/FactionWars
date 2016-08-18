@@ -14,24 +14,24 @@ function ENT:Initialize()
 	fw.resource.addEntity(self)
 
 	self.Consumes = {power = 1}
-	self.Produces = {healthpack = 6}
+	self:FWSetResource("healthpack", 6)
 
 	-- every minute add 1 healthpack
 	self.timerName = "fw-healthmachine-refill-" .. self:EntIndex()
 	timer.Create(self.timerName, 60, 0, function()
 		if not IsValid(self) or self:FWHaveResource("power") < self.Consumes.power then return end
-		local hp = self.Produces.healthpack or 0
-		self.Produces.healthpack = math.min(hp + 1, self.MaxProduction.healthpack)
+		local hp = self:FWHaveResource("healthpack") or 0
+		self:FWSetResource("healthpack", math.min(hp + 1, self.MaxProduction.healthpack))
 	end)
 end
 
 function ENT:Use(ply)
 	if ply:Health() < ply:GetMaxHealth() then
-		local hp = self.Produces.healthpack or 0
+		local hp = self:FWHaveResource("healthpack") or 0
 		if hp > 0 then
 			ply:SetHealth(math.min(ply:Health() + 100, ply:GetMaxHealth()))
 			self:EmitSound("hl1/fvox/boop.wav", 150, 100, 1, CHAN_AUTO)
-			self.Produces.healthpack = hp - 1
+			self:FWSetResource("healthpack", hp - 1)
 		else
 			self:EmitSound("hl1/fvox/buzz.wav", 150, 100, 1, CHAN_AUTO)
 		end
