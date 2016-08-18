@@ -48,9 +48,9 @@ if SERVER then
 		local tr = ply:GetEyeTrace()
 		local ent = tr.Entity
 		--if (IsValid(ent) and ent:GetClass() == "fw_opioid_refinery" and ent:GetPos():DistToSqr(ply:GetPos()) < 30000) then
-			
+
 			local tbl = factory.Crafts[opioid_type]
-			
+
 			if (not tbl) then return end
 			factory:CraftOpioid(tbl)
 		--end
@@ -125,7 +125,7 @@ else
 				end
 
 				table.insert(panels, button)
-			end		
+			end
 		end
 		populate()
 
@@ -140,7 +140,7 @@ else
 		function panel:createReq(name, data)
 			clearPanels()
 
-			local row = vgui.Create('fwEntityInfoPanel', panel)
+			local row = vgui.Create('fwEntityInfoRow', panel)
 			row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
 			local status = vgui.Create('FWUITextBox', row)
@@ -152,7 +152,7 @@ else
 			table.insert(panels, status)
 
 			for k,v in pairs(data) do
-				local row = vgui.Create('fwEntityInfoPanel', panel)
+				local row = vgui.Create('fwEntityInfoRow', panel)
 				row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
 				local hasRes, reqRes = ent:FWHaveResource(k), v
@@ -192,8 +192,7 @@ else
 			table.insert(panels, Craft)
 
 		end
-		
+
 	end
 
 end
-

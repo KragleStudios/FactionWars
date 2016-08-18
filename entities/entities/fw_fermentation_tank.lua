@@ -66,7 +66,7 @@ if SERVER then
 
 		local pos = self:GetPos() + self:GetAngles():Right() * 33 + Vector(0, 0, self:OBBMaxs().z - self.shaft:OBBMaxs().z - 4)
 		self.shaft:SetPos(pos)
-		
+
 		local ang = self:GetAngles() + Angle(180, 0, 0)
 		self.shaft:SetAngles(ang)
 
@@ -171,7 +171,7 @@ if SERVER then
 
 	function ENT:Touch(toucher)
 		if (toucher:GetClass() == "fw_distillery") then
-			
+
 			toucher:SetAngles(self:GetAngles() + Angle(0, 0, 180))
 
 			local right = self:GetAngles():Right() * 33
@@ -199,7 +199,7 @@ else
 
 	function ENT:CustomUI(panel)
 		local ent = self
-		local row = vgui.Create('fwEntityInfoPanel', panel)
+		local row = vgui.Create('fwEntityInfoRow', panel)
 		row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
 		local status = vgui.Create('FWUITextBox', row)
@@ -225,7 +225,7 @@ else
 				memory.status = ent:GetOn()
 				return true
 			end
-		end, function()		
+		end, function()
 			if ent:FWHaveResource('power') < ent.MaxConsumption.power then
 				status:SetText('NOT ENOUGH POWER')
 				status:SetColor(Color(255, 0, 0))

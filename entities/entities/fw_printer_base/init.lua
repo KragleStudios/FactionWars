@@ -46,9 +46,16 @@ function ENT:Think()
 		fw.economy.createMoneyBag(self.PrintAmount, self:LocalToWorld(self:OBBMaxs() + Vector(4, -3.5, -3)))
 		self:SetNextPrintTime(CurTime() + self.PrintSpeed)
 		self:FWSetResource("paper", 0)
+
+		fw.hud.pushNotification(self:FWGetOwner(), self.PrintName or 'Money Printer', 'Printed $' .. self.PrintAmount, Color(0, 255, 0))
+		if not self:ConsumeResource('paper', self.PaperDrain) then
+			fw.hud.pushNotification(self:FWGetOwner(), self.PrintName, 'Is out of paper!', Color(255, 0, 0))
+		end
 	elseif not (power and power >= self.PowerRequired) or not (paper and paper + 1 > self.PaperDrain) then
-		self:SetPrintStatus(false)
-		self.Sound:Stop()
+		if self:GetPrintStatus() ~= false then
+			self:SetPrintStatus(false)
+			self.Sound:Stop()
+		end
 	elseif not self:GetPrintStatus() then
 		self:SetPrintStatus(true)
 		self:SetNextPrintTime(CurTime() + self.PrintSpeed)

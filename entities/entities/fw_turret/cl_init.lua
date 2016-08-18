@@ -149,7 +149,7 @@ function ENT:CustomUI(panel)
 
 		if IsValid(upgrade) then
 			local nextUp =  self.upgrades[self:GetUpgradeStatus() + 1]
-			if not nextUp then 
+			if not nextUp then
 				upgrade:Remove()
 				panel:InvalidateLayout()
 			else

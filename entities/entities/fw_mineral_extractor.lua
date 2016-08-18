@@ -69,7 +69,7 @@ if SERVER then
 	end
 
 	function ENT:CanExtract()
-		return self.Storage.raw_resources < self.MaxStorage.raw_resources and self:FWHaveResource("power") >= self.Consumes["power"] 
+		return self.Storage.raw_resources < self.MaxStorage.raw_resources and self:FWHaveResource("power") >= self.Consumes["power"]
 	end
 
 	function ENT:SetNextExtractTime(timeInSeconds)
@@ -95,7 +95,7 @@ if SERVER then
 	end
 
 	function ENT:DoEffect()
-		
+
 	end
 
 	function ENT:Think()
@@ -125,7 +125,7 @@ else
 	end
 
 	function ENT:CustomUI(panel)
-		local row = vgui.Create("fwEntityInfoPanel", panel)
+		local row = vgui.Create("fwEntityInfoRow", panel)
 		row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
 		local status = vgui.Create("FWUITextBox", row)

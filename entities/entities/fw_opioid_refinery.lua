@@ -160,7 +160,7 @@ else
 
 	function ENT:CustomUI(panel)
 		local ent = self
-		local row = vgui.Create('fwEntityInfoPanel', panel)
+		local row = vgui.Create('fwEntityInfoRow', panel)
 		row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
 		local status = vgui.Create('FWUITextBox', row)
@@ -190,7 +190,7 @@ else
 				memory.status = ent:GetOn()
 				return true
 			end
-		end, function()		
+		end, function()
 			if ent:FWHaveResource('power') < ent.MaxConsumption.power then
 				status:SetText('NOT ENOUGH POWER')
 				status:SetColor(Color(255, 0, 0))
@@ -235,4 +235,3 @@ else
 	end
 
 end
-

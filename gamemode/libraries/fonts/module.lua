@@ -32,3 +32,8 @@ fw.fonts.default_compact_shadow = sty.Font {
 	weight = 100,
 	shadow = true
 }
+
+fw.fonts.default_bold = sty.Font {
+	font = "Roboto Bold",
+	weight = 100,
+}
