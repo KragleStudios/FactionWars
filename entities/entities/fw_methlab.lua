@@ -35,7 +35,7 @@ if (SERVER) then
 					meth:SetPos()
 					meth:Spawn()
 				meth:DropToFloor()]]
-				print("spawn meth")
+				--print("spawn meth")
 			elseif (self:GetUses() <= -3) then -- left unattended too long. 0 is when it stops functioning. -3 is when it blows up.
 				return self:Explode()
 			end

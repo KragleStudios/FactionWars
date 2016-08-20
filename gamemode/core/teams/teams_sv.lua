@@ -336,7 +336,7 @@ end):addParam("target", "player")
 fw.chat.addCMD({"factiondemote", "demote"}, "Vote to demote a user", function(ply, target)
 	local faction = ply:getFaction()
 	local players = player.GetAll()
-	print(ply, target)
+	
 	if (target:getFaction() ~= ply:getFaction()) then
 		ply:FWChatPrintError("This person isn't in the same faction as you!")
 		return

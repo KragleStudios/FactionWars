@@ -71,7 +71,7 @@ else
 	net.Receive("fw.zone.fetch", function()
 		fw.print("receiving zone data from server")
 		ra.net.ReadStream(function(data)
-			print("READ A BUNCH OF DATA FROM THE SERVER! ", string.len(data))
+			fw.print("READ A BUNCH OF DATA FROM THE SERVER! ", string.len(data))
 			file.Write(fw.zone.getSaveFileName(), data)
 			fw.zone.loadZonesFromDisk()
 		end)
