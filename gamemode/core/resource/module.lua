@@ -6,9 +6,11 @@ end
 require "ra"
 
 -- require internal libraries
-fw.dep(SHARED, "hook")
-fw.dep(CLIENT, "3d2d")
-fw.dep(CLIENT, "ui")
+fw.dep(SHARED, 'hook')
+fw.dep(CLIENT, '3d2d')
+fw.dep(CLIENT, 'ui')
+fw.dep(CLIENT, 'entity_kit')
+
 
 -- core shared function definitions
 

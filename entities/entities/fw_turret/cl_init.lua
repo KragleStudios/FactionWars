@@ -20,29 +20,16 @@ function ENT:Draw()
 	end
 end
 
-local function makeButton(btn, font)
-	local font = fw.fonts.default:atSize(btn:GetTall() - 20)
-	btn.OnCursorEntered = function(self) self.Hovered = true end
-	btn.OnCursorExited = function(self) self.Hovered = false end
-	btn.OnMousePressed = function(self) self.Depressed = true end
-	btn.OnMouseReleased = function(self)
-		self.Depressed = false
-		if self.Hovered then
-			self:DoClick()
-		end
-	end
-	btn.Paint = function(self, w, h)
-		local g = (self.Depressed and 45) or (self.Hovered and 50) or 40
-		surface.SetDrawColor(g, g, g + 5, 255)
-		surface.DrawRect(0, 0, w, h)
+local function makeButton(btn)
+	btn._label:SetColor(color_white)
+	btn:SetFont(fw.fonts.default)
 
-		surface.SetDrawColor(0, 0, 0, 50)
-		surface.DrawOutlinedRect(0, 0, w, h)
-		surface.SetDrawColor(200, 200, 200, 15)
-		surface.DrawOutlinedRect(1, 1, w - 2, h - 2)
+	local oldSetText = btn.SetText
+	btn.SetText = function(self, ...)
+		oldSetText(self, ...)
+		self._label:SizeToContents()
+		self._label:Center()
 	end
-	btn:SetTextColor(color_white)
-	btn:SetFont(font)
 end
 
 local function addText(panel, text)
@@ -89,7 +76,7 @@ function ENT:CustomUI(panel)
 	local fireRate = self:GetFireOffset()
 	local damage = addText(panel, "Damage: " .. self:GetDamage() .. " dmg every " .. fireRate .. " second" .. (fireRate > 0 and "s" or ""))
 
-	local toggle = vgui.Create("DButton", panel)
+	local toggle = vgui.Create("FWUIButton", panel)
 	toggle:SetTall(height)
 	toggle.DoClick = function()
 		net.Start("fw.updateTurretStatus")
@@ -98,7 +85,7 @@ function ENT:CustomUI(panel)
 		net.SendToServer()
 	end
 
-	local upgrade = vgui.Create("DButton", panel)
+	local upgrade = vgui.Create("FWUIButton", panel)
 	upgrade:SetTall(height)
 	upgrade.DoClick = function()
 		net.Start("fw.upgradeTurret")
@@ -106,7 +93,7 @@ function ENT:CustomUI(panel)
 		net.SendToServer()
 	end
 
-	local refill = vgui.Create("DButton", panel)
+	local refill = vgui.Create("FWUIButton", panel)
 	refill:SetTall(height)
 	refill.DoClick = function()
 		net.Start("fw.buyAmmo")
@@ -117,14 +104,14 @@ function ENT:CustomUI(panel)
 	local visual = vgui.Create("DPanel", panel)
 	visual:SetTall(height)
 
-	local showradius = vgui.Create("DButton", visual)
+	local showradius = vgui.Create("FWUIButton", visual)
 	showradius:SetText(self.show_radius and "Disable Visual Radius" or "Enable Visual Radius")
 	showradius.DoClick = function()
 		self.show_radius = not self.show_radius
 		showradius:SetText(self.show_radius and "Disable Visual Radius" or "Enable Visual Radius")
 	end
 
-	local hidemenu = vgui.Create("DButton", visual)
+	local hidemenu = vgui.Create("FWUIButton", visual)
 	hidemenu:SetText("Hide Menu")
 	hidemenu.DoClick = function()
 		net.Start("fw.toggleMenu")
@@ -136,9 +123,6 @@ function ENT:CustomUI(panel)
 		showradius:SetSize(visual:GetWide() / 2, height)
 		hidemenu:SetX(visual:GetWide() / 2)
 		hidemenu:SetSize(visual:GetWide() / 2, height)
-		local font = fw.fonts.default:atSize(showradius:GetTall() - 20)
-		showradius:SetFont(font)
-		hidemenu:SetFont(font)
 	end
 
 	condition.Think = function()
@@ -149,15 +133,15 @@ function ENT:CustomUI(panel)
 
 		if IsValid(upgrade) then
 			local nextUp =  self.upgrades[self:GetUpgradeStatus() + 1]
-			if not nextUp then 
+			if not nextUp then
 				upgrade:Remove()
 				panel:InvalidateLayout()
 			else
 				upgrade:SetText("Upgrade (" .. nextUp.cost .. "$)")
 				if nextUp.cost > client:getMoney() then
-					upgrade:SetColor(red)
+					upgrade._label:SetColor(red)
 				else
-					upgrade:SetColor(color_white)
+					upgrade._label:SetColor(color_white)
 				end
 			end
 		end
@@ -165,9 +149,9 @@ function ENT:CustomUI(panel)
 		local ammoCost = math.Round(self:GetAmmoCost() - self:GetRemaining() / self:GetMaxClip() * self:GetAmmoCost())
 		refill:SetText("Refill Ammunition (" .. (ammoCost == 0 and "Full" or (ammoCost .. "$")) .. ")")
 		if ammoCost > money then
-			refill:SetColor(red)
+			refill._label:SetColor(red)
 		else
-			refill:SetColor(color_white)
+			refill._label:SetColor(color_white)
 		end
 
 		local trgt = "NO TARGET"
@@ -182,9 +166,9 @@ function ENT:CustomUI(panel)
 		damage.text = "Damage: " .. self:GetDamage() .. " dmg every " .. fireRate .. " second" .. (fireRate > 0 and "s" or "")
 	end
 
-	makeButton(upgrade, btnFont)
-	makeButton(refill, btnFont)
-	makeButton(showradius, btnFont)
-	makeButton(hidemenu, btnFont)
-	makeButton(toggle, btnFont)
+	makeButton(upgrade)
+	makeButton(refill)
+	makeButton(showradius)
+	makeButton(hidemenu)
+	makeButton(toggle)
 end

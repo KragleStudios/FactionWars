@@ -12,7 +12,7 @@ function ENT:GetDisplayPosition()
 end
 
 function ENT:CustomUI(panel)
-	local row = vgui.Create("fwEntityInfoPanel", panel)
+	local row = vgui.Create("fwEntityInfoRow", panel)
 	row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
 	local status = vgui.Create("FWUITextBox", row)

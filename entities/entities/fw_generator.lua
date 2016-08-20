@@ -34,18 +34,21 @@ if SERVER then
 
 		fw.resource.addEntity(self)
 
+		self.Produces = {
+			['power'] = 5
+		}
+
 		local function consumeResources()
 			if not IsValid(self) then return end
 			local succ = self:ConsumeResource("gas", 1)
 			if succ then
-				self.Produces = {
-					["power"] = 5,
-				}
+				self.Produces.power = 5
 				timer.Simple(30, consumeResources)
 			else
-				self.Produces = {
-					["power"] = 0,
-				}
+				if self.Produces.power > 0 then
+					fw.hud.pushNotification(self:FWGetOwner(), self.PrintName, 'Out of gas', Color(255, 0, 0))
+				end
+				self.Produces.power = 0
 				timer.Simple(5, consumeResources)
 			end
 		end

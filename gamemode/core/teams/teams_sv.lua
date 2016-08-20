@@ -27,7 +27,7 @@ function fw.team.doPlayerChange(ply, t, targ_team)
 		fw.team.setFactionBoss(ply:getFaction(), ply)
 	end
 
-	hook.Run("PlayerChangedTeam", prevTeam, ply:Team())
+	hook.Run('PlayerChangedTeam', prevTeam, ply:Team())
 end
 
 function fw.team.playerChangeTeam(ply, targ_team, forced)
@@ -168,8 +168,8 @@ fw.hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
 
 	ply:StripWeapons()
 
-	hook.Call("PlayerLoadout", GAMEMODE, ply)
-	hook.Call("PlayerSetModel", GAMEMODE, ply)
+	hook.Call('PlayerLoadout', GAMEMODE, ply)
+	hook.Call('PlayerSetModel', GAMEMODE, ply)
 
 	-- TODO: use PlayerSelectSpawn
 	if (not _REFRESH) then
@@ -191,7 +191,7 @@ fw.hook.Add("PlayerSpawn", "TeamSpawn", function(ply)
 end)
 
 
-fw.hook.Add("PlayerLoadout", function(ply)
+fw.hook.Add('PlayerLoadout', function(ply)
 	local team = ply:Team()
 	local t = fw.team.list[team]
 	if (not t) then
@@ -205,7 +205,7 @@ fw.hook.Add("PlayerLoadout", function(ply)
 end)
 
 
-fw.hook.Add("PlayerSetModel", function(ply)
+fw.hook.Add('PlayerSetModel', function(ply)
 	local team = ply:Team()
 	local t = fw.team.list[team]
 	if (not t) then
@@ -223,7 +223,7 @@ fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 		ply:FWConPrint("setting your team to team citizen")
 
 		ply:GetFWData().faction = FACTION_DEFAULT
-		hook.Run("PlayerJoinedFaction", ply, FACTION_DEFAULT)
+		hook.Run('PlayerJoinedFaction', ply, FACTION_DEFAULT)
 		fw.team.playerChangeTeam(ply, TEAM_CIVILIAN, true)
 	else
 		if (ply._faction) then
@@ -233,9 +233,10 @@ fw.hook.Add("PlayerInitialSpawn", "SetTeam", function(ply)
 end)
 
 -- retain faction after lua refresh
-ndoc.observe(ndoc.table, "ply._faction", function(ply, value)
+ndoc.observe(ndoc.table, 'ply._faction', function(plyEntIndex, value)
+	local ply = Entity(plyEntIndex)
 	ply._faction = value
-end, ndoc.compilePath("fwPlayers.?.faction"))
+end, ndoc.compilePath('fwPlayers.?.faction'))
 
 -- handles all death related functionality
 fw.hook.Add("PlayerDeath", "TeamSpawn", function(ply)
@@ -255,7 +256,7 @@ end)
 
 --[[
 -- pay the team salary
-timer.Create("fw.teams.pay", fw.config.payrollTime, 0, function()
+timer.Create('fw.teams.pay', fw.config.payrollTime, 0, function()
 	for k,v in pairs(player.GetAll()) do
 		local t = fw.team.list[v:Team()]
 		if t and t.salary ~= 0 then
@@ -268,8 +269,8 @@ end)]]
 --
 -- CONSOLE COMMANDS
 --
-util.AddNetworkString("fw.team.preferredModel")
-net.Receive("fw.team.preferredModel", function(_, pl)
+util.AddNetworkString('fw.team.preferredModel')
+net.Receive('fw.team.preferredModel', function(_, pl)
 	local team = net.ReadString()
 	local model = net.ReadString()
 
@@ -324,9 +325,9 @@ fw.chat.addCMD("factionkick", "Vote to remove a user from a faction", function(p
 
 			if (decision) then
 				fw.team.removePlayerFromFaction(target)
-				fw.notif.chatPrint(players, color_black, "[Votes]: ", color_white, target:Nick(), " was removed from the faction!")
+				fw.notif.chatPrint(players, color_black, '[Votes]: ', color_white, target:Nick(), " was removed from the faction!")
 			else
-				fw.notif.chatPrint(players, color_black, "[Votes]: ", color_white, target:Nick(), " was not removed!")
+				fw.notif.chatPrint(players, color_black, '[Votes]: ', color_white, target:Nick(), " was not removed!")
 			end
 		end, "Yes", "No", 15)
 

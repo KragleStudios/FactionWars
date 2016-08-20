@@ -48,9 +48,9 @@ if SERVER then
 		local tr = ply:GetEyeTrace()
 		local ent = tr.Entity
 		--if (IsValid(ent) and ent:GetClass() == "fw_opioid_refinery" and ent:GetPos():DistToSqr(ply:GetPos()) < 30000) then
-			
+
 			local tbl = factory.Crafts[opioid_type]
-			
+
 			if (not tbl) then return end
 			factory:CraftOpioid(tbl)
 		--end
@@ -119,13 +119,14 @@ else
 				local button = vgui.Create("FWUIButton", panel)
 				button:SetTall(fw.resource.INFO_ROW_HEIGHT)
 				button:SetText(k)
+				button:SetFont(fw.fonts.default)
 
 				button.DoClick = function()
 					panel:createReq(k, v.resources)
 				end
 
 				table.insert(panels, button)
-			end		
+			end
 		end
 		populate()
 
@@ -140,7 +141,7 @@ else
 		function panel:createReq(name, data)
 			clearPanels()
 
-			local row = vgui.Create('fwEntityInfoPanel', panel)
+			local row = vgui.Create('fwEntityInfoRow', panel)
 			row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
 			local status = vgui.Create('FWUITextBox', row)
@@ -152,7 +153,7 @@ else
 			table.insert(panels, status)
 
 			for k,v in pairs(data) do
-				local row = vgui.Create('fwEntityInfoPanel', panel)
+				local row = vgui.Create('fwEntityInfoRow', panel)
 				row:SetTall(fw.resource.INFO_ROW_HEIGHT)
 
 				local hasRes, reqRes = ent:FWHaveResource(k), v
@@ -170,6 +171,7 @@ else
 			local Craft = vgui.Create("FWUIButton", panel)
 			Craft:SetTall(fw.resource.INFO_ROW_HEIGHT)
 			Craft:SetText("Craft")
+			Craft:SetFont(fw.fonts.default)
 
 			Craft.DoClick = function()
 				net.Start("fw.createOpioid")
@@ -181,6 +183,7 @@ else
 			local Back = vgui.Create("FWUIButton", panel)
 			Back:SetTall(fw.resource.INFO_ROW_HEIGHT)
 			Back:SetText("Back")
+			Back:SetFont(fw.fonts.default)
 
 			Back.DoClick = function()
 
@@ -192,8 +195,7 @@ else
 			table.insert(panels, Craft)
 
 		end
-		
+
 	end
 
 end
-

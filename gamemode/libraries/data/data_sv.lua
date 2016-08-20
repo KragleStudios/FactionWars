@@ -50,13 +50,12 @@ end
 
 -- player data table
 data.player = {}
-ndoc.table.fwPlayers = {}
 
 function data.loadPlayer(player)
 	fw.print("loading data for " .. tostring(player).. ".")
 
-	if not ndoc.table.fwPlayers[player] then
-		ndoc.table.fwPlayers[player] = {}
+	if not ndoc.table.fwPlayers[player:EntIndex()] then
+		ndoc.table.fwPlayers[player:EntIndex()] = {}
 	end
 	engine.loadPlayerData(player:SteamID64() or "0", function(_data)
 		-- copy the data to data.player
@@ -75,7 +74,7 @@ end
 function data.updateStore(player)
 	fw.print("update store for " .. tostring(player))
 	if not data.player[player] then
-		player:FWChatPrint(Color(255, 0, 0), "[FACTION WARS] [ERROR] your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.")
+		fw.hud.pushNotification(ply, "Faction Wars Error",  "Your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.", Color(255, 0, 0))
 		return
 	end
 

@@ -45,7 +45,7 @@ fw.hook.Add("PlayerSpawn", "SpawnAtSpawnPoint", function(ply)
 	if (sp and IsValid(sp)) then
 		ply:SetPos(sp:GetPos())
 
-		ply:FWChatPrint("You have been respawned at your respawn point!")
+		fw.hud.pushNotification(ply, "Faction Wars", "You have been respawned at your respawn point!")
 
 		sp:Remove()
 

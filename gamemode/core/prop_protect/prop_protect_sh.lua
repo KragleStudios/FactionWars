@@ -9,15 +9,14 @@ function fw.pp.canPhysgunProp(target, ent)
 	local whoCanPhysgun = data.whoCanPhysgun
 	local whoCanTool    = data.whoCanTool
 
-	if (whoCanPhysgun == 0) then 
-		return true 
+	if (whoCanPhysgun == 0) then
+		return true
 	elseif (whoCanPhysgun == 1) then
-		if (data.whitelist[target]) then return true end 
+		if (data.whitelist[target]) then return true end
 	elseif (whoCanPhysgun == 2) then
 		if (owner:getFaction() == target:getFaction()) then return true end
 	end
 	if (target == owner) then return true end
-
 
 	return false
 end
@@ -32,10 +31,10 @@ function fw.pp.canToolProp(target, ent)
 
 	local whoCanTool = data.whoCanTool
 
-	if (whoCanTool == 0) then 
-		return true 
+	if (whoCanTool == 0) then
+		return true
 	elseif (whoCanTool == 1) then
-		if (data.whitelist[target]) then return true end 
+		if (data.whitelist[target]) then return true end
 	elseif (whoCanTool == 2) then
 		if (owner:getFaction() == target:getFaction()) then return true end
 	end
