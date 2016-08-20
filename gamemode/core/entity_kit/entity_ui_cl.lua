@@ -49,6 +49,9 @@ vgui.Register('fwEntityInfoWrapper', {
 		self.panel.AddHeader = function(_, ...)
 			return self:AddHeader(...)
 		end
+		self.panel.AddSuperHeader = function(_, titleText)
+			return self:AddHeader(titleText, self.headerWrapper)
+		end
 
 		self:SetPadding(2 / baseScale)
 		self.isOpen = false
@@ -67,6 +70,14 @@ vgui.Register('fwEntityInfoWrapper', {
 
 			surface.SetDrawColor(255, 255, 255, 15)
 			surface.DrawRect(0, h - underscoreHeight, w, underscoreHeight)
+		end
+		header.SetRefresh = function(self, shouldRefresh, refresh)
+			local memory = {}
+			self.Think = function(self)
+				if shouldRefresh(memory) then
+					refresh()
+				end
+			end
 		end
 		return header
 	end,

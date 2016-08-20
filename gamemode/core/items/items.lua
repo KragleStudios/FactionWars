@@ -140,7 +140,6 @@ fw.ents.registerItem("Respawn Point", {
 ---
 --- BEGIN WEAPON REGISTRATION
 ---
-
 local function regWep(name, sID, col, mdl, ent, price, rmv, cat, ship, stor, job, faction)
 	fw.ents.registerWeapon(name, {
 			stringID = sID,
@@ -188,7 +187,7 @@ regWep("Repair Tool", "rtool", Color(0,0,0), "", "fw_repairtool", 1000, false, "
 fw.ents.registerShipment("Blowtorch", {
 	stringID = "blowtorch",
 	color = Color(0, 0, 0),
-	model = "", 
+	model = "",
 	entity = "fw_cuttingtorch",
 	price = 1,
 	storable = true,

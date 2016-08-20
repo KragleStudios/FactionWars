@@ -5,19 +5,21 @@ function fw.ents.registerItem(name, tbl)
 	assert(tbl.stringID, "must provide stringID for: "..name)
 	assert(tbl.entity, "must provide entity class name for: "..name)
 	assert(tbl.price, "must provide price for: "..name)
-	
+
 	tbl.max = tbl.max or 0
 	tbl.command = tbl.command or "fw_item_"..tbl.stringID
 	tbl.name = name
 	tbl.color = tbl.color or Color(100, 100, 100)
 	tbl.category = tbl.category or "General Merch"
+	tbl.index = table.insert(fw.ents.item-List, tbl)
 
-	local ind = table.insert(fw.ents.item_list, tbl)
-	fw.ents.item_list[ind].index = ind	
+	tbl.onBuy = function(self, player)
+		fw.ents.createWeapon(player, self)
+	end
 
 	if (SERVER) then
 		concommand.Add(tbl.command, function(ply)
-			fw.ents.buyItem(ply, ind)
+			tbl:onBuy(ply)
 		end)
 	end
 
@@ -46,7 +48,7 @@ function fw.ents.registerShipment(name, tbl)
 
 	if (tbl.seperate) then
 		assert(tbl.seperatePrice, "must provide a price for each individual weapon for :"..name)
-	
+
 		local indx = table.insert(fw.ents.item_list, {
 			model = tbl.model,
 			stringID = tbl.stringID.."_sep",
@@ -69,7 +71,6 @@ function fw.ents.registerShipment(name, tbl)
 			end)
 		end
 
-
 		fw.hook.Call("FWItemRegistered", fw.ents.item_list[indx])
 	end
 
@@ -90,7 +91,7 @@ function fw.ents.registerShipment(name, tbl)
 
 	tbl.shipment = true
 
-	fw.ents.item_list[ind].index = ind	
+	fw.ents.item_list[ind].index = ind
 
 	if (SERVER) then
 		concommand.Add(tbl.command, function(ply)
@@ -126,12 +127,12 @@ function fw.ents.canPlayerBuyItem(ply, itemID)
 	if (not ply:canAfford(price)) then return false, "you can't afford this!" end
 	if (faction and isstring(faction) and (ply:getFaction() != faction)) then return false, "you aren't the right faction for this!" end
 	if jobs and (not table.HasValue(jobs, ply:Team())) then return false, "you aren't the right job for this!" end
-	
+
 	if (ply.maxItems[i.entity] and maxItem and maxItem != 0 and ply.maxItems[i.entity] + 1 > maxItem) then
 		return false, "you already have the max allowed of this item!"
 	end
 
-	if (i.canBuy) then 
+	if (i.canBuy) then
 		return i.canBuy(i, ply)
 	end
 

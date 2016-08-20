@@ -17,8 +17,8 @@ end
 function ENT:Use(event, ply)
 	if IsValid(ply) and ply:IsPlayer() then
 		local remain = self:GetRemaining()
-		if (remain - 1 < 0) then 
-			return 
+		if (remain - 1 < 0) then
+			return
 		end
 		if (remain - 1 == 0) then
 			self:Remove()
@@ -46,7 +46,7 @@ end
 
 function ENT:Think()
 	if (IsValid(self.ent)) then
-	
+
 		self.ent:SetPos(self:GetPos() + Vector(0, 0, 30))
 		self.ent:SetAngles(Angle(0, CurTime() * 10, 0))
 	end
@@ -67,4 +67,3 @@ end
 function ENT:setName(name)
 	self:SetName(name)
 end
-

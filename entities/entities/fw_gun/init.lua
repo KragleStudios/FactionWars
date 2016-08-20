@@ -19,8 +19,17 @@ function ENT:setWeapon(ply)
 	self:SetWeapon(self.Gun:GetClass())
 end
 
+function ENT:SetWeaponAndModel(weapon, model)
+	self:SetWeapon(weapon)
+	self:SetModel(model)
+end
+
+
 function ENT:Use(event, ply)
 	local gun = ply:Give(self:GetWeapon())
-	gun:SetBuff(self:GetBuff())
 	self:Remove()
+	if self:GetBuff() then
+		gun:SetBuff(self:GetBuff())
+	end
+	fw.hud.pushNotification(ply, "PICKUP", "You picked up an "..(ply:GetActiveWeapon():GetPrintName() or ''))
 end

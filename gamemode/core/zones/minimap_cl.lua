@@ -132,7 +132,7 @@ fw.hook.Add("PostDrawOpaqueRenderables", function()
 	end
 
 
-	popClippingCircle(6)
+	popClippingCircle(100)
 
 	cam.IgnoreZ(false)
 
