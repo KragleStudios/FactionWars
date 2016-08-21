@@ -3,12 +3,12 @@ net.Receive("playerDeath", function()
 
 	LocalPlayer().menu_open = true
 
-    local deathText
+    	local deathText
 	local suicide = net.ReadBool()
-    local attacker = net.ReadEntity()
+	local attacker = net.ReadEntity()
 
 	if suicide then
-	    deathText = "You committed suicide"
+		deathText = "You killed yourself"
 	elseif IsValid(attacker) then
 		deathText = "You were killed by "..(attacker:IsPlayer() and attacker:Nick() or attacker:GetClass())
 	end
@@ -21,14 +21,7 @@ net.Receive("playerDeath", function()
    	deathPanel:SetDraggable(false)
 	deathPanel:ShowCloseButton(false)
 	deathPanel.Paint = function (self, w, h)
-	    Derma_DrawBackgroundBlur(self, 0)
-
-		local seed = 10
-		local tick = (CurTime() + seed*40)
-		local speed = seed % 4 + 1 + (seed * 0.05)
-		local realTick = (CurTime() * 2 + tick * speed * 100) % w
-
-		draw.SimpleText("RIP", fw.fonts.default:atSize(100), realTick, 0 + (h*2/4) + math.sin(realTick/200) * 100, color_white)
+		Derma_DrawBackgroundBlur(self, 0)
 	end
 
 	-- Label
@@ -42,9 +35,9 @@ net.Receive("playerDeath", function()
 
 	-- If the player is alive, removes the death screen.
 	timer.Create("checkIfAlive", 0.5, 0, function()
-        if LocalPlayer():Alive() then
-            deathPanel:Remove()
-            LocalPlayer().menu_open = false
+        	if LocalPlayer():Alive() then
+            		deathPanel:Remove()
+            		LocalPlayer().menu_open = false
 		end
 	end)
 end)
