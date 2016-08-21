@@ -8,7 +8,7 @@ function player.findInSphere(startPos, radius)
 
 	local cache = {}
 
-	for k,v in pairs(player.GetAll()) do
+	for k,v in pairs(players) do
 		if (v:GetPos():DistToSqr(startPos) <= r_squared) then
 			table.insert(cache, v)
 		end
