@@ -28,8 +28,10 @@ end
 function ENT:Use(event, ply)
 	local gun = ply:Give(self:GetWeapon())
 	self:Remove()
-	if self:GetBuff() then
+	if self:GetBuff() and self:GetBuff():len() > 0 then
 		gun:SetBuff(self:GetBuff())
 	end
-	fw.hud.pushNotification(ply, "PICKUP", "You picked up an "..(ply:GetActiveWeapon():GetPrintName() or ''))
+	if self.WeaponPrintName then
+		fw.hud.pushNotification(ply, "PICKUP", "You picked up an "..self.WeaponPrintName)
+	end
 end

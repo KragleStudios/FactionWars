@@ -220,6 +220,11 @@ function Entity:FWDrawInfo()
 	end
 end
 
+fw.hook.Add('EntityRemoved', function(ent)
+	if IsValid(ent._fwInfoPanel) then
+		ent._fwInfoPanel:Remove()
+	end
+end)
 
 
 --

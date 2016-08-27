@@ -3,9 +3,9 @@ if SERVER then AddCSLuaFile() end
 ENT.Type = "anim"
 ENT.Base = "base_entity"
 
-ENT.PrintName		= "Medium Gas Can"
-ENT.Author			= "thelastpenguin"
-ENT.Category        = "Faction Wars"
+ENT.PrintName   = "Medium Gas Can"
+ENT.Author      = "thelastpenguin"
+ENT.Category    = "Faction Wars"
 
 ENT.NETWORK_SIZE = 0
 ENT.Resources = true
@@ -14,6 +14,7 @@ ENT.MaxStorage = {
 }
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.MaxHealth = 100
 
 if SERVER then
 	function ENT:Initialize()
@@ -33,6 +34,20 @@ if SERVER then
 		}
 
 		fw.resource.addEntity(self)
+
+		self:SetHp(self.MaxHealth)
+	end
+
+	function ENT:OnTakeDamage(dmginfo)
+		if self:GetHealth() <= 0 then return end
+		self:SetHealth(self:GetHealth() - dmginfo:GetDamage())
+		if self:GetHealth() <= 0 then
+			self:Ignite(30, 100)
+			timer.Simple(5, function()
+				util.BlastDamage(self, self, self:GetPos(), 100, 100)
+				self:Remove()
+			end)
+		end
 	end
 
 	function ENT:OnRemove()
@@ -46,6 +61,7 @@ else
 	function ENT:Draw()
 		self:DrawModel()
 		self:FWDrawInfo()
+		self:FWDrawHealth(self:LocalToWorld(Vector(0, 0, -15)), self:GetAngles(), 15)
 	end
 
 	function ENT:GetDisplayPosition()
@@ -53,4 +69,12 @@ else
 		local obbmax = self:OBBMaxs()
 		return Vector(obbmax.x, obbcenter.y, obbcenter.z), Angle(0, 90, 90), 0.09
 	end
+
+	function ENT:GetHealth()
+		return self:GetHp()
+	end
+end
+
+function ENT:SetupDataTables()
+	self:NetworkVar("Int", 0, "Hp")
 end

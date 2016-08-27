@@ -16,3 +16,8 @@ fw.config.physgunColorFactionColor = true
 fw.config.zoneCaptureScore = 100
 --every <x> seconds score is added to the faction in control
 fw.config.zoneCaptureRate =  1
+-- what portion of the real weapon value should shipments cost
+-- shipmentCount * singlePrice * fw.config.shipmentMarkdown
+fw.config.shipmentMarkdown = 0.60
+--how many guns are in a shipment by default
+fw.config.defaultShipmentCount = 10

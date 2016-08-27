@@ -29,6 +29,20 @@ function ENT:Initialize()
 	}
 
 	fw.resource.addEntity(self)
+
+	self:SetHealth(self.MaxHealth)
+end
+
+function ENT:OnTakeDamage(dmginfo)
+	if self:GetHealth() <= 0 then return end
+	self:SetHealth(self:GetHealth() - dmginfo:GetDamage())
+	if self:GetHealth() <= 0 then
+		self:Ignite(30, 100)
+		timer.Simple(5, function()
+			util.BlastDamage(self, self, self:GetPos(), 100, 100)
+			self:Remove()
+		end)
+	end
 end
 
 function ENT:OnResourceUpdate()

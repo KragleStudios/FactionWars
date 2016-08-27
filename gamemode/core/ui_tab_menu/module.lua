@@ -438,107 +438,68 @@ function fw.tab_menu.itemManagement(parent)
 	listLayout:SetWide(parent:GetWide())
 	listLayout:SetPadding(sty.ScreenScale(2))
 
-	local function createItemPanel(item, doClickBuy)
+	local function addItemPanel(item, sectionParent)
 		local price = string.Comma(item.price)
-		local category = item.category
-		local item = item.name
 
-		if (not parent.categories[category]) then
-			local itemSelection = vgui.Create("FWUITableViewSection", listLayout)
-			itemSelection:SetTitle(string.upper(category))
-			itemSelection:SetPadding(sty.ScreenScale(2))
+		if item:shouldDisplay(LocalPlayer()) == false then return end
 
-			parent.categories[category] = itemSelection
+		local categoryPanel = sectionParent.categoryPanels[item.category]
+
+		if not categoryPanel then
+			categoryPanel = vgui.Create('FWUITableViewSection', sectionParent)
+			categoryPanel:SetTitle(string.upper(item.category))
+			categoryPanel:SetPadding(sty.ScreenScale(2))
+			sectionParent.categoryPanels[item.category] = categoryPanel
 		end
 
-		local panel = vgui.Create("FWUIPanel")
+		local panel = vgui.Create("FWUIPanel", categoryPanel)
 		panel:SetTall(sty.ScreenScale(12))
-
-		parent.categories[category]:Add(panel)
 
 		local buyButton = vgui.Create("FWUIButton", panel)
 		buyButton:SetFont(fw.fonts.default)
 		buyButton:SetText("BUY ITEM $"..price)
-		buyButton.DoClick = doClickBuy
+		buyButton.DoClick = function()
+			LocalPlayer():ConCommand(item.command)
+		end
 		buyButton:SetWide(sty.ScreenScale(60))
+		buyButton:Dock(RIGHT)
+
+		if not item:canBuy(LocalPlayer()) then
+			panel:SetBackgroundTint(Color(200, 0, 0), 10)
+			buyButton:SetAlpha(100)
+		end
 
 		local title = vgui.Create("FWUITextBox", panel)
-		title:SetText(item)
+		title:SetText(item.name or 'unnamed')
 		title:Dock(FILL)
 		title:DockMargin(sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1),sty.ScreenScale(1))
-
-		buyButton:Dock(RIGHT)
 	end
 
-	for index, item in pairs(fw.ents.item_list) do
-		if (not fw.ents.canPlayerBuyItem(LocalPlayer(), item.index)) then continue end
+	local itemSection = vgui.Create('FWUITableViewSection', listLayout)
+	itemSection:SetTitle(string.upper('Items'))
+	itemSection:SetPadding(sty.ScreenScale(2))
+	itemSection.categoryPanels = {}
 
-		createItemPanel(item, function()
-			LocalPlayer():ConCommand(item.command)
-			fw.tab_menu.hideContent()
-		end)
+	local weaponSection = vgui.Create('FWUITableViewSection', listLayout)
+	weaponSection:SetTitle(string.upper('Weapons'))
+	weaponSection:SetPadding(sty.ScreenScale(2))
+	weaponSection.categoryPanels = {}
+
+	local shipmentSection = vgui.Create('FWUITableViewSection', listLayout)
+	shipmentSection:SetTitle(string.upper('Shipments'))
+	shipmentSection:SetPadding(sty.ScreenScale(2))
+	shipmentSection.categoryPanels = {}
+
+	for k, item in ipairs(fw.ents.item_list) do
+		addItemPanel(item, itemSection)
 	end
-end
 
---TODO: Player inventory panel
-function fw.tab_menu.playerInventory(pnl)
-	local space = vgui.Create("DScrollPanel", pnl)
-	space:SetSize(pnl:GetSize())
+	for k, item in ipairs(fw.ents.shipment_list) do
+		addItemPanel(item, shipmentSection)
+	end
 
-	local icons = vgui.Create("DIconLayout", space)
-	icons:SetSize(space:GetWide() - 10, space:GetTall())
-	icons:SetPos(0, 0)
-	icons:SetSpaceY(2)
-	icons:SetSpaceX(2)
-
-	local inv = ndoc.table.items[LocalPlayer()].inventory
-	local pnlWidth = (space:GetWide() - 10 - (5 * icons:GetSpaceX())) / 4
-
-	for k,v in ndoc.ipairs(ndoc.table.items[LocalPlayer()].inventory.slots) do
-		local item = fw.ents.item_list[v.itemIndex]
-		local slot = k
-
-		if (not item) then continue end
-
-		local count = item.shipment and v.remaining or 1
-
-		local pnl = icons:Add("FWUIPanel")
-		pnl:SetSize(pnlWidth, 60)
-
-		local text = vgui.Create("FWUITextBox", pnl)
-		text:SetText(item.name.." - "..count)
-
-		local box = vgui.Create("DComboBox", pnl)
-		box:SetSize(pnl:GetWide(), sty.ScreenScale(15))
-		box:SetPos(0, pnl:GetTall() - box:GetTall())
-		box:SetValue("ACTION")
-		box.values = {}
-		function box:OnSelect(ind, val)
-			box.values[val]()
-			pnl:Remove()
-			icons:InvalidateLayout(true)
-
-		end
-
-		local use, equip
-		if (not item.shipment and item.weapon) then
-			box.values["EQUIP"] = function() LocalPlayer():ConCommand(item.command.."_equip "..v.invID) end
-		end
-		if (not item.shipment and item.useable) then
-			box.values["USE"] = function() LocalPlayer():ConCommand(item.command.."_use "..v.invID) end
-		end
-		box.values["DROP"] = function()
-			net.Start("fw.dropItem")
-				net.WriteInt(v.itemIndex, 32)
-				net.WriteInt(v.invID, 32)
-			net.SendToServer()
-		end
-
-		for k,v in pairs(box.values) do
-			box:AddChoice(k)
-		end
-
-		text:Dock(FILL)
+	for k, item in ipairs(fw.ents.weapon_list) do
+		addItemPanel(item, weaponSection)
 	end
 end
 

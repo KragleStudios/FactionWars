@@ -1,3 +1,5 @@
+if SERVER then AddCSLuaFile() end
+
 ENT.PrintName = "Shipment"
 ENT.Author = "thelastpenguin"
 ENT.Type = "anim"
@@ -5,12 +7,14 @@ ENT.Base = "base_entity"
 
 if SERVER then
 	function ENT:Initialize()
+		self:SetModel("models/items/item_item_crate.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:PhysWake()
 
 		self:SetUseType(SIMPLE_USE)
+		self.Health = 200
 	end
 end
 
@@ -43,24 +47,22 @@ function ENT:SetupDataTables()
 end
 
 function ENT:GetItemTable()
-	return fw.ents.item_list[self:GetItem()]
+	return fw.ents.shipment_list[self:GetItem()]
 end
 
 function ENT:GetDisplayPosition()
 	local obbcenter = self:OBBCenter()
 	local obbmax = self:OBBMaxs()
-	return Vector(obbcenter.x, obbcenter.y, obbmax.z), Angle(0, 90, 0), 0.12
+	return Vector(obbcenter.x, obbcenter.y, obbmax.z), Angle(0, 90, 0), 0.15
 end
 
 
 function ENT:Use(activator)
-	if not IsValid(activaor) or not activator:IsPlayer() then return end
+	if not IsValid(activator) or not activator:IsPlayer() then return end
 
-	self:EmitSound('ambient/misc/clank3.wav', 7, 100, 1)
+	self:EmitSound('ambient/misc/clank3.wav', 75, 100, 1)
 
 	self:SetCount(self:GetCount() - 1)
 	if self:GetCount() == 0 then self:Remove() end
-	timer.Simple(function()
-		fw.ents.createWeapon(activator, self:GetItemTable())
-	end)
+	fw.ents.createWeapon(activator, self:GetItemTable())
 end

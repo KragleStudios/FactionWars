@@ -17,6 +17,8 @@ ENT.Color = Color(26, 188, 156, 100) -- Color of printer + UI elements
 ENT.NETWORK_SIZE = 500
 ENT.Resources = true
 
+ENT.MaxHealth = 200
+
 ENT.MaxConsumption = { -- @thelastpengin this is used just for testing on the base printer, the printer creation function overwrites this field
 	["power"] = ENT.PowerRequired,
 	["paper"] = ENT.PaperDrain,
@@ -26,5 +28,6 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Float", 0, "NextPrintTime")
 	self:NetworkVar("Int", 1, "Money")
 	self:NetworkVar("Int", 2, "Paper")
-	self:NetworkVar("Bool", 3, "PrintStatus")
+	self:NetworkVar("Int", 3, "Health")
+	self:NetworkVar("Bool", 4, "PrintStatus")
 end

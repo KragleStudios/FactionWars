@@ -254,18 +254,6 @@ fw.hook.Add("PlayerDeath", "TeamSpawn", function(ply)
 	end
 end)
 
---[[
--- pay the team salary
-timer.Create('fw.teams.pay', fw.config.payrollTime, 0, function()
-	for k,v in pairs(player.GetAll()) do
-		local t = fw.team.list[v:Team()]
-		if t and t.salary ~= 0 then
-			v:addMoney(t.salary)
-			v:FWChatPrint(color_black, "[Salary]: ", color_white, " You were paid $" .. t.salary)
-		end
-	end
-end)]]
-
 --
 -- CONSOLE COMMANDS
 --
@@ -337,7 +325,7 @@ end):addParam("target", "player")
 fw.chat.addCMD({"factiondemote", "demote"}, "Vote to demote a user", function(ply, target)
 	local faction = ply:getFaction()
 	local players = player.GetAll()
-	
+
 	if (target:getFaction() ~= ply:getFaction()) then
 		ply:FWChatPrintError("This person isn't in the same faction as you!")
 		return

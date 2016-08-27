@@ -2,30 +2,16 @@ util.AddNetworkString("playerBuyItem")
 
 ndoc.table.items = {}
 
-function fw.ents.buyItem(ply, item_index)
-	local canjoin, msg = fw.ents.canPlayerBuyItem(ply, item_index)
-
-	if (msg) then
-		ply:FWChatPrintError(msg)
-		return
-	end
-	local item = fw.ents.item_list[item_index]
-	ply.maxItems[item.entity] = ply.maxItems[item.entity] and ply.maxItems[item.entity] + 1 or 1
-
-	item:onBuy(ply)
-
-	ply:addMoney(-item.price)
-end
-
-function fw.ents.createShipment(item)
+function fw.ents.createShipment(pl, item)
 	local ship = ents.Create("fw_shipment")
-	ship:SetPos(tr)
+	PrintTable(item)
 	ship:SetItem(item.index)
+	ship:SetCount(item.shipmentCount)
 	ship:Spawn()
 	ship:Activate()
 	ship:FWSetOwner(ply)
 
-	fw.ents.setPositionWithEntityTrace(ship)
+	fw.ents.setPositionWithEntityTrace(pl, ship)
 end
 
 function fw.ents.createItem(pl, item)
@@ -39,9 +25,10 @@ end
 
 function fw.ents.createWeapon(pl, item)
 	local ent = ents.Create("fw_gun")
+	ent:SetWeaponAndModel(item.weapon, item.model)
+	ent.WeaponPrintName = item.name
 	ent:Spawn()
 	ent:Activate()
-	ent:SetWeaponAndModel(item.weapon, item.model)
 	ent:FWSetOwner(pl)
 
 	if item.buff then
@@ -55,18 +42,8 @@ function fw.ents.setPositionWithEntityTrace(pl, ent)
 	local tr = util.TraceEntity({
 		start = pl:EyePos(),
 		endpos = pl:EyePos() +  pl:GetAimVector() * 100,
-		filter = function() return false end
-	})
+		filter = function(ent) return ent ~= pl end
+	}, ent)
 
 	ent:SetPos(tr.HitPos)
 end
-
-
-fw.hook.Add("EntityRemoved", "AdjustItemCount", function(ent)
-	local own = ent:FWGetOwner()
-	local class = ent:GetClass()
-
-	if (IsValid(own) and class != "prop_physics" and own and own.maxItems[class]) then
-		own.maxItems[class] = own.maxItems[class] and own.maxItems[class] - 1 or nil
-	end
-end)

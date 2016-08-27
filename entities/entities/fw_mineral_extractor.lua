@@ -56,6 +56,9 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 		self:PhysWake()
 
+		print("TEST")
+		self:Fire("Enable", "", 0)
+
 		self.Consumes = {
 			["power"] = self.MaxConsumption.power,
 		}
@@ -120,8 +123,8 @@ else
 
 	function ENT:GetDisplayPosition()
 		local obbcenter = self:OBBCenter()
-		local obbmax = self:OBBMaxs()
-		return Vector(obbcenter.x - 8, obbmax.y, obbcenter.z), Angle(0, -90, 90), 0.15
+		local obbmax = self:OBBMins()
+		return Vector(obbmax.x, obbcenter.y, obbmax.z + 40), Angle(0, -90, 90), 0.15
 	end
 
 	function ENT:CustomUI(panel)

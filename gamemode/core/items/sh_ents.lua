@@ -1,140 +1,135 @@
-fw.ents.item_list = fw.ents.item_list or {}
+fw.ents.item_list = {}
+fw.ents.shipment_list = {}
+fw.ents.weapon_list = {}
 
 function fw.ents.registerItem(name, tbl)
-	assert(tbl.model or tbl.models, "must provide world model for: "..name)
-	assert(tbl.stringID, "must provide stringID for: "..name)
-	assert(tbl.entity, "must provide entity class name for: "..name)
-	assert(tbl.price, "must provide price for: "..name)
+	assert(type(name) == "string", "must provide a string name when registering an item")
+	assert(tbl.model, "tbl.model must provide a world model for " .. name)
+	assert(tbl.entity, "tbl.entity must provide an entity class to spawn for " .. name)
+	assert(type(tbl.price) == "number", "tbl.price must provide price for "..name)
+	assert(type(tbl.max) == "number", "tbl.max must provide a maximum item count for " .. name)
 
-	tbl.max = tbl.max or 0
-	tbl.command = tbl.command or "fw_item_"..tbl.stringID
 	tbl.name = name
-	tbl.color = tbl.color or Color(100, 100, 100)
-	tbl.category = tbl.category or "General Merch"
-	tbl.index = table.insert(fw.ents.item-List, tbl)
+	tbl.stringID = tbl.stringID or tbl.entity
 
-	tbl.onBuy = function(self, player)
-		fw.ents.createWeapon(player, self)
+	tbl.index = table.insert(fw.ents.item_list, tbl)
+	tbl.category = tbl.category or "Things and Stuff"
+	tbl.command = 'fw_item_'..(tbl.entity)
+	if tbl.job then tbl.jobs = {tbl.job} end
+	if tbl.faction then tbl.factions = {tbl.faction} end
+
+	tbl.shouldDisplay = function(self, player)
+		if self.jobs and not table.HasValue(self.jobs, player:Team()) then return false, "You do not have the corret job to buy this" end
+		if self.factions and not table.HasValue(self.factions, player:getFaction()) then return false, "You are not in the correct faction to buy this" end
+		if tbl.customShouldDisplay then
+			return tbl:customShouldDisplay(player)
+		end
+		return true
 	end
 
-	if (SERVER) then
-		concommand.Add(tbl.command, function(ply)
-			tbl:onBuy(ply)
+	tbl.canBuy = function(self, player)
+		local shouldDisplay, message = self:shouldDisplay(player)
+		if shouldDisplay == false then return false, message end
+		if self.max > 0 and self:getPlayerOwnedCount(player) >= self.max then return false, name .. " max item limit is " .. self.max end
+		if not player:canAfford(self.price) then return false, "You can not afford $" .. self.price end
+		if tbl.customCanBuy then
+			return tbl:customCanBuy(player)
+		end
+		return true
+	end
+
+	tbl.getPlayerOwnedCount = function(self, player)
+		local count = 0
+		for k,v in ipairs(ents.FindByClass(tbl.entity)) do
+			if v:FWGetOwner() == player then
+				count = count + 1
+			end
+		end
+		return count
+	end
+
+	if SERVER then
+		concommand.Add(tbl.command, function(pl)
+			local shouldBuy, message = tbl:canBuy(pl)
+			if not shouldBuy then
+				pl:FWChatPrintError(message)
+				return
+			end
+
+			pl:addMoney(-tbl.price)
+
+			fw.ents.createItem(pl, tbl)
 		end)
 	end
-
-	fw.hook.Call("FWItemRegistered", tbl)
 end
 
 function fw.ents.registerWeapon(name, tbl)
-	tbl.weapon = true
+	assert(type(name) == "string", "must provide a string name when registering a weapon")
+	assert(tbl.model, "tbl.model must provide a world model for " .. name)
+	assert(tbl.weapon, "tbl.weapon must provide an weapon class to spawn for " .. name)
+	assert(type(tbl.price) == "number", "tbl.price must provide price for "..name)
+	assert(type(tbl.weapon) == "string", "tbl.weapon must specify the class of the weapon to spawn for "..name)
 
-	fw.ents.registerItem(name, tbl)
-end
-
-function fw.ents.registerShipment(name, tbl)
-	assert(tbl.model, "must provide world model for: "..name)
-	assert(tbl.stringID, "must provide stringID for: "..name)
-	assert(tbl.entity, "must provide entity class name for: "..name)
-	assert(tbl.price, "must provide price for: "..name)
-	assert(tbl.shipmentCount, "must provide count for how many are in the shipment :"..name)
-
-	tbl.seperate = tbl.seperate or false
-	tbl.max = tbl.max or 0
-	tbl.command = tbl.command or "fw_item_"..tbl.stringID
 	tbl.name = name
-	tbl.color = tbl.color or Color(100, 100, 100)
-	tbl.category = tbl.category or "General Merch"
 
-	if (tbl.seperate) then
-		assert(tbl.seperatePrice, "must provide a price for each individual weapon for :"..name)
+	tbl.shouldDisplay = function(self, player)
+		if self.jobs and not table.HasValue(self.jobs, player:Team()) then return false, "You do not have the corret job to buy this" end
+		if self.factions and not table.HasValue(self.factions, player:getFaction()) then return false, "You are not in the correct faction to buy this" end
+		if tbl.customShouldDisplay then
+			return tbl:customShouldDisplay(player)
+		end
+		return true
+	end
 
-		local indx = table.insert(fw.ents.item_list, {
-			model = tbl.model,
-			stringID = tbl.stringID.."_sep",
-			entity = tbl.entity,
-			price = tbl.seperatePrice,
-			max = tbl.max,
-			command = tbl.command.."_sep",
-			name = tbl.name,
-			color = tbl.color,
-			category = tbl.category,
-			storable = tbl.storable,
-			weapon = tbl.weapon,
-			useable = tbl.useable
-		})
-		fw.ents.item_list[indx].index = indx
+	tbl.canBuy = function(self, player)
+		local shouldDisplay, message = self:shouldDisplay(player)
+		if shouldDisplay == false then return false, message end
+		if not player:canAfford(self.price) then return false, "You can not afford $" .. self.price end
+		if tbl.customCanBuy then
+			return tbl:customCanBuy(player)
+		end
+		return true
+	end
 
-		if (SERVER) then
-			concommand.Add(tbl.command.."_sep", function(ply)
-				fw.ents.buyItem(ply, indx)
+	if tbl.shipment or tbl.both then
+		tbl.shipmentCount = tbl.shipmentCount or fw.config.defaultShipmentCount
+
+		local shipment = table.Copy(tbl)
+		shipment.category = shipment.category or 'Things and Stuff'
+		shipment.price = tbl.shipmentPrice or tbl.price * tbl.shipmentCount * fw.config.shipmentMarkdown
+		shipment.command = (tbl.command or tbl.weapon) .. '_shipment'
+		shipment.index = table.insert(fw.ents.shipment_list, shipment)
+
+		if SERVER then
+			concommand.Add(shipment.command, function(pl)
+				local shouldBuy, message = tbl:canBuy(pl)
+				if not shouldBuy then
+					pl:FWChatPrintError(message)
+					return
+				end
+				pl:addMoney(-shipment.price)
+
+				fw.ents.createShipment(pl, shipment)
 			end)
 		end
-
-		fw.hook.Call("FWItemRegistered", fw.ents.item_list[indx])
 	end
+	if tbl.single or tbl.both then
+		local single = table.Copy(tbl)
+		single.category = single.category or 'Things and Stuff'
+		single.command = (tbl.command or tbl.weapon) .. '_single'
+		single.index = table.insert(fw.ents.weapon_list, single)
 
-	local ind = table.insert(fw.ents.item_list, {
-			model = tbl.model,
-			stringID = tbl.stringID,
-			entity = tbl.entity,
-			price = tbl.price,
-			max = tbl.max,
-			command = tbl.command,
-			name = tbl.name.. " Shipment",
-			color = tbl.color,
-			category = tbl.category,
-			storable = tbl.storable,
-			shipment = true,
-			shipmentCount = tbl.shipmentCount
-		})
+		if SERVER then
+			concommand.Add(single.command, function(pl)
+				local shouldBuy, message = tbl:canBuy(pl)
+				if not shouldBuy then
+					pl:FWChatPrintError(message)
+					return
+				end
+				pl:addMoney(-single.price)
 
-	tbl.shipment = true
-
-	fw.ents.item_list[ind].index = ind
-
-	if (SERVER) then
-		concommand.Add(tbl.command, function(ply)
-			fw.ents.buyItem(ply, ind)
-		end)
+				fw.ents.createWeapon(pl, single)
+			end)
+		end
 	end
-
-	fw.hook.Call("FWItemRegistered", fw.ents.item_list[ind])
-end
-
-function fw.ents.canPlayerBuyItem(ply, itemID)
-	local i = fw.ents.item_list[itemID]
-	if (not i) then
-		return false
-	end
-
-	local canbuy, msg = fw.hook.Call("CanPlayerBuyItem", ply, i)
-
-	if (not canbuy and msg) then
-		return false, msg
-	end
-
-	local maxItem  = i.max
-	local faction = i.faction
-	local jobs = i.jobs
-	local price = i.price
-
-	ply.maxItems = ply.maxItems or {}
-
-	if (i.jobs and not istable(i.jobs)) then i.jobs = {i.jobs} end
-	if (i.faction and not istable(i.faction)) then i.faction = {i.faction} end
-
-	if (not ply:canAfford(price)) then return false, "you can't afford this!" end
-	if (faction and isstring(faction) and (ply:getFaction() != faction)) then return false, "you aren't the right faction for this!" end
-	if jobs and (not table.HasValue(jobs, ply:Team())) then return false, "you aren't the right job for this!" end
-
-	if (ply.maxItems[i.entity] and maxItem and maxItem != 0 and ply.maxItems[i.entity] + 1 > maxItem) then
-		return false, "you already have the max allowed of this item!"
-	end
-
-	if (i.canBuy) then
-		return i.canBuy(i, ply)
-	end
-
-	return true
 end
