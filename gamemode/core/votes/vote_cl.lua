@@ -22,6 +22,10 @@ end
 local function removeVotePanel(pnl, index)
 	votePanels[index] = nil
 
+	if (IsValid(pnl)) then
+		pnl:Remove()
+	end
+
 	realignVotes()
 end
 
@@ -34,7 +38,6 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 		end
 		return
 	end
-
 
 	timer.Simple(0.5, function()
 		-- wait for the table to finish syncing.
@@ -50,13 +53,12 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 		local title  = vote.title
 		local desc   = vote.desc
 
-		LocalPlayer():EmitSound("Friends/friend_join.wav", 100, 100)
 		pnl = vgui.Create("FWUIFrame")
 		pnl:SetSize(200, 150)
 		pnl:SetTitle(title)
 		pnl:Center()
-			pnl.DoClose = function()
-		  		pnl:Remove()
+		function pnl:DoClose()
+		  	removeVotePanel(self)
 		end
 
 		function pnl:SetBG(bool, count)
@@ -73,10 +75,6 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 		realignVotes()
 
 		timer.Create("vote_"..vIndex, tbl.voteLength or vote_defLen, 1, function()
-			if IsValid(pnl) then
-				pnl:Remove()
-			end
-
 			removeVotePanel(pnl, vIndex)
 		end)
 
@@ -119,8 +117,6 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 			net.SendToServer()
 
 			removeVotePanel(pnl, vIndex)
-
-			pnl:Remove()
 		end
 
 		function no:DoClick()
@@ -130,8 +126,6 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 			net.SendToServer()
 
 			removeVotePanel(pnl, vIndex)
-
-			pnl:Remove()
 		end
 	end)
 end, ndoc.compilePath("fwVotes.?"))
