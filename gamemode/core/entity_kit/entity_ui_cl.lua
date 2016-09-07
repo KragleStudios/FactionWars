@@ -232,6 +232,26 @@ end)
 --
 
 fw.entity_kit.registerInfoProvider('CustomUI', function(entity, panel)
+	local infoRow = vgui.Create('fwEntityInfoRow', panel)
+	local text = vgui.Create('FWUITextBox', infoRow)
+	text:SetAlign('left')
+	text:SetInset(2 / baseScale)
+	text:Dock(FILL)
+	text:SetText("unowned")
+	infoRow:SetRefresh(function(memory)
+		if memory[1] ~= entity:FWGetOwner() then
+			memory[1] = entity:FWGetOwner()
+			return true
+		end
+	end, function()
+		if IsValid(entity:FWGetOwner()) then
+			infoRow.Think = nil
+			text:SetText('Owner: '..entity:FWGetOwner():Name())
+		end
+	end)
+end)
+
+fw.entity_kit.registerInfoProvider('CustomUI', function(entity, panel)
 	if entity.CustomUI then
 		entity:CustomUI(panel)
 	end

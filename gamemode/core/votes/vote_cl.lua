@@ -4,23 +4,24 @@ local function realignVotes()
 	local width = 200
 	local tall  = 150
 
-	local c = 0
-	for k,v in pairs(votePanels) do
-		local offset = (ScrW() / 2) - (width / 2) + ((width + 10) * c)
-		--local c = #votePanels
-		v:SetPos( (ScrW() / 2) - (width / 2) + (8 * c), ScrH() - tall)
-		v:MoveToBack()
-		if (c ~= 0) then
-			v:SetBG(true, c)
-		else
-			v:SetBG(false)
-		end
-		c = c + 1
+	local totalWidth = 0
+	local maximumHeight = 0
+	for k, v in pairs(votePanels) do
+		totalWidth = totalWidth + v:GetWide()
+		maximumHeight = math.max(maximumHeight, v:GetTall())
+	end
+
+	local x = (sty.ScrW - totalWidth) * 0.5
+	local y = sty.ScrH - maximumHeight
+	for k,v in SortedPairs(votePanels) do
+		v:SetPos(x, y)
+		x = x + v:GetWide()
 	end
 end
 
 local function removeVotePanel(pnl, index)
 	votePanels[index] = nil
+	pnl:Remove()
 
 	realignVotes()
 end
@@ -36,7 +37,7 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 	end
 
 
-	timer.Simple(0.5, function()
+	timer.Simple(LocalPlayer():Ping() * 4, function()
 		-- wait for the table to finish syncing.
 
 		fw.print("vote started with id #" .. vIndex)
@@ -53,11 +54,23 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 		LocalPlayer():EmitSound("Friends/friend_join.wav", 100, 100)
 		pnl = vgui.Create("FWUIFrame")
 		pnl:SetSize(200, 150)
-		pnl:SetTitle(title)
+		ndoc.observe(ndoc.fwVotes[vIndex], 'fw.votes.titleChange', function(value)
+			pnl:SetTitle(value)
+		end, 'title')
 		pnl:Center()
-			pnl.DoClose = function()
-		  		pnl:Remove()
+		pnl.DoClose = function(self)
+		  removeVotePanel(self, vIndex)
 		end
+
+		local textLabel = vgui.Create("DLabel", pnl)
+		textLabel:SetPos(0, pnl:GetHeaderYOffset())
+		textLabel:Dock(FILL)
+		textLabel:SetWrap(true)
+		textLabel:SetFont(fw.fonts.default:atSize(sty.ScreenScale(10)))
+
+		ndoc.observe(ndoc.table.fwVotes[vIndex], 'fw.votes.descChange', function(value)
+			textLabel:SetText(value)
+		end, 'desc')
 
 		function pnl:SetBG(bool, count)
 			if (bool) then
@@ -74,10 +87,8 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 
 		timer.Create("vote_"..vIndex, tbl.voteLength or vote_defLen, 1, function()
 			if IsValid(pnl) then
-				pnl:Remove()
+				pnl:DoClose()
 			end
-
-			removeVotePanel(pnl, vIndex)
 		end)
 
 		local desc_f = fw.fonts.default:atSize(20)
@@ -85,8 +96,6 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 
 		function pnl:Paint(w, h)
 			draw.RoundedBox(0, 0, 0, w, h, Color(46, 46, 46))
-
-			draw.SimpleText(desc, desc_f, w/2, 20, color_white, TEXT_ALIGN_CENTER)
 
 			local timeLeft = timer.TimeLeft("vote_"..vIndex) or 0
 
@@ -118,9 +127,7 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 				net.WriteString(yesText)
 			net.SendToServer()
 
-			removeVotePanel(pnl, vIndex)
-
-			pnl:Remove()
+			pnl:DoClose()
 		end
 
 		function no:DoClick()
@@ -129,9 +136,17 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 				net.WriteString(noText)
 			net.SendToServer()
 
-			removeVotePanel(pnl, vIndex)
-
-			pnl:Remove()
+			pnl:DoClose()
 		end
+
+		ndoc.observe(ndoc.table.fwVotes[vIndex], 'ndoc.vote.yesCountChange', function(yesCount)
+			yes:SetText(yesText .. ' ' .. yesCount)
+		end, 'yes')
+		ndoc.observe(ndoc.table.fwVotes[vIndex], 'ndoc.vote.yesCountChange', function(yesText)
+			yes:SetText(yesText .. ' ' .. noCount)
+		end, 'no')
+
+		pnl:SetMouseInputEnabled(true)
+		pnl:MoveToFront()
 	end)
 end, ndoc.compilePath("fwVotes.?"))

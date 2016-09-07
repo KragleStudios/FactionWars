@@ -1,3 +1,34 @@
+ndoc.table.fwVotes = {}
+
+local nextVoteId = 1
+
+function fw.vote.createNew(vTitle, vDesc, vPlayers, vCallback, vYText, vNText, vote_len)
+	if type(vTitle) == 'table' then
+		vDesc = vTitle.desc or vTitle.description
+		vPlayers = vTitle.players or player.GetAll()
+		vCallback = vTitle.callback
+		vYText = vTitle.yesText or 'Yes'
+		vNText = vTitle.noText or 'No'
+		vote_len = vTitle.length or vTitle.len or 15
+	end
+
+	ndoc.table.fwVotes[nextVoteId] = {
+		id = nextVoteId,
+		title = vTitle,
+		text = vDesc,
+		players = ra.util.map_copy(vPlayers, function(player)
+			return player:UserID()
+		end),
+		yesText = vYText,
+		noText = vNText,
+		end_time = CurTime() + vote_len
+	}
+end
+
+
+
+
+
 
 util.AddNetworkString("fw.sendVoteQuery")
 util.AddNetworkString("fw.sendVoteResponse")
@@ -14,15 +45,15 @@ net.Receive("fw.sendVoteResponse", function(len, client)
 
 	--assign it!
 	local vote = ndoc.table.fwVotes[index]
-	if (not vote) then 
-		client:FWChatPrint(Color(0, 0, 0), "[Votes]: ", Color(255, 255, 255), "This vote may no longer exist!") 
-		return 
+	if (not vote) then
+		client:FWChatPrint(Color(0, 0, 0), "[Votes]: ", Color(255, 255, 255), "This vote may no longer exist!")
+		return
 	end
 
 	haveVoted[index] = haveVoted[index] or {}
 
 	if (haveVoted[index][client]) then
-		client:FWChatPrint(Color(0, 0, 0), "[Votes]: ", Color(255, 255, 255), "You have already voted!") 
+		client:FWChatPrint(Color(0, 0, 0), "[Votes]: ", Color(255, 255, 255), "You have already voted!")
 		return
 	end
 
@@ -71,13 +102,13 @@ function fw.vote.createNew(vTitle, vDesc, vPlayers, vCallback, vYText, vNText, v
 		local decision, vote_tbl = fw.vote.getVoteStatus(count)
 
 		--clear the memory up
-		ndoc.table.fwVotes[count] = nil		
+		ndoc.table.fwVotes[count] = nil
 		haveVoted[count] = nil
 
 		vCallback(decision, syncTable, vote_tbl)
 	end)
 
 	ndoc.table.fwVotes[count] = syncTable
-	
+
 	vCount = vCount + 1
 end

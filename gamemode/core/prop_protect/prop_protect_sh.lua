@@ -45,8 +45,14 @@ end
 
 
 local entity = FindMetaTable("Entity")
-function entity:FWGetOwner()
-	return SERVER and self.owner or self:GetNWEntity("owner")
+if SERVER then
+	function entity:FWGetOwner()
+		return self.owner
+	end
+else
+	function entity:FWGetOwner()
+		return self:GetNWEntity('owner')
+	end
 end
 
 if (SERVER) then

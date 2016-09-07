@@ -21,7 +21,9 @@ function ENT:Initialize()
 	timer.Create(self.timerName, 60, 0, function()
 		if not IsValid(self) or self:FWHaveResource("power") < self.Consumes.power then return end
 		local hp = self:FWHaveResource("healthpack") or 0
-		self:FWSetResource("healthpack", math.min(hp + 1, self.MaxProduction.healthpack))
+		if hp < self.MaxProduction.healthpack then
+			self:FWSetResource("healthpack", hp + 1)
+		end
 	end)
 end
 
@@ -51,6 +53,6 @@ function ENT:SpawnFunction(ply, tr, ClassName)
 end
 
 function ENT:OnRemove()
-	timer.Destroy(self.timerName) 
+	timer.Destroy(self.timerName)
 	fw.resource.removeEntity(self)
 end

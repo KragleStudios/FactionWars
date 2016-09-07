@@ -130,6 +130,49 @@ fw.ents.registerItem("Mineral Extractor", {
 	max = 5,
 })
 
+fw.ents.registerItem("Fermentation Tank", {
+	model = "models/props_wasteland/laundry_basket001.mdl",
+	entity = "fw_fermentation_tank",
+	price = 500,
+	max = 10,
+})
+
+fw.ents.registerItem("Distillery", {
+	model = "models/props_c17/FurnitureBoiler001a.mdl",
+	entity = "fw_distillery",
+	price = 900,
+	max = 5,
+})
+
+fw.ents.registerItem("Meth Lab", {
+	model = "models/props_lab/crematorcase.mdl",
+	entity = "fw_methlab",
+	price = 1600,
+	max = 5,
+})
+
+fw.ents.registerItem("Oil Extractor", {
+	model = "models/props_wasteland/gaspump001a.mdl",
+	entity = "fw_oil_extractor",
+	price = 3000,
+	max = 5,
+})
+
+fw.ents.registerItem("Medical Opiate Lab", {
+	model = "models/props/cs_italy/it_mkt_table1.mdl",
+	entity = "fw_opioid_crafting",
+	price = 10000,
+	max = 5,
+})
+
+fw.ents.registerItem("Opiate Refinery", {
+	model = "models/props_wasteland/laundry_washer001a.mdl",
+	entity = "fw_opioid_refinery",
+	price = 1500,
+	max = 10,
+})
+
+
 ---
 --- BEGIN WEAPON REGISTRATION
 ---

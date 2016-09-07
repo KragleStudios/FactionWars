@@ -19,7 +19,7 @@ if (SERVER) then
 
 	function ENT:Initialize()
 		self:SetModel( "models/props_lab/crematorcase.mdl" )
-		self:PhysicsInit(SOLID_VPHYSICS)  
+		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:SetUseType(SIMPLE_USE)
@@ -40,7 +40,7 @@ if (SERVER) then
 				return self:Explode()
 			end
 
-			self:SetUses(self:GetUses() - 1)		
+			self:SetUses(self:GetUses() - 1)
 			self:SetNextProduceTime(CurTime() + 3)
 		end
 	end

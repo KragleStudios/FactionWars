@@ -3,7 +3,7 @@ if SERVER then AddCSLuaFile() end
 ENT.Type = "anim"
 ENT.Base = "base_entity"
 
-ENT.PrintName   = "Opioid Creation"
+ENT.PrintName   = "Medical Opiate Lab"
 ENT.Author      = "crazyscouter"
 ENT.Category    = "Faction Wars"
 
