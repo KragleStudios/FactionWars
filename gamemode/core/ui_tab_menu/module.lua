@@ -122,7 +122,7 @@ function fw.tab_menu.showScoreboard()
 		__FW_TABMENU:AddView("PLAYERS", fw.tab_menu.tabDisplayPlayersList)
 		__FW_TABMENU:AddView("JOBS", fw.tab_menu.tabDisplayJobsList)
 		__FW_TABMENU:AddView("ITEMS", fw.tab_menu.itemManagement)
-		__FW_TABMENU:AddView("INVENTORY", fw.tab_menu.playerInventory)
+		--__FW_TABMENU:AddView("INVENTORY", fw.tab_menu.playerInventory)
 
 		if (LocalPlayer():inFaction() and LocalPlayer():getFaction() ~= FACTION_DEFAULT) then
 			__FW_TABMENU:AddView("FACTION", fw.tab_menu.faction)
@@ -287,12 +287,12 @@ function fw.tab_menu.faction(pnl)
 	amountText:SetAlign("center")
 	amountText:SizeToContents()
 
-	ndoc.addHook("fwFactions.?.money", "set", function(index, money)
+	ndoc.observe(ndoc.table, "fw.money", "set", function(index, money)
 		if (not IsValid(amountText) or index ~= LocalPlayer():getFaction()) then return end
 
 		amountText:SetText("Balance: $"..string.Comma(money))
 		amountText:SizeToContents()
-	end)
+	end, ndoc.compilePath('fwFactions.?.money'))
 
 	local actionButtons = vgui.Create("FWUIPanel", factionTools)
 	actionButtons:SetTall(sty.ScreenScale(12))
