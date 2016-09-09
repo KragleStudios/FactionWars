@@ -1,5 +1,4 @@
 AddCSLuaFile("shared.lua")
-AddCSLuaFile("3d2dvgui.lua")
 AddCSLuaFile("cl_init.lua")
 include("shared.lua")
 

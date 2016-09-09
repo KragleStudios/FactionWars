@@ -3,7 +3,7 @@ include("shared.lua")
 function ENT:GetDisplayPosition()
 	local obbcenter = self:OBBCenter()
 	local obbmax = self:OBBMaxs()
-	return Vector(obbcenter.x + 20, obbmax.y - 14, obbcenter.z + (self:GetModel() == "models/combine_turrets/ground_turret.mdl" and 0 or 10)), Angle(0, 90, 90), 0.2
+	return Vector(obbcenter.x + 20, obbmax.y - 14, obbcenter.z + (self:GetModel() == "models/combine_turrets/ground_turret.mdl" and 10 or 10)), Angle(0, 90, 90), 0.2
 end
 
 function ENT:Draw()

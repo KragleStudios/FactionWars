@@ -2,6 +2,10 @@
 -- This module defines a bunch of utilities to be used by entities
 --
 
+if SERVER then
+	AddCSLuaFile()
+end
+
 fw.entity_kit = {}
 
 fw.dep(CLIENT, '3d2d')
