@@ -3,7 +3,7 @@ function fw.pp.canPhysgunProp(target, ent)
 
 	if (not owner) then return false end
 
-	local data = ndoc.table.pp[owner]
+	local data = ndoc.table.fwPP[owner]
 	if (not data) then return false end
 
 	local whoCanPhysgun = data.whoCanPhysgun
@@ -26,7 +26,7 @@ function fw.pp.canToolProp(target, ent)
 
 	if (not owner) then return false end
 
-	local data = ndoc.table.pp[owner]
+	local data = ndoc.table.fwPP[owner]
 	if (not data) then return false end
 
 	local whoCanTool = data.whoCanTool
@@ -63,7 +63,7 @@ if (SERVER) then
 end
 
 fw.hook.Add("CanTool", "PreventBaddieTools", function(ply, tr)
-	if (tr.Entity and tr.Entity:GetClass() == "prop_physics") then
+	if (tr.Entity and tr.Entity:FWGetOwner()) then
 		return fw.pp.canToolProp(ply, tr.Entity)
 	end
 	if (tr.Entity and tr.Entity:IsPlayer()) then return false end
