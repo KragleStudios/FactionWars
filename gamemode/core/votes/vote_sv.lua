@@ -25,11 +25,6 @@ function fw.vote.createNew(vTitle, vDesc, vPlayers, vCallback, vYText, vNText, v
 	}
 end
 
-
-
-
-
-
 util.AddNetworkString("fw.sendVoteQuery")
 util.AddNetworkString("fw.sendVoteResponse")
 util.AddNetworkString("fw.sendVote")

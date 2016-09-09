@@ -7,6 +7,11 @@ local function realignVotes()
 	local totalWidth = 0
 	local maximumHeight = 0
 	for k, v in pairs(votePanels) do
+		if not IsValid(v) then
+			table.remove(votePanels, k)
+			realignVotes()
+			break
+		end
 		totalWidth = totalWidth + v:GetWide()
 		maximumHeight = math.max(maximumHeight, v:GetTall())
 	end
@@ -37,7 +42,7 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 	end
 
 
-	timer.Simple(LocalPlayer():Ping() * 4, function()
+	timer.Simple(0.5, function()
 		-- wait for the table to finish syncing.
 
 		fw.print("vote started with id #" .. vIndex)
@@ -52,9 +57,9 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 		local desc   = vote.desc
 
 		LocalPlayer():EmitSound("Friends/friend_join.wav", 100, 100)
-		pnl = vgui.Create("FWUIFrame")
+		local pnl = vgui.Create("FWUIFrame")
 		pnl:SetSize(200, 150)
-		ndoc.observe(ndoc.fwVotes[vIndex], 'fw.votes.titleChange', function(value)
+		ndoc.observe(ndoc.table.fwVotes[vIndex], 'fw.votes.titleChange', function(value)
 			pnl:SetTitle(value)
 		end, 'title')
 		pnl:Center()
@@ -110,16 +115,16 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 		local w,h = pnl:GetSize()
 
 		local no = vgui.Create("FWUIButton", pnl)
-       		no:SetSize((w / 2) - 7.5, 25)
-        	no:Dock(BOTTOM)
-        	no:SetText(noText .." ".. ndoc.table.fwVotes[vIndex].no)
-        	no:SetFont(fw.fonts.default)
+		no:SetSize((w / 2) - 7.5, 25)
+		no:Dock(BOTTOM)
+		no:SetText(noText .." ".. ndoc.table.fwVotes[vIndex].no)
+		no:SetFont(fw.fonts.default)
 
-        	local yes = vgui.Create("FWUIButton", pnl)
-        	yes:SetSize((w / 2) - 7.5, 25)
-        	yes:Dock(BOTTOM)
-        	yes:SetText(yesText .." ".. ndoc.table.fwVotes[vIndex].yes)
-        	yes:SetFont(fw.fonts.default)
+		local yes = vgui.Create("FWUIButton", pnl)
+		yes:SetSize((w / 2) - 7.5, 25)
+		yes:Dock(BOTTOM)
+		yes:SetText(yesText .." ".. ndoc.table.fwVotes[vIndex].yes)
+		yes:SetFont(fw.fonts.default)
 
 		function yes:DoClick()
 			net.Start("fw.sendVoteResponse")
@@ -139,11 +144,17 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 			pnl:DoClose()
 		end
 
-		ndoc.observe(ndoc.table.fwVotes[vIndex], 'ndoc.vote.yesCountChange', function(yesCount)
+		local noCount = 0
+		local yesCount = 0
+		ndoc.observe(ndoc.table.fwVotes[vIndex], 'ndoc.vote.yesCountChange', function(_yesCount)
+			if not IsValid(pnl) then return end
+			yesCount = _yesCount
 			yes:SetText(yesText .. ' ' .. yesCount)
 		end, 'yes')
-		ndoc.observe(ndoc.table.fwVotes[vIndex], 'ndoc.vote.yesCountChange', function(yesText)
-			yes:SetText(yesText .. ' ' .. noCount)
+		ndoc.observe(ndoc.table.fwVotes[vIndex], 'ndoc.vote.noCountChange', function(_noCount)
+			if not IsValid(pnl) then return end
+			noCount = _noCount
+			no:SetText(noText .. ' ' .. noCount)
 		end, 'no')
 
 		pnl:SetMouseInputEnabled(true)

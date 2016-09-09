@@ -5,30 +5,31 @@ vgui.Register("FWUIDropShadow", {
 	Init = function(self)
 		self:SetRadius(32)
 		self:SetColor(color_black)
+		self:SetMouseInputEnabled(false)
 	end,
 
 	SetRadius = function(self, radius)
 		self._radius = radius
 
-		return self 
+		return self
 	end,
 
 	SetColor = function(self, color)
 		self._color = color
 
-		return self  
+		return self
 	end,
 
 	SetNoBackground = function(self, noBackground)
-		self._noBackground = noBackground 
-		return self 
+		self._noBackground = noBackground
+		return self
 	end,
 
 	ParentTo = function(self, panel)
 		self._following = panel
 		self:SetParent(panel:GetParent())
 
-		return self 
+		return self
 	end,
 
 	Paint = function(self, w, h)
@@ -37,7 +38,7 @@ vgui.Register("FWUIDropShadow", {
 		self:SetPos(panel:GetX() - self._radius, panel:GetY() - self._radius)
 		self:SetSize(panel:GetWide() + self._radius * 2, panel:GetTall() + self._radius * 2)
 
-		local r = self._radius 
+		local r = self._radius
 
 		surface.SetDrawColor(self._color)
 
@@ -61,11 +62,11 @@ vgui.Register("FWUIDropShadow", {
 
 
 		surface.SetMaterial(matV)
-		-- left vertical 
+		-- left vertical
 		surface.DrawTexturedRectUV(0, r, r, h - 2*r, 0, 0, 1, 0.5)
 		-- right vertical
 		surface.DrawTexturedRectUV(w - r, r, r, h - 2*r, 1, 0, 0, 0.5)
-		
+
 	end,
 
 }, "STYPanel")
