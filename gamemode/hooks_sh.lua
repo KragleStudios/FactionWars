@@ -119,6 +119,10 @@ function GM:OnReloaded(...)
 	return ret
 end
 
+function GM:DoPlayerDeath(...)
+	return fw.hook.Call("DoPlayerDeath", ...)
+end
+
 function GM:PlayerCanHearPlayersVoice(...)
 	return fw.hook.Call("PlayerCanHearPlayersVoice", ...)
 end
