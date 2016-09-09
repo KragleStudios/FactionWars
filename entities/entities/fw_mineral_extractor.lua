@@ -25,7 +25,6 @@ end
 
 if SERVER then
 	util.AddNetworkString("fw.turnExOn")
-	util.AddNetworkString("fw.spawnOre")
 
 
 	net.Receive("fw.turnExOn", function(l, ply)
@@ -35,15 +34,6 @@ if SERVER then
 		--if (IsValid(ent) and ent:GetClass() == "fw_fermentation_tank" and tr.HitPos:GetPos():DistToSqr(ply:GetPos()) < 30000) then
 			ext:SetOn(not ext:GetOn())
 	--	end
-	end)
-
-	net.Receive("fw.spawnOre", function(l, ply)
-		local ext = net.ReadEntity()
-		local tr = ply:GetEyeTrace()
-		local ent = tr.Entity
-		if (IsValid(ent) and ent:GetClass() == "fw_fermentation_tank" and tr.HitPos:DistToSqr(ply:GetPos()) < 30000) then
-			ext:CreateAlcohol()
-		end
 	end)
 
 	function ENT:Initialize()
@@ -181,18 +171,6 @@ else
 
 		button.DoClick = function()
 			net.Start("fw.turnExOn")
-				net.WriteEntity(self)
-			net.SendToServer()
-		end
-
-		local alc = vgui.Create("FWUIButton", panel)
-		alc:SetTall(fw.resource.INFO_ROW_HEIGHT)
-		alc:SetFont(fw.fonts.default)
-		alc:SetText("Package Ore")
-		alc:SetEnabled(false)
-
-		alc.DoClick = function()
-			net.Start("fw.spawnOre")
 				net.WriteEntity(self)
 			net.SendToServer()
 		end

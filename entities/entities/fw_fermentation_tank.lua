@@ -17,6 +17,8 @@ ENT.MaxStorage = {
 	['alcohol'] = 1,
 }
 ENT.NETWORK_SIZE = 500
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Bool", 1, "On")

@@ -6,3 +6,6 @@
  - Opioid by Freepik in other http://www.flaticon.com/free-icon/spices_114990#term=ingredients&page=1&position=10
  - Alcohol by Freepik in other http://www.flaticon.com/free-icon/drink-beer-jar_39467#term=alcohol&page=1&position=13
  - Vodka by Freepik in other http://www.flaticon.com/free-icon/vodka-closed-bottle_71023#term=vodka&page=1&position=2
+ - Durgz: PCP, LSD, Aspirin
+ https://garrysmods.org/download/2128/durgzmod-22-injector-fixed
+ This was not created by members of the FW dev team, all rights are reserved to their creator
