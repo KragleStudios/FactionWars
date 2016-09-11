@@ -55,6 +55,11 @@ function GM:PlayerDisconnected(...)
 end
 
 function GM:InitPostEntity(...)
+	if SERVER then
+		for k,v in pairs(ents.GetAll()) do
+			v:Fire("unlock")
+		end
+	end
 	return fw.hook.Call("InitPostEntity", ...)
 end
 
@@ -174,7 +179,7 @@ function GM:DoPlayerDeath(ply, att, dmg)
 end
 
 function GM:PlayerDeathThink(ply)
-	if ply.DeathTime + 5 > CurTime() then return end
+	if ply.DeathTime and ply.DeathTime + 5 > CurTime() then return end
 
 	if ply:IsBot() or ply:KeyPressed(IN_ATTACK) or ply:KeyPressed(IN_ATTACK2) or ply:KeyPressed(IN_JUMP) then
 		ply:Spawn()
