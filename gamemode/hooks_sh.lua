@@ -58,13 +58,15 @@ function GM:InitPostEntity(...)
 end
 
 function GM:PlayerSay(pl, text, ...)
-	local message = fw.hook.Call('PlayerSay', pl, text, ...) or text
+	print(pl, text, ...)
+	local message = fw.hook.Call('PlayerSay', pl, text, ...)
+	print(type(message))
 	print("PlayerSay: " .. tostring(message))
 	return message
 end
 
-function GM:OnPlayerChat(...)
-	local stop = fw.hook.Call("OnPlayerChat", ...)
+function GM:OnPlayerChat(player, text, bTeamOnly, bPlayerIsDead)
+	local stop = fw.hook.Call("OnPlayerChat", ply, text, teamChat, isDead)
 	if stop ~= nil then return end
 
 	local tab = {}
@@ -80,18 +82,18 @@ function GM:OnPlayerChat(...)
 	end
 
 	if ( IsValid( player ) ) then
-		table.insert( tab, player )
-		local fac = fw.team.factions[ ply:getFaction() ]
+		local fac = fw.team.factions[ player:getFaction() ]
 		local fname = fac:getName()
 		local fcolor = fac:getColor()
 		table.insert( tab, fcolor )
 		table.insert( tab, '[' .. string.sub(fname, 1, 1) .. ']')
+		table.insert( tab, player )
 	else
 		table.insert( tab, "Console" )
 	end
 
 	table.insert( tab, Color( 255, 255, 255 ) )
-	table.insert( tab, ": "..strText )
+	table.insert( tab, ": " .. text )
 
 	chat.AddText(unpack(tab))
 
