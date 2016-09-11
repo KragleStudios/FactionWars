@@ -63,6 +63,14 @@ function GM:InitPostEntity(...)
 	return fw.hook.Call("InitPostEntity", ...)
 end
 
+function GM:ShowHelp(...)
+	return fw.hook.Call("ShowHelp", ...)
+end
+
+function GM:ShowTean(...)
+	return fw.hook.Call("ShowTean", ...)
+end
+
 function GM:PlayerSay(pl, text, ...)
 	print(pl, text, ...)
 	local message = fw.hook.Call('PlayerSay', pl, text, ...)

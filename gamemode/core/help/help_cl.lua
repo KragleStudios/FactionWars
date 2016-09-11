@@ -1,0 +1,11 @@
+net.Receive("FW_ShowHelp", function()
+	local frame = vgui.Create("FWUIFrame")
+	frame:SetSize(ScrW() - 128, ScrH() - 128)
+	frame:SetTitle("HELP")
+	frame:Center()
+	frame:MakePopup()
+
+	local html = vgui.Create("DHTML", frame)
+	html:Dock(FILL)
+	html:OpenURL("https://github.com/KragleStudios/gmFactionWars/wiki/How-to-Play")
+end)

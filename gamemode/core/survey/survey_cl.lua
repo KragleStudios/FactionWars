@@ -1,0 +1,11 @@
+net.Receive("FW_ShowTeam", function()
+	local frame = vgui.Create("FWUIFrame")
+	frame:SetSize(ScrW() - 128, ScrH() - 128)
+	frame:SetTitle("Faction Wars Playtesting Survey")
+	frame:Center()
+	frame:MakePopup()
+
+	local html = vgui.Create("DHTML", frame)
+	html:Dock(FILL)
+	html:OpenURL("https://goo.gl/forms/5Warc4tKtK9ry2yp1")
+end)

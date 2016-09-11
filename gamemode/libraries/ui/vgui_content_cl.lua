@@ -192,6 +192,8 @@ vgui.Register("FWUIFrame", {
 		self._titleBar._closeButton.DoClick = function()
 			self:DoClose()
 		end
+
+		self:DockPadding(8, self._titleBar:GetTall() + 8, 8, 8)
 	end,
 
 	DoClose = function(self)
