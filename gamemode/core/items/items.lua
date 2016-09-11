@@ -196,8 +196,8 @@ fw.ents.registerItem("Gun Grinder", {
 
 fw.ents.registerWeapon("Five-Seven", {
 	model = "models/weapons/w_pist_fiveseven.mdl",
-	weapon = "fw_gun_deagle",
-	price = 100,
+	weapon = "fw_gun_fiveseven",
+	price = 275,
 	both = true, -- creates both a shipment anda single
 	-- shipment = true,
 	-- single = true, -- both is equivalent to defining both these fields
@@ -206,83 +206,83 @@ fw.ents.registerWeapon("Five-Seven", {
 fw.ents.registerWeapon("Desert Eagle", {
 	model = "models/weapons/w_pist_deagle.mdl",
 	weapon = "fw_gun_deagle",
-	price = 200,
+	price = 450,
 	both = true,
 })
 
 fw.ents.registerWeapon("Glock", {
 	model = "models/weapons/w_pist_glock18.mdl",
 	weapon = "fw_gun_glock",
-	price = 200,
+	price = 150,
 	both = true,
 })
 
 fw.ents.registerWeapon("P228", {
 	model = "models/weapons/w_pist_p228.mdl",
-	price = 100,
-	weapon = "fw_gun_glock",
+	price = 225,
+	weapon = "fw_gun_p228",
 	both = true
 })
 
 fw.ents.registerWeapon("USP", {
 	weapon = "fw_gun_usp",
-	price = 230,
+	price = 150,
 	model = "models/weapons/w_pist_usp.mdl",
 	both = true,
 })
 
 fw.ents.registerWeapon("Dualies", {
 	weapon = "fw_gun_dualies",
-	price = 300,
-	model = "models/weapons/w_pist_elite",
+	price = 325,
+	model = "models/weapons/w_pist_elite.mdl",
 	both = true,
 })
 
 
 fw.ents.registerWeapon("MAC 10", {
 	weapon = "fw_gun_mac10",
-	price = 500,
+	price = 700,
 	model = "models/weapons/w_smg_mac10.mdl",
 	both = true,
 })
 
 fw.ents.registerWeapon("AK-47", {
 	weapon = "fw_gun_ak47",
-	price = 800,
+	price = 3000,
 	model = "models/weapons/w_rif_ak47.mdl",
 	both = true,
 })
 
-fw.ents.registerWeapon("M3 Supor 90", {
+fw.ents.registerWeapon("M3 Super 90", {
 	weapon = "fw_gun_m3",
-	price = 600,
+	price = 2500,
 	model = "models/weapons/w_shot_m3super90.mdl",
 	both = true,
 })
 
 fw.ents.registerWeapon("TMP", {
 	weapon = "fw_gun_tmp",
-	price = 520,
-	model = "models/weapons/w_shot_m3super90.mdl",
+	price = 750,
+	model = "models/weapons/w_smg_tmp.mdl",
 	both = true,
 })
 
 fw.ents.registerWeapon("UMP", {
 	weapon = "fw_gun_ump",
-	price = 600,
+	price = 800,
 	model = "models/weapons/w_smg_ump.mdl",
 	both = true,
 })
 
 fw.ents.registerWeapon("Scout", {
 	weapon = "fw_gun_scout",
-	price = 600,
+	price = 2250,
 	model = "models/weapons/w_snip_scout.mdl",
 	both = true,
 })
 
 fw.ents.registerWeapon("AWP", {
-	price = 2000,
+	price = 5000,
 	weapon = "fw_gun_awp",
 	model = "models/weapons/w_snip_awp.mdl",
 	both = true,
@@ -298,7 +298,7 @@ fw.ents.registerWeapon("P90", {
 })
 
 fw.ents.registerWeapon("SG552", {
-	price = 3600,
+	price = 3500,
 	model = "models/weapons/w_rif_sg552.mdl",
 	weapon = "fw_gun_sg552",
 	both = true,
@@ -306,7 +306,7 @@ fw.ents.registerWeapon("SG552", {
 })
 
 fw.ents.registerWeapon("AUG", {
-	price = 4200,
+	price = 3500,
 	model = "models/weapons/w_rif_aug.mdl",
 	weapon = "fw_gun_aug",
 	both = true,
@@ -314,7 +314,7 @@ fw.ents.registerWeapon("AUG", {
 })
 
 fw.ents.registerWeapon("G3SG1", {
-	price = 5000,
+	price = 6500,
 	model = "models/weapons/w_snip_g3sg1.mdl",
 	weapon = "fw_gun_g3sg1",
 	both = true,
@@ -322,7 +322,7 @@ fw.ents.registerWeapon("G3SG1", {
 })
 
 fw.ents.registerWeapon("MP5", {
-	price = 500,
+	price = 800,
 	model = "models/weapons/w_smg_mp5.mdl",
 	weapon = "fw_gun_mp5",
 	both = true,
@@ -330,7 +330,7 @@ fw.ents.registerWeapon("MP5", {
 })
 
 fw.ents.registerWeapon("Famas", {
-	price = 750,
+	price = 2500,
 	model = "models/weapons/w_rif_famas.mdl",
 	weapon = "fw_gun_famas",
 	both = true,
@@ -338,15 +338,7 @@ fw.ents.registerWeapon("Famas", {
 })
 
 fw.ents.registerWeapon("Galil", {
-	price = 960,
-	model = "models/weapons/w_rif_galil.mdl",
-	weapon = "fw_gun_galil",
-	both = true,
-	team = TEAM_GUN,
-})
-
-fw.ents.registerWeapon("Galil", {
-	price = 960,
+	price = 2300,
 	model = "models/weapons/w_rif_galil.mdl",
 	weapon = "fw_gun_galil",
 	both = true,
@@ -354,7 +346,7 @@ fw.ents.registerWeapon("Galil", {
 })
 
 fw.ents.registerWeapon("M4A1", {
-	price = 600,
+	price = 3000,
 	model = "models/weapons/w_rif_m4a1.mdl",
 	weapon = "fw_gun_m4a1",
 	both = true,
@@ -362,9 +354,9 @@ fw.ents.registerWeapon("M4A1", {
 })
 
 fw.ents.registerWeapon("XM-1014", {
-	price = 600,
+	price = 3500,
 	model = "models/weapons/w_shot_xm1014.mdl",
-	weapon = "fw_gun_m4a1",
+	weapon = "fw_gun_xm1014",
 	both = true,
 	team = TEAM_GUN,
 })

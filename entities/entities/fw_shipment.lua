@@ -14,13 +14,15 @@ if SERVER then
 		self:PhysWake()
 
 		self:SetUseType(SIMPLE_USE)
-		self.Health = 200
+		self.health = 200
+
+		self:PrecacheGibs()
 	end
 
 	function ENT:OnTakeDamage(dmg)
-		self.Health = self.Health - dmg:GetDamage()
+		self.health = self.health - dmg:GetDamage()
 
-		if self.Health <= 0 then
+		if self.health <= 0 then
 			-- Make cool gibs on the client before it dies
 			net.Start("FW_BreakShipment")
 			net.WriteEntity(self)
