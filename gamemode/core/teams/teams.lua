@@ -89,8 +89,8 @@ TEAM_DRUG = fw.team.register("Drug Dealer", {
 TEAM_MERC = fw.team.register("Mercenary", {
 	stringID = "t_merc",
 	models = {"models/player/guerilla.mdl"},
-	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
-	salary = 4,
+	weapons = {"fw_gun_p228", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
+	salary = 45,
 	max = 4,
 })
 
@@ -124,7 +124,7 @@ TEAM_SOLDIER = fw.team.register("Soldier", {
 		"models/player/Group03/male_07.mdl",
 		"models/player/Group03/male_08.mdl"
 	},
-	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
+	weapons = {"fw_gun_ump", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	faction = {FACTION_GANGA, FACTION_GANGB},
 	salary = 45,
 	max = 4,
@@ -139,7 +139,7 @@ end
 TEAM_POLICE = fw.team.register("Police Officer", {
 	stringID = "t_police_officer",
 	models = {"models/player/urban.mdl"},
-	weapons = {"weapon_357", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
+	weapons = {"fw_gun_deagle", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	faction = FACTION_POLICE,
 	salary = 50,
 	max = 8,
@@ -148,7 +148,7 @@ TEAM_POLICE = fw.team.register("Police Officer", {
 TEAM_POLICE_CHIEF = fw.team.register("Police Chief", {
 	stringID = "t_police_officer_chief",
 	models = {"models/player/riot.mdl"},
-	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
+	weapons = {"fw_gun_deagle", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	faction = FACTION_POLICET,
 	salary = 55,
 	max = 1,
