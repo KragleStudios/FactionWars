@@ -172,6 +172,22 @@ fw.ents.registerItem("Opiate Refinery", {
 	max = 10,
 })
 
+fw.ents.registerItem("Gun Factory", {
+	model = "",
+	entity = "fw_gun_factory",
+	price = 690,
+	max = 10,
+})
+
+fw.ents.registerItem("Gun Grinder", {
+	model = "",
+	entity = "fw_gun_grinder",
+	price = 666,
+	max = 10,
+})
+
+
+
 
 ---
 --- BEGIN WEAPON REGISTRATION
