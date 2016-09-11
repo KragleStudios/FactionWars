@@ -127,12 +127,25 @@ function GM:PlayerCanHearPlayersVoice(...)
 	return fw.hook.Call("PlayerCanHearPlayersVoice", ...)
 end
 
+function GM:PlayerCanSeePlayersChat(text, teamonly, listener, speaker)
+	local ret = fw.hook.Call("PlayerCanSeePlayersChat", text, teamonly, listener, speaker)
+	if ret == nil then
+		if listener:GetPos():Distance(talker:GetPos()) >= 500 then
+			return false
+		end
+	end
+end
+
 function GM:RenderScreenspaceEffects(...)
 	return fw.hook.Call("RenderScreenspaceEffects", ...)
 end
 
 function GM:EntityRemoved(...)
 	return fw.hook.Call("EntityRemoved", ...)
+end
+
+function GM:GetFallDamage( ply, speed )
+	return speed / 7
 end
 
 function GM:PreRender(...)
