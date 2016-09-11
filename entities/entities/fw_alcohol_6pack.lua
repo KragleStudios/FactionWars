@@ -10,8 +10,8 @@ ENT.Resources = true
 ENT.MaxStorage = {
 	["alcohol"] = 25
 }
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false
 
 if SERVER then
 	AddCSLuaFile()

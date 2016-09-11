@@ -5,5 +5,5 @@ ENT.PrintName		= "Vodka"
 ENT.Category 		= "Faction Wars"
 ENT.Author			= "sanny"
 
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false

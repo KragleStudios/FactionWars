@@ -7,8 +7,8 @@ ENT.PrintName   = "Medical Opiate Lab"
 ENT.Author      = "crazyscouter"
 ENT.Category    = "Faction Wars"
 
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false
 
 ENT.Color = color_white
 ENT.NETWORK_SIZE = 500

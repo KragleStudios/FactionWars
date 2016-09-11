@@ -5,8 +5,8 @@ ENT.PrintName		= "Oxycontin Pill"
 ENT.Category 		= "Faction Wars"
 ENT.Author			= "crazyscouter"
 
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false
 
 ENT.NETWORK_SIZE = 0
 ENT.Resources = true

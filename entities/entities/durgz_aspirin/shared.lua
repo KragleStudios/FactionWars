@@ -4,8 +4,8 @@ ENT.PrintName = "Aspirin"
 ENT.Nicknames = {"too many pills", "too many painkillers", "too much aspirin"}
 ENT.OverdosePhrase = {"took", "consumed", "gulped down"}
 ENT.Author = "cheesylard (inspired by ninjers)"
-ENT.Spawnable = true
-ENT.AdminSpawnable = true 
+ENT.Spawnable = false
+ENT.AdminSpawnable = false 
 ENT.Information	 = "Gets rid of headaches" 
 
 if( CLIENT )then

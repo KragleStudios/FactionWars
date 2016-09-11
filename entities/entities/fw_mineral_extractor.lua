@@ -16,8 +16,8 @@ ENT.MaxStorage = {
 	["raw_resources"] = 30,
 }
 ENT.NETWORK_SIZE = 500
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Bool", 1, "On")

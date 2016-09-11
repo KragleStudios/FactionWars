@@ -2,7 +2,7 @@ ENT.PrintName = "Weapon Factory"
 ENT.Base = "base_entity"
 ENT.Type = "anim"
 
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminOnly = true
 
 ENT.MaxConsumption = {

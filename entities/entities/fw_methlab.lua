@@ -6,8 +6,8 @@ ENT.PrintName		= "Meth Lab"
 ENT.Author			= "sanny"
 ENT.Category 		= "Faction Wars"
 
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Float", 0, "NextProduceTime")

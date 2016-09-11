@@ -4,8 +4,8 @@ ENT.PrintName = "PCP"
 ENT.Nicknames = {"PCP"}
 ENT.OverdosePhrase = {"overdosed on"}
 ENT.Author = "cheesylard (inspired by ninjers)"
-ENT.Spawnable = true
-ENT.AdminSpawnable = true 
+ENT.Spawnable = false
+ENT.AdminSpawnable = false 
 ENT.Information	 = "GODLIKE!!!" 
 
 ENT.TRANSITION_TIME = 3
