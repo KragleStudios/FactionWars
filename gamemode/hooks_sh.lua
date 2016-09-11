@@ -94,7 +94,7 @@ function GM:OnPlayerChat(player, text, bTeamOnly, bPlayerIsDead)
 		local fname = fac:getName()
 		local fcolor = fac:getColor()
 		table.insert( tab, fcolor )
-		table.insert( tab, '[' .. string.sub(fname, 1, 1) .. ']')
+		table.insert( tab, '[' .. string.sub(fname, 1, 1) .. '] ')
 		table.insert( tab, player )
 	else
 		table.insert( tab, "Console" )
