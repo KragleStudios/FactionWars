@@ -72,6 +72,9 @@ function ENT:Draw()
 
 		for k,v in pairs(self:FindTargets()) do
 			local facCol = fw.team.factions[v.target:getFaction()].color or fw.team.factions[FACTION_DEFAULT].color
+			
+			--if the player has a bad weapon, show them as a threat if they aren't in the same faction
+
 
 			surface.SetDrawColor(facCol)
 

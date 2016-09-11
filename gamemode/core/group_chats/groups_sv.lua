@@ -288,12 +288,11 @@ fw.hook.Add("PlayerCanHearPlayersVoice", "RadioPlayerVoice", function(listener, 
 	if (listener:GetNWBool("radio") and talker:GetNWBool("radio")) then
 		for k,v in pairs(fw.group.voice) do
 			if (v[talker:Team()] and v[listener:Team()]) then
-				return true
-
+				return true, false
 			end
 		end
 	end
 
 	--distance based voice chat
-	if (listener:GetPos():DistToSqr(talker:GetPos()) <= 560 * 560) then return true end
+	if (listener:GetPos():DistToSqr(talker:GetPos()) <= 560 * 560) then return true, true end
 end)
