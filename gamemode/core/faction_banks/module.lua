@@ -11,6 +11,7 @@ fw.dep(SHARED, "hook")
 fw.dep(SERVER, "data")
 fw.dep(SHARED, "teams")
 fw.dep(SERVER, "chat_commands")
+fw.dep(SERVER, "zones")
 
 -- TEMPORARILY DISABLED
 

@@ -29,3 +29,5 @@ fw.config.dropBlacklist = {
 fw.config.resourceNetworkUpdateInterval = 1 -- seconds
 
 fw.config.doorRespawnTime = 300 -- Amount of time for a door to respawn, seconds
+
+fw.config.zoneCaptureReward = 1 -- how much boost to give faction salaries per zone they have captured on payday

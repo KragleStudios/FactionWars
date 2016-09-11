@@ -1,9 +1,9 @@
 function fw.team.factionDeposit(ply, amt)
 	local fac = ply:getFaction()
-	if (not ply:inFaction() or ply:getFaction() == FACTION_DEFAULT) then 
-		return 
+	if (not ply:inFaction() or ply:getFaction() == FACTION_DEFAULT) then
+		return
 	end
-	
+
 	if (not ply:canAfford(amt)) then
 		ply:FWChatPrint("You can't afford to depost this much!")
 		return
@@ -14,13 +14,13 @@ function fw.team.factionDeposit(ply, amt)
 	local str = ply:Nick().." has deposited $"..string.Comma(amt).. " into the faction bank! New Amount: $"..string.Comma(ndoc.table.fwFactions[fac].money)
 	for k,v in pairs(fw.team.getFactionPlayers(fac)) do
 		v:FWChatPrint(str)
-	end	
+	end
 end
 
 function fw.team.factionWithdraw(ply, amt)
 	local fac = ply:getFaction()
-	if (not ply:inFaction() or ply:getFaction() == FACTION_DEFAULT) then 
-		return 
+	if (not ply:inFaction() or ply:getFaction() == FACTION_DEFAULT) then
+		return
 	end
 
 	--this boss is the only one who can approve withdraws, however if there isn't one, we need to ask the other members. DEMOCRACY! :D
@@ -40,7 +40,7 @@ function fw.team.factionWithdraw(ply, amt)
 		ply:FWChatPrint("The faction can't afford this withdraw!")
 		return
 	end
-	
+
 	fw.vote.createNew("Withdraw Query", ply:Nick().." wants to withdraw: $"..amt, players,
 		function(decision)
 			if (decision) then
@@ -50,7 +50,7 @@ function fw.team.factionWithdraw(ply, amt)
 				local str = ply:Nick().." has withdrawn $"..string.Comma(amt).." from the faction bank! New Amount: $"..string.Comma(ndoc.table.fwFactions[fac].money)
 				for k,v in pairs(fw.team.getFactionPlayers(fac)) do
 					v:FWChatPrint(str)
-				end	
+				end
 			else
 				fw.hud.pushNotification(ply, "Faction Bank", "The boss has rejected your withdrawl proposal!")
 			end
@@ -83,7 +83,7 @@ function fw.team.saveFactionBanks()
 end
 
 --[[
-		Structure: 
+		Structure:
 		tbl = {
 			money = amount,
 		}
@@ -107,10 +107,18 @@ function fw.team.factionPayroll(faction)
 	local fac_players = fw.team.getFactionPlayers(faction)
 	local useFacBank = fw.config.useFactionBank
 
+	local reward = 0
+	for k, zone in pairs(fw.zone.zoneList) do
+		if zone:getControllingFaction() == faction then
+			reward = reward + 1
+		end
+	end
+	reward = reward * fw.config.zoneCaptureReward
+
 	for k,v in pairs(fac_players) do
 		local team = fw.team.list[v:Team()]
 
-		local salary = team.salary
+		local salary = team.salary + reward
 
 		v:addMoney(salary)
 
@@ -127,7 +135,7 @@ hook.Add("Initialize", "LoadBanks", function()
 	end
 end)
 
-timer.Create("fw.teams.pay", payroll, 0, function() 
+timer.Create("fw.teams.pay", payroll, 0, function()
 	for k,v in pairs(fw.team.factions) do
 		fw.team.factionPayroll(k)
 	end
