@@ -47,46 +47,6 @@ function ENT:SpawnFunction( ply, tr )
 
 end
 
-local function ScaleDamage( ent, inflictor, attacker, amount, dmginfo )
-	if(!server_settings.Bool( "durgz_roleplay", 0 ))then //if we're not in roleplay mode, then continue on.
-		//when the PCP high person is attacking.
-		local pl = attacker;
-		if( pl:IsPlayer() && pl:GetNetworkedFloat("durgz_pcp_high_start") && pl:GetNetworkedFloat("durgz_pcp_high_end") > CurTime() )then
-			local scale;
-			if( pl:GetNetworkedFloat("durgz_pcp_high_start") + 3 > CurTime() )then
-				scale = 1 + MAX_SCALE*(CurTime() - pl:GetNetworkedFloat("durgz_pcp_high_start"))/3
-
-
-			elseif( pl:GetNetworkedFloat("durgz_pcp_high_end") - 3 < CurTime() )then
-				scale = 1 + MAX_SCALE*(pl:GetNetworkedFloat("durgz_pcp_high_end") - CurTime())/3
-			else
-				scale = 1 + MAX_SCALE;
-			end
-			dmginfo:ScaleDamage(scale);
-			dmginfo:SetDamageForce(dmginfo:GetDamageForce()*scale*10);
-
-		end
-		//when the PCP high person is being attacked.
-		pl = ent;
-		if( pl:IsPlayer() && pl:GetNetworkedFloat("durgz_pcp_high_start") && pl:GetNetworkedFloat("durgz_pcp_high_end") > CurTime() )then
-			local scale;
-			if( pl:GetNetworkedFloat("durgz_pcp_high_start") + 3 > CurTime() )then
-				scale = 1 + MAX_SCALE*(CurTime() - pl:GetNetworkedFloat("durgz_pcp_high_start"))/3/2
-
-
-			elseif( pl:GetNetworkedFloat("durgz_pcp_high_end") - 3 < CurTime() )then
-				scale = 1 + MAX_SCALE*(pl:GetNetworkedFloat("durgz_pcp_high_end") - CurTime())/3/2
-			else
-				scale = 1 + MAX_SCALE/2;
-			end
-			dmginfo:ScaleDamage(scale);
-			dmginfo:SetDamageForce(dmginfo:GetDamageForce()*scale*10);
-
-		end
-	end
-end
-hook.Add("EntityTakeDamage", "PCPScale", ScaleDamage);
-
 local lastThink = 0;
 
 local function RandomizeHealth()
