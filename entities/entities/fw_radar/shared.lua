@@ -2,8 +2,8 @@ ENT.Type = "anim"
 ENT.Base = "base_entity"
 
 ENT.PrintName = "Radar"
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false
 ENT.Category = "Faction Wars"
 
 --how big is the detection distance?

@@ -1,4 +1,4 @@
-if SERVER then AddCSLuaFile() end
+if SERVER then util.AddNetworkString("FW_BreakShipment") AddCSLuaFile() end
 
 ENT.PrintName = "Shipment"
 ENT.Author = "thelastpenguin"
@@ -14,7 +14,23 @@ if SERVER then
 		self:PhysWake()
 
 		self:SetUseType(SIMPLE_USE)
-		self.Health = 200
+		self.health = 200
+
+		self:PrecacheGibs()
+	end
+
+	function ENT:OnTakeDamage(dmg)
+		self.health = self.health - dmg:GetDamage()
+
+		if self.health <= 0 then
+			-- Make cool gibs on the client before it dies
+			net.Start("FW_BreakShipment")
+			net.WriteEntity(self)
+			net.WriteVector(dmg:GetDamageForce())
+			net.SendPVS(self:GetPos())
+
+			self:Remove()
+		end
 	end
 end
 
@@ -66,3 +82,7 @@ function ENT:Use(activator)
 	if self:GetCount() == 0 then self:Remove() end
 	fw.ents.createWeapon(activator, self:GetItemTable())
 end
+
+net.Receive("FW_BreakShipment", function()
+	net.ReadEntity():GibBreakClient(net.ReadVector())
+end)

@@ -1,4 +1,4 @@
-ndoc.table.pp = ndoc.table.pp or {}
+ndoc.table.fwPP = ndoc.table.fwPP or {}
 
 --[[
 	Docs: 
@@ -15,29 +15,29 @@ util.AddNetworkString("fw.removePlayerFromWhitelist")
 net.Receive("fw.whoCanPhysgun", function(l, ply)
 	local status = net.ReadUInt(8)
 
-	ndoc.table.pp[ply].whoCanPhysgun = status
+	ndoc.table.fwPP[ply].whoCanPhysgun = status
 end)
 
 net.Receive("fw.whoCanTool", function(l, ply)
 	local status = net.ReadUInt(8)
 
-	ndoc.table.pp[ply].whoCanTool = status
+	ndoc.table.fwPP[ply].whoCanTool = status
 end)
 
 net.Receive("fw.addPlayerToWhitelist", function(l, ply)
 	local target = net.ReadEntity()
 
-	ndoc.table.pp[ply].whitelist[target] = true
+	ndoc.table.fwPP[ply].whitelist[target] = true
 end)
 
 net.Receive("fw.removePlayerFromWhitelist", function(l, ply)
 	local target = net.ReadEntity()
 
-	ndoc.table.pp[ply].whitelist[target] = nil
+	ndoc.table.fwPP[ply].whitelist[target] = nil
 end)
 
 fw.hook.Add("PlayerInitialSpawn", "SetupNDOCTables", function(ply)
-	ndoc.table.pp[ply] = {
+	ndoc.table.fwPP[ply] = {
 		whoCanPhysgun = 1,
 		whoCanTool    = 1,
 		whitelist = {}
@@ -45,7 +45,7 @@ fw.hook.Add("PlayerInitialSpawn", "SetupNDOCTables", function(ply)
 end)
 
 fw.hook.Add("PhysgunPickup", "PreventBaddies", function(ply, ent)
-	if (ent:GetClass() == "prop_physics") then
+	if (ent:FWGetOwner()) then
 		return fw.pp.canPhysgunProp(ply, ent)
 	end
 

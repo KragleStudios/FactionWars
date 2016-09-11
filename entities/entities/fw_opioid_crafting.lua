@@ -7,34 +7,34 @@ ENT.PrintName   = "Medical Opiate Lab"
 ENT.Author      = "crazyscouter"
 ENT.Category    = "Faction Wars"
 
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false
 
 ENT.Color = color_white
 ENT.NETWORK_SIZE = 500
 
 ENT.Resources = true
 ENT.Crafts = {
-	["Morphine"] = {
+	["PCP"] = {
 		resources = {
 			["water"] = 1,
 			["opioid"] = 2,
 		},
-		entity = "fw_morphine_needle"
+		entity = "durgz_pcp"
 	},
-	["Oxycontin"] = {
+	["LSD"] = {
 		resources = {
 			["water"] = 1,
 			["opioid"] = 3,
 		},
-		entity = "fw_oxycontin_pill"
+		entity = "durgz_lsd"
 	},
-	["Vicodin"] = {
+	["Aspirin"] = {
 		resources = {
 			["water"] = 1,
 			["opioid"] = 4,
 		},
-		entity = "fw_vicodin_pill"
+		entity = "durgz_aspirin"
 	}
 }
 

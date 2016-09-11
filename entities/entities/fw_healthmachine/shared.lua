@@ -5,7 +5,7 @@ ENT.PrintName = "Health Machine"
 ENT.Author = "Spai"
 ENT.Category = "Faction Wars"
 
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.Resources = true
 ENT.NETWORK_SIZE = 500
 

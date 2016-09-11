@@ -58,11 +58,44 @@ function GM:InitPostEntity(...)
 end
 
 function GM:PlayerSay(pl, text, ...)
-	return fw.hook.Call('PlayerSay', pl, text, ...)
+	local message = fw.hook.Call('PlayerSay', pl, text, ...) or text
+	print("PlayerSay: " .. tostring(message))
+	return message
 end
 
 function GM:OnPlayerChat(...)
-	return fw.hook.Call("OnPlayerChat", ...)
+	local stop = fw.hook.Call("OnPlayerChat", ...)
+	if stop ~= nil then return end
+
+	local tab = {}
+
+	if ( bPlayerIsDead ) then
+		table.insert( tab, Color( 255, 30, 40 ) )
+		table.insert( tab, "*DEAD* " )
+	end
+
+	if ( bTeamOnly ) then
+		table.insert( tab, Color( 30, 160, 40 ) )
+		table.insert( tab, "( TEAM ) " )
+	end
+
+	if ( IsValid( player ) ) then
+		table.insert( tab, player )
+		local fac = fw.team.factions[ ply:getFaction() ]
+		local fname = fac:getName()
+		local fcolor = fac:getColor()
+		table.insert( tab, fcolor )
+		table.insert( tab, '[' .. string.sub(fname, 1, 1) .. ']')
+	else
+		table.insert( tab, "Console" )
+	end
+
+	table.insert( tab, Color( 255, 255, 255 ) )
+	table.insert( tab, ": "..strText )
+
+	chat.AddText(unpack(tab))
+
+	return true
 end
 
 function GM:ScoreboardShow(...)
@@ -127,12 +160,20 @@ function GM:PlayerCanHearPlayersVoice(...)
 	return fw.hook.Call("PlayerCanHearPlayersVoice", ...)
 end
 
+function GM:PlayerCanSeePlayersChat(text, teamonly, listener, speaker)
+	return listener:GetPos():Distance(talker:GetPos()) < 500
+end
+
 function GM:RenderScreenspaceEffects(...)
 	return fw.hook.Call("RenderScreenspaceEffects", ...)
 end
 
 function GM:EntityRemoved(...)
 	return fw.hook.Call("EntityRemoved", ...)
+end
+
+function GM:GetFallDamage( ply, speed )
+	return speed / 7
 end
 
 function GM:PreRender(...)
@@ -150,6 +191,23 @@ end
 function GM:PlayerSwitchWeapon(...)
 	return fw.hook.Call("PlayerSwitchWeapon", ...)
 end
+
+function GM:PlayerSpawnSENT(pl)
+	return pl:IsSuperAdmin()
+end
+
+function GM:PlayerSpawnSWEP()
+	return pl:IsSuperAdmin()
+end
+
+function GM:PlayerGiveSWEP()
+	return pl:IsSuperAdmin()
+end
+
+function GM:PlayerSpawnNPC()
+	return pl:IsSuperAdmin()
+end
+
 
 --
 -- MODELE TEAMS

@@ -18,6 +18,10 @@ fw.config.zoneCaptureScore = 100
 fw.config.zoneCaptureRate =  1
 -- what portion of the real weapon value should shipments cost
 -- shipmentCount * singlePrice * fw.config.shipmentMarkdown
-fw.config.shipmentMarkdown = 0.60
+fw.config.shipmentMarkdown = 0.80
 --how many guns are in a shipment by default
 fw.config.defaultShipmentCount = 10
+--which tools should we ignore when checking if a player can use it?
+fw.config.whitelisted_tools = {
+	['fw_zone_creator'] = true, -- leave this here or you won't be able to create zones!
+}

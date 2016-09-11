@@ -6,8 +6,8 @@ ENT.PrintName		= "Small Bomb"
 ENT.Category 		= "Faction Wars"
 ENT.Author			= "Spai"
 
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false
 
 function ENT:SetupDataTables()
 

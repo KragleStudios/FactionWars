@@ -2,7 +2,7 @@ local dist = 1000 * 1000
 
 fw.hook.Add("PostDrawOpaqueRenderables", "drawOverhead", function()
 	for k, v in pairs(player.GetAll()) do
-		if v != LocalPlayer() and v:GetPos():DistToSqr(LocalPlayer():GetPos()) <= dist then
+		if IsValid(v) and v != LocalPlayer() and v:GetPos():DistToSqr(LocalPlayer():GetPos()) <= dist and v:Alive() then
 			local boneIndex = v:LookupBone("ValveBiped.Bip01_Head1")
 			local bonePos = v:GetBonePosition(boneIndex)
 			local pos = bonePos + Vector(0, 0, 20)

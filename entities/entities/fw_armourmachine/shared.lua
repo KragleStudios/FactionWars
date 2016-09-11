@@ -6,8 +6,8 @@ ENT.PrintName		= "Armour Machine"
 ENT.Author			= "Spai"
 ENT.Category 		= "Faction Wars"
 
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false
 ENT.Resources = true
 ENT.NETWORK_SIZE = 500
 

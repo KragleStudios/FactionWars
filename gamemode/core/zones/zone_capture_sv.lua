@@ -133,9 +133,13 @@ end
 
 local MAX_CAPTURE_SCORE = fw.config.zoneCaptureScore
 local ZONE_CAPTURE_RATE = fw.config.zoneCaptureRate
+
+local notificationCache = {}
 timer.Create("fw.zone_capture.updateCaptureProgress", 1, 0, function()
 	for k, zone in pairs(fw.zone.zoneList) do
 		if (not zone:canBeCaptured()) then continue end
+
+		notificationCache[ zone ] = notificationCache[ zone ] or {}
 
 		local zoneControl = ndoc.table.fwZoneControl[zone.id].scores
 
@@ -160,10 +164,28 @@ timer.Create("fw.zone_capture.updateCaptureProgress", 1, 0, function()
 			for k,v in ndoc.pairs(zoneControl) do
 				if k ~= mostInterest and v ~= 0 then
 					zoneControl[k] = math.max(0, zoneControl[k] - ZONE_CAPTURE_RATE)
+
+					local protecting = k
+					local contesting = mostInterest
+
+					--if the stored contesting faction is different, that means we are being contested! :D
+					local notif = notificationCache[ zone ]
+					if (notif.contesting ~= contesting) then
+						
+						notif.contesting = contesting
+						fw.hook.Call("FWZoneContested", zone, protecting, contesting)
+					end
 				end
 			end
 		end
 	end
+end)
+
+fw.hook.Add("FWZoneContested", "ZoneContestingNotification", function(zone, protecting, contesting)
+	local protectingPlayers = fw.team.factions[ protecting ]:getPlayers()
+	local contestingFaction = fw.team.factions[ contesting ]:getName()
+
+	fw.hud.pushNotification(protectingPlayers, 'ZONES', zone.name .. " is being contested by the " .. contestingFaction .. "!")
 end)
 
 ---

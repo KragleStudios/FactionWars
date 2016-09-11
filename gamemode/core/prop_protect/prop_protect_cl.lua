@@ -60,7 +60,7 @@ fw.hook.Add("AddToolMenuTabs", "AddPPPanels", function()
 		local function addChoices()
 			for k,v in pairs(player.GetAll()) do
 				if (v == LocalPlayer()) then continue end
-				if (ndoc.table.pp[LocalPlayer()].whitelist[v]) then continue end
+				if (ndoc.table.fwPP[LocalPlayer()].whitelist[v]) then continue end
 
 				local choice = combo:AddChoice(v:Nick(), v)
 			end
@@ -85,7 +85,7 @@ fw.hook.Add("AddToolMenuTabs", "AddPPPanels", function()
 
 			box:Clear()
 
-			for k,v in ndoc.pairs(ndoc.table.pp[LocalPlayer()].whitelist) do
+			for k,v in ndoc.pairs(ndoc.table.fwPP[LocalPlayer()].whitelist) do
 				local line = box:AddItem(k:Nick())
 				line.ply = k
 			end

@@ -12,8 +12,8 @@ ENT.Resources = true
 ENT.MaxStorage = {
 	["gas"] = 100
 }
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false
 ENT.MaxHealth = 100
 
 if SERVER then
