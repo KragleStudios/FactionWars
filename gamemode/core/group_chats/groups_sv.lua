@@ -8,6 +8,14 @@ fw.chat.addCMD({"/", "all", "occ"}, "Sends a message out of character to all pla
 	table.insert(textCache, Color(0, 0, 0))
 	table.insert(textCache, "[Global] ")
 
+	local fac = fw.team.factions[ ply:getFaction() ]
+	local fname = fac:getName()
+	local fcolor = fac:getColor()
+
+	local prefix = string.sub(fname, 1, 1)
+	table.insert(textCache, fcolor)
+	table.insert(textCache, '['..prefix..'] ')
+
 	table.insert(textCache, team.GetColor(ply:Team()))
 	table.insert(textCache, ply:Nick() .. ": ")
 	table.insert(textCache, Color(255, 255, 255))
@@ -37,6 +45,14 @@ fw.chat.addCMD({"fac", "faction", "team"}, "Sends a message to all players in yo
 
 	table.insert(textCache, Color(0, 0, 0))
 	table.insert(textCache, "[Faction] ")
+
+	local fac = fw.team.factions[ ply:getFaction() ]
+	local fname = fac:getName()
+	local fcolor = fac:getColor()
+
+	local prefix = string.sub(fname, 1, 1)
+	table.insert(textCache, fcolor)
+	table.insert(textCache, '['..prefix..'] ')
 
 	table.insert(textCache, team.GetColor(ply:Team()))
 	table.insert(textCache, ply:Nick() .. ": ")
@@ -143,6 +159,14 @@ fw.chat.addCMD({"yell", "y"}, "Sends a message to players in your direct vacinit
 	table.insert(textCache, Color(255, 255, 0))
 	table.insert(textCache, "[Yell] ")
 
+	local fac = fw.team.factions[ ply:getFaction() ]
+	local fname = fac:getName()
+	local fcolor = fac:getColor()
+
+	local prefix = string.sub(fname, 1, 1)
+	table.insert(textCache, fcolor)
+	table.insert(textCache, '['..prefix..'] ')
+
 	table.insert(textCache, team.GetColor(ply:Team()))
 	table.insert(textCache, ply:Nick() .. ": ")
 	table.insert(textCache, Color(255, 255, 255))
@@ -190,6 +214,14 @@ fw.chat.addCMD({"g", "group"}, "Sends a message to players in your registered ch
 
 	table.insert(textCache, Color(0, 0, 0))
 	table.insert(textCache, "["..g_name.."] ")
+
+	local fac = fw.team.factions[ ply:getFaction() ]
+	local fname = fac:getName()
+	local fcolor = fac:getColor()
+
+	local prefix = string.sub(fname, 1, 1)
+	table.insert(textCache, fcolor)
+	table.insert(textCache, '['..prefix..'] ')
 
 	table.insert(textCache, team.GetColor(ply:Team()))
 	table.insert(textCache, ply:Nick() .. ": ")
