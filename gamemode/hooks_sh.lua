@@ -73,6 +73,39 @@ function GM:PlayerSay(pl, text, ...)
 	return "" 
 end
 
+function GM:OnPlayerChat(player, text, bTeamOnly, bPlayerIsDead)
+	local stop = fw.hook.Call("OnPlayerChat", ply, text, teamChat, isDead)
+	if stop ~= nil then return end
+
+	local tab = {}
+
+	if ( bPlayerIsDead ) then
+		table.insert( tab, Color( 255, 30, 40 ) )
+		table.insert( tab, "*DEAD* " )
+	end
+
+	if ( bTeamOnly ) then
+		table.insert( tab, Color( 30, 160, 40 ) )
+		table.insert( tab, "( TEAM ) " )
+	end
+
+	if ( IsValid( player ) ) then
+		local fac = fw.team.factions[ player:getFaction() ]
+		local fname = fac:getName()
+		local fcolor = fac:getColor()
+		table.insert( tab, fcolor )
+		table.insert( tab, '[' .. string.sub(fname, 1, 1) .. ']')
+		table.insert( tab, player )
+	else
+		table.insert( tab, "Console" )
+	end
+
+	table.insert( tab, Color( 255, 255, 255 ) )
+	table.insert( tab, ": " .. text )
+
+	chat.AddText(unpack(tab))
+end
+
 function GM:OnPlayerChat(...)
 	return fw.hook.Call("OnPlayerChat", ...)
 end

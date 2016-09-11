@@ -21,6 +21,4 @@ fw.hook.Add("PlayerSay", "EasterEggs", function(ply, msg)
 
     timer.Simple(30, function() if prop:IsValid() then prop:Remove() end end)
   end
-
-  return ""
 end)
