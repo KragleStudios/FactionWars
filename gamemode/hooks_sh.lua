@@ -161,7 +161,7 @@ function GM:PlayerCanHearPlayersVoice(...)
 end
 
 function GM:PlayerCanSeePlayersChat(text, teamonly, listener, speaker)
-	return listener:GetPos():Distance(talker:GetPos()) < 500
+	return listener:GetPos():DistToSqr(speaker:GetPos()) < 500 * 500
 end
 
 function GM:RenderScreenspaceEffects(...)

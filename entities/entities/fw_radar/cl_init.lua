@@ -71,13 +71,7 @@ function ENT:Draw()
 		drawCircle(0, 0, 200, 360)
 
 		for k,v in pairs(self:FindTargets()) do
-			local facCol = fw.team.factions[v.target:getFaction() or FACTION_DEFAULT].color
-			
-			--if the player has a bad weapon, show them as a threat if they aren't in the same faction
-			local wep = v.target:GetActiveWeapon()
-			if (IsValid(wep) and IsValid(LocalPlayer()) and not self.WepBlacklist[wep:GetClass()] and LocalPlayer():getFaction() != v.target:getFaction()) then
-				facCol = Color(255, 0, 0)
-			end
+			local facCol = fw.team.factions[v.target:getFaction()].color or fw.team.factions[FACTION_DEFAULT].color
 
 			surface.SetDrawColor(facCol)
 
