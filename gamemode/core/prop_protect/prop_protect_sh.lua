@@ -70,3 +70,13 @@ fw.hook.Add("CanTool", "PreventBaddieTools", function(ply, tr, tool)
 
 	return true
 end)
+
+fw.hook.Add("PhysgunPickup", "PreventBaddies", function(ply, ent)
+	if (ent:FWGetOwner()) then
+		return fw.pp.canPhysgunProp(ply, ent)
+	elseif ent:IsPlayer() then
+		return ply:IsSuperAdmin()
+	end
+
+	return true
+end)

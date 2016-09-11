@@ -44,14 +44,6 @@ fw.hook.Add("PlayerInitialSpawn", "SetupNDOCTables", function(ply)
 	}
 end)
 
-fw.hook.Add("PhysgunPickup", "PreventBaddies", function(ply, ent)
-	if (ent:FWGetOwner()) then
-		return fw.pp.canPhysgunProp(ply, ent)
-	end
-
-	return true
-end)
-
 fw.hook.Add("PlayerSpawnedProp", "SetOwner", function(ply, _, ent)
 	ent:FWSetOwner(ply)
 end)
