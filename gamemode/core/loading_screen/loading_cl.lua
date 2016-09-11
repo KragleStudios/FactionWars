@@ -17,6 +17,7 @@ local pMeta = FindMetaTable("Player")
 local Frame
 
 function pMeta:openLoadingScreen()
+	if IsValid(Frame) then return end
 
 	Frame = vgui.Create("DPanel")
 	Frame:SetSize(w, h)
@@ -52,12 +53,14 @@ function pMeta:openLoadingScreen()
 
 	
 	timer.Create("Loading_Percent",.1,100,function() -- please dont judge me for using timers, it was only supposed to be for testing
+		if not IsValid(Percent) then return end
 		Percent:SetText(100 - timer.RepsLeft("Loading_Percent") .. "%")
 		Percent:SetPos(w * .5 - surface.GetTextSize(Percent:GetText()) * .6, h * .5 - cOffset - 15)
 		Percent:SizeToContents()
 
 		if timer.RepsLeft("Loading_Percent") == 0 then
 			self:closeLoadingScreen(true)
+			self._isLoading = false
 		end
 	end)
 
@@ -85,74 +88,17 @@ function pMeta:closeLoadingScreen(shouldFade)
 end
 
 sty.WaitForLocalPlayer(function()
-	timer.Simple(4, function() LocalPlayer():openLoadingScreen() end) -- This is called slightly before we can actually see the screen (e.g. sending client info)
+	if not LocalPlayer():isLoading() then
+		timer.Simple(4, function() LocalPlayer():openLoadingScreen() end) -- This is called slightly before we can actually see the screen (e.g. sending client info)
+	end
 end)
-
 
 concommand.Add("fw_open_loading", function(ply)
 	ply:openLoadingScreen()
 end)
 
-
-function draw.Arc(cx,cy,radius,thickness,startang,endang,roughness,color) -- Credit to bobblehead (I think? Its on facepunch somewhere)
-	surface.SetDrawColor(color)
-	surface.DrawArc(surface.PrecacheArc(cx,cy,radius,thickness,startang,endang,roughness))
-end
-
-function surface.PrecacheArc(cx,cy,radius,thickness,startang,endang,roughness)
-	local triarc = {}
-
-	local roughness = math.max(roughness or 1, 1)
-	local step = roughness
-	local startang,endang = startang or 0, endang or 0
-	
-	if startang > endang then
-		step = math.abs(step) * -1
+concommand.Add("fw_close_loading", function(ply)
+	if IsValid(Frame) then
+		Frame:Remove()
 	end
-	
-	local inner = {}
-	local r = radius - thickness
-	for deg=startang, endang, step do
-		local rad = math.rad(deg)
-		-- local rad = deg2rad * deg
-		local ox, oy = cx+(math.cos(rad)*r), cy+(-math.sin(rad)*r)
-		table.insert(inner, {
-			x=ox,
-			y=oy,
-			u=(ox-cx)/radius + .5,
-			v=(oy-cy)/radius + .5,
-		})
-	end
-	
-	local outer = {}
-	for deg=startang, endang, step do
-		local rad = math.rad(deg)
-		local ox, oy = cx+(math.cos(rad)*radius), cy+(-math.sin(rad)*radius)
-		table.insert(outer, {
-			x=ox,
-			y=oy,
-			u=(ox-cx)/radius + .5,
-			v=(oy-cy)/radius + .5,
-		})
-	end
-	
-	for tri=1,#inner*2 do
-		local p1,p2,p3
-		p1 = outer[math.floor(tri/2)+1]
-		p3 = inner[math.floor((tri+1)/2)+1]
-		if tri%2 == 0 then
-			p2 = outer[math.floor((tri+1)/2)]
-		else
-			p2 = inner[math.floor((tri+1)/2)]
-		end
-	
-		table.insert(triarc, {p1,p2,p3})
-	end
-	return triarc	
-end
-
-function surface.DrawArc(arc) //Draw a premade arc.
-	for k,v in ipairs(arc) do
-		surface.DrawPoly(v)
-	end
-end
+end)
