@@ -68,7 +68,7 @@ fw.hook.Add("CanTool", "PreventBaddieTools", function(ply, tr, tool)
 	end
 	if (tr.Entity and tr.Entity:IsPlayer()) then return false end
 
-	return true
+	return false
 end)
 
 fw.hook.Add("PhysgunPickup", "PreventBaddies", function(ply, ent)
@@ -78,5 +78,5 @@ fw.hook.Add("PhysgunPickup", "PreventBaddies", function(ply, ent)
 		return ply:IsSuperAdmin()
 	end
 
-	return true
+	return false
 end)
