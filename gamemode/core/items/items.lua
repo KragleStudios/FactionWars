@@ -361,7 +361,7 @@ fw.ents.registerWeapon("Repair Tool", {
 })
 
 fw.ents.registerWeapon("Cutting Torch", {
-	model = "",
+	model = "models/weapons/w_IRifle.mdl",
 	weapon = "fw_cuttingtorch",
 	price = 800,
 	both = true,
