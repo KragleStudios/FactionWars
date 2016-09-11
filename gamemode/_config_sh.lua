@@ -21,3 +21,7 @@ fw.config.zoneCaptureRate =  1
 fw.config.shipmentMarkdown = 0.60
 --how many guns are in a shipment by default
 fw.config.defaultShipmentCount = 10
+--which tools should we ignore when checking if a player can use it?
+fw.config.whitelisted_tools = {
+	['fw_zone_creator'] = true, -- leave this here or you won't be able to create zones!
+}
