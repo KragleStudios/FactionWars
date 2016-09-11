@@ -15,6 +15,7 @@ function GM:PlayerInitialSpawn(...)
 end
 
 function GM:PlayerDeath(...)
+	self.BaseClass:PlayerDeath()
 	return fw.hook.Call("PlayerDeath", ...)
 end
 
@@ -58,19 +59,11 @@ function GM:InitPostEntity(...)
 end
 
 function GM:PlayerSay(pl, text, ...)
-	local ret = fw.hook.Call('PlayerSay', pl, text, ...)
-
-	if (ret == nil) then
-		print("SEARCHING")
-		local players = {}
- 		for k,v in pairs(player.findInSphere(pl:GetPos(), 400)) do
- 			table.insert(players, v)
- 		end
- 
- 		fw.notif.chat(players, team.GetColor(pl:Team()), pl:Nick(), ": ", Color(255, 255, 255), text)
-	end
-
-	return "" 
+	print(pl, text, ...)
+	local message = fw.hook.Call('PlayerSay', pl, text, ...)
+	print(type(message))
+	print("PlayerSay: " .. tostring(message))
+	return message
 end
 
 function GM:OnPlayerChat(player, text, bTeamOnly, bPlayerIsDead)
@@ -104,10 +97,8 @@ function GM:OnPlayerChat(player, text, bTeamOnly, bPlayerIsDead)
 	table.insert( tab, ": " .. text )
 
 	chat.AddText(unpack(tab))
-end
 
-function GM:OnPlayerChat(...)
-	return fw.hook.Call("OnPlayerChat", ...)
+	return true
 end
 
 function GM:ScoreboardShow(...)
@@ -164,12 +155,38 @@ function GM:OnReloaded(...)
 	return ret
 end
 
-function GM:DoPlayerDeath(...)
-	return fw.hook.Call("DoPlayerDeath", ...)
+function GM:DoPlayerDeath(ply, att, dmg)
+	ply.DeathTime = CurTime()
+	ply:CreateRagdoll()
+	ply:AddDeaths(1)
+
+	local att = dmg:GetAttacker()
+
+	if IsValid(att) and IsValid(ply) and att:IsPlayer() and ply:IsPlayer() then
+		if ply == att then
+			ply:AddFrags(-1)
+		else
+			att:AddFrags(1)
+		end
+	end
+
+	return fw.hook.Call("DoPlayerDeath", ply, att, dmg)
+end
+
+function GM:PlayerDeathThink(ply)
+	if ply.DeathTime + 5 > CurTime() then return end
+
+	if ply:IsBot() or ply:KeyPressed(IN_ATTACK) or ply:KeyPressed(IN_ATTACK2) or ply:KeyPressed(IN_JUMP) then
+		ply:Spawn()
+	end
 end
 
 function GM:PlayerCanHearPlayersVoice(...)
 	return fw.hook.Call("PlayerCanHearPlayersVoice", ...)
+end
+
+function GM:PlayerCanSeePlayersChat(text, teamonly, listener, speaker)
+	return listener:GetPos():DistToSqr(speaker:GetPos()) < 500 * 500
 end
 
 function GM:RenderScreenspaceEffects(...)
@@ -200,29 +217,22 @@ function GM:PlayerSwitchWeapon(...)
 	return fw.hook.Call("PlayerSwitchWeapon", ...)
 end
 
-function GM:PlayerSpawnSWEP(pl)
-	return pl:IsSuperAdmin()
-end
-
-function GM:PlayerGiveSWEP(pl)
-	return pl:IsSuperAdmin()
-end
-
-function GM:PlayerSpawnVehicle(pl)
-	return pl:IsSuperAdmin()
-end
-
 function GM:PlayerSpawnSENT(pl)
 	return pl:IsSuperAdmin()
 end
 
-function GM:PlayerSpawnNPC(pl)
+function GM:PlayerSpawnSWEP()
 	return pl:IsSuperAdmin()
 end
 
-function GM:PlayerNoClip(pl)
+function GM:PlayerGiveSWEP()
 	return pl:IsSuperAdmin()
 end
+
+function GM:PlayerSpawnNPC()
+	return pl:IsSuperAdmin()
+end
+
 
 --
 -- MODELE TEAMS
@@ -277,4 +287,3 @@ end
 function GM:CanTool(...)
 	return fw.hook.Call("CanTool", ...)
 end
-
