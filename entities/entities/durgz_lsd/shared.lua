@@ -21,7 +21,7 @@ if(CLIENT)then
 	
 	
 	local function DoLSD()
-		if(!DURGZ_LOST_VIRGINITY)then return; end
+		if(not DURGZ_LOST_VIRGINITY)then return; end
 		--self:SetNetworkedFloat( "SprintSpeed"
 		local pl = LocalPlayer();
 		
@@ -37,7 +37,7 @@ if(CLIENT)then
 		tab[ "$pp_colour_mulb" ] = 0
 		
 		
-		if( pl:GetNetworkedFloat("durgz_lsd_high_start") && pl:GetNetworkedFloat("durgz_lsd_high_end") > CurTime() )then
+		if( pl:GetNetworkedFloat("durgz_lsd_high_start") and pl:GetNetworkedFloat("durgz_lsd_high_end") > CurTime() )then
 		
 			if( pl:GetNetworkedFloat("durgz_lsd_high_start") + TRANSITION_TIME > CurTime() )then
 			
@@ -81,12 +81,12 @@ if(CLIENT)then
 	end
 	
 	
-	/*local function DoMsgLSD()
+	--[[local function DoMsgLSD()
 		local pl = LocalPlayer();
 		
 		
 		
-		if( pl:GetNetworkedFloat("durgz_lsd_high_start") && pl:GetNetworkedFloat("durgz_lsd_high_end") > CurTime() )then
+		if( pl:GetNetworkedFloat("durgz_lsd_high_start") and pl:GetNetworkedFloat("durgz_lsd_high_end") > CurTime() )then
 		
 			local say = "main"
 			
@@ -106,7 +106,7 @@ if(CLIENT)then
 			draw.DrawText(say, "ScoreboardHead", ScrW() / 2 , ScrH()*0.6, Color(255,9,9,255),TEXT_ALIGN_CENTER) 
 		end
 	end
-	hook.Add("HUDPaint", "durgz_lsd_msg", DoMsgLSD)*/
+	hook.Add("HUDPaint", "durgz_lsd_msg", DoMsgLSD)]]
 	
 	hook.Add("RenderScreenspaceEffects", "durgz_lsd_high", DoLSD)
 end

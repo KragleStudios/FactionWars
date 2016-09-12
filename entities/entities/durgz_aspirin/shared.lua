@@ -8,8 +8,6 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false 
 ENT.Information	 = "Gets rid of headaches" 
 
-if( CLIENT )then
-
+if ( CLIENT ) then
 	killicon.Add("durgz_aspirin","killicons/durgz_aspirin_killicon",Color( 255, 80, 0, 255 ))
-
 end

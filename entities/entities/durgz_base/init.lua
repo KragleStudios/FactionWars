@@ -13,7 +13,7 @@ CreateConVar( "durgz_roleplay", "0", { FCVAR_REPLICATED, FCVAR_ARCHIVE } ) --set
 
 function ENT:SpawnFunction( ply, tr ) 
    
- 	if ( !tr.Hit ) then return end 
+ 	if ( not tr.Hit ) then return end 
  	 
  	local SpawnPos = tr.HitPos + tr.HitNormal * 16 
  	 
@@ -54,19 +54,19 @@ end
  
 local function DoHigh(activator, caller, class, lastingeffect, transition_time, overdosephrase, nicknames)
 		--if you're transitioning to the end and you take another, smoothen it out
-		if activator:GetNetworkedFloat(class.."_high_end") && activator:GetNetworkedFloat(class.."_high_end") > CurTime() && activator:GetNetworkedFloat(class.."_high_end") - transition_time < CurTime() then
+		if activator:GetNetworkedFloat(class.."_high_end") and activator:GetNetworkedFloat(class.."_high_end") > CurTime() and activator:GetNetworkedFloat(class.."_high_end") - transition_time < CurTime() then
 			--set the high start in such a way to where it doesn't snap to the start time, goes smoooothly.
 			local set = CurTime() - ( activator:GetNetworkedFloat(class.."_high_end") - CurTime() );
 			activator:SetNetworkedFloat(class.."_high_start", set);
 			
 		--if you're not high at all
-		elseif( !activator:GetNetworkedFloat(class.."_high_start") || activator:GetNetworkedFloat(class.."_high_end") < CurTime() )then
+		elseif( not activator:GetNetworkedFloat(class.."_high_start") or activator:GetNetworkedFloat(class.."_high_end") < CurTime() )then
 			activator:SetNetworkedFloat(class.."_high_start", CurTime());
 		end
 		
 		--high is done
 		local ctime;
-		if( !activator:GetNetworkedFloat(class.."_high_end") || activator:GetNetworkedFloat(class.."_high_end") < CurTime() )then
+		if( not activator:GetNetworkedFloat(class.."_high_end") or activator:GetNetworkedFloat(class.."_high_end") < CurTime() )then
 			ctime = CurTime();
 		--you're already high on the drug,  add more highness
 		else
@@ -74,7 +74,7 @@ local function DoHigh(activator, caller, class, lastingeffect, transition_time, 
 		end
 		activator:SetNetworkedFloat(class.."_high_end", ctime + lastingeffect);
 		
-		if( activator:GetNetworkedFloat(class.."_high_end") && activator:GetNetworkedFloat(class.."_high_end") - lastingeffect*5 > CurTime() )then
+		if( activator:GetNetworkedFloat(class.."_high_end") and activator:GetNetworkedFloat(class.."_high_end") - lastingeffect*5 > CurTime() )then
 			--kill em
 			activator.DURGZ_MOD_DEATH = class;
 			activator.DURGZ_MOD_OVERDOSE = overdosephrase[math.random(1, #overdosephrase)];
@@ -93,9 +93,9 @@ hook.Add("PlayerDeath", "durgz_death_notice", function(victim, inflictor, attack
 			 		umsg.String( victim.DURGZ_MOD_DEATH );
 			umsg.End()
 			local s = victim.DURGZ_MOD_OVERRIDE or victim:Nick().." "..victim.DURGZ_MOD_OVERDOSE.." "..victim.DURGZ_MOD_NICKNAMES.." and died.";
-			/*for id,pl in pairs(player.GetAll())do
+			--[[for id,pl in pairs(player.GetAll())do
 				pl:PrintMessage(HUD_PRINTTALK, s);
-			end*/
+			end]]
 			MsgAll(s);
 			victim.DURGZ_MOD_DEATH = nil;
 			victim.DURGZ_MOD_OVERDOSE = nil;
@@ -181,7 +181,7 @@ end
 		}
 		
 		--you can't get out of the heroine high because you die when the high ends
-		if( !didntdie )then
+		if( not didntdie )then
 			table.insert(ttime, 5)
 			table.insert(drugs, "heroine")
 		end
@@ -190,7 +190,7 @@ end
 			local tend = 0
 			if( pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_start") + ttime[i] > CurTime() )then
 				tend = ( CurTime() - pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_start") ) + CurTime()
-			elseif !( pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_end") - ttime[i] < CurTime() )then	
+			elseif( not pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_end") - ttime[i] < CurTime() )then	
 				tend = CurTime() + ttime[i]
 			elseif( pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_end") > CurTime() )then
 				tend = pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_end")
@@ -202,14 +202,14 @@ end
 		
 		--remove cigarette if there is one
 		
-		/*if( pl.DurgzModCigarette && pl.DurgzModCigarette:IsValid() )then
+		--[[if( pl.DurgzModCigarette and pl.DurgzModCigarette:IsValid() )then
 			pl.DurgzModCigarette:Remove()
 			pl.DurgzModCigarette = nil
-		end*/
+		end*/]]
 		
 		--set speed back to normal
 		
-		if( pl:GetNetworkedFloat( "durgz_oldSprintSpeed" ) && pl:GetNetworkedFloat("durgz_oldSprintSpeed") != 0)then
+		if( pl:GetNetworkedFloat( "durgz_oldSprintSpeed" ) and pl:GetNetworkedFloat("durgz_oldSprintSpeed") ~= 0)then
 			pl:SetWalkSpeed(pl:GetNetworkedFloat( "durgz_oldWalkSpeed" ))
 			pl:SetRunSpeed(pl:GetNetworkedFloat( "durgz_oldSprintSpeed" ))
 		else

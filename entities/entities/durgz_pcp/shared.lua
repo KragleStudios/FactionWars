@@ -29,13 +29,13 @@ if(CLIENT)then
 	local TRANSITION_TIME = ENT.TRANSITION_TIME; --transition effect from sober to high, high to sober, in seconds how long it will take etc.
 	
 	local function DoPCP()
-		if(!DURGZ_LOST_VIRGINITY)then return; end
+		if(not DURGZ_LOST_VIRGINITY)then return; end
 		--self:SetNetworkedFloat( "SprintSpeed"
 		local pl = LocalPlayer();
 		
 		
 		
-		if( pl:GetNetworkedFloat("durgz_pcp_high_start") && pl:GetNetworkedFloat("durgz_pcp_high_end") > CurTime() )then
+		if( pl:GetNetworkedFloat("durgz_pcp_high_start") and pl:GetNetworkedFloat("durgz_pcp_high_end") > CurTime() )then
 			
 			local pf = 1;
 			

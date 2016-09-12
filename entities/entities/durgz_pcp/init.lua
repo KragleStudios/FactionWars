@@ -34,7 +34,7 @@ end
 
 function ENT:SpawnFunction( ply, tr )
 
-	if ( !tr.Hit ) then return end
+	if ( not tr.Hit ) then return end
 
 	local SpawnPos = tr.HitPos + tr.HitNormal * 16
 
@@ -54,9 +54,9 @@ local function RandomizeHealth()
 	lastThink = CurTime();
 	local health;
 	for _, pl in pairs(player.GetAll())do
-		if !(pl:GetNetworkedFloat("durgz_pcp_high_start") && pl:GetNetworkedFloat("durgz_pcp_high_end") > CurTime() && pl.durgz_pcp_originalhealth)then return; end
+		if not (pl:GetNetworkedFloat("durgz_pcp_high_start") and pl:GetNetworkedFloat("durgz_pcp_high_end") > CurTime() and pl.durgz_pcp_originalhealth)then return; end
 		health = pl:Health();
-		if(pl.durgz_pcp_lasthealth != health)then
+		if(pl.durgz_pcp_lasthealth ~= health)then
 			pl.durgz_pcp_originalhealth = pl.durgz_pcp_originalhealth - pl.durgz_pcp_lasthealth + health;
 		end
 		local randhealth = math.random(pl.durgz_pcp_originalhealth/2, pl.durgz_pcp_originalhealth);

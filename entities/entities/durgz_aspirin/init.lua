@@ -30,7 +30,7 @@ end
 
 local function RemoveHealth() for id,pl in pairs(player.GetAll())do
 	local health = pl:Health()
-	if( pl.durgz_aspirin_used && health > pl.durgz_aspirin_hp_start && pl.durgz_aspirin_start + TIME_TO_REMOVE > CurTime() )then
+	if( pl.durgz_aspirin_used and health > pl.durgz_aspirin_hp_start and pl.durgz_aspirin_start + TIME_TO_REMOVE > CurTime() )then
 		if( health < pl.durgz_aspirin_lasthealth )then
 			pl.durgz_aspirin_start = pl.durgz_aspirin_start - ( pl.durgz_aspirin_lasthealth - health ) / HP_TO_ADD * TIME_TO_REMOVE
 			pl.durgz_aspirin_hp = pl.durgz_aspirin_hp + ( pl.durgz_aspirin_lasthealth - health )
@@ -40,7 +40,7 @@ local function RemoveHealth() for id,pl in pairs(player.GetAll())do
 		
 		local set = math.floor(pl.durgz_aspirin_hp - HP_TO_ADD*pf)
 		
-		if( set != health )then
+		if( set ~= health )then
 			pl:SetHealth( set )
 			pl.durgz_aspirin_lasthealth = set
 		end
@@ -67,7 +67,7 @@ end)
 
 function ENT:SpawnFunction( ply, tr ) 
    
- 	if ( !tr.Hit ) then return end 
+ 	if ( not tr.Hit ) then return end 
  	 
  	local SpawnPos = tr.HitPos + tr.HitNormal * 16 
  	 
