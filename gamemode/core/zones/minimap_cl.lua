@@ -69,7 +69,11 @@ fw.hook.Add("PostDrawOpaqueRenderables", function()
 	-- push custom clipping planes
 	local myPos = LocalPlayer():GetPos()
 	local stepSize = (2 * math.pi / 6)
-
+	local icon = Material("icon16/user.png")
+	local camAngle = LocalPlayer():EyeAngles()
+	camAngle:RotateAroundAxis(camAngle:Right(), 90)
+	camAngle:RotateAroundAxis(camAngle:Up(), -90)
+	
 	-- draw the hexagon using clipping circles
 	pushClippingCircle(myPos, MINIMAP_RADIUS + 0.3, 6)
 	cam.Start3D2D(myPos, Angle(0, 0, 0), 0.2)
@@ -85,6 +89,12 @@ fw.hook.Add("PostDrawOpaqueRenderables", function()
 	cam.Start3D2D(myPos, Angle(0, 0, 0), 1)
 		surface.SetDrawColor(0, 0, 20, 230)
 		surface.DrawRect(-150, -150, 300, 300)
+	cam.End3D2D()
+	
+	cam.Start3D2D(myPos, camAngle, 0.03)
+		surface.SetDrawColor(255, 255, 255)
+        	surface.SetMaterial(icon)
+		surface.DrawTexturedRect(-30, -30, 64, 64)
 	cam.End3D2D()
 
 	cam.PushModelMatrix(m)
@@ -115,10 +125,6 @@ fw.hook.Add("PostDrawOpaqueRenderables", function()
 	cam.PopModelMatrix()
 
 	-- finish displaying the zone labels
-	local camAngle = LocalPlayer():EyeAngles()
-	camAngle:RotateAroundAxis(camAngle:Right(), 90)
-	camAngle:RotateAroundAxis(camAngle:Up(), -90)
-
 	for k, zone in pairs(fw.zone.zoneList) do
 		local territoryOwner = fw.team.factions[zone:getControllingFaction()]
 		local zonePosActual = m * zone.label_pos
