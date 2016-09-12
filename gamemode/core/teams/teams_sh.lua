@@ -13,6 +13,9 @@ local team_mt = {
 	getModels = function(self)
 		return self.models
 	end,
+	getDescription = function(self)
+		return self.description
+	end,
 	getWeapons = function(self)
 		return self.weapons
 	end,

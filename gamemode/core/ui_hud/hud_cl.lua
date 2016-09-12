@@ -125,7 +125,7 @@ vgui.Register('fwHudInfo', {
 					if not t then
 						return 'unknown team'
 					end
-					return t.name .. ' $' .. (t.salary or 0)
+					return t.name .. ' $' .. (t.salary or 0)..'/h'
 				end)
 
 			end

@@ -27,6 +27,7 @@ FACTION_GANGB = fw.team.registerFaction("Aryans", {
 TEAM_BOSS = fw.team.register("Boss", {
 	stringID = "t_boss",
 	models = {"models/player/gman_high.mdl"},
+	description = "Big boy\n",
 	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	faction = {FACTION_GANGA, FACTION_GANGB},
 	salary = 55,
@@ -38,6 +39,7 @@ TEAM_BOSS = fw.team.register("Boss", {
 TEAM_BMD = fw.team.register("Black Market Dealer", {
 	stringID = "t_bmd",
 	models = {"models/player/eli.mdl"},
+	description = "Sell very illegal guns\n",
 	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	faction = {FACTION_GANGA, FACTION_GANGB},
 	salary = 40,
@@ -47,6 +49,7 @@ TEAM_BMD = fw.team.register("Black Market Dealer", {
 TEAM_ENGINEER = fw.team.register("Engineer", {
 	stringID = "t_eng",
 	models = {"models/player/barney.mdl"},
+	description = "Go fix stuff\n",
 	faction = {FACTION_DEFAULT, FACTION_GANGA, FACTION_GANGB},
 	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	salary = 50,
@@ -56,6 +59,7 @@ TEAM_ENGINEER = fw.team.register("Engineer", {
 TEAM_MAYOR = fw.team.register("Mayor", {
 	stringID = "t_mayor",
 	models = {"models/player/breen.mdl"},
+	description = "I have no idea what you're supposed to do\n",
 	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	faction = FACTION_DEFAULT,
 	salary = 55,
@@ -73,6 +77,7 @@ TEAM_CIVILIAN = fw.team.register("Civilian", {
 		"models/player/Group01/female_06.mdl",
 		"models/player/Group01/female_01.mdl"
 	},
+	description = "Boring person\n",
 	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	salary = 30,
 	max = 0
@@ -81,6 +86,7 @@ TEAM_CIVILIAN = fw.team.register("Civilian", {
 TEAM_DRUG = fw.team.register("Drug Dealer", {
 	stringID = "t_drug_dealer",
 	models = {"models/player/leet.mdl"},
+	description = "420\n",
 	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	salary = 40,
 	max = 4,
@@ -89,14 +95,16 @@ TEAM_DRUG = fw.team.register("Drug Dealer", {
 TEAM_MERC = fw.team.register("Mercenary", {
 	stringID = "t_merc",
 	models = {"models/player/guerilla.mdl"},
-	weapons = {"fw_gun_p228", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
-	salary = 45,
+	description = "Be hired to capture and kill people\n",
+	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
+	salary = 4,
 	max = 4,
 })
 
 TEAM_GUN = fw.team.register("Gun Dealer", {
 	stringID = "t_gun_dealer",
 	models = {"models/player/monk.mdl"},
+	description = "Sell guns\n",
 	weapons = {"weapon_fists"},
 	salary = 45,
 	max = 4,
@@ -110,6 +118,7 @@ TEAM_MEDIC = fw.team.register("Medic", {
 		"models/player/Group03m/female_02.mdl",
 		"models/player/Group03m/female_06.mdl"
 	},
+	description = "Heal people\n",
 	weapons = {"weapon_medkit", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	faction = {FACTION_GANGA, FACTION_GANGB},
 	salary = 45,
@@ -124,7 +133,8 @@ TEAM_SOLDIER = fw.team.register("Soldier", {
 		"models/player/Group03/male_07.mdl",
 		"models/player/Group03/male_08.mdl"
 	},
-	weapons = {"fw_gun_ump", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
+	description = "Pro\n",
+	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	faction = {FACTION_GANGA, FACTION_GANGB},
 	salary = 45,
 	max = 4,
@@ -139,7 +149,8 @@ end
 TEAM_POLICE = fw.team.register("Police Officer", {
 	stringID = "t_police_officer",
 	models = {"models/player/urban.mdl"},
-	weapons = {"fw_gun_deagle", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
+	description = "You arrest people\n",
+	weapons = {"weapon_357", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	faction = FACTION_POLICE,
 	salary = 50,
 	max = 8,
@@ -148,7 +159,8 @@ TEAM_POLICE = fw.team.register("Police Officer", {
 TEAM_POLICE_CHIEF = fw.team.register("Police Chief", {
 	stringID = "t_police_officer_chief",
 	models = {"models/player/riot.mdl"},
-	weapons = {"fw_gun_deagle", "weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
+	description = "You arrest people\n",
+	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	faction = FACTION_POLICET,
 	salary = 55,
 	max = 1,

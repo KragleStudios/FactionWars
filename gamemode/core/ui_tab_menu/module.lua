@@ -568,6 +568,20 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 		panel:SetBackgroundTint(Color(200, 0, 0), 10)
 	end
 
+	local function descMenu(job)
+		local pnlDesc = vgui.Create("FWUIFrame")
+		pnlDesc:SetSize(panel:GetSize())
+		pnlDesc:SetTitle(job:getName().." - DESCRIPTION")
+		pnlDesc:Center()
+		pnlDesc:MakePopup()
+
+		local lblDesc = vgui.Create("DLabel", pnlDesc)
+		lblDesc:SetPos(5, 20)
+        lblDesc:SetWide(pnlDesc:GetWide() - 20)
+    	lblDesc:SetFont(fw.fonts.default:atSize(18))
+    	lblDesc:SetAutoStretchVertical(true)
+    	lblDesc:SetText(job.description)
+	end
 
 	-- list of jobs
 	local jobListSection = vgui.Create("FWUITableViewSection", listLayout)
@@ -593,6 +607,15 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 		function join:DoClick()
 			LocalPlayer():ConCommand(job.command)
 			fw.tab_menu.hideContent()
+		end
+
+		local desc = vgui.Create("FWUIButton", pnl)
+		desc:SetText("DESCRIPTION")
+		desc:SetFont(fw.fonts.default)
+		desc:SetWide(sty.ScreenScale(50))
+		desc:Dock(RIGHT)
+		function desc:DoClick()
+			descMenu(job)
 		end
 
 		if #job.models > 1 then
