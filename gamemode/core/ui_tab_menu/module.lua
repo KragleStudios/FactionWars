@@ -577,10 +577,10 @@ function fw.tab_menu.tabDisplayJobsList(panel)
 
 		local lblDesc = vgui.Create("DLabel", pnlDesc)
 		lblDesc:SetPos(5, 20)
-        lblDesc:SetWide(pnlDesc:GetWide() - 20)
-    	lblDesc:SetFont(fw.fonts.default:atSize(18))
-    	lblDesc:SetAutoStretchVertical(true)
-    	lblDesc:SetText(job.description)
+        	lblDesc:SetWide(pnlDesc:GetWide() - 20)
+    		lblDesc:SetFont(fw.fonts.default:atSize(18))
+    		lblDesc:SetAutoStretchVertical(true)
+    		lblDesc:SetText(job.description)
 	end
 
 	-- list of jobs
