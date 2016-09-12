@@ -1,9 +1,9 @@
-
 -- TODO: Rewrite loading screen using stylish
 -- TODO: Move loading screen away from timers
 
+local font = fw.fonts.default:atSize(20)
+local fontPercent = fw.fonts.default:atSize(28)
 
-surface.CreateFont("SubTextLoading", {font = "Roboto", size = 24, weight = 300})
 local sayings, tbl = {
 	"Loading something to do with NetDoc",
 	"Oh no NetDoc Desync.. let me fix that",
@@ -32,7 +32,7 @@ function pMeta:openLoadingScreen()
 			ra.surface.DrawArc(mX,mY - (cOffset), 50 + ((i - 1) * 15),  50 + ((i - 1) * 15) + 10, ( math.abs(math.sin(CurTime() * i * (i * .02))) * 360)  , ( math.abs(math.sin(CurTime() * i * (i * .02)) * 360) ) + 90, 15)
 		end
 
-		surface.SetFont("SubTextLoading")
+		surface.SetFont(font)
 		for i=1, 5 do
 			surface.SetTextColor(230,230,230, 255 - (i * 45))
 			surface.SetTextPos(mX - surface.GetTextSize(tbl[i] or "") * .5, h * .52 + (i * 30))
@@ -45,8 +45,8 @@ function pMeta:openLoadingScreen()
 	end
 
 	local Percent = vgui.Create("DLabel", Frame)
-	Percent:SetFont("DermaLarge")
-	Percent:SetTextColor(Color(255,255,255))
+	Percent:SetFont(fontPercent)
+	Percent:SetTextColor(color_white)
 	Percent:SetText("1%")
 	Percent:SetPos(w * .5 - surface.GetTextSize(Percent:GetText()) * .6, h * .5 - cOffset - 15)
 	Percent:SizeToContents()
