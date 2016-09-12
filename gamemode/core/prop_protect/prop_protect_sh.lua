@@ -63,7 +63,10 @@ if (SERVER) then
 end
 
 fw.hook.Add("CanTool", "PreventBaddieTools", function(ply, tr, tool)
-	if (tr.Entity and tr.Entity:FWGetOwner() and not fw.config.whitelisted_tools[ tool ]) then
+	if (fw.config.whitelisted_tools[ tool ]) then
+		return true 
+	end
+	if (tr.Entity and tr.Entity:FWGetOwner()) then
 		return fw.pp.canToolProp(ply, tr.Entity)
 	end
 	if (tr.Entity and tr.Entity:IsPlayer()) then return false end
