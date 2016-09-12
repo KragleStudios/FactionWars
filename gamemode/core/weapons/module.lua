@@ -12,7 +12,6 @@ fw.weapons.SLOT_SHOTGUN = 3
 fw.weapons.SLOT_RIFLE = 4
 
 fw.include_sh "weapons_sh.lua"
-fw.include_sh "weapons.lua"
 fw.include_sv "weapons_sv.lua"
 
 concommand.Add("fw_reloadguns", function(ply, cmd, args)

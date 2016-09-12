@@ -90,9 +90,9 @@ end
 
 print "Modules: "
 
-fw.include_sv "_config_sv.lua"
-fw.include_sh "_config_sh.lua"
-fw.include_cl "_config_cl.lua"
+fw.include_sv "custom_things/_config_sv.lua"
+fw.include_sh "custom_things/_config_sh.lua"
+fw.include_cl "custom_things/_config_cl.lua"
 
 for _, searchPath in ipairs(fw.module_search_paths) do
 	local _, directories = file.Find(searchPath.. "/*", "LUA")
@@ -116,6 +116,14 @@ function fw.dep(name)
 	fw[name] = include(fw.module_srcs[name])
 	return fw[name]
 end
+
+print('Loading Configuration Files')
+
+fw.include_sh 'custom_things/groups.lua'
+fw.include_sh 'custom_things/items.lua'
+fw.include_sh 'custom_things/printers.lua'
+fw.include_sh 'custom_things/teams.lua'
+fw.include_sh 'custom_things/weapons.lua'
 
 
 -- todo crawler

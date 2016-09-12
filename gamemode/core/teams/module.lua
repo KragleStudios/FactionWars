@@ -19,6 +19,3 @@ fw.include_cl "teams_cl.lua"
 -- load faction system
 fw.include_sh "factions_sh.lua"
 fw.include_sv "factions_sv.lua"
-
--- should really be placed somewhere else
-fw.include_sh "teams.lua"
