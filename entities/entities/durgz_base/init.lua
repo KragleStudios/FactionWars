@@ -188,9 +188,10 @@ end
 		
 		for i = 1, #drugs do
 			local tend = 0
+
 			if( pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_start") + ttime[i] > CurTime() )then
 				tend = ( CurTime() - pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_start") ) + CurTime()
-			elseif( not pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_end") - ttime[i] < CurTime() )then	
+			elseif( not (pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_end") - ttime[i] < CurTime()) )then	
 				tend = CurTime() + ttime[i]
 			elseif( pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_end") > CurTime() )then
 				tend = pl:GetNetworkedFloat("durgz_"..drugs[i].."_high_end")
