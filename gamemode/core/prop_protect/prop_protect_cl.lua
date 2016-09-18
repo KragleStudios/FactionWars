@@ -80,7 +80,7 @@ fw.hook.Add("AddToolMenuTabs", "AddPPPanels", function()
 			net.SendToServer()
 		end
 
-		ndoc.addHook("pp.?.whitelist.?", "set", function(ply)
+		ndoc.observe(ndoc.table, 'fw.pp.whitelist_update', function(ply)
 			if (ply != LocalPlayer()) then return end
 
 			box:Clear()
@@ -95,7 +95,7 @@ fw.hook.Add("AddToolMenuTabs", "AddPPPanels", function()
 
 			box:Rebuild()
 			box:SizeToContents()
-		end)
+		end, ndoc.compilePath("fwPP.?.whitelist.?"))
 	end)
 
 end)
