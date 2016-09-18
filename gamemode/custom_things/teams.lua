@@ -97,7 +97,7 @@ TEAM_MERC = fw.team.register("Mercenary", {
 TEAM_GUN = fw.team.register("Gun Dealer", {
 	stringID = "t_gun_dealer",
 	models = {"models/player/monk.mdl"},
-	weapons = {"weapon_fists"},
+	weapons = {"weapon_fists", "gmod_tool", "gmod_camera", "weapon_physgun", "weapon_physcannon", "fw_repairtool"},
 	salary = 45,
 	max = 4,
 })

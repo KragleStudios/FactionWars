@@ -4,14 +4,15 @@ function fw.team.factionDeposit(ply, amt)
 		return
 	end
 
-	if (not ply:canAfford(amt)) then
+	if (not ply:canAfford(math.abs(amt))) then
 		ply:FWChatPrint("You can't afford to depost this much!")
 		return
 	end
 
-	ndoc.table.fwFactions[fac].money = ndoc.table.fwFactions[fac].money + amt
+	ply:addMoney(-math.abs(amt))
+	ndoc.table.fwFactions[fac].money = ndoc.table.fwFactions[fac].money + math.abs(amt)
 
-	local str = ply:Nick().." has deposited $"..string.Comma(amt).. " into the faction bank! New Amount: $"..string.Comma(ndoc.table.fwFactions[fac].money)
+	local str = ply:Nick().." has deposited $"..string.Comma(math.abs(amt)).. " into the faction bank! New Amount: $"..string.Comma(ndoc.table.fwFactions[fac].money)
 	for k,v in pairs(fw.team.getFactionPlayers(fac)) do
 		v:FWChatPrint(str)
 	end
