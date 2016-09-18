@@ -147,7 +147,7 @@ fw.chat.addCMD({"broadcast", "br"}, "Sends a message to your faction as the boss
 	local players = fw.team.getFactionPlayers(ply:getFaction())
 
 	fw.notif.chat(players, unpack(textCache))
-end):addParam("message", "string"):restrictTo("boss")
+end):addParam("message", "string"):restrictTo("t_boss")
 
 fw.chat.addCMD({"yell", "y"}, "Sends a message to players in your direct vacinity", function(ply, msg)
 	local textCache = {}
