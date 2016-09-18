@@ -147,11 +147,13 @@ timer.Create("fw.zone_capture.updateCaptureProgress", 1, 0, function()
 		local mostInterest = nil
 
 		for k, pl in ipairs(zone.players) do
-			local fac = pl:getFaction()
-			if fac ~= FACTION_DEFAULT then
-				controllingInterests[fac] = (controllingInterests[fac] or 0) + 1
-				if not mostInterest or controllingInterests[mostInterest] < controllingInterests[fac] then
-					mostInterest = fac
+			if IsValid(pl) then
+				local fac = pl:getFaction()
+				if fac ~= FACTION_DEFAULT then
+					controllingInterests[fac] = (controllingInterests[fac] or 0) + 1
+					if not mostInterest or controllingInterests[mostInterest] < controllingInterests[fac] then
+						mostInterest = fac
+					end
 				end
 			end
 		end
