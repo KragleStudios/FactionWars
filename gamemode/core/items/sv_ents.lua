@@ -11,6 +11,10 @@ function fw.ents.createShipment(pl, item)
 	ship:Activate()
 	ship:FWSetOwner(ply)
 
+	if (item.customRun) then
+		item.customRun(ship, pl)
+	end
+
 	fw.ents.setPositionWithEntityTrace(pl, ship)
 end
 
@@ -19,6 +23,10 @@ function fw.ents.createItem(pl, item)
 	ent:Spawn()
 	ent:Activate()
 	ent:FWSetOwner(pl)
+
+	if (item.customRun) then
+		item.customRun(ent, pl)
+	end
 
 	fw.ents.setPositionWithEntityTrace(pl, ent)
 end
@@ -33,6 +41,10 @@ function fw.ents.createWeapon(pl, item)
 
 	if item.buff then
 		ent:SetBuff(item.buff)
+	end
+
+	if (item.customRun) then
+		item.customRun(ent, pl)
 	end
 
 	fw.ents.setPositionWithEntityTrace(pl, ent)

@@ -121,6 +121,9 @@ fw.ents.registerItem("Respawn Point", {
 	entity = "fw_respawn_point",
 	price = 100,
 	max = 10,
+	customRun = function(ent, ply)
+		ply:SetNWEntity("spawn_point", ent)
+	end,
 })
 
 fw.ents.registerItem("Mineral Extractor", {

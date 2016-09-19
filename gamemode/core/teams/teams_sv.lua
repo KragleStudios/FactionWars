@@ -38,7 +38,16 @@ function fw.team.playerChangeTeam(ply, targ_team, forced)
 	end
 
 	if (t.election and not forced) then
-		local players = t.facions and ply:inFaction() and fw.team.getFactionPlayers(ply:getFaction()) or player.GetAll()
+		local players = player.GetAll()
+
+		if (t.faction) then
+			if (not ply:inFaction()) then 
+				ply:FWChatPrintError("You need to be in a faction to join this team!")
+				return
+			end
+
+			players = fw.team.getFactionPlayers(ply:getFaction())
+		end
 
 		fw.vote.createNew("Job Vote", ply:Nick().." for "..t.name, players, function(decision)
 			if (decision) then

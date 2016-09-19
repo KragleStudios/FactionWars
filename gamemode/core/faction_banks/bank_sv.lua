@@ -31,7 +31,7 @@ function fw.team.factionWithdraw(ply, amt)
 	end
 
 	--only allow 25% of the funds to be taken out at a time
-	if (amt > ndoc.table.fwFactions[fac].money * .1) then
+	if (amt > (ndoc.table.fwFactions[fac].money * .25)) then
 		ply:FWChatPrintError("You can only take out 25% of the funds at a time!")
 		return
 	end

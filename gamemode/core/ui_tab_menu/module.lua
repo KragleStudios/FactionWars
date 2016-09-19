@@ -287,7 +287,7 @@ function fw.tab_menu.faction(pnl)
 	amountText:SetAlign("center")
 	amountText:SizeToContents()
 
-	ndoc.observe(ndoc.table, "fw.money", "set", function(index, money)
+	ndoc.observe(ndoc.table, "fw.factionBank.money", function(index, money)
 		if (not IsValid(amountText) or index ~= LocalPlayer():getFaction()) then return end
 
 		amountText:SetText("Balance: $"..string.Comma(money))

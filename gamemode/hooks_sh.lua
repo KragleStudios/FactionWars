@@ -15,7 +15,7 @@ function GM:PlayerInitialSpawn(...)
 end
 
 function GM:PlayerDeath(...)
-	self.BaseClass:PlayerDeath()
+	self.BaseClass:PlayerDeath(...)
 	return fw.hook.Call("PlayerDeath", ...)
 end
 
