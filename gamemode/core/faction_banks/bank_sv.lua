@@ -122,7 +122,11 @@ function fw.team.factionPayroll(faction)
 
 		v:addMoney(salary)
 
-		local text = "Payroll has been issued! Your salary: $"..salary
+		local text = "Payroll has been issued! Your salary: $"..team.salary
+
+		if (reward > 0) then
+			text = text.." + $"..reward.." in zones"
+		end
 		fw.hud.pushNotification(v, "Faction", text)
 	end
 end
