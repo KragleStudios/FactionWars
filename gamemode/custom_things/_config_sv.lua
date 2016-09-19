@@ -31,3 +31,5 @@ fw.config.resourceNetworkUpdateInterval = 1 -- seconds
 fw.config.doorRespawnTime = 300 -- Amount of time for a door to respawn, seconds
 
 fw.config.zoneCaptureReward = 1 -- how much boost to give faction salaries per zone they have captured on payday
+
+fw.config.policeFaction = FACTION_POLICE -- this is used for commands like /911, this is the faction which gets the notifications

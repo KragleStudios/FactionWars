@@ -19,6 +19,12 @@ function fw.ents.createShipment(pl, item)
 end
 
 function fw.ents.createItem(pl, item)
+	if (item.ammo and item.ammoCount) then
+		pl:GiveAmmo(item.ammoCount, item.ammo)
+
+		return
+	end
+
 	local ent = ents.Create(item.entity)
 	ent:Spawn()
 	ent:Activate()

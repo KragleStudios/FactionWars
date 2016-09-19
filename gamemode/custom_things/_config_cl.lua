@@ -9,3 +9,5 @@ fw.config.uiAnimTimeSlower = 0.25
 
 fw.config.minimapScaleFactor = 0.01
 fw.config.zoneBorderThickness = 10
+
+fw.config.loadingScreenEnabled = true
