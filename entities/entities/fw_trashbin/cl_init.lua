@@ -22,6 +22,7 @@ end
  
 hook.Add("HUDPaint","TrashIndicator",function()
 	local ent = LocalPlayer():GetEyeTrace().Entity
+	if !IsValid(ent) then return end 
 	if ent:GetClass()!="ent_trashbin" then return end
 	if ent.CanSpawn>=SysTime() then return end
 	surface.SetFont("default")
