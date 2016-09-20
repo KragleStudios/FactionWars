@@ -8,7 +8,9 @@ TOOL.Category = "Faction Wars"
 TOOL.Name = "#faction wars object creator"
 TOOL.ClientConVar[ "entity" ] = ""
 TOOL.ClientConVar[ "entity_option" ] = ""
-TOOL.ClientConVar[ "rotate" ] = "0"
+TOOL.ClientConVar[ "p" ] = "0"
+TOOL.ClientConVar[ "y" ] = "0"
+TOOL.ClientConVar[ "r" ] = "0"
 
 local data = {}
 FW_Map_Objects = FW_Map_Objects or {}
@@ -127,7 +129,6 @@ function TOOL:LeftClick( trace, attach )
 		end
 	end
 	if !objects[selected_entity] then return false end
-	PrintTable(trace)
 
 	local ent_data = objects[selected_entity]
 	if selected_entity_option!="" then
@@ -136,20 +137,18 @@ function TOOL:LeftClick( trace, attach )
 
 
 	local ent = ents.Create(selected_entity)
-	local vec = trace.HitPos
-	if type(vec)=="string" then
-		local a = string.Explode(" ",trace.HitPos)
-		vec = Vector(a[1]:tonumber(),a[2]:tonumber(),a[3]:tonumber())
-		print(vec,a[1],a[2])
-	end
-	
 	if ent_data[2] and ent_data[3] then
 		ent[ent_data[2]] = ent_data[3]
 	end
-	
 	ent:Spawn()
-	ent:SetPos(vec+Vector(0,0,-ent:OBBMins().z))
-	ent:SetAngles( Angle( 0, trace.Normal:Angle().yaw+self:GetClientNumber("rotate",0), 0 ) )
+
+	local ang = Angle(self:GetClientNumber("p",0),self:GetClientNumber("y",0),self:GetClientNumber("r",0))
+	ent:SetAngles(ang)
+
+	local offset = ent:LocalToWorld(Vector(0,0,-ent:OBBMins().z))-ent:GetPos()
+	local pos = trace.HitPos+offset
+
+	ent:SetPos(pos)
 	AddObject( ent, ent_data[2], ent_data[3] )
 
 	local phys = ent:GetPhysicsObject()
@@ -198,15 +197,22 @@ function TOOL:UpdateGhost( ent, ply )
 	if ( !IsValid( ent ) ) then return end
 
 	local trace = ply:GetEyeTrace()
+	local rotate = self.rotate or 0
 
-	local CurPos = ent:GetPos()
-	local NearestPoint = ent:NearestPoint( CurPos - ( trace.HitNormal * 512 ) )
-	local Offset = CurPos - NearestPoint
+	local hitAngle = trace.HitNormal:Angle()
+	local ang = Angle(hitAngle.pitch+90,hitAngle.yaw,0) 
 
-	local pos = trace.HitPos + Offset
+	ent:SetAngles( ang)
+	ent:SetAngles( ent:LocalToWorldAngles(Angle(0,rotate,0)))
+
+	local offset = ent:LocalToWorld(Vector(0,0,-ent:OBBMins().z))-ent:GetPos()
+	local pos = trace.HitPos+offset
 
 	ent:SetPos( pos )
-	ent:SetAngles( Angle( 0, ply:GetAngles().yaw+self:GetClientNumber("rotate",0), 0 ) )
+	local ang = ent:GetAngles()
+	RunConsoleCommand("fw_object_creator_p",ang.p)
+	RunConsoleCommand("fw_object_creator_y",ang.y)
+	RunConsoleCommand("fw_object_creator_r",ang.r)
 
 	ent:SetNoDraw( false )
 
@@ -233,10 +239,10 @@ local Lastrotated = 0
 function TOOL:Reload()
 	if (Lastrotated or 0)>=SysTime() then return end
 	Lastrotated = SysTime()+0.2
-	local rotate = self:GetClientNumber("rotate",0)
 	if CLIENT then
+		local rotate = self.rotate or 0
 		rotate = ((rotate or 0)-90)%360
-		RunConsoleCommand("fw_object_creator_rotate",rotate)
+		self.rotate = rotate
 	end
 end
 
