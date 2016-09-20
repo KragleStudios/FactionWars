@@ -15,6 +15,12 @@ TOOL.ClientConVar[ "r" ] = "0"
 local data = {}
 FW_Map_Objects = FW_Map_Objects or {}
 local function Load()
+	if CLIENT then return end
+
+	local f_data = util.JSONToTable(file.Read("factionwars_sv/entities_sv/"..game.GetMap()..".dat"))
+	if table.Count(f_data)>=1 then
+		data = f_data
+	end
 	-- Clear
 	print("Loading map entities ..")
 	for ent,_ in pairs(FW_Map_Objects) do
@@ -36,13 +42,13 @@ local function Load()
 		end
 		ent:SetPos(data.pos)
 		ent:SetAngles(data.ang)
-
+		print("["..key.."]: ",ent)
 		ent:Spawn()
+		ent:SetAngles(data.ang)
 		local phys = ent:GetPhysicsObject()
 		if IsValid(phys) then
 			phys:EnableMotion(false)
 		end
-
 		FW_Map_Objects[ent] = key
 	end
 end
@@ -56,10 +62,25 @@ local function AddObject( ent, key_value, value )
 	FW_Map_Objects[ent] = table.insert(data,{class = ent:GetClass(), pos= ent:GetPos(), ang = ent:GetAngles(),model = ent:GetModel(), key = key_value, value =value} )
 	Save()
 end
-
+Load()
 local function RemoveObject( ent )
 	if !FW_Map_Objects[ent] then return end
-	table.remove(data,FW_Map_Objects[ent])
+	local num = FW_Map_Objects[ent]
+	table.remove(data,num)
+	FW_Map_Objects[ent] = nil
+	
+	local tab = table.SortByKey( FW_Map_Objects , true ) 
+
+	for I=1,#tab do
+		FW_Map_Objects[tab[I]] = I
+	end
+
+	sound.Play("buttons/button4.wav",ent:GetPos())
+
+	local effectdata = EffectData()
+	effectdata:SetOrigin( ent:GetPos() )
+	util.Effect( "ManhackSparks", effectdata, true, true )
+
 	SafeRemoveEntity(ent)
 	Save()
 end
@@ -96,11 +117,7 @@ else
 	hook.Add("InitPostEntity","Faction Wars Entitie_stool",function()
 		file.CreateDir("factionwars_sv/entities_sv")
 		if file.Exists("factionwars_sv/entities_sv/"..game.GetMap()..".dat","DATA") then
-			local f_data = util.JSONToTable(file.Read("factionwars_sv/entities_sv/"..game.GetMap()..".dat"))
-			if table.Count(f_data)>=1 then
-				data = f_data
-				Load()
-			end
+			Load()
 		end
 	end)
 end
@@ -239,10 +256,12 @@ function TOOL:RightClick( trace )
 	if game.SinglePlayer() then error "This tool will not work in single player." end
 	if not self:GetOwner():IsSuperAdmin() then return false end
 	if not IsFirstTimePredicted() then return false end
+	if not IsValid(trace.Entity)  then return false end
 
-	if IsValid(trace.Entity) and (trace.Entity:GetClass() == "prop_physics" or objects[trace.Entity:GetClass()]) then
+	if (trace.Entity:GetClass() == "prop_physics" or objects[trace.Entity:GetClass()]) then
+		if CLIENT then return true end
 		RemoveObject(trace.Entity)
-		return true
+		return true		
 	end
 	return false
 end
