@@ -17,12 +17,12 @@ FW_Map_Objects = FW_Map_Objects or {}
 local function Load()
 	-- Clear
 	print("Loading map entities ..")
-	for _,ent in ipairs(FW_Map_Objects) do
+	for ent,_ in pairs(FW_Map_Objects) do
 		SafeRemoveEntity(ent)
 	end
 	table.Empty(FW_Map_Objects)
 	-- Spawn
-	for _,data in ipairs(data) do
+	for key,data in ipairs(data) do
 		local pos,class = data.pos,data.class
 
 		local ent = ents.Create(data.class)
@@ -38,7 +38,12 @@ local function Load()
 		ent:SetAngles(data.ang)
 
 		ent:Spawn()
-		table.insert(FW_Map_Objects,ent)
+		local phys = ent:GetPhysicsObject()
+		if IsValid(phys) then
+			phys:EnableMotion(false)
+		end
+
+		FW_Map_Objects[ent] = key
 	end
 end
 local function Save()
@@ -48,18 +53,13 @@ local function Save()
 end
 local function AddObject( ent, key_value, value )
 	if CLIENT then return end
-	table.insert(data,{class = ent:GetClass(), pos= ent:GetPos(), ang = ent:GetAngles(),model = ent:GetModel(), key = key_value, value =value} )
-	table.insert(FW_Map_Objects,ent)
+	FW_Map_Objects[ent] = table.insert(data,{class = ent:GetClass(), pos= ent:GetPos(), ang = ent:GetAngles(),model = ent:GetModel(), key = key_value, value =value} )
 	Save()
 end
 
 local function RemoveObject( ent )
-	for key,data in ipairs(data) do
-		if data.pos:Distance(ent:GetPos())<10 and ent:GetClass()==data.class then
-			table.remove(data,key)
-			break
-		end
-	end
+	if !FW_Map_Objects[ent] then return end
+	table.remove(data,FW_Map_Objects[ent])
 	SafeRemoveEntity(ent)
 	Save()
 end
@@ -67,9 +67,10 @@ end
 if CLIENT then
 	language.Add( "tool.fw_object_creator.name", "FW Object Creator" )
 	language.Add("tool.fw_object_creator.select_entity","Entities")
-	language.Add( "tool.fw_object_creator.0", "Primary: Place an object.\nSecondary: Delete an object.\nReload: Rotate 90 degrees." )
+	language.Add( "tool.fw_object_creator.0", "Primary: Place an object.\nSecondary: Delete an object.\nReload: Rotate 45 degrees." )
 	RunConsoleCommand("fw_object_creator_entity","")
 
+	local Arrow = Material("vgui/gmod_tool")
 	hook.Add("PostDrawOpaqueRenderables", "fw.toolgun.objectcreator", function()
 		if !LocalPlayer() then return end
 		if !IsValid(LocalPlayer():GetActiveWeapon()) then return end
@@ -78,19 +79,30 @@ if CLIENT then
 		if !LocalPlayer():GetTool() then return end
 		local ent = LocalPlayer():GetTool().GhostEntity
 		if !IsValid(ent) then return end
+		local min,max = ent:OBBMins(),ent:OBBMaxs()
 
 		render.SetColorMaterial()
-		render.DrawBox(ent:GetPos(),ent:GetAngles(),ent:OBBMins(),ent:OBBMaxs(),Color(255,0,0,155))
+		render.DrawBox(ent:GetPos(),ent:GetAngles(),min,max,Color(255,0,0,155))
+
+		local w,h = max.x-min.x,max.y-min.y
+		cam.Start3D2D( ent:LocalToWorld(Vector(min.x,min.y,0)), ent:GetAngles(), 0.1)
+			surface.SetDrawColor(Color(255,255,255))
+			surface.SetMaterial(Arrow)
+			
+			surface.DrawTexturedRect(0,-h*10,w*10,h*10)
+		cam.End3D2D()
 	end)
 else
-	file.CreateDir("factionwars_sv/entities_sv")
-	if file.Exists("factionwars_sv/entities_sv/"..game.GetMap()..".dat","DATA") then
-		local f_data = util.JSONToTable(file.Read("factionwars_sv/entities_sv/"..game.GetMap()..".dat"))
-		if table.Count(f_data)>=1 then
-			data = f_data
-			Load()
+	hook.Add("InitPostEntity","Faction Wars Entitie_stool",function()
+		file.CreateDir("factionwars_sv/entities_sv")
+		if file.Exists("factionwars_sv/entities_sv/"..game.GetMap()..".dat","DATA") then
+			local f_data = util.JSONToTable(file.Read("factionwars_sv/entities_sv/"..game.GetMap()..".dat"))
+			if table.Count(f_data)>=1 then
+				data = f_data
+				Load()
+			end
 		end
-	end
+	end)
 end
 local objects = {} -- entity: options{ [name] = {Model,Set a value on the entity,The value, scale} }
 	objects["fw_trashbin"] = {["small money box"] = {"models/props_junk/cardboard_box004a.mdl","Type",0},
@@ -102,6 +114,7 @@ local objects = {} -- entity: options{ [name] = {Model,Set a value on the entity
 function TOOL:LeftClick( trace, attach )
 	if game.SinglePlayer() then error "This tool will not work in single player." end
 	if not self:GetOwner():IsSuperAdmin() then print("Not super") return false end
+	if not IsFirstTimePredicted() then return false end
 
 	local selected_entity = self:GetClientInfo("entity") or ""
 	local selected_entity_option = self:GetClientInfo("entity_option") or ""
@@ -124,6 +137,10 @@ function TOOL:LeftClick( trace, attach )
 			return false
 		elseif trace.Entity:GetClass() == "prop_physics" then
 			AddObject( trace.Entity )
+			local phys = trace.Entity:GetPhysicsObject()
+			if IsValid(phys) then
+				phys:EnableMotion(false)
+			end
 			trace.Entity:SetColor(Color(255,0,0))
 			return true			 
 		end
@@ -150,12 +167,12 @@ function TOOL:LeftClick( trace, attach )
 
 	ent:SetPos(pos)
 	AddObject( ent, ent_data[2], ent_data[3] )
+	ent:EmitSound("buttons/button14.wav")
 
 	local phys = ent:GetPhysicsObject()
 	if IsValid(phys) then
 		phys:EnableMotion(false)
 	end
-	if not IsFirstTimePredicted() then return false end
 
 	return true
 end
@@ -240,9 +257,33 @@ function TOOL:Reload()
 	if (Lastrotated or 0)>=SysTime() then return end
 	Lastrotated = SysTime()+0.2
 	if CLIENT then
-		local rotate = self.rotate or 0
-		rotate = ((rotate or 0)-90)%360
-		self.rotate = rotate
+		if self:GetClientInfo("entity")!="" then
+			local rotate = self.rotate or 0
+			rotate = ((rotate or 0)-45)%360
+			self.rotate = rotate
+			LocalPlayer():EmitSound("buttons/blip1.wav")
+		end
+	else
+		if self:GetClientInfo("entity")!="" then return end
+		local trace = self:GetOwner():GetEyeTrace()
+		local ent = trace.Entity
+		if !ent then return end
+		if ent:GetClass()!="prop_physics" then return end
+		if !FW_Map_Objects[ent] then return end
+		
+		-- Rotate the prop
+		for key,ent_data in ipairs(data) do
+			if ent_data.pos:Distance(ent:GetPos())<10 and ent:GetClass()==ent_data.class then
+				
+				local newAng = trace.Entity:LocalToWorldAngles(Angle(0,45,0))
+				ent:SetAngles(newAng)
+
+				data[key].ang = ent:GetAngles()
+				Save()
+				self:GetOwner():EmitSound("buttons/button9.wav")
+				break
+			end
+		end
 	end
 end
 
