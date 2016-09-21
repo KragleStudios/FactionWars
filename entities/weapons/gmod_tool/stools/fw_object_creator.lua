@@ -32,7 +32,7 @@ local function Load()
 		local pos,class = data.pos,data.class
 
 		local ent = ents.Create(data.class)
-		if data.model then
+		if data.model and IsValid(ent) then
 			ent:SetModel(data.model)
 		end
 

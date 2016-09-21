@@ -9,6 +9,7 @@ function fw.team.factionDeposit(ply, amt)
 		return
 	end
 
+	ply:addMoney(-amt)
 	ndoc.table.fwFactions[fac].money = ndoc.table.fwFactions[fac].money + amt
 
 	local str = ply:Nick().." has deposited $"..string.Comma(amt).. " into the faction bank! New Amount: $"..string.Comma(ndoc.table.fwFactions[fac].money)

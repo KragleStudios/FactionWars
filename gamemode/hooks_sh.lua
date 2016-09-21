@@ -159,8 +159,21 @@ function GM:OnReloaded(...)
 	fw.hook.Call("Initialize")
 
 	for k, pl in ipairs(player.GetAll()) do
+		pl.weps = pl:GetWeapons() or {}
+
 		fw.hook.Call("PlayerInitialSpawn", pl)
 		fw.hook.Call("PlayerSpawn", pl)
+
+		for k,v in pairs(pl.weps) do
+			local wepClass = v:GetClass()
+
+			if (not pl:HasWeapon(wepClass)) then 
+				pl:Give(wepClass)
+
+			end
+		end
+
+		pl.weps = nil
 	end
 
 	_REFRESH = nil
