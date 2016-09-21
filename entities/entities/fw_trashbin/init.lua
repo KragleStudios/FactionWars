@@ -26,18 +26,18 @@ function ENT:SetModelType(num)
 	local Data = TrashData[num] or TrashData[2]
 	self.Data = num
 	self:SetModel(Data[1])
-	if self:GetSkin()>0 then
+	if self:GetSkin() > 0 then
 		self:SetSkin(math.random(1,self:GetSkin()))
 	end
 	if Data[4] then
 		local n = Data[4],0
 		self:SetModelScale(n)
 		-- Activate can crash the server and clients tent to get stuck on entities
-		if !Data[5] then
+		if not Data[5] then
 			local max,min = self:OBBMaxs(),self:OBBMins()
 			self:PhysicsInitBox( min*n,max*n )
 		end
-	elseif !Data[5] then
+	elseif not Data[5] then
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_NONE)
 	end
@@ -74,22 +74,22 @@ local function spawnGarbadge(self)
 	local num = TrashData[self.Data][2] or 0
 	local r = math.random(0,num)
 	local ent
-	if num==0 and math.random(10)<=4 then
+	if num == 0 and math.random(10) <= 4 then
 		return -- Nothing
 	end
-	if num == 0 or r==0 then
+	if num == 0 or r == 0 then
 		if Item then
 			ent = Item.Create("money",math.random(10,25),self:GetPos())
 		else 
 			ent = ents.Create("fw_money")
 		end
-		if ent:GetClass()=="fw_money" then
+		if ent:GetClass() == "fw_money" then
 			ent:SetValue(math.random(10,25))
 		end
 		return ent
 	end
-	if num<3 then
-		if r == 1 or !WeaponSys then
+	if num < 3 then
+		if r == 1 or not WeaponSys then
 			-- ammo
 			ent = ents.Create(table.Random({"item_ammo_357","item_ammo_ar2","item_ammo_pistol","item_box_buckshot","item_ammo_smg1","item_healthvial"}))
 		elseif WeaponSys then -- Check if the weaponmod is installed
@@ -109,14 +109,14 @@ function SpawnGarbedgebin(numtype,pos)
 	return ent 
 end
 function ENT:Think()
-	if !IsValid(self.LastSpawn) then return end
-	if !self.LastSpawn.Owner then return end
-	if type(self.LastSpawn.Owner)=="Player" then
+	if not IsValid(self.LastSpawn) then return end
+	if not self.LastSpawn.Owner then return end
+	if type(self.LastSpawn.Owner) == "Player" then
 		self.LastSpawn = nil
 	end
 end
 function ENT:Use(...)
-	if (self.CanSpawn or 0)>=SysTime() then return end
+	if (self.CanSpawn or 0) >= SysTime() then return end
 	if self.LastSpawn then
 		SafeRemoveEntity(self.LastSpawn)
 	end
@@ -124,7 +124,7 @@ function ENT:Use(...)
 	self:SetNWFloat("CanSpawn",self.CanSpawn)
 	
 	local ent = spawnGarbadge(self)
-	if !ent then 
+	if not ent then 
 		for I=1,10 do
 			local effectdata = EffectData()
 			effectdata:SetOrigin(self:GetPos()+VectorRand()*5)

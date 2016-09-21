@@ -18,7 +18,7 @@ local function Load()
 	if CLIENT then return end
 
 	local f_data = util.JSONToTable(file.Read("factionwars_sv/entities_sv/"..game.GetMap()..".dat"))
-	if table.Count(f_data)>=1 then
+	if table.Count(f_data) >=1 then
 		data = f_data
 	end
 	-- Clear
@@ -64,7 +64,7 @@ local function AddObject( ent, key_value, value )
 end
 Load()
 local function RemoveObject( ent )
-	if !FW_Map_Objects[ent] then return end
+	if not FW_Map_Objects[ent] then return end
 	local num = FW_Map_Objects[ent]
 	table.remove(data,num)
 	FW_Map_Objects[ent] = nil
@@ -93,13 +93,13 @@ if CLIENT then
 
 	local Arrow = Material("vgui/gmod_tool")
 	hook.Add("PostDrawOpaqueRenderables", "fw.toolgun.objectcreator", function()
-		if !LocalPlayer() then return end
-		if !IsValid(LocalPlayer():GetActiveWeapon()) then return end
-		if LocalPlayer():GetActiveWeapon():GetClass()!="gmod_tool" then return end
-		if LocalPlayer():GetInfo( "gmod_toolmode","" )!="fw_object_creator" then return end
-		if !LocalPlayer():GetTool() then return end
+		if not LocalPlayer() then return end
+		if not IsValid(LocalPlayer():GetActiveWeapon()) then return end
+		if LocalPlayer():GetActiveWeapon():GetClass() ~= "gmod_tool" then return end
+		if LocalPlayer():GetInfo( "gmod_toolmode","" ) ~= "fw_object_creator" then return end
+		if not LocalPlayer():GetTool() then return end
 		local ent = LocalPlayer():GetTool().GhostEntity
-		if !IsValid(ent) then return end
+		if not IsValid(ent) then return end
 		local min,max = ent:OBBMins(),ent:OBBMaxs()
 
 		render.SetColorMaterial()
@@ -139,7 +139,7 @@ function TOOL:LeftClick( trace, attach )
 	if CLIENT then
 		if selected_entity=="" then
 			local ent = trace.Entity
-			if !IsValid(ent) or ent:IsWorld() or objects[trace.Entity:GetClass()] then
+			if not IsValid(ent) or ent:IsWorld() or objects[trace.Entity:GetClass()] then
 				return false
 			else
 				return trace.Entity:GetClass() == "prop_physics"
@@ -149,7 +149,7 @@ function TOOL:LeftClick( trace, attach )
 	end
 
 	if selected_entity=="" then
-		if !IsValid(trace.Entity) or objects[trace.Entity:GetClass()] then
+		if not IsValid(trace.Entity) or objects[trace.Entity:GetClass()] then
 			self:GetOwner():ChatPrint("No entity selected")
 			return false
 		elseif trace.Entity:GetClass() == "prop_physics" then
@@ -162,7 +162,7 @@ function TOOL:LeftClick( trace, attach )
 			return true			 
 		end
 	end
-	if !objects[selected_entity] then return false end
+	if not objects[selected_entity] then return false end
 
 	local ent_data = objects[selected_entity]
 	if selected_entity_option!="" then
@@ -183,7 +183,7 @@ function TOOL:LeftClick( trace, attach )
 	local pos = trace.HitPos+offset
 
 	ent:SetPos(pos)
-	AddObject( ent, ent_data[2], ent_data[3] )
+	AddObject(ent, ent_data[2], ent_data[3])
 	ent:EmitSound("buttons/button14.wav")
 
 	local phys = ent:GetPhysicsObject()
@@ -198,19 +198,19 @@ function TOOL:Think()
 	local selected_entity = self:GetClientInfo("entity")
 	local selected_entity_option = self:GetClientInfo("entity_option")
 
-	if selected_entity=="" then 
+	if selected_entity == "" then 
 		if IsValid(self.GhostEntity) then
 			SafeRemoveEntity(self.GhostEntity)
 		end
 		return 
 	end
 	local entity_data = objects[selected_entity]
-	if selected_entity_option !="" then
+	if selected_entity_option ~= "" then
 		entity_data = entity_data[string.lower(selected_entity_option)]
 	end
 	local model = entity_data[1]
 
-	if ( !IsValid( self.GhostEntity ) || self.GhostEntity.model != model and model ) then
+	if ( not IsValid( self.GhostEntity ) or self.GhostEntity.model ~= model and model ) then
 	
 		self:MakeGhostEntity( model, Vector( 0, 0, 0 ), Angle( 0, 0, 0 ) )
 
@@ -228,7 +228,7 @@ end
 
 function TOOL:UpdateGhost( ent, ply )
 
-	if ( !IsValid( ent ) ) then return end
+	if ( not IsValid( ent ) ) then return end
 
 	local trace = ply:GetEyeTrace()
 	local rotate = self.rotate or 0
@@ -236,19 +236,19 @@ function TOOL:UpdateGhost( ent, ply )
 	local hitAngle = trace.HitNormal:Angle()
 	local ang = Angle(hitAngle.pitch+90,hitAngle.yaw,0) 
 
-	ent:SetAngles( ang)
-	ent:SetAngles( ent:LocalToWorldAngles(Angle(0,rotate,0)))
+	ent:SetAngles(ang)
+	ent:SetAngles(ent:LocalToWorldAngles(Angle(0,rotate,0)))
 
 	local offset = ent:LocalToWorld(Vector(0,0,-ent:OBBMins().z))-ent:GetPos()
 	local pos = trace.HitPos+offset
 
-	ent:SetPos( pos )
+	ent:SetPos(pos)
 	local ang = ent:GetAngles()
 	RunConsoleCommand("fw_object_creator_p",ang.p)
 	RunConsoleCommand("fw_object_creator_y",ang.y)
 	RunConsoleCommand("fw_object_creator_r",ang.r)
 
-	ent:SetNoDraw( false )
+	ent:SetNoDraw(false)
 
 end
 
@@ -267,7 +267,6 @@ function TOOL:RightClick( trace )
 end
 
 function TOOL.BuildCPanel( CPanel )
-
 	CPanel:AddControl( "ListBox", { Label = "#tool.fw_object_creator.objects", Height = "300", Options = RealOptions } )
 end
 
@@ -276,19 +275,19 @@ function TOOL:Reload()
 	if (Lastrotated or 0)>=SysTime() then return end
 	Lastrotated = SysTime()+0.2
 	if CLIENT then
-		if self:GetClientInfo("entity")!="" then
+		if self:GetClientInfo("entity")~="" then
 			local rotate = self.rotate or 0
 			rotate = ((rotate or 0)-45)%360
 			self.rotate = rotate
 			LocalPlayer():EmitSound("buttons/blip1.wav")
 		end
 	else
-		if self:GetClientInfo("entity")!="" then return end
+		if self:GetClientInfo("entity")~="" then return end
 		local trace = self:GetOwner():GetEyeTrace()
 		local ent = trace.Entity
-		if !ent then return end
-		if ent:GetClass()!="prop_physics" then return end
-		if !FW_Map_Objects[ent] then return end
+		if not ent then return end
+		if ent:GetClass()~="prop_physics" then return end
+		if not FW_Map_Objects[ent] then return end
 		
 		-- Rotate the prop
 		for key,ent_data in ipairs(data) do
