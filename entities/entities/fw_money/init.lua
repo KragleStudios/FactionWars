@@ -23,7 +23,15 @@ end
 function ENT:Touch(ent)
 	if ent:GetClass() == "fw_money" and not ent.Used then
 		ent.Used = true
-		self:SetValue(self:GetValue() + ent:GetValue())
+		local val = self:GetValue() + ent:GetValue()
+
+		if val > 99999999 then
+			ent.Used = false
+			return
+		end
+
+		self:SetValue(val)
+
 		if not self.Used then
 			ent:Remove()
 		end
