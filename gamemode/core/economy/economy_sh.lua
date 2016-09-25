@@ -3,7 +3,7 @@ local Player = FindMetaTable("Player")
 -- Player:canAfford(amount:number)
 -- @ret canAfford:bool - can the player afford the amount requested
 function Player:canAfford(amount)
-	return (self:getMoney() or 0) >= amount
+	return (self:getMoney() or 0) >= math.abs(amount)
 end
 
 -- Player:getMoney()

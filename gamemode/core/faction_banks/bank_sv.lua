@@ -4,6 +4,8 @@ function fw.team.factionDeposit(ply, amt)
 		return
 	end
 
+	amt = math.abs(amt)
+
 	if (not ply:canAfford(amt)) then
 		ply:FWChatPrint("You can't afford to depost this much!")
 		return
