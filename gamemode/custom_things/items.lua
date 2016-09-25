@@ -121,6 +121,9 @@ fw.ents.registerItem("Respawn Point", {
 	entity = "fw_respawn_point",
 	price = 100,
 	max = 10,
+	customRun = function(ent, ply)
+		ply:SetNWEntity("spawn_point", ent)
+	end,
 })
 
 fw.ents.registerItem("Mineral Extractor", {
@@ -186,9 +189,49 @@ fw.ents.registerItem("Gun Grinder", {
 	max = 10,
 })
 
+---
+--- BEGIN AMMO REGISTRATION
+---
 
+fw.ents.registerItem('AR2 Ammo', {
+	model = "",
+	entity = "",
+	ammo = "AR2",
+	ammoCount = 100,
+	category = "Ammo",
+	max = 0,
+	price = 300,
+})
 
+fw.ents.registerItem('SMG Ammo', {
+	model = "",
+	entity = "",
+	ammo = "SMG1",
+	ammoCount = 100,
+	category = "Ammo",
+	max = 0,
+	price = 300,
+})
 
+fw.ents.registerItem('Shotgun Ammo', {
+	model = "",
+	entity = "",
+	ammo = "Buckshot",
+	ammoCount = 50,
+	category = "Ammo",
+	max = 0,
+	price = 300,
+})
+
+fw.ents.registerItem('Pistol Ammo', {
+	model = "",
+	entity = "",
+	ammo = "pistol",
+	ammoCount = 100,
+	category = "Ammo",
+	max = 0,
+	price = 300,
+})
 ---
 --- BEGIN WEAPON REGISTRATION
 ---

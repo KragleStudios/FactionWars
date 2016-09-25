@@ -4,12 +4,14 @@ function fw.team.factionDeposit(ply, amt)
 		return
 	end
 
-	if (not ply:canAfford(math.abs(amt))) then
+	local amt = math.abs(amt)
+
+	if (not ply:canAfford(amt)) then
 		ply:FWChatPrint("You can't afford to depost this much!")
 		return
 	end
 
-	ply:addMoney(-math.abs(amt))
+	ply:addMoney(-amt)
 	ndoc.table.fwFactions[fac].money = ndoc.table.fwFactions[fac].money + math.abs(amt)
 
 	local str = ply:Nick().." has deposited $"..string.Comma(math.abs(amt)).. " into the faction bank! New Amount: $"..string.Comma(ndoc.table.fwFactions[fac].money)
@@ -32,7 +34,7 @@ function fw.team.factionWithdraw(ply, amt)
 	end
 
 	--only allow 25% of the funds to be taken out at a time
-	if (amt > ndoc.table.fwFactions[fac].money * .1) then
+	if (amt > (ndoc.table.fwFactions[fac].money * .25)) then
 		ply:FWChatPrintError("You can only take out 25% of the funds at a time!")
 		return
 	end
@@ -123,7 +125,11 @@ function fw.team.factionPayroll(faction)
 
 		v:addMoney(salary)
 
-		local text = "Payroll has been issued! Your salary: $"..salary
+		local text = "Payroll has been issued! Your salary: $"..team.salary
+
+		if (reward > 0) then
+			text = text.." + $"..reward.." in zones"
+		end
 		fw.hud.pushNotification(v, "Faction", text)
 	end
 end

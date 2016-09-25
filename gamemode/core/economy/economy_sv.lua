@@ -9,6 +9,9 @@ function Player:setMoney(amount)
 	if type(amount) != "number" then error("player money must be a number") end
 	if amount < 0 then error("value must be positive") end
 	self:GetFWData().money = amount
+
+	fw.data.updateStore(self)
+
 	return amount
 end
 

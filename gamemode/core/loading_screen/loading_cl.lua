@@ -17,6 +17,7 @@ local pMeta = FindMetaTable("Player")
 local Frame
 
 function pMeta:openLoadingScreen()
+	if (not fw.config.loadingScreenEnabled) then return end
 	if IsValid(Frame) then return end
 
 	Frame = vgui.Create("DPanel")

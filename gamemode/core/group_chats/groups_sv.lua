@@ -252,16 +252,12 @@ fw.chat.addCMD({"radio", "r"}, "Toggles the player's group chat radio", function
 	fw.notif.chat(ply, "voice radio toggled to "..status)
 end)
 
---TODO: MOVE THIS TO CONFIG
-local police_teams = {
-	TEAM_POLICE, TEAM_POLICE_CHIEF
-}
 fw.chat.addCMD("911", "Sends a 911 prompt to all available police", function(ply, msg)
 	ply:FWChatPrint(team.GetColor(ply:Team()), ply:Nick(), color_white, " -> ", Color(0, 0, 255), "[911]", color_white, ": ", msg)
 
 	local players = {}
 	for k,v in pairs(player.GetAll()) do
-		if (table.HasValue(police_teams, v:Team())) then
+		if (v:getFaction() == fw.config.policeFaction) then
 			table.insert(players, v)
 		end
 	end

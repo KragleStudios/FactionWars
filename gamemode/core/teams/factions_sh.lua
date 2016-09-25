@@ -84,7 +84,7 @@ function fw.team.canJoinFaction(ply, factionId)
 	local factionMeta = factionsList[factionId]
 
 	if (factionPlayers / players > (factionMeta.fraction or (1.0 / #factionMeta))) then
-		return true, "Faction already full!"
+		return false, "Faction already full!"
 	end
 
 	local canjoin, msg = hook.Call("PlayerCanJoinFaction", GAMEMODE, ply, faction)

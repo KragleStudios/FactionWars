@@ -24,4 +24,5 @@ fw.config.defaultShipmentCount = 10
 --which tools should we ignore when checking if a player can use it?
 fw.config.whitelisted_tools = {
 	['fw_zone_creator'] = true, -- leave this here or you won't be able to create zones!
+	['fw_object_creator'] = true,
 }

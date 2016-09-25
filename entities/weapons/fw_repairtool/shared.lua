@@ -41,7 +41,9 @@ function SWEP:PrimaryAttack()
 	self:SetNextPrimaryFire(CurTime() + buff)
 
 	if IsValid(tr.Entity) and tr.Entity:GetClass() == "prop_physics" then
-		if tr.Entity:getMaxHealth() > tr.Entity:getHealth() then
+		local max, cur = tr.Entity:getMaxHealth(), tr.Entity:getHealth()
+
+		if max and cur and cur < max then
 			if SERVER then
 				local val = (25 > tr.Entity:getMaxHealth() / 30 and 25 or math.floor(tr.Entity:getMaxHealth() / 30))
 				tr.Entity:setHealth(math.Clamp(tr.Entity:getHealth() + val, 0, tr.Entity:getMaxHealth()))
@@ -70,7 +72,10 @@ function SWEP:SecondaryAttack()
 			filter = function(ent) return ent != self.Owner end
 		})
 
-		if IsValid(tr.Entity) and tr.Entity:getHealth() <= tr.Entity:getMaxHealth() then
+		if (not IsValid(tr.Entity)) then return end
+		local max, cur = tr.Entity:getMaxHealth(), tr.Entity:getHealth()
+
+		if max and cur and cur < max then
 			if SERVER then
 				tr.Entity:setHealth(tr.Entity:getHealth() + math.floor(tr.Entity:getMaxHealth() / 10))
 			end

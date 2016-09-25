@@ -33,7 +33,8 @@ fw.chat.addCMD("vote", "Makes a vote available to everyone", function(ply, desc)
 end):addParam("description", "string")
 
 fw.chat.addCMD("dropmoney", "Drops some money in front of you", function(ply, money)
-	money = math.abs(money)
+	if (not isnumber(money) or money < 1) then return end
+
 	if ply:canAfford(money) then
 		local tr = util.TraceLine({
 			start = ply:EyePos(),
@@ -62,7 +63,8 @@ fw.chat.addCMD("drop", "Drop your weapon", function(ply)
 		ent:setWeapon(ply)
 		ent:SetPos(tr.HitPos)
 		ent:Spawn()
-		ply:GetActiveWeapon():Remove()
+
+		ply:StripWeapon(ply:GetActiveWeapon():GetClass())
 	else
 		ply:FWChatPrint("You cannot drop this weapon.")
 	end
