@@ -16,29 +16,33 @@ end
 function ENT:Use(event, ply)
 	if IsValid(ply) and ply:IsPlayer() then
 		ply:addMoney(self:GetValue())
+
+		self.owner.maxmonay = self.owner.maxmonay - 1
+
 		self:Remove()
 	end
 end
 
 function ENT:Touch(ent)
-	if ent:GetClass() == "fw_money" and not ent.Used then
+	/*if ent:GetClass() == "fw_money" and not ent.Used then
 		ent.Used = true
-		local val = self:GetValue() + ent:GetValue()
+
+		local selfVal = self:GetValue()
+		local entVal  = ent:GetValue()
+		local val = selfVal + entVal
+
+		if (ent.valSet or self.valSet) then return end
 
 		if val > 99999999 then
-			ent.Used = false
 			return
-		end
-
-		self:SetValue(val)
-
-		if not self.Used then
+		elseif (selfVal > entVal or selfVal == entVal) then
 			ent:Remove()
+			self:SetValue(val)
+			self.valSet = true
+		elseif (selfVal < entVal) then
+			ent:SetValue(val)
+			ent.valSet = true
+			self:Remove()
 		end
-		timer.Simple(1, function()
-			if IsValid(self) then
-				self.Used = false
-			end
-		end )
-	end
+	end*/
 end

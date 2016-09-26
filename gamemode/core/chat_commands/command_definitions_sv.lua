@@ -33,7 +33,18 @@ fw.chat.addCMD("vote", "Makes a vote available to everyone", function(ply, desc)
 end):addParam("description", "string")
 
 fw.chat.addCMD("dropmoney", "Drops some money in front of you", function(ply, money)
-	if (not isnumber(money) or money < 1) or ply.CantDropMoney then return end
+	if (not isnumber(money) or money < 1) or ply.CantDropMoney then 
+		return 
+	end
+	if (money < 100) then 
+		ply:FWChatPrintError('You can only drop cash greater than $100')
+		return
+	end
+
+	if (ply.maxmonay and ply.maxmonay + 1 > 10) then
+		ply:FWChatPrintError('You have dropped the max amount of money. How about picking some of that up.')
+		return
+	end
 
 	if ply:canAfford(money) then
 		local tr = util.TraceLine({
@@ -49,9 +60,12 @@ fw.chat.addCMD("dropmoney", "Drops some money in front of you", function(ply, mo
 		ent:SetPos(tr.HitPos)
 		ent:Spawn()
 
+		ent.owner = ply
+		ent.owner.maxmonay = ent.owner.maxmonay and ent.owner.maxmonay + 1 or 1
+
 		ply.CantDropMoney = true
 
-		timer.Simple(0.5, function()
+		timer.Simple(5, function()
 			ply.CantDropMoney = false
 		end)
 	end
