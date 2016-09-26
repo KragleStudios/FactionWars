@@ -72,10 +72,7 @@ function GM:ShowTean(...)
 end
 
 function GM:PlayerSay(pl, text, ...)
-	print(pl, text, ...)
 	local message = fw.hook.Call('PlayerSay', pl, text, ...)
-	print(type(message))
-	print("PlayerSay: " .. tostring(message))
 	return message
 end
 

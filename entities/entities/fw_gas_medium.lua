@@ -39,9 +39,11 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		if self:GetHealth() <= 0 then return end
-		self:SetHealth(self:GetHealth() - dmginfo:GetDamage())
-		if self:GetHealth() <= 0 then
+		if self:GetHp() <= 0 then return end
+		self:SetHp(self:GetHp() - dmginfo:GetDamage())
+
+		print(self:GetHp())
+		if self:GetHp() <= 0 then
 			self:Ignite(30, 100)
 			timer.Simple(5, function()
 				util.BlastDamage(self, self, self:GetPos(), 100, 100)
@@ -69,10 +71,10 @@ else
 		local obbmax = self:OBBMaxs()
 		return Vector(obbmax.x, obbcenter.y, obbcenter.z), Angle(0, 90, 90), 0.09
 	end
+end
 
-	function ENT:GetHealth()
-		return self:GetHp()
-	end
+function ENT:GetHealth()
+	return self:GetHp()
 end
 
 function ENT:SetupDataTables()
