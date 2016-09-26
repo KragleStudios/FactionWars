@@ -20,6 +20,7 @@ end
 
 function fw.ents.createItem(pl, item)
 	if (item.ammo and item.ammoCount) then
+		print('AMMO', item.name, item.ammo, item.ammoCount)
 		pl:GiveAmmo(item.ammoCount, item.ammo)
 
 		return

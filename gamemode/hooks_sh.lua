@@ -247,15 +247,15 @@ function GM:PlayerSpawnSENT(pl)
 	return pl:IsSuperAdmin()
 end
 
-function GM:PlayerSpawnSWEP()
+function GM:PlayerSpawnSWEP(pl)
 	return pl:IsSuperAdmin()
 end
 
-function GM:PlayerGiveSWEP()
+function GM:PlayerGiveSWEP(pl)
 	return pl:IsSuperAdmin()
 end
 
-function GM:PlayerSpawnNPC()
+function GM:PlayerSpawnNPC(pl)
 	return pl:IsSuperAdmin()
 end
 

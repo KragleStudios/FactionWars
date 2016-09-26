@@ -14,7 +14,7 @@ function fw.ents.registerItem(name, tbl)
 
 	tbl.index = table.insert(fw.ents.item_list, tbl)
 	tbl.category = tbl.category or "Things and Stuff"
-	tbl.command = 'fw_item_'..(tbl.entity)
+	tbl.command = 'fw_item_'..(string.Replace(name, " ", "_"))
 	if tbl.job then tbl.jobs = {tbl.job} end
 	if tbl.faction then tbl.factions = {tbl.faction} end
 
