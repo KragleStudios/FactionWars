@@ -52,11 +52,16 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 		local yesText = vote.yesText
 		local noText  = vote.noText
 
+		local isInPool = false
+		for k,v in ndoc.ipairs(vote.players) do
+			if (v == LocalPlayer()) then isInPool = true end
+		end
+		if (not isInPool) then return end
+
 		local length = vote.voteLength
 		local title  = vote.title
 		local desc   = vote.desc
 
-		LocalPlayer():EmitSound("Friends/friend_join.wav", 100, 100)
 		local pnl = vgui.Create("FWUIFrame")
 		pnl:SetSize(200, 150)
 		ndoc.observe(ndoc.table.fwVotes[vIndex], 'fw.votes.titleChange', function(value)
@@ -92,7 +97,7 @@ ndoc.observe(ndoc.table, "fw.votes", function(vIndex, tbl)
 
 		timer.Create("vote_"..vIndex, tbl.voteLength or vote_defLen, 1, function()
 			if IsValid(pnl) then
-				pnl:DoClose()
+				removeVotePanel(pnl, vIndex)
 			end
 		end)
 

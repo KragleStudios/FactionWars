@@ -41,14 +41,27 @@ net.Receive("fw.sendVoteResponse", function(len, client)
 	--assign it!
 	local vote = ndoc.table.fwVotes[index]
 	if (not vote) then
-		client:FWChatPrint(Color(0, 0, 0), "[Votes]: ", Color(255, 255, 255), "This vote may no longer exist!")
+		client:FWChatPrintError("This vote may no longer exist!")
+		return
+	end
+
+	local isInPool = false
+	for k,v in ndoc.ipairs(vote.players) do
+		if (v == client) then
+			isInPool = true
+		end
+	end
+
+	if (not isInPool) then
+		client:FWChatPrintError('Okay mf you cant do this. tryna juke the system. fite me')
+		client:Kill()
 		return
 	end
 
 	haveVoted[index] = haveVoted[index] or {}
 
 	if (haveVoted[index][client]) then
-		client:FWChatPrint(Color(0, 0, 0), "[Votes]: ", Color(255, 255, 255), "You have already voted!")
+		client:FWChatPrintError("You have already voted!")
 		return
 	end
 
@@ -90,6 +103,7 @@ function fw.vote.createNew(vTitle, vDesc, vPlayers, vCallback, vYText, vNText, v
 		noText = nYText or "No",
 		voteLength = vote_len or fw.vote_defLen,
 		yes = 0,
+		players = vPlayers,
 		no = 0
 	}
 
