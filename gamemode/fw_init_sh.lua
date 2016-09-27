@@ -93,6 +93,7 @@ print "Modules: "
 fw.include_sv "custom_things/_config_sv.lua"
 fw.include_sh "custom_things/_config_sh.lua"
 fw.include_cl "custom_things/_config_cl.lua"
+fw.include_sh "libraries/spon.lua"
 
 for _, searchPath in ipairs(fw.module_search_paths) do
 	local _, directories = file.Find(searchPath.. "/*", "LUA")
