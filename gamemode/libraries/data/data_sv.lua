@@ -40,11 +40,16 @@ local function updateStorage(tbl, val, a, b, ...)
 	updateStorage(tbl[a], val, b, ...)
 end
 
+local fields = {}
+
 function data.addPersistField(field)
 	ndoc.observe(ndoc.table, "fw.persistField", function(pl, value)
 		if not data.player[pl] then return end
 		data.player[pl][field] = value
 	end, "fwPlayers", ndoc.kWILDCARD, field)
+
+	--TODO: Fix this. Add the field to the field cache.
+	fields[ field ] = 1
 end
 
 
@@ -76,6 +81,13 @@ function data.updateStore(player)
 	if not data.player[player] then
 		fw.hud.pushNotification(ply, "Faction Wars Error",  "Your account data is currently loaded in offline mode. Your progress will not save. Please reconnect.", Color(255, 0, 0))
 		return
+	end
+
+	--TODO: BUG FIX TEMP. This is to get around the netdoc error with hooks :(
+	for k,v in ndoc.pairs(ndoc.table.fwPlayers[ player:EntIndex() ]) do
+		if (fields [ k ]) then
+			data.player[ player ][ k ] = v
+		end
 	end
 
 	engine.updatePlayerData(player:SteamID64() or "0", data.player[player], ra.fn.noop) -- no callback
