@@ -1,9 +1,12 @@
-# kragle
+# Faction Wars
 The core gamemode that holds everything together
+
+# What is "Faction Wars?"
+FactionWars is a combat oriented roleplay gamemode that pits factions against one another in a battle for territory and resources. Each server offers a set of factions that players can choose to align themselves with. Once aligned with a faction you can work with your teammates to launch wars, capture land, and construct illegal enterprises using our advanced resource system providing electricity, money printers, drugs, weapons, and more. 
 
 Uses semantic versioning http://semver.org
 
-### Kragle is plugin based
+### Faction Wars is plugin based
 ```
 <your module name>/
   module.lua
@@ -17,7 +20,7 @@ fw.hook.Add("PlayerSay", function(pl) -- automagically injects the hook into the
 end)
 ```
 # Utility Functions and Recommendations
-Please read over the modules by thelastpenguin for reference to find how to properly use netdoc and existing librararies properly in your code.
+Please read over the modules by thelastpenguin for reference to find how to properly use netdoc and existing libraries properly in your code.
 Please use stylish fonts. from libraries/fonts 
 
 ## When doing prints
@@ -48,9 +51,9 @@ Also remember if your module runs any code client side you must add
 ```
 if SERVER then AddCSLuaFile() end
 ```
-to the top, kragle does not AddCSLuaFiles for you! It aims to give you maximum control over how your files are loaded.
+to the top, Faction Wars does not AddCSLuaFiles for you! It aims to give you maximum control over how your files are loaded.
 ## When adding hooks
-always use the fw hook module the syntax for this is 
+always use the fw.hook module, the syntax for this is 
 ```
 fw.hook.Add("hook name", "optional hook id", function(...) end)
 ```
@@ -67,9 +70,8 @@ Please install and keep the following up to date
 
 # Style Guide
  - use -- for comments
- - use native lua syntax only plaese aka not instead of !
+ - use native lua syntax only please aka not instead of !
  - use lowerCamelCase for all methods and local variables etc. If you find somewhere that isn't lower camel case please change it.
- - please read through this https://github.com/Capster/lua-style-guide
 
 # Module Docs
  - [core/economy](gamemode/core/economy/README.md)
