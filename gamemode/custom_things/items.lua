@@ -313,7 +313,7 @@ fw.ents.registerWeapon("TMP", {
 fw.ents.registerWeapon("UMP", {
 	weapon = "fw_gun_ump",
 	price = 800,
-	model = "models/weapons/w_smg_ump.mdl",
+	model = "models/weapons/w_smg_ump45.mdl",
 	both = true,
 })
 

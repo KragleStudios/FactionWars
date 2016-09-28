@@ -219,7 +219,9 @@ fw.hook.Add("PlayerSay", function(pl, text)
 			arguments = {}
 		end
 
-		fw.chat.runCommand(pl, command, arguments)
-		return ""
+		if (command) then
+			fw.chat.runCommand(pl, command, arguments)
+			return ""
+		end
 	end
 end)
