@@ -27,6 +27,10 @@ function GM:PlayerSetModel(...)
 	return fw.hook.Call("PlayerSetModel", ...)
 end
 
+function GM:ScalePlayerDamage(...)
+	return fw.hook.Call("ScalePlayerDamage", ...)
+end
+
 function GM:HUDPaint(...)
 	return fw.hook.Call("HUDPaint", ...)
 end
