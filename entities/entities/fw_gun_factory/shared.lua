@@ -7,7 +7,6 @@ ENT.AdminOnly = true
 
 ENT.MaxConsumption = {
 	["parts"] = 3,
-	["scrap"] = 3,
 	["power"] = 1,
 }
 

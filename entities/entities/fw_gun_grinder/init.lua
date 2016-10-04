@@ -84,6 +84,8 @@ end
 
 function ENT:Touch(ent)
 	if ent:GetClass() == "fw_gun" and not ent.Used and self:FWHaveResource("power") >= self.MaxConsumption.power then
+		if (self.Storage.parts == self.MaxStorage.parts) then return end
+
 		ent.Used = true
 		self:ProcessGun(ent)
 	end
