@@ -67,3 +67,20 @@ timer.Create("DoorSpawner", 5, 0, function()
 		end
 	end
 end)
+
+-- Credit to Nak
+local dmgmultiply = {}
+    dmgmultiply[HITGROUP_HEAD] = 4
+    dmgmultiply[HITGROUP_CHEST] = 1
+    dmgmultiply[HITGROUP_STOMACH] = 1.25
+    dmgmultiply[HITGROUP_LEFTARM] = 1
+    dmgmultiply[HITGROUP_RIGHTARM] = 1
+    dmgmultiply[HITGROUP_LEFTLEG] = 0.75
+    dmgmultiply[HITGROUP_RIGHTLEG] = 0.75
+    dmgmultiply[HITGROUP_GENERIC] = 0.75
+    dmgmultiply[HITGROUP_GEAR] = 0.75 -- Belt or something .. not on every model
+
+fw.hook.Add("ScalePlayerDamage","DamageControl",function(ply,hitgroup,dmginfo)
+    local multi = dmgmultiply[hitgroup or 0] or dmgmultiply[HITGROUP_GENERIC] or 1
+    dmginfo:ScaleDamage( multi )
+end)
