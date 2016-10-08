@@ -17,7 +17,9 @@ function ENT:Use(event, ply)
 	if IsValid(ply) and ply:IsPlayer() then
 		ply:addMoney(self:GetValue())
 
-		self.owner.maxmonay = self.owner.maxmonay - 1
+		if (IsValid(self.owner) then 
+			self.owner.maxmonay = self.owner.maxmonay - 1
+		end
 
 		self:Remove()
 	end
