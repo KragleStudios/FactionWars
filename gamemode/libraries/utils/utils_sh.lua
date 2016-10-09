@@ -17,6 +17,8 @@ function player.findInSphere(startPos, radius)
 	return cache
 end
 
+
+--Credit to Nak for this 
 local events = {}
 for I=1,12 do events[I] = {} end
 events[2][14] = "Valentines Day"
