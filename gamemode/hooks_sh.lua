@@ -262,7 +262,7 @@ end
 
 
 --
--- Teams module
+-- TEAMS MODULE
 --
 function GM:CanPlayerJoinTeam(...)
 	return fw.hook.Call("CanPlayerJoinTeam", ...)
