@@ -292,7 +292,7 @@ function GM:KeyRelease(...)
 	return fw.hook.Call("KeyRelease", ...)
 end
 --
--- MODULE ITEMS
+-- ITEM MODULES
 --
 
 function GM:CanPlayerBuyItem(...)
