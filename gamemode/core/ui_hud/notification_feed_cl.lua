@@ -10,7 +10,7 @@ vgui.Register('fwNotificationFeed', {
 
 		local p = sty.ScreenScale(1)
 
-		self:SetPos(sty.ScrW - self:GetWide(), p)
+		self:SetPos(ScrW() - self:GetWide(), p)
 
 		local panels = self._panels
 		local y = p

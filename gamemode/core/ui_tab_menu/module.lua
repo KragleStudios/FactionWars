@@ -152,7 +152,7 @@ end
 function fw.tab_menu.hideContent(callback)
 	if IsValid(__FW_TABMENU_CONTENT) then
 		local content = __FW_TABMENU_CONTENT
-		content:MoveTo(content:GetX(), sty.ScrH, fw.config.uiAnimTimeQuick, 0, -1, function()
+		content:MoveTo(content:GetX(), ScrH(), fw.config.uiAnimTimeQuick, 0, -1, function()
 			content:Remove()
 			if callback then callback() end
 		end)
@@ -168,7 +168,7 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 		__FW_TABMENU_CONTENT = vgui.Create("FWUIFrame")
 		local content = __FW_TABMENU_CONTENT
 
-		content:SetSize(sty.ScrH * 0.7, sty.ScrH * 0.7)
+		content:SetSize(ScrH() * 0.7, ScrH() * 0.7)
 		content:MakePopup()
 		content:SetTitle(title or "Unknown Content Panel")
 		content:CenterHorizontal()
@@ -176,10 +176,10 @@ function fw.tab_menu.displayContent(title, constructor, callback)
 			fw.tab_menu.hideContent()
 		end
 
-		content:SetY(sty.ScrH)
+		content:SetY(ScrH())
 		content:MoveTo(
 			content:GetX(),
-			(sty.ScrH - content:GetTall()) * 0.5,
+			(ScrH() - content:GetTall()) * 0.5,
 			fw.config.uiAnimTimeQuick, 0, -1,
 			callback or ra.fn.noop)
 		content:PerformLayout()

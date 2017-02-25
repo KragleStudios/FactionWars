@@ -62,7 +62,6 @@ local function AddObject( ent, key_value, value )
 	FW_Map_Objects[ent] = table.insert(data,{class = ent:GetClass(), pos= ent:GetPos(), ang = ent:GetAngles(),model = ent:GetModel(), key = key_value, value =value} )
 	Save()
 end
-Load()
 local function RemoveObject( ent )
 	if not FW_Map_Objects[ent] then return end
 	local num = FW_Map_Objects[ent]
