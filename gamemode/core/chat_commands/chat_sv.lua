@@ -207,6 +207,35 @@ function fw.chat.runCommand(pl, command, arguments)
 end
 
 fw.hook.Add("PlayerSay", function(pl, text)
+	local ooc = text:match("^//(.*)")
+	if ooc then
+		local textCache = {}
+		if (not pl:Alive()) then
+			table.insert(textCache, Color(255, 0, 0))
+			table.insert(textCache, "*DEAD* ")
+		end
+
+		table.insert(textCache, Color(0, 0, 0))
+		table.insert(textCache, "[Global] ")
+
+		local fac = fw.team.factions[ pl:getFaction() ]
+		local fname = fac:getName()
+		local fcolor = fac:getColor()
+
+		local prefix = string.sub(fname, 1, 1)
+		table.insert(textCache, fcolor)
+		table.insert(textCache, '['..prefix..'] ')
+
+		table.insert(textCache, team.GetColor(pl:Team()))
+		table.insert(textCache, pl:Nick() .. ": ")
+		table.insert(textCache, Color(255, 255, 255))
+
+		table.insert(textCache, ooc)
+
+		fw.notif.chat(player.GetAll(), unpack(textCache))
+		return ""
+	end
+
 	local firstSpace = string.find(text, "%s")
 	local prefix = string.sub(text, 1, 1)
 	local command = string.sub(text, 2, firstSpace and firstSpace - 1 or nil)

@@ -1,4 +1,4 @@
-fw.chat.addCMD({"/", "all", "occ"}, "Sends a message out of character to all players on the server", function(ply, msg)
+fw.chat.addCMD({"all", "ooc"}, "Sends a message out of character to all players on the server", function(ply, msg)
 	local textCache = {}
 	if (not ply:Alive()) then
 		table.insert(textCache, Color(255, 0, 0))
